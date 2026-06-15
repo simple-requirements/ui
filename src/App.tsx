@@ -1,10 +1,14 @@
 import 'primeicons/primeicons.css';
+import { Button } from 'primereact/button';
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import { ActionBar } from '@/components/ActionBar';
 import { AppTabBar } from '@/components/AppTabBar';
 import { RequirementsList } from '@/components/RequirementsList';
 import { Workspace } from '@/components/Workspace';
 import { createDemoRepositories } from '@/demo/demoRepositories';
+import { createCategoriesStore } from '@/stores/categoriesStore';
+import { createProjectsStore } from '@/stores/projectsStore';
+import { createRequirementsStore } from '@/stores/requirementsStore';
 import type { Category, DemoRequirement, Priority, ProjectSummary } from '@/demo/demoTypes';
 import { RequirementDetail } from '@/features/requirements/RequirementDetail';
 import { LoadingOverlay } from '@/layout/LoadingOverlay';
@@ -25,6 +29,9 @@ function formValue(formData: FormData, fieldName: string) {
 
 export default function App() {
     const demoRepository = useMemo(() => createDemoRepositories(), []);
+    const projectsStore = useMemo(() => createProjectsStore(demoRepository), [demoRepository]);
+    const requirementsStore = useMemo(() => createRequirementsStore(demoRepository), [demoRepository]);
+    const categoriesStore = useMemo(() => createCategoriesStore(demoRepository), [demoRepository]);
     const [workspaceState, dispatch] = useReducer(workspaceReducer, undefined, loadWorkspaceState);
     const [bootstrapping, setBootstrapping] = useState(true);
     const [projects, setProjects] = useState<ProjectSummary[]>([]);
@@ -41,7 +48,7 @@ export default function App() {
         setBootstrapping(true);
         setRightPaneError(null);
         try {
-            const loadedProjects = [...(await demoRepository.listProjects())];
+            const loadedProjects = await projectsStore.loadProjects();
             setProjects(loadedProjects);
             if (!workspaceState.activeProjectId && loadedProjects[0]) {
                 dispatch({ type: 'selectProject', projectId: loadedProjects[0].id });
@@ -56,7 +63,7 @@ export default function App() {
 
     useEffect(() => {
         void loadProjects();
-        void demoRepository.listCategories().then((loadedCategories) => setCategories([...loadedCategories]));
+        void categoriesStore.loadCategories().then(setCategories);
     }, []);
 
     useEffect(() => {
@@ -67,8 +74,8 @@ export default function App() {
 
         setProjectContentLoading(true);
         setRightPaneError(null);
-        demoRepository
-            .listRequirements(activeProjectId)
+        requirementsStore
+            .loadRequirements(activeProjectId)
             .then((loadedRequirements) => {
                 setRequirements([...loadedRequirements]);
                 const selectedRequirementId =
@@ -97,8 +104,8 @@ export default function App() {
         }
 
         setRequirementDetailLoading(true);
-        demoRepository
-            .getRequirement(workspaceState.selectedRequirementId)
+        requirementsStore
+            .loadRequirementDetail(workspaceState.selectedRequirementId)
             .then(setSelectedRequirement)
             .catch((error: unknown) => {
                 setSelectedRequirement(null);
@@ -115,15 +122,15 @@ export default function App() {
         void loadProjects();
         const currentActiveProjectId = workspaceState.activeProjectId;
         if (currentActiveProjectId) {
-            void demoRepository
-                .listRequirements(currentActiveProjectId)
+            void requirementsStore
+                .loadRequirements(currentActiveProjectId)
                 .then((loadedRequirements) => setRequirements([...loadedRequirements]));
         }
     }
 
     async function createProject(formData: FormData) {
-        const project = await demoRepository.createProject({ name: formValue(formData, 'name') });
-        setProjects([...(await demoRepository.listProjects())]);
+        const project = await projectsStore.createProject({ name: formValue(formData, 'name') });
+        setProjects(await projectsStore.loadProjects());
         dispatch({ type: 'selectProject', projectId: project.id });
     }
 
@@ -132,7 +139,7 @@ export default function App() {
             return;
         }
 
-        const requirement = await demoRepository.createRequirement(workspaceState.activeProjectId, {
+        const requirement = await requirementsStore.createRequirement(workspaceState.activeProjectId, {
             categoryKey: formValue(formData, 'category'),
             description: formValue(formData, 'description'),
             priority: formValue(formData, 'priority') as Priority,
@@ -150,13 +157,13 @@ export default function App() {
             return;
         }
 
-        await demoRepository.transitionRequirement(selectedRequirement.id, lifecycleTransitionByLabel[actionLabel]);
+        await requirementsStore.transitionRequirement(selectedRequirement.id, lifecycleTransitionByLabel[actionLabel]);
         refreshWorkspace();
     }
 
     async function deleteDraftRequirement() {
         if (selectedRequirement && confirm('Delete draft requirement?')) {
-            await demoRepository.deleteDraft(selectedRequirement.id);
+            await requirementsStore.deleteDraftRequirement(selectedRequirement.id);
             dispatch({ type: 'selectRequirement', requirementId: null });
             refreshWorkspace();
         }
@@ -227,7 +234,7 @@ export default function App() {
                         {rightPaneError ? (
                             <div className="state">
                                 {rightPaneError}
-                                <button onClick={refreshWorkspace}>Retry</button>
+                                <Button type="button" label="Retry" onClick={refreshWorkspace} />
                             </div>
                         ) : selectedRequirement ? (
                             <RequirementDetail requirement={selectedRequirement} />

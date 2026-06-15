@@ -1,3 +1,4 @@
+import { Button } from 'primereact/button';
 import type { Action, Module } from '@/state/workspaceReducer';
 
 interface ModuleNavigationProps {
@@ -8,18 +9,20 @@ interface ModuleNavigationProps {
 export function ModuleNavigation({ activeModule, dispatch }: ModuleNavigationProps) {
     return (
         <nav className="module-nav">
-            <button
+            <Button
+                type="button"
                 className={activeModule === 'requirements' ? 'active' : ''}
                 onClick={() => dispatch({ type: 'selectModule', module: 'requirements' })}
             >
                 Requirements
-            </button>
-            <button
+            </Button>
+            <Button
+                type="button"
                 className={activeModule === 'categories' ? 'active' : ''}
                 onClick={() => dispatch({ type: 'selectModule', module: 'categories' })}
             >
                 Categories
-            </button>
+            </Button>
         </nav>
     );
 }

@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { Column } from 'primereact/column';
+import { DataTable, type DataTableRowClickEvent, type DataTableRowDoubleClickEvent } from 'primereact/datatable';
 import type { DemoRequirement } from '@/demo/demoTypes';
 import type { Action } from '@/state/workspaceReducer';
 
@@ -8,51 +11,30 @@ interface RequirementsListProps {
 }
 
 export function RequirementsList({ requirements, selectedRequirementId, dispatch }: RequirementsListProps) {
+    function selectRequirement(requirement: DemoRequirement) {
+        dispatch({ type: 'selectRequirement', requirementId: requirement.id });
+    }
+
+    function openRequirement(requirement: DemoRequirement) {
+        dispatch({ type: 'openRequirementTab', requirementId: requirement.id, visibleKey: requirement.visibleKey });
+    }
+
     return (
-        <table className="req-list">
-            <thead>
-                <tr>
-                    <th>Visible key</th>
-                    <th>Category</th>
-                    <th>Type</th>
-                    <th>Status</th>
-                    <th>Priority</th>
-                    <th>Owner</th>
-                </tr>
-            </thead>
-            <tbody>
-                {requirements.map((requirement) => (
-                    <tr
-                        key={requirement.id}
-                        className={requirement.id === selectedRequirementId ? 'selected' : ''}
-                        tabIndex={0}
-                        onClick={() => dispatch({ type: 'selectRequirement', requirementId: requirement.id })}
-                        onDoubleClick={() =>
-                            dispatch({
-                                type: 'openRequirementTab',
-                                requirementId: requirement.id,
-                                visibleKey: requirement.visibleKey,
-                            })
-                        }
-                        onKeyDown={(event) => {
-                            if (event.key === 'Enter' && event.ctrlKey) {
-                                dispatch({
-                                    type: 'openRequirementTab',
-                                    requirementId: requirement.id,
-                                    visibleKey: requirement.visibleKey,
-                                });
-                            }
-                        }}
-                    >
-                        <td>{requirement.visibleKey}</td>
-                        <td>{requirement.categoryKey}</td>
-                        <td>{requirement.type}</td>
-                        <td>{requirement.status}</td>
-                        <td>{requirement.priority}</td>
-                        <td>{requirement.owner ?? '—'}</td>
-                    </tr>
-                ))}
-            </tbody>
-        </table>
+        <DataTable
+            value={[...requirements]}
+            dataKey="id"
+            className="req-list"
+            rowClassName={(requirement) => (requirement.id === selectedRequirementId ? 'selected' : '')}
+            onRowClick={(event: DataTableRowClickEvent) => selectRequirement(event.data as DemoRequirement)}
+            onRowDoubleClick={(event: DataTableRowDoubleClickEvent) => openRequirement(event.data as DemoRequirement)}
+            tableProps={{ 'aria-label': 'Requirements' }}
+        >
+            <Column field="visibleKey" header="Visible key" />
+            <Column field="categoryKey" header="Category" />
+            <Column field="type" header="Type" />
+            <Column field="status" header="Status" />
+            <Column field="priority" header="Priority" />
+            <Column field="owner" header="Owner" body={(requirement: DemoRequirement) => requirement.owner ?? '—'} />
+        </DataTable>
     );
 }

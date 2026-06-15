@@ -1,3 +1,4 @@
+import { Button } from 'primereact/button';
 import type { DemoRequirement } from '@/demo/demoTypes';
 import { lifecycleActions } from '@/features/requirements/requirementActions';
 import type { Action } from '@/state/workspaceReducer';
@@ -21,14 +22,15 @@ export function ActionBar({
 }: ActionBarProps) {
     return (
         <div className="actionbar">
-            <button onClick={() => dispatch({ type: 'setMode', mode: 'newRequirement' })} disabled={!activeProjectId}>
+            <Button type="button" onClick={() => dispatch({ type: 'setMode', mode: 'newRequirement' })} disabled={!activeProjectId}>
                 New requirement
-            </button>
+            </Button>
             {selectedRequirement ? (
                 <>
-                    <button>History</button>
+                    <Button type="button">History</Button>
                     {!dedicated ? (
-                        <button
+                        <Button
+                            type="button"
                             aria-label="Open in tab"
                             onClick={() =>
                                 dispatch({
@@ -39,20 +41,20 @@ export function ActionBar({
                             }
                         >
                             Open in tab
-                        </button>
+                        </Button>
                     ) : null}
                     {lifecycleActions(selectedRequirement.status).map((actionLabel) => (
-                        <button key={actionLabel} onClick={() => onTransition(actionLabel)}>
+                        <Button type="button" key={actionLabel} onClick={() => onTransition(actionLabel)}>
                             {actionLabel}
-                        </button>
+                        </Button>
                     ))}
-                    <button onClick={() => void navigator.clipboard.writeText(selectedRequirement.visibleKey)}>
+                    <Button type="button" onClick={() => void navigator.clipboard.writeText(selectedRequirement.visibleKey)}>
                         Copy visible key
-                    </button>
+                    </Button>
                     {selectedRequirement.status === 'draft' ? (
-                        <button className="danger" onClick={onDeleteDraft}>
+                        <Button type="button" className="danger" onClick={onDeleteDraft}>
                             Delete draft
-                        </button>
+                        </Button>
                     ) : null}
                 </>
             ) : null}

@@ -1,2 +1,4 @@
+import { Button } from 'primereact/button';
 import type { ProjectSummary } from '@/demo/demoTypes';
-export function ProjectRow({project,active,onSelect}:{project:ProjectSummary;active:boolean;onSelect:()=>void}){return <button className={`project-row ${active?'active':''}`} onClick={onSelect} aria-current={active?'true':undefined}><i className="pi pi-folder" aria-hidden="true"/><span>{project.name}</span><b>{project.requirementCount}</b></button>}
+
+export function ProjectRow({project,active,onSelect}:{project:ProjectSummary;active:boolean;onSelect:()=>void}){return <Button type="button" className={`project-row ${active?'active':''}`} onClick={onSelect} aria-current={active?'true':undefined}><i className="pi pi-folder" aria-hidden="true"/><span>{project.name}</span><b>{project.requirementCount}</b></Button>}

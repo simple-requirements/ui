@@ -1,3 +1,4 @@
+import { Button } from 'primereact/button';
 import { WORKSPACE_TAB_ID, type Action, type RequirementTabState } from '@/state/workspaceReducer';
 
 interface AppTabBarProps {
@@ -9,15 +10,17 @@ interface AppTabBarProps {
 export function AppTabBar({ activeAppTabId, openRequirementTabs, dispatch }: AppTabBarProps) {
     return (
         <div className="tabs" role="tablist" aria-label="Application tabs">
-            <button
+            <Button
+                type="button"
                 role="tab"
                 aria-selected={activeAppTabId === WORKSPACE_TAB_ID}
                 onClick={() => dispatch({ type: 'activateTab', tabId: WORKSPACE_TAB_ID })}
             >
                 Workspace
-            </button>
+            </Button>
             {openRequirementTabs.map((tab) => (
-                <button
+                <Button
+                    type="button"
                     role="tab"
                     aria-selected={activeAppTabId === tab.id}
                     key={tab.id}
@@ -39,7 +42,7 @@ export function AppTabBar({ activeAppTabId, openRequirementTabs, dispatch }: App
                         {' '}
                         ×
                     </span>
-                </button>
+                </Button>
             ))}
         </div>
     );

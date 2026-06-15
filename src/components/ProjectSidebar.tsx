@@ -1,3 +1,4 @@
+import { Button } from 'primereact/button';
 import { ProjectRow } from '@/features/projects/ProjectRow';
 import type { ProjectSummary } from '@/demo/demoTypes';
 import type { Action } from '@/state/workspaceReducer';
@@ -11,9 +12,9 @@ interface ProjectSidebarProps {
 export function ProjectSidebar({ projects, activeProjectId, dispatch }: ProjectSidebarProps) {
     return (
         <aside className="sidebar">
-            <button className="new-project" onClick={() => dispatch({ type: 'setMode', mode: 'newProject' })}>
+            <Button type="button" className="new-project" onClick={() => dispatch({ type: 'setMode', mode: 'newProject' })}>
                 New Project
-            </button>
+            </Button>
             <div>
                 {projects.map((project) => (
                     <ProjectRow

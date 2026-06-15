@@ -1,4 +1,8 @@
 import type { SyntheticEvent } from 'react';
+import { Button } from 'primereact/button';
+import { Dropdown } from 'primereact/dropdown';
+import { InputText } from 'primereact/inputtext';
+import { InputTextarea } from 'primereact/inputtextarea';
 import type { Category } from '@/demo/demoTypes';
 
 interface RequirementFormProps {
@@ -6,6 +10,8 @@ interface RequirementFormProps {
     onSubmit: (formData: FormData) => void;
     onCancel: () => void;
 }
+
+const priorityOptions = ['P1', 'P2', 'P3', 'P4'];
 
 export function RequirementForm({ categories, onSubmit, onCancel }: RequirementFormProps) {
     function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
@@ -18,43 +24,37 @@ export function RequirementForm({ categories, onSubmit, onCancel }: RequirementF
             <h2>New requirement</h2>
             <label>
                 Category
-                <select name="category">
-                    {categories.map((category) => (
-                        <option key={category.key} value={category.key}>
-                            {category.key} — {category.name} ({category.type})
-                        </option>
-                    ))}
-                </select>
+                <Dropdown
+                    name="category"
+                    options={[...categories]}
+                    optionLabel="name"
+                    optionValue="key"
+                    itemTemplate={(category: Category) => `${category.key} — ${category.name} (${category.type})`}
+                    value={categories[0]?.key ?? null}
+                />
             </label>
             <label>
                 Description
-                <textarea name="description" required />
+                <InputTextarea name="description" required />
             </label>
             <label>
                 Priority
-                <select name="priority">
-                    <option>P1</option>
-                    <option>P2</option>
-                    <option>P3</option>
-                    <option>P4</option>
-                </select>
+                <Dropdown name="priority" options={priorityOptions} value="P1" />
             </label>
             <label>
                 Owner
-                <input name="owner" />
+                <InputText name="owner" />
             </label>
             <label>
                 Rationale
-                <input name="rationale" />
+                <InputText name="rationale" />
             </label>
             <label>
                 Source
-                <input name="source" />
+                <InputText name="source" />
             </label>
-            <button>Create</button>
-            <button type="button" onClick={onCancel}>
-                Cancel
-            </button>
+            <Button type="submit" label="Create" />
+            <Button type="button" label="Cancel" onClick={onCancel} />
         </form>
     );
 }

@@ -1,4 +1,8 @@
 import type { SyntheticEvent, ReactNode } from 'react';
+import { Button } from 'primereact/button';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
+import { InputText } from 'primereact/inputtext';
 import type { Category, DemoRequirement, ProjectSummary } from '@/demo/demoTypes';
 import { RequirementDetail } from '@/features/requirements/RequirementDetail';
 import { VerticalSplitPane } from '@/layout/VerticalSplitPane';
@@ -60,12 +64,10 @@ export function Workspace({
                         <h2>New Project</h2>
                         <label>
                             Project name
-                            <input name="name" required />
+                            <InputText name="name" required />
                         </label>
-                        <button>Create</button>
-                        <button type="button" onClick={() => dispatch({ type: 'setMode', mode: 'workspace' })}>
-                            Cancel
-                        </button>
+                        <Button type="submit" label="Create" />
+                        <Button type="button" label="Cancel" onClick={() => dispatch({ type: 'setMode', mode: 'workspace' })} />
                     </form>
                 ) : mode === 'newRequirement' ? (
                     <RequirementForm
@@ -80,7 +82,7 @@ export function Workspace({
                             <section className="state">
                                 <h2>Unable to load demo data</h2>
                                 <p>{projectError}</p>
-                                <button onClick={onRetry}>Retry</button>
+                                <Button type="button" label="Retry" onClick={onRetry} />
                             </section>
                         ) : null}
                         {!projectError && projectContentLoading ? (
@@ -91,21 +93,13 @@ export function Workspace({
                         {!projectError && !projectContentLoading && activeModule === 'categories' ? (
                             <>
                                 <div className="actionbar">
-                                    <button onClick={() => dispatch({ type: 'setMode', mode: 'newCategory' })}>
-                                        New category
-                                    </button>
+                                    <Button type="button" label="New category" onClick={() => dispatch({ type: 'setMode', mode: 'newCategory' })} />
                                 </div>
-                                <table className="req-list">
-                                    <tbody>
-                                        {categories.map((category) => (
-                                            <tr key={category.key}>
-                                                <td>{category.key}</td>
-                                                <td>{category.name}</td>
-                                                <td>{category.type}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                <DataTable value={[...categories]} dataKey="key" className="req-list" tableProps={{ 'aria-label': 'Categories' }}>
+                                    <Column field="key" header="Key" />
+                                    <Column field="name" header="Name" />
+                                    <Column field="type" header="Type" />
+                                </DataTable>
                             </>
                         ) : null}
                         {!projectError && !projectContentLoading && activeModule === 'requirements' ? (

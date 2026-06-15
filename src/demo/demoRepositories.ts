@@ -1,7 +1,7 @@
 /* eslint-disable */
-import { DETAIL_LOAD_DELAY_MS, INITIAL_LOAD_DELAY_MS, MUTATION_DELAY_MS, PROJECT_LOAD_DELAY_MS, DEMO_DATA_KEY, getDemoError } from './demoConfig';
-import { demoCategories, initialProjects, initialRequirements } from './demoData';
-import type { Category, CreateProjectInput, CreateRequirementInput, DemoProjectRepository, DemoRequirement, DemoRequirementRepository, ProjectSummary } from './demoTypes';
+import { DETAIL_LOAD_DELAY_MS, INITIAL_LOAD_DELAY_MS, MUTATION_DELAY_MS, PROJECT_LOAD_DELAY_MS, DEMO_DATA_KEY, getDemoError } from '@/demo/demoConfig';
+import { demoCategories, initialProjects, initialRequirements } from '@/demo/demoData';
+import type { Category, CreateProjectInput, CreateRequirementInput, DemoProjectRepository, DemoRequirement, DemoRequirementRepository, ProjectSummary } from '@/demo/demoTypes';
 const delay=(ms:number)=>new Promise(r=>setTimeout(r,ms));
 type Store={projects:ProjectSummary[]; requirements:DemoRequirement[]; categories:Category[]};
 function load():Store{try{const raw=sessionStorage.getItem(DEMO_DATA_KEY); if(raw)return JSON.parse(raw) as Store;}catch{/* reset */} return {projects:initialProjects(),requirements:[...initialRequirements],categories:[...demoCategories]};}

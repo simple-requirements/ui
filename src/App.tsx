@@ -1,16 +1,16 @@
 /* eslint-disable */
 import 'primeicons/primeicons.css';
 import { useEffect, useMemo, useReducer, useState } from 'react';
-import { createDemoRepositories } from './demo/demoRepositories';
-import type { Category, DemoRequirement, ProjectSummary } from './demo/demoTypes';
-import { ProjectRow } from './features/projects/ProjectRow';
-import { RequirementDetail } from './features/requirements/RequirementDetail';
-import { lifecycleActions } from './features/requirements/requirementActions';
-import { LoadingOverlay } from './layout/LoadingOverlay';
-import { VerticalSplitPane } from './layout/VerticalSplitPane';
-import { loadWorkspaceState, saveWorkspaceState } from './state/sessionPersistence';
-import { WORKSPACE_TAB_ID, workspaceReducer } from './state/workspaceReducer';
-import './styles/app.css';
+import { createDemoRepositories } from '@/demo/demoRepositories';
+import type { Category, DemoRequirement, ProjectSummary } from '@/demo/demoTypes';
+import { ProjectRow } from '@/features/projects/ProjectRow';
+import { RequirementDetail } from '@/features/requirements/RequirementDetail';
+import { lifecycleActions } from '@/features/requirements/requirementActions';
+import { LoadingOverlay } from '@/layout/LoadingOverlay';
+import { VerticalSplitPane } from '@/layout/VerticalSplitPane';
+import { loadWorkspaceState, saveWorkspaceState } from '@/state/sessionPersistence';
+import { WORKSPACE_TAB_ID, workspaceReducer } from '@/state/workspaceReducer';
+import '@/styles/app.scss';
 
 export default function App(){const repo=useMemo(()=>createDemoRepositories(),[]); const [state,dispatch]=useReducer(workspaceReducer,undefined,loadWorkspaceState); const [boot,setBoot]=useState(true); const [projects,setProjects]=useState<ProjectSummary[]>([]); const [reqs,setReqs]=useState<DemoRequirement[]>([]); const [detail,setDetail]=useState<DemoRequirement|null>(null); const [cats,setCats]=useState<Category[]>([]); const [err,setErr]=useState<string|null>(null); const [rightLoading,setRightLoading]=useState(false); const [detailLoading,setDetailLoading]=useState(false);
 useEffect(()=>saveWorkspaceState(state),[state]);

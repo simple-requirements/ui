@@ -1,31 +1,245 @@
-/* eslint-disable */
 import 'primeicons/primeicons.css';
 import { useEffect, useMemo, useReducer, useState } from 'react';
+import { ActionBar } from '@/components/ActionBar';
+import { AppTabBar } from '@/components/AppTabBar';
+import { RequirementsList } from '@/components/RequirementsList';
+import { Workspace } from '@/components/Workspace';
 import { createDemoRepositories } from '@/demo/demoRepositories';
-import type { Category, DemoRequirement, ProjectSummary } from '@/demo/demoTypes';
+import type { Category, DemoRequirement, Priority, ProjectSummary } from '@/demo/demoTypes';
 import { RequirementDetail } from '@/features/requirements/RequirementDetail';
-import { lifecycleActions } from '@/features/requirements/requirementActions';
 import { LoadingOverlay } from '@/layout/LoadingOverlay';
-import { VerticalSplitPane } from '@/layout/VerticalSplitPane';
 import { loadWorkspaceState, saveWorkspaceState } from '@/state/sessionPersistence';
 import { workspaceReducer } from '@/state/workspaceReducer';
-import { AppTabBar } from '@/components/AppTabBar';
-import { ProjectSidebar } from '@/components/ProjectSidebar';
-import { ModuleNavigation } from '@/components/ModuleNavigation';
 
-export default function App(){const repo=useMemo(()=>createDemoRepositories(),[]); const [state,dispatch]=useReducer(workspaceReducer,undefined,loadWorkspaceState); const [boot,setBoot]=useState(true); const [projects,setProjects]=useState<ProjectSummary[]>([]); const [reqs,setReqs]=useState<DemoRequirement[]>([]); const [detail,setDetail]=useState<DemoRequirement|null>(null); const [cats,setCats]=useState<Category[]>([]); const [err,setErr]=useState<string|null>(null); const [rightLoading,setRightLoading]=useState(false); const [detailLoading,setDetailLoading]=useState(false);
-useEffect(()=>saveWorkspaceState(state),[state]);
-async function loadProjects(){setBoot(true);setErr(null);try{const p=[...(await repo.listProjects())];setProjects(p);if(!state.activeProjectId&&p[0])dispatch({type:'selectProject',projectId:p[0].id});}catch(e){setProjects([]);setErr((e as Error).message)}finally{setBoot(false)}}
-useEffect(()=>{void loadProjects(); void repo.listCategories().then(c=>setCats([...c]));},[]);
-useEffect(()=>{if(!state.activeProjectId)return; setRightLoading(true);setErr(null); repo.listRequirements(state.activeProjectId).then(r=>{setReqs([...r]); const first=state.selectedRequirementId&&r.some(x=>x.id===state.selectedRequirementId)?state.selectedRequirementId:r[0]?.id??null; dispatch({type:'selectRequirement',requirementId:first}); history.replaceState(null,'',`/workspace/projects/${state.activeProjectId}/${state.activeModule}`)}).catch(e=>{setReqs([]);setErr((e as Error).message)}).finally(()=>setRightLoading(false));},[state.activeProjectId,state.activeModule]);
-useEffect(()=>{if(!state.selectedRequirementId){setDetail(null);return} setDetailLoading(true); repo.getRequirement(state.selectedRequirementId).then(setDetail).catch(e=>{setDetail(null);setErr((e as Error).message)}).finally(()=>setDetailLoading(false));},[state.selectedRequirementId]);
-const activeTab=state.openRequirementTabs.find(t=>t.id===state.activeAppTabId); const refresh=()=>{void loadProjects(); if(state.activeProjectId) void repo.listRequirements(state.activeProjectId).then(r=>setReqs([...r]));};
-async function createProject(fd:FormData){const p=await repo.createProject({name:String(fd.get('name'))}); setProjects([...(await repo.listProjects())]); dispatch({type:'selectProject',projectId:p.id});}
-async function createReq(fd:FormData){if(!state.activeProjectId)return; const r=await repo.createRequirement(state.activeProjectId,{categoryKey:String(fd.get('category')),description:String(fd.get('description')),priority:fd.get('priority') as never,owner:String(fd.get('owner'))||null,rationale:String(fd.get('rationale'))||null,source:String(fd.get('source'))||null}); dispatch({type:'setMode',mode:'workspace'}); dispatch({type:'selectRequirement',requirementId:r.id}); refresh();}
-async function transition(label:string){if(!detail)return; const map:Record<string,DemoRequirement['status']>={'Approve':'approved','Reject':'rejected','Mark implemented':'implemented','Mark obsolete':'obsolete'}; await repo.transitionRequirement(detail.id,map[label]); refresh();}
-async function del(){if(detail&&confirm('Delete draft requirement?')){await repo.deleteDraft(detail.id); dispatch({type:'selectRequirement',requirementId:null}); refresh();}}
-const actionBar=(dedicated=false)=><div className="actionbar"><button onClick={()=>dispatch({type:'setMode',mode:'newRequirement'})} disabled={!state.activeProjectId}>New requirement</button>{detail&&<><button>History</button>{!dedicated&&<button aria-label="Open in tab" onClick={()=>dispatch({type:'openRequirementTab',requirementId:detail.id,visibleKey:detail.visibleKey})}>Open in tab</button>}{lifecycleActions(detail.status).map(a=><button key={a} onClick={()=>void transition(a)}>{a}</button>)}<button onClick={()=>void navigator.clipboard?.writeText(detail.visibleKey)}>Copy visible key</button>{detail.status==='draft'&&<button className="danger" onClick={()=>void del()}>Delete draft</button>}</>}</div>;
-const reqList=<table className="req-list"><thead><tr><th>Visible key</th><th>Category</th><th>Type</th><th>Status</th><th>Priority</th><th>Owner</th></tr></thead><tbody>{reqs.map(r=><tr key={r.id} className={r.id===state.selectedRequirementId?'selected':''} tabIndex={0} onClick={()=>dispatch({type:'selectRequirement',requirementId:r.id})} onDoubleClick={()=>dispatch({type:'openRequirementTab',requirementId:r.id,visibleKey:r.visibleKey})} onKeyDown={e=>{if(e.key==='Enter'&&e.ctrlKey)dispatch({type:'openRequirementTab',requirementId:r.id,visibleKey:r.visibleKey})}}><td>{r.visibleKey}</td><td>{r.categoryKey}</td><td>{r.type}</td><td>{r.status}</td><td>{r.priority}</td><td>{r.owner??'—'}</td></tr>)}</tbody></table>;
-function formReq(){return <form className="form" onSubmit={e=>{e.preventDefault();void createReq(new FormData(e.currentTarget))}}><h2>New requirement</h2><label>Category<select name="category">{cats.map(c=><option key={c.key} value={c.key}>{c.key} — {c.name} ({c.type})</option>)}</select></label><label>Description<textarea name="description" required/></label><label>Priority<select name="priority"><option>P1</option><option>P2</option><option>P3</option><option>P4</option></select></label><label>Owner<input name="owner"/></label><label>Rationale<input name="rationale"/></label><label>Source<input name="source"/></label><button>Create</button><button type="button" onClick={()=>dispatch({type:'setMode',mode:'workspace'})}>Cancel</button></form>}
-const workspace=<div className="workspace"><ProjectSidebar projects={projects} activeProjectId={state.activeProjectId} dispatch={dispatch}/><main className="right-pane">{state.mode==='newProject'?<form className="form" onSubmit={e=>{e.preventDefault();void createProject(new FormData(e.currentTarget))}}><h2>New Project</h2><label>Project name<input name="name" required/></label><button>Create</button><button type="button" onClick={()=>dispatch({type:'setMode',mode:'workspace'})}>Cancel</button></form>:state.mode==='newRequirement'?formReq():<><ModuleNavigation activeModule={state.activeModule} dispatch={dispatch}/>{err&&<section className="state"><h2>Unable to load demo data</h2><p>{err}</p><button onClick={refresh}>Retry</button></section>}{!err&&rightLoading&&<section className="state" role="status">Loading project content…</section>}{!err&&!rightLoading&&state.activeModule==='categories'&&<><div className="actionbar"><button onClick={()=>dispatch({type:'setMode',mode:'newCategory'})}>New category</button></div><table className="req-list"><tbody>{cats.map(c=><tr key={c.key}><td>{c.key}</td><td>{c.name}</td><td>{c.type}</td></tr>)}</tbody></table></>}{!err&&!rightLoading&&state.activeModule==='requirements'&&<>{actionBar(false)}<VerticalSplitPane position={state.splitterPosition} onChange={p=>dispatch({type:'setSplitter',position:p})} top={reqList} bottom={detailLoading?<div className="state" role="status">Loading requirement detail…</div>:detail?<RequirementDetail requirement={detail}/>:<div className="state">No requirement selected.</div>}/></>}</>}</main></div>;
-return <div className="app-shell"><AppTabBar activeAppTabId={state.activeAppTabId} openRequirementTabs={state.openRequirementTabs} dispatch={dispatch}/><section className="panel" role="tabpanel">{activeTab?<main className="dedicated">{actionBar(true)}{err?<div className="state">{err}<button onClick={refresh}>Retry</button></div>:detail?<RequirementDetail requirement={detail}/>:<div className="state">Loading requirement detail…</div>}</main>:workspace}</section>{boot&&<LoadingOverlay/>}</div>}
+const lifecycleTransitionByLabel: Record<string, DemoRequirement['status']> = {
+    Approve: 'approved',
+    Reject: 'rejected',
+    'Mark implemented': 'implemented',
+    'Mark obsolete': 'obsolete',
+};
+
+function formValue(formData: FormData, fieldName: string) {
+    const value = formData.get(fieldName);
+    return typeof value === 'string' ? value : '';
+}
+
+export default function App() {
+    const demoRepository = useMemo(() => createDemoRepositories(), []);
+    const [workspaceState, dispatch] = useReducer(workspaceReducer, undefined, loadWorkspaceState);
+    const [bootstrapping, setBootstrapping] = useState(true);
+    const [projects, setProjects] = useState<ProjectSummary[]>([]);
+    const [requirements, setRequirements] = useState<DemoRequirement[]>([]);
+    const [selectedRequirement, setSelectedRequirement] = useState<DemoRequirement | null>(null);
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [rightPaneError, setRightPaneError] = useState<string | null>(null);
+    const [projectContentLoading, setProjectContentLoading] = useState(false);
+    const [requirementDetailLoading, setRequirementDetailLoading] = useState(false);
+
+    useEffect(() => saveWorkspaceState(workspaceState), [workspaceState]);
+
+    async function loadProjects() {
+        setBootstrapping(true);
+        setRightPaneError(null);
+        try {
+            const loadedProjects = [...(await demoRepository.listProjects())];
+            setProjects(loadedProjects);
+            if (!workspaceState.activeProjectId && loadedProjects[0]) {
+                dispatch({ type: 'selectProject', projectId: loadedProjects[0].id });
+            }
+        } catch (error) {
+            setProjects([]);
+            setRightPaneError((error as Error).message);
+        } finally {
+            setBootstrapping(false);
+        }
+    }
+
+    useEffect(() => {
+        void loadProjects();
+        void demoRepository.listCategories().then((loadedCategories) => setCategories([...loadedCategories]));
+    }, []);
+
+    useEffect(() => {
+        const activeProjectId = workspaceState.activeProjectId;
+        if (!activeProjectId) {
+            return;
+        }
+
+        setProjectContentLoading(true);
+        setRightPaneError(null);
+        demoRepository
+            .listRequirements(activeProjectId)
+            .then((loadedRequirements) => {
+                setRequirements([...loadedRequirements]);
+                const selectedRequirementId =
+                    workspaceState.selectedRequirementId &&
+                    loadedRequirements.some((requirement) => requirement.id === workspaceState.selectedRequirementId)
+                        ? workspaceState.selectedRequirementId
+                        : (loadedRequirements[0]?.id ?? null);
+                dispatch({ type: 'selectRequirement', requirementId: selectedRequirementId });
+                history.replaceState(
+                    null,
+                    '',
+                    `/workspace/projects/${activeProjectId}/${workspaceState.activeModule}`,
+                );
+            })
+            .catch((error: unknown) => {
+                setRequirements([]);
+                setRightPaneError((error as Error).message);
+            })
+            .finally(() => setProjectContentLoading(false));
+    }, [workspaceState.activeProjectId, workspaceState.activeModule]);
+
+    useEffect(() => {
+        if (!workspaceState.selectedRequirementId) {
+            setSelectedRequirement(null);
+            return;
+        }
+
+        setRequirementDetailLoading(true);
+        demoRepository
+            .getRequirement(workspaceState.selectedRequirementId)
+            .then(setSelectedRequirement)
+            .catch((error: unknown) => {
+                setSelectedRequirement(null);
+                setRightPaneError((error as Error).message);
+            })
+            .finally(() => setRequirementDetailLoading(false));
+    }, [workspaceState.selectedRequirementId]);
+
+    const activeRequirementTab = workspaceState.openRequirementTabs.find(
+        (tab) => tab.id === workspaceState.activeAppTabId,
+    );
+
+    function refreshWorkspace() {
+        void loadProjects();
+        const currentActiveProjectId = workspaceState.activeProjectId;
+        if (currentActiveProjectId) {
+            void demoRepository
+                .listRequirements(currentActiveProjectId)
+                .then((loadedRequirements) => setRequirements([...loadedRequirements]));
+        }
+    }
+
+    async function createProject(formData: FormData) {
+        const project = await demoRepository.createProject({ name: formValue(formData, 'name') });
+        setProjects([...(await demoRepository.listProjects())]);
+        dispatch({ type: 'selectProject', projectId: project.id });
+    }
+
+    async function createRequirement(formData: FormData) {
+        if (!workspaceState.activeProjectId) {
+            return;
+        }
+
+        const requirement = await demoRepository.createRequirement(workspaceState.activeProjectId, {
+            categoryKey: formValue(formData, 'category'),
+            description: formValue(formData, 'description'),
+            priority: formValue(formData, 'priority') as Priority,
+            owner: formValue(formData, 'owner') || null,
+            rationale: formValue(formData, 'rationale') || null,
+            source: formValue(formData, 'source') || null,
+        });
+        dispatch({ type: 'setMode', mode: 'workspace' });
+        dispatch({ type: 'selectRequirement', requirementId: requirement.id });
+        refreshWorkspace();
+    }
+
+    async function transitionRequirement(actionLabel: string) {
+        if (!selectedRequirement) {
+            return;
+        }
+
+        await demoRepository.transitionRequirement(selectedRequirement.id, lifecycleTransitionByLabel[actionLabel]);
+        refreshWorkspace();
+    }
+
+    async function deleteDraftRequirement() {
+        if (selectedRequirement && confirm('Delete draft requirement?')) {
+            await demoRepository.deleteDraft(selectedRequirement.id);
+            dispatch({ type: 'selectRequirement', requirementId: null });
+            refreshWorkspace();
+        }
+    }
+
+    const workspaceActionBar = (
+        <ActionBar
+            activeProjectId={workspaceState.activeProjectId}
+            selectedRequirement={selectedRequirement}
+            dispatch={dispatch}
+            onTransition={(actionLabel) => void transitionRequirement(actionLabel)}
+            onDeleteDraft={() => void deleteDraftRequirement()}
+        />
+    );
+
+    const dedicatedActionBar = (
+        <ActionBar
+            activeProjectId={workspaceState.activeProjectId}
+            selectedRequirement={selectedRequirement}
+            dedicated
+            dispatch={dispatch}
+            onTransition={(actionLabel) => void transitionRequirement(actionLabel)}
+            onDeleteDraft={() => void deleteDraftRequirement()}
+        />
+    );
+
+    const requirementsList = (
+        <RequirementsList
+            requirements={requirements}
+            selectedRequirementId={workspaceState.selectedRequirementId}
+            dispatch={dispatch}
+        />
+    );
+
+    const workspace = (
+        <Workspace
+            projects={projects}
+            activeProjectId={workspaceState.activeProjectId}
+            mode={workspaceState.mode}
+            activeModule={workspaceState.activeModule}
+            selectedRequirementId={workspaceState.selectedRequirementId}
+            splitterPosition={workspaceState.splitterPosition}
+            categories={categories}
+            projectError={rightPaneError}
+            projectContentLoading={projectContentLoading}
+            requirementDetailLoading={requirementDetailLoading}
+            selectedRequirement={selectedRequirement}
+            requirementsList={requirementsList}
+            actionBar={workspaceActionBar}
+            dispatch={dispatch}
+            onCreateProject={(formData) => void createProject(formData)}
+            onCreateRequirement={(formData) => void createRequirement(formData)}
+            onRetry={refreshWorkspace}
+        />
+    );
+
+    return (
+        <div className="app-shell">
+            <AppTabBar
+                activeAppTabId={workspaceState.activeAppTabId}
+                openRequirementTabs={workspaceState.openRequirementTabs}
+                dispatch={dispatch}
+            />
+            <section className="panel" role="tabpanel">
+                {activeRequirementTab ? (
+                    <main className="dedicated">
+                        {dedicatedActionBar}
+                        {rightPaneError ? (
+                            <div className="state">
+                                {rightPaneError}
+                                <button onClick={refreshWorkspace}>Retry</button>
+                            </div>
+                        ) : selectedRequirement ? (
+                            <RequirementDetail requirement={selectedRequirement} />
+                        ) : (
+                            <div className="state">Loading requirement detail…</div>
+                        )}
+                    </main>
+                ) : (
+                    workspace
+                )}
+            </section>
+            {bootstrapping ? <LoadingOverlay /> : null}
+        </div>
+    );
+}

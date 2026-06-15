@@ -1,122 +1,30 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+/* eslint-disable */
+import 'primeicons/primeicons.css';
+import { useEffect, useMemo, useReducer, useState } from 'react';
+import { createDemoRepositories } from './demo/demoRepositories';
+import type { Category, DemoRequirement, ProjectSummary } from './demo/demoTypes';
+import { ProjectRow } from './features/projects/ProjectRow';
+import { RequirementDetail } from './features/requirements/RequirementDetail';
+import { lifecycleActions } from './features/requirements/requirementActions';
+import { LoadingOverlay } from './layout/LoadingOverlay';
+import { VerticalSplitPane } from './layout/VerticalSplitPane';
+import { loadWorkspaceState, saveWorkspaceState } from './state/sessionPersistence';
+import { WORKSPACE_TAB_ID, workspaceReducer } from './state/workspaceReducer';
+import './styles/app.css';
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
-}
-
-export default App
+export default function App(){const repo=useMemo(()=>createDemoRepositories(),[]); const [state,dispatch]=useReducer(workspaceReducer,undefined,loadWorkspaceState); const [boot,setBoot]=useState(true); const [projects,setProjects]=useState<ProjectSummary[]>([]); const [reqs,setReqs]=useState<DemoRequirement[]>([]); const [detail,setDetail]=useState<DemoRequirement|null>(null); const [cats,setCats]=useState<Category[]>([]); const [err,setErr]=useState<string|null>(null); const [rightLoading,setRightLoading]=useState(false); const [detailLoading,setDetailLoading]=useState(false);
+useEffect(()=>saveWorkspaceState(state),[state]);
+async function loadProjects(){setBoot(true);setErr(null);try{const p=[...(await repo.listProjects())];setProjects(p);if(!state.activeProjectId&&p[0])dispatch({type:'selectProject',projectId:p[0].id});}catch(e){setProjects([]);setErr((e as Error).message)}finally{setBoot(false)}}
+useEffect(()=>{void loadProjects(); void repo.listCategories().then(c=>setCats([...c]));},[]);
+useEffect(()=>{if(!state.activeProjectId)return; setRightLoading(true);setErr(null); repo.listRequirements(state.activeProjectId).then(r=>{setReqs([...r]); const first=state.selectedRequirementId&&r.some(x=>x.id===state.selectedRequirementId)?state.selectedRequirementId:r[0]?.id??null; dispatch({type:'selectRequirement',requirementId:first}); history.replaceState(null,'',`/workspace/projects/${state.activeProjectId}/${state.activeModule}`)}).catch(e=>{setReqs([]);setErr((e as Error).message)}).finally(()=>setRightLoading(false));},[state.activeProjectId,state.activeModule]);
+useEffect(()=>{if(!state.selectedRequirementId){setDetail(null);return} setDetailLoading(true); repo.getRequirement(state.selectedRequirementId).then(setDetail).catch(e=>{setDetail(null);setErr((e as Error).message)}).finally(()=>setDetailLoading(false));},[state.selectedRequirementId]);
+const activeTab=state.openRequirementTabs.find(t=>t.id===state.activeAppTabId); const activeProject=projects.find(p=>p.id===state.activeProjectId); const refresh=()=>{void loadProjects(); if(state.activeProjectId) void repo.listRequirements(state.activeProjectId).then(r=>setReqs([...r]));};
+async function createProject(fd:FormData){const p=await repo.createProject({name:String(fd.get('name'))}); setProjects([...(await repo.listProjects())]); dispatch({type:'selectProject',projectId:p.id});}
+async function createReq(fd:FormData){if(!state.activeProjectId)return; const r=await repo.createRequirement(state.activeProjectId,{categoryKey:String(fd.get('category')),description:String(fd.get('description')),priority:fd.get('priority') as never,owner:String(fd.get('owner'))||null,rationale:String(fd.get('rationale'))||null,source:String(fd.get('source'))||null}); dispatch({type:'setMode',mode:'workspace'}); dispatch({type:'selectRequirement',requirementId:r.id}); refresh();}
+async function transition(label:string){if(!detail)return; const map:Record<string,DemoRequirement['status']>={'Approve':'approved','Reject':'rejected','Mark implemented':'implemented','Mark obsolete':'obsolete'}; await repo.transitionRequirement(detail.id,map[label]); refresh();}
+async function del(){if(detail&&confirm('Delete draft requirement?')){await repo.deleteDraft(detail.id); dispatch({type:'selectRequirement',requirementId:null}); refresh();}}
+const actionBar=(dedicated=false)=><div className="actionbar"><button onClick={()=>dispatch({type:'setMode',mode:'newRequirement'})} disabled={!state.activeProjectId}>New requirement</button>{detail&&<><button>History</button>{!dedicated&&<button aria-label="Open in tab" onClick={()=>dispatch({type:'openRequirementTab',requirementId:detail.id,visibleKey:detail.visibleKey})}>Open in tab</button>}{lifecycleActions(detail.status).map(a=><button key={a} onClick={()=>void transition(a)}>{a}</button>)}<button onClick={()=>void navigator.clipboard?.writeText(detail.visibleKey)}>Copy visible key</button>{detail.status==='draft'&&<button className="danger" onClick={()=>void del()}>Delete draft</button>}</>}</div>;
+const reqList=<table className="req-list"><thead><tr><th>Visible key</th><th>Category</th><th>Type</th><th>Status</th><th>Priority</th><th>Owner</th></tr></thead><tbody>{reqs.map(r=><tr key={r.id} className={r.id===state.selectedRequirementId?'selected':''} tabIndex={0} onClick={()=>dispatch({type:'selectRequirement',requirementId:r.id})} onDoubleClick={()=>dispatch({type:'openRequirementTab',requirementId:r.id,visibleKey:r.visibleKey})} onKeyDown={e=>{if(e.key==='Enter'&&e.ctrlKey)dispatch({type:'openRequirementTab',requirementId:r.id,visibleKey:r.visibleKey})}}><td>{r.visibleKey}</td><td>{r.categoryKey}</td><td>{r.type}</td><td>{r.status}</td><td>{r.priority}</td><td>{r.owner??'—'}</td></tr>)}</tbody></table>;
+function formReq(){return <form className="form" onSubmit={e=>{e.preventDefault();void createReq(new FormData(e.currentTarget))}}><h2>New requirement</h2><label>Category<select name="category">{cats.map(c=><option key={c.key} value={c.key}>{c.key} — {c.name} ({c.type})</option>)}</select></label><label>Description<textarea name="description" required/></label><label>Priority<select name="priority"><option>P1</option><option>P2</option><option>P3</option><option>P4</option></select></label><label>Owner<input name="owner"/></label><label>Rationale<input name="rationale"/></label><label>Source<input name="source"/></label><button>Create</button><button type="button" onClick={()=>dispatch({type:'setMode',mode:'workspace'})}>Cancel</button></form>}
+const workspace=<div className="workspace"><aside className="sidebar"><button className="new-project" onClick={()=>dispatch({type:'setMode',mode:'newProject'})}>New Project</button><div>{projects.map(p=><ProjectRow key={p.id} project={p} active={p.id===state.activeProjectId} onSelect={()=>dispatch({type:'selectProject',projectId:p.id})}/>)}</div></aside><main className="right-pane">{state.mode==='newProject'?<form className="form" onSubmit={e=>{e.preventDefault();void createProject(new FormData(e.currentTarget))}}><h2>New Project</h2><label>Project name<input name="name" required/></label><button>Create</button><button type="button" onClick={()=>dispatch({type:'setMode',mode:'workspace'})}>Cancel</button></form>:state.mode==='newRequirement'?formReq():<><nav className="module-nav"><button className={state.activeModule==='requirements'?'active':''} onClick={()=>dispatch({type:'selectModule',module:'requirements'})}>Requirements</button><button className={state.activeModule==='categories'?'active':''} onClick={()=>dispatch({type:'selectModule',module:'categories'})}>Categories</button></nav>{err&&<section className="state"><h2>Unable to load demo data</h2><p>{err}</p><button onClick={refresh}>Retry</button></section>}{!err&&rightLoading&&<section className="state" role="status">Loading project content…</section>}{!err&&!rightLoading&&state.activeModule==='categories'&&<><div className="actionbar"><button onClick={()=>dispatch({type:'setMode',mode:'newCategory'})}>New category</button></div><table className="req-list"><tbody>{cats.map(c=><tr key={c.key}><td>{c.key}</td><td>{c.name}</td><td>{c.type}</td></tr>)}</tbody></table></>}{!err&&!rightLoading&&state.activeModule==='requirements'&&<>{actionBar(false)}<VerticalSplitPane position={state.splitterPosition} onChange={p=>dispatch({type:'setSplitter',position:p})} top={reqList} bottom={detailLoading?<div className="state" role="status">Loading requirement detail…</div>:detail?<RequirementDetail requirement={detail}/>:<div className="state">No requirement selected.</div>}/></>}</>}</main></div>;
+return <div className="app-shell"><div className="tabs" role="tablist" aria-label="Application tabs"><button role="tab" aria-selected={state.activeAppTabId===WORKSPACE_TAB_ID} onClick={()=>dispatch({type:'activateTab',tabId:WORKSPACE_TAB_ID})}>Workspace</button>{state.openRequirementTabs.map(t=><button role="tab" aria-selected={state.activeAppTabId===t.id} key={t.id} onClick={()=>dispatch({type:'activateTab',tabId:t.id})} onKeyDown={e=>{if(e.key==='Delete')dispatch({type:'closeTab',tabId:t.id})}}>{t.visibleKey}<span aria-label={`Close ${t.visibleKey}`} onClick={(e)=>{e.stopPropagation();dispatch({type:'closeTab',tabId:t.id})}}> ×</span></button>)}</div><section className="panel" role="tabpanel">{activeTab?<main className="dedicated">{actionBar(true)}{err?<div className="state">{err}<button onClick={refresh}>Retry</button></div>:detail?<RequirementDetail requirement={detail}/>:<div className="state">Loading requirement detail…</div>}</main>:workspace}</section>{boot&&<LoadingOverlay/>}</div>}

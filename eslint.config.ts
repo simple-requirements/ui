@@ -19,6 +19,7 @@ const reactHooksRecommendedRules = reactHooks.configs.recommended.rules;
 
 export default defineConfig(
     includeIgnoreFile(gitignorePath),
+    { ignores: ['test/e2e/**'] },
 
     js.configs.recommended,
 
@@ -38,7 +39,7 @@ export default defineConfig(
     {
         languageOptions: {
             parserOptions: {
-                projectService: { defaultProject: 'tsconfig.node.json' },
+                projectService: { defaultProject: 'tsconfig.node.json', allowDefaultProject: ['test/*.spec.ts'] },
                 tsconfigRootDir: configDirectory,
             },
         },

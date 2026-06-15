@@ -62,21 +62,21 @@ export default function App() {
     }
 
     useEffect(() => {
-        void loadProjects();
-        void categoriesStore.loadCategories().then(setCategories);
+        async function bootstrapWorkspace() {
+            await loadProjects();
+            const loadedCategories = await categoriesStore.loadCategories();
+            setCategories(loadedCategories);
+        }
+
+        void bootstrapWorkspace();
     }, []);
 
     useEffect(() => {
-        const activeProjectId = workspaceState.activeProjectId;
-        if (!activeProjectId) {
-            return;
-        }
-
-        setProjectContentLoading(true);
-        setRightPaneError(null);
-        requirementsStore
-            .loadRequirements(activeProjectId)
-            .then((loadedRequirements) => {
+        async function loadProjectContent(activeProjectId: string) {
+            setProjectContentLoading(true);
+            setRightPaneError(null);
+            try {
+                const loadedRequirements = await requirementsStore.loadRequirements(activeProjectId);
                 setRequirements([...loadedRequirements]);
                 const selectedRequirementId =
                     workspaceState.selectedRequirementId &&
@@ -89,42 +89,52 @@ export default function App() {
                     '',
                     `/workspace/projects/${activeProjectId}/${workspaceState.activeModule}`,
                 );
-            })
-            .catch((error: unknown) => {
+            } catch (error) {
                 setRequirements([]);
                 setRightPaneError((error as Error).message);
-            })
-            .finally(() => setProjectContentLoading(false));
+            } finally {
+                setProjectContentLoading(false);
+            }
+        }
+
+        const activeProjectId = workspaceState.activeProjectId;
+        if (activeProjectId) {
+            void loadProjectContent(activeProjectId);
+        }
     }, [workspaceState.activeProjectId, workspaceState.activeModule]);
 
     useEffect(() => {
+        async function loadRequirementDetail(requirementId: string) {
+            setRequirementDetailLoading(true);
+            try {
+                const requirementDetail = await requirementsStore.loadRequirementDetail(requirementId);
+                setSelectedRequirement(requirementDetail);
+            } catch (error) {
+                setSelectedRequirement(null);
+                setRightPaneError((error as Error).message);
+            } finally {
+                setRequirementDetailLoading(false);
+            }
+        }
+
         if (!workspaceState.selectedRequirementId) {
             setSelectedRequirement(null);
             return;
         }
 
-        setRequirementDetailLoading(true);
-        requirementsStore
-            .loadRequirementDetail(workspaceState.selectedRequirementId)
-            .then(setSelectedRequirement)
-            .catch((error: unknown) => {
-                setSelectedRequirement(null);
-                setRightPaneError((error as Error).message);
-            })
-            .finally(() => setRequirementDetailLoading(false));
+        void loadRequirementDetail(workspaceState.selectedRequirementId);
     }, [workspaceState.selectedRequirementId]);
 
     const activeRequirementTab = workspaceState.openRequirementTabs.find(
         (tab) => tab.id === workspaceState.activeAppTabId,
     );
 
-    function refreshWorkspace() {
-        void loadProjects();
+    async function refreshWorkspace() {
+        await loadProjects();
         const currentActiveProjectId = workspaceState.activeProjectId;
         if (currentActiveProjectId) {
-            void requirementsStore
-                .loadRequirements(currentActiveProjectId)
-                .then((loadedRequirements) => setRequirements([...loadedRequirements]));
+            const loadedRequirements = await requirementsStore.loadRequirements(currentActiveProjectId);
+            setRequirements([...loadedRequirements]);
         }
     }
 
@@ -149,7 +159,7 @@ export default function App() {
         });
         dispatch({ type: 'setMode', mode: 'workspace' });
         dispatch({ type: 'selectRequirement', requirementId: requirement.id });
-        refreshWorkspace();
+        void refreshWorkspace();
     }
 
     async function transitionRequirement(actionLabel: string) {
@@ -158,14 +168,14 @@ export default function App() {
         }
 
         await requirementsStore.transitionRequirement(selectedRequirement.id, lifecycleTransitionByLabel[actionLabel]);
-        refreshWorkspace();
+        void refreshWorkspace();
     }
 
     async function deleteDraftRequirement() {
         if (selectedRequirement && confirm('Delete draft requirement?')) {
             await requirementsStore.deleteDraftRequirement(selectedRequirement.id);
             dispatch({ type: 'selectRequirement', requirementId: null });
-            refreshWorkspace();
+            void refreshWorkspace();
         }
     }
 
@@ -216,7 +226,7 @@ export default function App() {
             dispatch={dispatch}
             onCreateProject={(formData) => void createProject(formData)}
             onCreateRequirement={(formData) => void createRequirement(formData)}
-            onRetry={refreshWorkspace}
+            onRetry={() => void refreshWorkspace()}
         />
     );
 
@@ -234,7 +244,7 @@ export default function App() {
                         {rightPaneError ? (
                             <div className="state">
                                 {rightPaneError}
-                                <Button type="button" label="Retry" onClick={refreshWorkspace} />
+                                <Button type="button" label="Retry" onClick={() => void refreshWorkspace()} />
                             </div>
                         ) : selectedRequirement ? (
                             <RequirementDetail requirement={selectedRequirement} />

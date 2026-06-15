@@ -1,0 +1,8 @@
+export type RequirementType='FR'|'NFR'; export type Priority='P1'|'P2'|'P3'|'P4'; export type RequirementStatus='draft'|'approved'|'implemented'|'rejected'|'obsolete';
+export interface ProjectSummary{ id:string; name:string; requirementCount:number }
+export interface Category{ key:string; name:string; type:RequirementType }
+export interface DemoRequirement{ id:string; projectId:string; visibleKey:string; categoryKey:string; categoryName:string; type:RequirementType; description:string; priority:Priority; status:RequirementStatus; owner:string|null; rationale:string|null; source:string|null }
+export type RequirementSummary=DemoRequirement; export type RequirementDetail=DemoRequirement;
+export interface CreateProjectInput{ name:string } export interface CreateRequirementInput{ categoryKey:string; description:string; priority:Priority; owner:string|null; rationale:string|null; source:string|null }
+export interface DemoProjectRepository{ listProjects():Promise<readonly ProjectSummary[]>; createProject(input:CreateProjectInput):Promise<ProjectSummary> }
+export interface DemoRequirementRepository{ listRequirements(projectId:string):Promise<readonly RequirementSummary[]>; getRequirement(requirementId:string):Promise<RequirementDetail>; createRequirement(projectId:string,input:CreateRequirementInput):Promise<RequirementDetail>; updateRequirement(id:string, patch:Partial<DemoRequirement>):Promise<RequirementDetail>; transitionRequirement(id:string,status:RequirementStatus):Promise<RequirementDetail>; deleteDraft(id:string):Promise<void>; listCategories():Promise<readonly Category[]>; createCategory(input:Category):Promise<Category> }

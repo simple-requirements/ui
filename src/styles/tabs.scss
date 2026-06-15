@@ -1,0 +1,23 @@
+.tabs {
+    display: flex;
+    align-items: end;
+    gap: 2px;
+    background: #e9edf3;
+    border-bottom: 1px solid var(--border);
+    padding: 4px 8px 0;
+
+    [role='tab'] {
+        height: 32px;
+        border: 1px solid var(--border);
+        background: var(--surface-muted);
+        padding: 0 12px;
+        border-radius: 6px 6px 0 0;
+    }
+
+    [aria-selected='true'] {
+        background: white;
+        border-bottom-color: white;
+        color: var(--accent);
+        font-weight: 700;
+    }
+}

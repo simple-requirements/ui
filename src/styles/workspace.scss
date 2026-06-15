@@ -1,0 +1,67 @@
+@use '@/styles/tokens' as *;
+
+.workspace {
+    height: 100%;
+    display: grid;
+    grid-template-columns: var(--sidebar-width) 1fr;
+}
+
+.right-pane {
+    display: grid;
+    grid-template-rows: var(--module-nav-height) auto 1fr;
+    overflow: hidden;
+}
+
+.module-nav {
+    height: var(--module-nav-height);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: end;
+    padding-left: 12px;
+    gap: 4px;
+
+    button {
+        height: 34px;
+        border: 0;
+        background: transparent;
+        padding: 0 14px;
+    }
+
+    .active {
+        border-bottom: 3px solid var(--accent);
+        font-weight: 700;
+        color: var(--accent);
+    }
+}
+
+.actionbar {
+    min-height: var(--actionbar-height);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    background: #fbfcfe;
+
+    button {
+        @include control-surface;
+
+        padding: 6px 10px;
+    }
+}
+
+.danger {
+    color: #b91c1c;
+}
+
+.dedicated {
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    overflow: hidden;
+
+    .detail {
+        overflow: auto;
+    }
+}

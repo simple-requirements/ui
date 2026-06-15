@@ -1,0 +1,43 @@
+@use '@/styles/tokens' as *;
+
+@media (max-width: 900px) {
+    :root {
+        --sidebar-width: #{$tablet-sidebar-width};
+    }
+
+    .workspace {
+        grid-template-columns: minmax(190px, 35vw) 1fr;
+    }
+
+    .actionbar {
+        font-size: 14px;
+    }
+
+    .req-list {
+        font-size: 13px;
+    }
+
+    body {
+        overflow: hidden;
+    }
+}
+
+@media (max-width: 720px) {
+    .workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        position: absolute;
+        z-index: 3;
+        width: $mobile-sidebar-width;
+        top: var(--app-tabbar-height);
+        bottom: 0;
+        box-shadow: 0 10px 30px #0002;
+    }
+
+    .right-pane {
+        margin-left: $mobile-sidebar-width;
+        width: calc(100% - #{$mobile-sidebar-width});
+    }
+}

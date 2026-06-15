@@ -1,0 +1,28 @@
+@use '@/styles/tokens' as *;
+
+.form {
+    padding: 24px;
+    display: grid;
+    gap: 12px;
+    align-content: start;
+    max-width: 720px;
+
+    label {
+        display: grid;
+        gap: 5px;
+    }
+
+    input,
+    select,
+    textarea {
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 8px;
+    }
+
+    button {
+        @include control-surface;
+
+        padding: 6px 10px;
+    }
+}

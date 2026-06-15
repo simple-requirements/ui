@@ -1,0 +1,44 @@
+@use '@/styles/tokens' as *;
+
+:root {
+    --app-tabbar-height: 40px;
+    --sidebar-width: #{$desktop-sidebar-width};
+    --module-nav-height: 44px;
+    --actionbar-height: 48px;
+    --splitter-size: 10px;
+    --surface: #fff;
+    --surface-muted: #f4f6f8;
+    --border: #d7dde5;
+    --text: #1f2937;
+    --text-muted: #64748b;
+    --accent: #2563eb;
+    --focus-ring: #f59e0b;
+
+    font-family: Inter, system-ui, sans-serif;
+    color: var(--text);
+}
+
+html,
+body,
+#root {
+    height: 100%;
+    overflow: hidden;
+}
+
+.app-shell {
+    height: 100%;
+    display: grid;
+    grid-template-rows: var(--app-tabbar-height) 1fr;
+    background: var(--surface);
+}
+
+.panel,
+.workspace,
+.right-pane {
+    @include full-size-scroll-container;
+}
+
+.state {
+    padding: 24px;
+    color: var(--text-muted);
+}

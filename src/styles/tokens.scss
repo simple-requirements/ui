@@ -1,0 +1,20 @@
+$desktop-sidebar-width: 260px;
+$tablet-sidebar-width: 210px;
+$mobile-sidebar-width: 220px;
+$status-backgrounds: (
+    implemented: #dcfce7,
+    obsolete: #fee2e2,
+    rejected: #fee2e2,
+    approved: #dbeafe,
+);
+
+@mixin control-surface {
+    border: 1px solid var(--border);
+    background: white;
+    border-radius: 6px;
+}
+
+@mixin full-size-scroll-container {
+    min-width: 0;
+    min-height: 0;
+}

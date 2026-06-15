@@ -1,3 +1,5 @@
+@use '@/styles/reset';
+
 $desktop-sidebar-width: 260px;
 $tablet-sidebar-width: 210px;
 $mobile-sidebar-width: 220px;
@@ -38,28 +40,14 @@ $status-backgrounds: (
     color: var(--text);
 }
 
-* {
-    box-sizing: border-box;
-}
 
 html,
 body,
 #root {
     height: 100%;
-    margin: 0;
     overflow: hidden;
 }
 
-button,
-input,
-select,
-textarea {
-    font: inherit;
-}
-
-button {
-    cursor: pointer;
-}
 
 .app-shell {
     height: 100%;

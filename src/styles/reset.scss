@@ -1,0 +1,98 @@
+/* Modern browser reset for the demo SPA. */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+* {
+    margin: 0;
+}
+
+html {
+    min-height: 100%;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+body {
+    min-height: 100%;
+    line-height: 1.5;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+    display: block;
+    max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+    font: inherit;
+    color: inherit;
+}
+
+button,
+select {
+    text-transform: none;
+}
+
+button,
+[type='button'],
+[type='reset'],
+[type='submit'] {
+    appearance: button;
+}
+
+button {
+    border: 0;
+    background: none;
+    cursor: pointer;
+}
+
+textarea {
+    resize: vertical;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    overflow-wrap: break-word;
+}
+
+ul,
+ol {
+    padding: 0;
+    list-style: none;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+:focus-visible {
+    outline: 3px solid var(--focus-ring, #f59e0b);
+    outline-offset: 2px;
+}
+
+#root {
+    isolation: isolate;
+}

@@ -1,5 +1,5 @@
 /* eslint-disable */
-import type { Category, DemoRequirement, ProjectSummary, RequirementStatus, Priority } from './demoTypes';
+import type { Category, DemoRequirement, ProjectSummary, RequirementStatus, Priority } from '@/demo/demoTypes';
 export const demoCategories:readonly Category[]=[{key:'AUTH',name:'Authentication',type:'FR'},{key:'DATA',name:'Data Management',type:'FR'},{key:'UI',name:'User Interface',type:'FR'},{key:'INT',name:'Integration',type:'FR'},{key:'PERF',name:'Performance',type:'NFR'},{key:'SEC',name:'Security',type:'NFR'},{key:'USAB',name:'Usability',type:'NFR'}];
 const specs=[['project-alpha','Requirements Platform',18],['project-beta','Customer Portal',12],['project-gamma','Reporting and Analytics',27],['project-delta','Mobile Application',9],['project-epsilon','Integration Platform',34],['project-zeta','Security Hardening',14],['project-eta','Billing Modernization',21],['project-theta','Archive Migration',16]] as const;
 const statuses:RequirementStatus[]=['draft','approved','implemented','rejected','obsolete']; const priorities:Priority[]=['P1','P2','P3','P4'];

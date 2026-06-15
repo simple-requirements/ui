@@ -1,2 +1,2 @@
-import type { DemoRequirement } from '../../demo/demoTypes';
+import type { DemoRequirement } from '@/demo/demoTypes';
 export function RequirementDetail({requirement}:{requirement:DemoRequirement}){const v=(x:string|null)=>x??'Not specified';return <article className="detail"><h2>{requirement.visibleKey}</h2><p><span className={`badge ${requirement.status}`}>{requirement.status}</span></p><dl><dt>Category</dt><dd>{requirement.categoryName} ({requirement.categoryKey})</dd><dt>Type</dt><dd>{requirement.type}</dd><dt>Description</dt><dd>{requirement.description}</dd><dt>Priority</dt><dd>{requirement.priority}</dd><dt>Owner</dt><dd>{v(requirement.owner)}</dd><dt>Rationale</dt><dd>{v(requirement.rationale)}</dd><dt>Source</dt><dd>{v(requirement.source)}</dd></dl></article>}

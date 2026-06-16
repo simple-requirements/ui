@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Column } from 'primereact/column';
-import { DataTable, type DataTableRowClickEvent, type DataTableRowDoubleClickEvent } from 'primereact/datatable';
+import { DataTable, type DataTableRowClickEvent } from 'primereact/datatable';
 import type { DemoRequirement } from '@/demo/demoTypes';
 import type { Action } from '@/state/workspaceReducer';
 
@@ -11,23 +10,33 @@ type RequirementsListProps = Readonly<{
 }>;
 
 export function RequirementsList({ requirements, selectedRequirementId, dispatch }: RequirementsListProps) {
-    function selectRequirement(requirement: DemoRequirement) {
+    const selectRequirement = (requirement: DemoRequirement) => {
         dispatch({ type: 'selectRequirement', requirementId: requirement.id });
-    }
+    };
 
-    function openRequirement(requirement: DemoRequirement) {
+    const openRequirement = (requirement: DemoRequirement) => {
         dispatch({ type: 'openRequirementTab', requirementId: requirement.id, visibleKey: requirement.visibleKey });
-    }
+    };
+
+    const handleRowClick = (event: DataTableRowClickEvent) => {
+        selectRequirement(event.data as DemoRequirement);
+    };
+
+    const handleRowDoubleClick = (event: DataTableRowClickEvent) => {
+        openRequirement(event.data as DemoRequirement);
+    };
 
     return (
         <DataTable
             value={[...requirements]}
             dataKey="id"
-            className="req-list"
-            rowClassName={(requirement) => (requirement.id === selectedRequirementId ? 'selected' : '')}
-            onRowClick={(event: DataTableRowClickEvent) => selectRequirement(event.data as DemoRequirement)}
-            onRowDoubleClick={(event: DataTableRowDoubleClickEvent) => openRequirement(event.data as DemoRequirement)}
-            tableProps={{ 'aria-label': 'Requirements' }}
+            className="requirements-list req-list"
+            rowClassName={(requirement: DemoRequirement) =>
+                requirement.id === selectedRequirementId ? 'requirements-list__row--selected selected' : ''
+            }
+            onRowClick={handleRowClick}
+            onRowDoubleClick={handleRowDoubleClick}
+            aria-label="Requirements"
         >
             <Column field="visibleKey" header="Visible key" />
             <Column field="categoryKey" header="Category" />

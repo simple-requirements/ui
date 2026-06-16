@@ -5,6 +5,7 @@ import type {
     RequirementStatus,
 } from '@/demo/demoTypes';
 
+/** Snapshot shape for future requirement store subscriptions. */
 export interface RequirementsStoreState {
     requirements: readonly DemoRequirement[];
     selectedRequirement: DemoRequirement | null;
@@ -13,6 +14,7 @@ export interface RequirementsStoreState {
     error: string | null;
 }
 
+/** Creates requirement data operations backed by the replaceable demo repository boundary. */
 export function createRequirementsStore(requirementRepository: DemoRequirementRepository) {
     return {
         async loadRequirements(projectId: string) {

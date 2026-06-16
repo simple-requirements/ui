@@ -28,7 +28,6 @@ export default defineConfig(
 
     prettier,
 
-
     {
         files: ['test/*.spec.ts'],
         rules: {

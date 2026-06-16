@@ -9,6 +9,7 @@ type RequirementsListProps = Readonly<{
     dispatch: (action: Action) => void;
 }>;
 
+/** Shows the selectable requirement table and tab-opening interactions. */
 export function RequirementsList({ requirements, selectedRequirementId, dispatch }: RequirementsListProps) {
     const selectRequirement = (requirement: DemoRequirement) => {
         dispatch({ type: 'selectRequirement', requirementId: requirement.id });
@@ -29,21 +30,39 @@ export function RequirementsList({ requirements, selectedRequirementId, dispatch
     return (
         <DataTable
             value={[...requirements]}
-            dataKey="id"
-            className="requirements-list req-list"
+            dataKey='id'
+            className='requirements-list req-list'
             rowClassName={(requirement: DemoRequirement) =>
                 requirement.id === selectedRequirementId ? 'requirements-list__row--selected selected' : ''
             }
             onRowClick={handleRowClick}
             onRowDoubleClick={handleRowDoubleClick}
-            aria-label="Requirements"
-        >
-            <Column field="visibleKey" header="Visible key" />
-            <Column field="categoryKey" header="Category" />
-            <Column field="type" header="Type" />
-            <Column field="status" header="Status" />
-            <Column field="priority" header="Priority" />
-            <Column field="owner" header="Owner" body={(requirement: DemoRequirement) => requirement.owner ?? '—'} />
+            aria-label='Requirements'>
+            <Column
+                field='visibleKey'
+                header='Visible key'
+            />
+            <Column
+                field='categoryKey'
+                header='Category'
+            />
+            <Column
+                field='type'
+                header='Type'
+            />
+            <Column
+                field='status'
+                header='Status'
+            />
+            <Column
+                field='priority'
+                header='Priority'
+            />
+            <Column
+                field='owner'
+                header='Owner'
+                body={(requirement: DemoRequirement) => requirement.owner ?? '—'}
+            />
         </DataTable>
     );
 }

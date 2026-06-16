@@ -13,6 +13,7 @@ type RequirementFormProps = Readonly<{
 
 const priorityOptions = ['P1', 'P2', 'P3', 'P4'];
 
+/** Collects local demo requirement data while deriving type from the selected category. */
 export function RequirementForm({ categories, onSubmit, onCancel }: RequirementFormProps) {
     function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -20,41 +21,57 @@ export function RequirementForm({ categories, onSubmit, onCancel }: RequirementF
     }
 
     return (
-        <form className="form" onSubmit={handleSubmit}>
+        <form
+            className='form'
+            onSubmit={handleSubmit}>
             <h2>New requirement</h2>
             <label>
                 Category
                 <Dropdown
-                    name="category"
+                    name='category'
                     options={[...categories]}
-                    optionLabel="name"
-                    optionValue="key"
+                    optionLabel='name'
+                    optionValue='key'
                     itemTemplate={(category: Category) => `${category.key} — ${category.name} (${category.type})`}
                     value={categories[0]?.key ?? null}
                 />
             </label>
             <label>
                 Description
-                <InputTextarea name="description" required />
+                <InputTextarea
+                    name='description'
+                    required
+                />
             </label>
             <label>
                 Priority
-                <Dropdown name="priority" options={priorityOptions} value="P1" />
+                <Dropdown
+                    name='priority'
+                    options={priorityOptions}
+                    value='P1'
+                />
             </label>
             <label>
                 Owner
-                <InputText name="owner" />
+                <InputText name='owner' />
             </label>
             <label>
                 Rationale
-                <InputText name="rationale" />
+                <InputText name='rationale' />
             </label>
             <label>
                 Source
-                <InputText name="source" />
+                <InputText name='source' />
             </label>
-            <Button type="submit" label="Create" />
-            <Button type="button" label="Cancel" onClick={onCancel} />
+            <Button
+                type='submit'
+                label='Create'
+            />
+            <Button
+                type='button'
+                label='Cancel'
+                onClick={onCancel}
+            />
         </form>
     );
 }

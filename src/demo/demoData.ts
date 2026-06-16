@@ -1,9 +1,61 @@
 /* eslint-disable */
 import type { Category, DemoRequirement, ProjectSummary, RequirementStatus, Priority } from '@/demo/demoTypes';
-export const demoCategories:readonly Category[]=[{key:'AUTH',name:'Authentication',type:'FR'},{key:'DATA',name:'Data Management',type:'FR'},{key:'UI',name:'User Interface',type:'FR'},{key:'INT',name:'Integration',type:'FR'},{key:'PERF',name:'Performance',type:'NFR'},{key:'SEC',name:'Security',type:'NFR'},{key:'USAB',name:'Usability',type:'NFR'}];
-const specs=[['project-alpha','Requirements Platform',18],['project-beta','Customer Portal',12],['project-gamma','Reporting and Analytics',27],['project-delta','Mobile Application',9],['project-epsilon','Integration Platform',34],['project-zeta','Security Hardening',14],['project-eta','Billing Modernization',21],['project-theta','Archive Migration',16]] as const;
-const statuses:RequirementStatus[]=['draft','approved','implemented','rejected','obsolete']; const priorities:Priority[]=['P1','P2','P3','P4'];
-export function generateRequirements(){let n=1; const out:DemoRequirement[]=[]; for(const [pid,,count] of specs){ for(let i=0;i<count;i++){ const c=demoCategories[(i+n)%demoCategories.length]; const prefix=c.type==='FR'?'FR':'NFR'; const key=`${prefix}-${c.key}-${String(n).padStart(4,'0')}`; out.push({id:`${pid}-req-${i+1}`,projectId:pid,visibleKey:key,categoryKey:c.key,categoryName:c.name,type:c.type,description:`Demo ${c.name.toLowerCase()} requirement ${i+1} for ${pid.replace('project-','project ')}.`,priority:priorities[(i+n)%4],status:statuses[(i+n)%5],owner:i%3===0?null:`Demo Owner ${(i%5)+1}`,rationale:i%4===0?null:'Supports the local interactive prototype.',source:i%5===0?null:'Workshop note'}); n++; }} return out;}
-export const initialRequirements=generateRequirements();
-export function initialProjects():ProjectSummary[]{return specs.map(([id,name])=>({id,name,requirementCount:initialRequirements.filter(r=>r.projectId===id).length}));}
-export const demoProjectFixtures=specs.map(([id,name])=>({id,name}));
+export const demoCategories: readonly Category[] = [
+    { key: 'AUTH', name: 'Authentication', type: 'FR' },
+    { key: 'DATA', name: 'Data Management', type: 'FR' },
+    { key: 'UI', name: 'User Interface', type: 'FR' },
+    { key: 'INT', name: 'Integration', type: 'FR' },
+    { key: 'PERF', name: 'Performance', type: 'NFR' },
+    { key: 'SEC', name: 'Security', type: 'NFR' },
+    { key: 'USAB', name: 'Usability', type: 'NFR' },
+];
+const specs = [
+    ['project-alpha', 'Requirements Platform', 18],
+    ['project-beta', 'Customer Portal', 12],
+    ['project-gamma', 'Reporting and Analytics', 27],
+    ['project-delta', 'Mobile Application', 9],
+    ['project-epsilon', 'Integration Platform', 34],
+    ['project-zeta', 'Security Hardening', 14],
+    ['project-eta', 'Billing Modernization', 21],
+    ['project-theta', 'Archive Migration', 16],
+] as const;
+const statuses: RequirementStatus[] = ['draft', 'approved', 'implemented', 'rejected', 'obsolete'];
+const priorities: Priority[] = ['P1', 'P2', 'P3', 'P4'];
+/** Generates deterministic demo requirements for every initial project. */
+export function generateRequirements() {
+    let n = 1;
+    const out: DemoRequirement[] = [];
+    for (const [pid, , count] of specs) {
+        for (let i = 0; i < count; i++) {
+            const c = demoCategories[(i + n) % demoCategories.length];
+            const prefix = c.type === 'FR' ? 'FR' : 'NFR';
+            const key = `${prefix}-${c.key}-${String(n).padStart(4, '0')}`;
+            out.push({
+                id: `${pid}-req-${i + 1}`,
+                projectId: pid,
+                visibleKey: key,
+                categoryKey: c.key,
+                categoryName: c.name,
+                type: c.type,
+                description: `Demo ${c.name.toLowerCase()} requirement ${i + 1} for ${pid.replace('project-', 'project ')}.`,
+                priority: priorities[(i + n) % 4],
+                status: statuses[(i + n) % 5],
+                owner: i % 3 === 0 ? null : `Demo Owner ${(i % 5) + 1}`,
+                rationale: i % 4 === 0 ? null : 'Supports the local interactive prototype.',
+                source: i % 5 === 0 ? null : 'Workshop note',
+            });
+            n++;
+        }
+    }
+    return out;
+}
+export const initialRequirements = generateRequirements();
+/** Builds project summaries with counts derived from generated requirements. */
+export function initialProjects(): ProjectSummary[] {
+    return specs.map(([id, name]) => ({
+        id,
+        name,
+        requirementCount: initialRequirements.filter((r) => r.projectId === id).length,
+    }));
+}
+export const demoProjectFixtures = specs.map(([id, name]) => ({ id, name }));

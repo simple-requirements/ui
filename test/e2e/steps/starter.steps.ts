@@ -3,11 +3,7 @@ import { createBdd, test } from 'playwright-bdd';
 
 const { Given, Then, When } = createBdd(test);
 
-const ordinalIndexByWord: Record<string, number> = {
-    first: 0,
-    second: 1,
-    third: 2,
-};
+const ordinalIndexByWord: Record<string, number> = { first: 0, second: 1, third: 2 };
 
 Given('I open the demo workspace', async ({ page }) => {
     await page.goto('/');

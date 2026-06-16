@@ -1,19 +1,18 @@
 import type { DemoRequirement } from '@/demo/demoTypes';
 
-type RequirementDetailProps = Readonly<{
-    requirement: DemoRequirement;
-}>;
+type RequirementDetailProps = Readonly<{ requirement: DemoRequirement }>;
 
 const displayOptionalValue = (value: string | null) => value ?? 'Not specified';
 
+/** Presents the complete detail fields for a requirement in split and dedicated views. */
 export function RequirementDetail({ requirement }: RequirementDetailProps) {
     return (
-        <article className="requirement-detail detail">
-            <h2 className="requirement-detail__heading">{requirement.visibleKey}</h2>
-            <p className="requirement-detail__status-line">
+        <article className='requirement-detail detail'>
+            <h2 className='requirement-detail__heading'>{requirement.visibleKey}</h2>
+            <p className='requirement-detail__status-line'>
                 <span className={`requirement-detail__status badge ${requirement.status}`}>{requirement.status}</span>
             </p>
-            <dl className="requirement-detail__definition-list">
+            <dl className='requirement-detail__definition-list'>
                 <dt>Category</dt>
                 <dd>
                     {requirement.categoryName} ({requirement.categoryKey})

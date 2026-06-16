@@ -14,6 +14,7 @@ const LARGE_KEYBOARD_STEP = 0.1;
 const MINIMUM_LIST_POSITION = 0.25;
 const MAXIMUM_LIST_POSITION = 0.8;
 
+/** Wraps PrimeReact Splitter with persisted percentage sizing and keyboard separator controls. */
 export function VerticalSplitPane({ position, onChange, top, bottom }: VerticalSplitPaneProps) {
     const listPaneSize = Math.round(position * 100);
     const detailPaneSize = 100 - listPaneSize;
@@ -46,29 +47,34 @@ export function VerticalSplitPane({ position, onChange, top, bottom }: VerticalS
 
     return (
         <Splitter
-            layout="vertical"
-            className="requirements-split split"
+            layout='vertical'
+            className='requirements-split split'
             gutterSize={10}
             onResizeEnd={(event) => onChange(clampSplitter((event.sizes[0] ?? listPaneSize) / 100))}
             pt={{
                 gutter: {
-                    role: 'separator',
+                    'role': 'separator',
                     'aria-orientation': 'horizontal',
                     'aria-valuemin': 25,
                     'aria-valuemax': 80,
                     'aria-valuenow': listPaneSize,
-                    tabIndex: 0,
-                    className: 'requirements-split__separator splitter',
-                    onKeyDown: handleOnKeyDown,
-                    onPointerDown: handleOnPointerDown,
+                    'tabIndex': 0,
+                    'className': 'requirements-split__separator splitter',
+                    'onKeyDown': handleOnKeyDown,
+                    'onPointerDown': handleOnPointerDown,
                 },
                 gutterHandler: { className: 'requirements-split__separator-handle' },
-            }}
-        >
-            <SplitterPanel className="requirements-split__pane split-pane" size={listPaneSize} minSize={25}>
+            }}>
+            <SplitterPanel
+                className='requirements-split__pane split-pane'
+                size={listPaneSize}
+                minSize={25}>
                 {top}
             </SplitterPanel>
-            <SplitterPanel className="requirements-split__pane requirements-split__pane--detail split-pane detail-pane" size={detailPaneSize} minSize={20}>
+            <SplitterPanel
+                className='requirements-split__pane requirements-split__pane--detail split-pane detail-pane'
+                size={detailPaneSize}
+                minSize={20}>
                 {bottom}
             </SplitterPanel>
         </Splitter>

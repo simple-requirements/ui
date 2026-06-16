@@ -16,8 +16,8 @@ import { loadWorkspaceState, saveWorkspaceState } from '@/state/sessionPersisten
 import { workspaceReducer } from '@/state/workspaceReducer';
 
 const lifecycleTransitionByLabel: Record<string, DemoRequirement['status']> = {
-    Approve: 'approved',
-    Reject: 'rejected',
+    'Approve': 'approved',
+    'Reject': 'rejected',
     'Mark implemented': 'implemented',
     'Mark obsolete': 'obsolete',
 };
@@ -27,6 +27,7 @@ function formValue(formData: FormData, fieldName: string) {
     return typeof value === 'string' ? value : '';
 }
 
+/** Coordinates demo repositories, workspace state, and top-level application layout. */
 export default function App() {
     const demoRepository = useMemo(() => createDemoRepositories(), []);
     const projectsStore = useMemo(() => createProjectsStore(demoRepository), [demoRepository]);
@@ -79,16 +80,16 @@ export default function App() {
                 const loadedRequirements = await requirementsStore.loadRequirements(activeProjectId);
                 setRequirements([...loadedRequirements]);
                 const selectedRequirementId =
-                    workspaceState.selectedRequirementId &&
-                    loadedRequirements.some((requirement) => requirement.id === workspaceState.selectedRequirementId)
-                        ? workspaceState.selectedRequirementId
-                        : (loadedRequirements[0]?.id ?? null);
+                    (
+                        workspaceState.selectedRequirementId
+                        && loadedRequirements.some(
+                            (requirement) => requirement.id === workspaceState.selectedRequirementId,
+                        )
+                    ) ?
+                        workspaceState.selectedRequirementId
+                    :   (loadedRequirements[0]?.id ?? null);
                 dispatch({ type: 'selectRequirement', requirementId: selectedRequirementId });
-                history.replaceState(
-                    null,
-                    '',
-                    `/workspace/projects/${activeProjectId}/${workspaceState.activeModule}`,
-                );
+                history.replaceState(null, '', `/workspace/projects/${activeProjectId}/${workspaceState.activeModule}`);
             } catch (error) {
                 setRequirements([]);
                 setRightPaneError((error as Error).message);
@@ -233,9 +234,13 @@ export default function App() {
     const renderDedicatedRequirementTab = () => {
         if (rightPaneError) {
             return (
-                <div className="workspace-state state">
+                <div className='workspace-state state'>
                     {rightPaneError}
-                    <Button type="button" label="Retry" onClick={() => void refreshWorkspace()} />
+                    <Button
+                        type='button'
+                        label='Retry'
+                        onClick={() => void refreshWorkspace()}
+                    />
                 </div>
             );
         }
@@ -244,7 +249,7 @@ export default function App() {
             return <RequirementDetail requirement={selectedRequirement} />;
         }
 
-        return <div className="workspace-state state">Loading requirement detail…</div>;
+        return <div className='workspace-state state'>Loading requirement detail…</div>;
     };
 
     const renderActivePanel = () => {
@@ -253,7 +258,7 @@ export default function App() {
         }
 
         return (
-            <main className="workspace-dedicated dedicated">
+            <main className='workspace-dedicated dedicated'>
                 {dedicatedActionBar}
                 {renderDedicatedRequirementTab()}
             </main>
@@ -261,16 +266,20 @@ export default function App() {
     };
 
     return (
-        <div className="app-shell">
+        <div className='app-shell'>
             <AppTabBar
                 activeAppTabId={workspaceState.activeAppTabId}
                 openRequirementTabs={workspaceState.openRequirementTabs}
                 dispatch={dispatch}
             />
-            <section className="app-shell__panel panel" role="tabpanel">
+            <section
+                className='app-shell__panel panel'
+                role='tabpanel'>
                 {renderActivePanel()}
             </section>
-            {bootstrapping ? <LoadingOverlay /> : null}
+            {bootstrapping ?
+                <LoadingOverlay />
+            :   null}
         </div>
     );
 }

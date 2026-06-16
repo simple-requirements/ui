@@ -31,6 +31,7 @@ type WorkspaceProps = Readonly<{
     onRetry: () => void;
 }>;
 
+/** Composes the project sidebar with the active right-pane workspace content. */
 export function Workspace({
     projects,
     activeProjectId,
@@ -56,53 +57,94 @@ export function Workspace({
     }
 
     return (
-        <div className="workspace">
-            <ProjectSidebar projects={projects} activeProjectId={activeProjectId} dispatch={dispatch} />
-            <main className="right-pane">
-                {mode === 'newProject' ? (
-                    <form className="form" onSubmit={handleCreateProjectSubmit}>
+        <div className='workspace'>
+            <ProjectSidebar
+                projects={projects}
+                activeProjectId={activeProjectId}
+                dispatch={dispatch}
+            />
+            <main className='right-pane'>
+                {mode === 'newProject' ?
+                    <form
+                        className='form'
+                        onSubmit={handleCreateProjectSubmit}>
                         <h2>New Project</h2>
                         <label>
                             Project name
-                            <InputText name="name" required />
+                            <InputText
+                                name='name'
+                                required
+                            />
                         </label>
-                        <Button type="submit" label="Create" />
-                        <Button type="button" label="Cancel" onClick={() => dispatch({ type: 'setMode', mode: 'workspace' })} />
+                        <Button
+                            type='submit'
+                            label='Create'
+                        />
+                        <Button
+                            type='button'
+                            label='Cancel'
+                            onClick={() => dispatch({ type: 'setMode', mode: 'workspace' })}
+                        />
                     </form>
-                ) : mode === 'newRequirement' ? (
+                : mode === 'newRequirement' ?
                     <RequirementForm
                         categories={categories}
                         onSubmit={onCreateRequirement}
                         onCancel={() => dispatch({ type: 'setMode', mode: 'workspace' })}
                     />
-                ) : (
-                    <>
-                        <ModuleNavigation activeModule={activeModule} dispatch={dispatch} />
-                        {projectError ? (
-                            <section className="state">
+                :   <>
+                        <ModuleNavigation
+                            activeModule={activeModule}
+                            dispatch={dispatch}
+                        />
+                        {projectError ?
+                            <section className='state'>
                                 <h2>Unable to load demo data</h2>
                                 <p>{projectError}</p>
-                                <Button type="button" label="Retry" onClick={onRetry} />
+                                <Button
+                                    type='button'
+                                    label='Retry'
+                                    onClick={onRetry}
+                                />
                             </section>
-                        ) : null}
-                        {!projectError && projectContentLoading ? (
-                            <section className="state" role="status">
+                        :   null}
+                        {!projectError && projectContentLoading ?
+                            <section
+                                className='state'
+                                role='status'>
                                 Loading project content…
                             </section>
-                        ) : null}
-                        {!projectError && !projectContentLoading && activeModule === 'categories' ? (
+                        :   null}
+                        {!projectError && !projectContentLoading && activeModule === 'categories' ?
                             <>
-                                <div className="actionbar">
-                                    <Button type="button" label="New category" onClick={() => dispatch({ type: 'setMode', mode: 'newCategory' })} />
+                                <div className='actionbar'>
+                                    <Button
+                                        type='button'
+                                        label='New category'
+                                        onClick={() => dispatch({ type: 'setMode', mode: 'newCategory' })}
+                                    />
                                 </div>
-                                <DataTable value={[...categories]} dataKey="key" className="req-list" tableProps={{ 'aria-label': 'Categories' }}>
-                                    <Column field="key" header="Key" />
-                                    <Column field="name" header="Name" />
-                                    <Column field="type" header="Type" />
+                                <DataTable
+                                    value={[...categories]}
+                                    dataKey='key'
+                                    className='req-list'
+                                    tableProps={{ 'aria-label': 'Categories' }}>
+                                    <Column
+                                        field='key'
+                                        header='Key'
+                                    />
+                                    <Column
+                                        field='name'
+                                        header='Name'
+                                    />
+                                    <Column
+                                        field='type'
+                                        header='Type'
+                                    />
                                 </DataTable>
                             </>
-                        ) : null}
-                        {!projectError && !projectContentLoading && activeModule === 'requirements' ? (
+                        :   null}
+                        {!projectError && !projectContentLoading && activeModule === 'requirements' ?
                             <>
                                 {actionBar}
                                 <VerticalSplitPane
@@ -110,23 +152,23 @@ export function Workspace({
                                     onChange={(position) => dispatch({ type: 'setSplitter', position })}
                                     top={requirementsList}
                                     bottom={
-                                        requirementDetailLoading ? (
-                                            <div className="state" role="status">
+                                        requirementDetailLoading ?
+                                            <div
+                                                className='state'
+                                                role='status'>
                                                 Loading requirement detail…
                                             </div>
-                                        ) : selectedRequirement ? (
+                                        : selectedRequirement ?
                                             <RequirementDetail requirement={selectedRequirement} />
-                                        ) : selectedRequirementId ? (
-                                            <div className="state">Unable to display selected requirement.</div>
-                                        ) : (
-                                            <div className="state">No requirement selected.</div>
-                                        )
+                                        : selectedRequirementId ?
+                                            <div className='state'>Unable to display selected requirement.</div>
+                                        :   <div className='state'>No requirement selected.</div>
                                     }
                                 />
                             </>
-                        ) : null}
+                        :   null}
                     </>
-                )}
+                }
             </main>
         </div>
     );

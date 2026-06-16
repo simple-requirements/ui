@@ -9,10 +9,14 @@ type ProjectSidebarProps = Readonly<{
     dispatch: (action: Action) => void;
 }>;
 
+/** Displays project creation affordance and selectable project rows. */
 export function ProjectSidebar({ projects, activeProjectId, dispatch }: ProjectSidebarProps) {
     return (
-        <aside className="sidebar">
-            <Button type="button" className="new-project" onClick={() => dispatch({ type: 'setMode', mode: 'newProject' })}>
+        <aside className='sidebar'>
+            <Button
+                type='button'
+                className='new-project'
+                onClick={() => dispatch({ type: 'setMode', mode: 'newProject' })}>
                 New Project
             </Button>
             <div>

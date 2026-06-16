@@ -12,6 +12,7 @@ type ActionBarProps = Readonly<{
     onDeleteDraft: () => void;
 }>;
 
+/** Renders context-sensitive requirement actions for workspace and dedicated requirement views. */
 export function ActionBar({
     activeProjectId,
     selectedRequirement,
@@ -46,7 +47,10 @@ export function ActionBar({
         }
 
         return (
-            <Button type="button" aria-label="Open in tab" onClick={handleOpenInTab}>
+            <Button
+                type='button'
+                aria-label='Open in tab'
+                onClick={handleOpenInTab}>
                 Open in tab
             </Button>
         );
@@ -59,28 +63,39 @@ export function ActionBar({
 
         return (
             <>
-                <Button type="button">History</Button>
+                <Button type='button'>History</Button>
                 {renderOpenInTabButton()}
                 {lifecycleActions(selectedRequirement.status).map((actionLabel) => (
-                    <Button type="button" key={actionLabel} onClick={() => onTransition(actionLabel)}>
+                    <Button
+                        type='button'
+                        key={actionLabel}
+                        onClick={() => onTransition(actionLabel)}>
                         {actionLabel}
                     </Button>
                 ))}
-                <Button type="button" onClick={handleCopyVisibleKey}>
+                <Button
+                    type='button'
+                    onClick={handleCopyVisibleKey}>
                     Copy visible key
                 </Button>
-                {selectedRequirement.status === 'draft' ? (
-                    <Button type="button" className="actionbar__button--danger danger" onClick={onDeleteDraft}>
+                {selectedRequirement.status === 'draft' ?
+                    <Button
+                        type='button'
+                        className='actionbar__button--danger danger'
+                        onClick={onDeleteDraft}>
                         Delete draft
                     </Button>
-                ) : null}
+                :   null}
             </>
         );
     };
 
     return (
-        <div className="workspace-actionbar actionbar">
-            <Button type="button" onClick={handleNewRequirement} disabled={!activeProjectId}>
+        <div className='workspace-actionbar actionbar'>
+            <Button
+                type='button'
+                onClick={handleNewRequirement}
+                disabled={!activeProjectId}>
                 New requirement
             </Button>
             {renderRequirementActions()}

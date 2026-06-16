@@ -1,10 +1,10 @@
 import { Button } from 'primereact/button';
 import type { Action, Module } from '@/state/workspaceReducer';
 
-interface ModuleNavigationProps {
+type ModuleNavigationProps = Readonly<{
     activeModule: Module;
     dispatch: (action: Action) => void;
-}
+}>;
 
 export function ModuleNavigation({ activeModule, dispatch }: ModuleNavigationProps) {
     return (

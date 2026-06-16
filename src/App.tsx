@@ -44,7 +44,7 @@ export default function App() {
 
     useEffect(() => saveWorkspaceState(workspaceState), [workspaceState]);
 
-    async function loadProjects() {
+    const loadProjects = async () => {
         setBootstrapping(true);
         setRightPaneError(null);
         try {
@@ -59,20 +59,20 @@ export default function App() {
         } finally {
             setBootstrapping(false);
         }
-    }
+    };
 
     useEffect(() => {
-        async function bootstrapWorkspace() {
+        const bootstrapWorkspace = async () => {
             await loadProjects();
             const loadedCategories = await categoriesStore.loadCategories();
             setCategories(loadedCategories);
-        }
+        };
 
         void bootstrapWorkspace();
     }, []);
 
     useEffect(() => {
-        async function loadProjectContent(activeProjectId: string) {
+        const loadProjectContent = async (activeProjectId: string) => {
             setProjectContentLoading(true);
             setRightPaneError(null);
             try {
@@ -95,7 +95,7 @@ export default function App() {
             } finally {
                 setProjectContentLoading(false);
             }
-        }
+        };
 
         const activeProjectId = workspaceState.activeProjectId;
         if (activeProjectId) {
@@ -104,7 +104,7 @@ export default function App() {
     }, [workspaceState.activeProjectId, workspaceState.activeModule]);
 
     useEffect(() => {
-        async function loadRequirementDetail(requirementId: string) {
+        const loadRequirementDetail = async (requirementId: string) => {
             setRequirementDetailLoading(true);
             try {
                 const requirementDetail = await requirementsStore.loadRequirementDetail(requirementId);
@@ -115,7 +115,7 @@ export default function App() {
             } finally {
                 setRequirementDetailLoading(false);
             }
-        }
+        };
 
         if (!workspaceState.selectedRequirementId) {
             setSelectedRequirement(null);
@@ -129,22 +129,22 @@ export default function App() {
         (tab) => tab.id === workspaceState.activeAppTabId,
     );
 
-    async function refreshWorkspace() {
+    const refreshWorkspace = async () => {
         await loadProjects();
         const currentActiveProjectId = workspaceState.activeProjectId;
         if (currentActiveProjectId) {
             const loadedRequirements = await requirementsStore.loadRequirements(currentActiveProjectId);
             setRequirements([...loadedRequirements]);
         }
-    }
+    };
 
-    async function createProject(formData: FormData) {
+    const createProject = async (formData: FormData) => {
         const project = await projectsStore.createProject({ name: formValue(formData, 'name') });
         setProjects(await projectsStore.loadProjects());
         dispatch({ type: 'selectProject', projectId: project.id });
-    }
+    };
 
-    async function createRequirement(formData: FormData) {
+    const createRequirement = async (formData: FormData) => {
         if (!workspaceState.activeProjectId) {
             return;
         }
@@ -160,32 +160,32 @@ export default function App() {
         dispatch({ type: 'setMode', mode: 'workspace' });
         dispatch({ type: 'selectRequirement', requirementId: requirement.id });
         void refreshWorkspace();
-    }
+    };
 
-    async function transitionRequirement(actionLabel: string) {
+    const handleTransitionRequirement = async (actionLabel: string) => {
         if (!selectedRequirement) {
             return;
         }
 
         await requirementsStore.transitionRequirement(selectedRequirement.id, lifecycleTransitionByLabel[actionLabel]);
         void refreshWorkspace();
-    }
+    };
 
-    async function deleteDraftRequirement() {
+    const handleDeleteDraftRequirement = async () => {
         if (selectedRequirement && confirm('Delete draft requirement?')) {
             await requirementsStore.deleteDraftRequirement(selectedRequirement.id);
             dispatch({ type: 'selectRequirement', requirementId: null });
             void refreshWorkspace();
         }
-    }
+    };
 
     const workspaceActionBar = (
         <ActionBar
             activeProjectId={workspaceState.activeProjectId}
             selectedRequirement={selectedRequirement}
             dispatch={dispatch}
-            onTransition={(actionLabel) => void transitionRequirement(actionLabel)}
-            onDeleteDraft={() => void deleteDraftRequirement()}
+            onTransition={(actionLabel) => void handleTransitionRequirement(actionLabel)}
+            onDeleteDraft={() => void handleDeleteDraftRequirement()}
         />
     );
 
@@ -195,8 +195,8 @@ export default function App() {
             selectedRequirement={selectedRequirement}
             dedicated
             dispatch={dispatch}
-            onTransition={(actionLabel) => void transitionRequirement(actionLabel)}
-            onDeleteDraft={() => void deleteDraftRequirement()}
+            onTransition={(actionLabel) => void handleTransitionRequirement(actionLabel)}
+            onDeleteDraft={() => void handleDeleteDraftRequirement()}
         />
     );
 
@@ -230,6 +230,36 @@ export default function App() {
         />
     );
 
+    const renderDedicatedRequirementTab = () => {
+        if (rightPaneError) {
+            return (
+                <div className="workspace-state state">
+                    {rightPaneError}
+                    <Button type="button" label="Retry" onClick={() => void refreshWorkspace()} />
+                </div>
+            );
+        }
+
+        if (selectedRequirement) {
+            return <RequirementDetail requirement={selectedRequirement} />;
+        }
+
+        return <div className="workspace-state state">Loading requirement detail…</div>;
+    };
+
+    const renderActivePanel = () => {
+        if (!activeRequirementTab) {
+            return workspace;
+        }
+
+        return (
+            <main className="workspace-dedicated dedicated">
+                {dedicatedActionBar}
+                {renderDedicatedRequirementTab()}
+            </main>
+        );
+    };
+
     return (
         <div className="app-shell">
             <AppTabBar
@@ -237,24 +267,8 @@ export default function App() {
                 openRequirementTabs={workspaceState.openRequirementTabs}
                 dispatch={dispatch}
             />
-            <section className="panel" role="tabpanel">
-                {activeRequirementTab ? (
-                    <main className="dedicated">
-                        {dedicatedActionBar}
-                        {rightPaneError ? (
-                            <div className="state">
-                                {rightPaneError}
-                                <Button type="button" label="Retry" onClick={() => void refreshWorkspace()} />
-                            </div>
-                        ) : selectedRequirement ? (
-                            <RequirementDetail requirement={selectedRequirement} />
-                        ) : (
-                            <div className="state">Loading requirement detail…</div>
-                        )}
-                    </main>
-                ) : (
-                    workspace
-                )}
+            <section className="app-shell__panel panel" role="tabpanel">
+                {renderActivePanel()}
             </section>
             {bootstrapping ? <LoadingOverlay /> : null}
         </div>

@@ -11,7 +11,7 @@ import { ModuleNavigation } from '@/components/ModuleNavigation';
 import { ProjectSidebar } from '@/components/ProjectSidebar';
 import { RequirementForm } from '@/components/RequirementForm';
 
-interface WorkspaceProps {
+type WorkspaceProps = Readonly<{
     projects: readonly ProjectSummary[];
     activeProjectId: string | null;
     mode: WorkspaceState['mode'];
@@ -29,7 +29,7 @@ interface WorkspaceProps {
     onCreateProject: (formData: FormData) => void;
     onCreateRequirement: (formData: FormData) => void;
     onRetry: () => void;
-}
+}>;
 
 export function Workspace({
     projects,

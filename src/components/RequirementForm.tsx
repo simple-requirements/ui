@@ -5,11 +5,11 @@ import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import type { Category } from '@/demo/demoTypes';
 
-interface RequirementFormProps {
+type RequirementFormProps = Readonly<{
     categories: readonly Category[];
     onSubmit: (formData: FormData) => void;
     onCancel: () => void;
-}
+}>;
 
 const priorityOptions = ['P1', 'P2', 'P3', 'P4'];
 

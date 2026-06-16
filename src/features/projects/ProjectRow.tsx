@@ -1,4 +1,23 @@
 import { Button } from 'primereact/button';
 import type { ProjectSummary } from '@/demo/demoTypes';
 
-export function ProjectRow({project,active,onSelect}:{project:ProjectSummary;active:boolean;onSelect:()=>void}){return <Button type="button" className={`project-row ${active?'active':''}`} onClick={onSelect} aria-current={active?'true':undefined}><i className="pi pi-folder" aria-hidden="true"/><span>{project.name}</span><b>{project.requirementCount}</b></Button>}
+type ProjectRowProps = Readonly<{
+    project: ProjectSummary;
+    active: boolean;
+    onSelect: () => void;
+}>;
+
+export function ProjectRow({ project, active, onSelect }: ProjectRowProps) {
+    return (
+        <Button
+            type="button"
+            className={`project-sidebar__row project-row ${active ? 'project-sidebar__row--active active' : ''}`}
+            onClick={onSelect}
+            aria-current={active ? 'true' : undefined}
+        >
+            <span className="project-sidebar__row-icon pi pi-folder" aria-hidden="true" />
+            <span className="project-sidebar__row-name">{project.name}</span>
+            <span className="project-sidebar__row-count">{project.requirementCount}</span>
+        </Button>
+    );
+}

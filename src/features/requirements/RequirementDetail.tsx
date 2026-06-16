@@ -1,2 +1,36 @@
 import type { DemoRequirement } from '@/demo/demoTypes';
-export function RequirementDetail({requirement}:{requirement:DemoRequirement}){const v=(x:string|null)=>x??'Not specified';return <article className="detail"><h2>{requirement.visibleKey}</h2><p><span className={`badge ${requirement.status}`}>{requirement.status}</span></p><dl><dt>Category</dt><dd>{requirement.categoryName} ({requirement.categoryKey})</dd><dt>Type</dt><dd>{requirement.type}</dd><dt>Description</dt><dd>{requirement.description}</dd><dt>Priority</dt><dd>{requirement.priority}</dd><dt>Owner</dt><dd>{v(requirement.owner)}</dd><dt>Rationale</dt><dd>{v(requirement.rationale)}</dd><dt>Source</dt><dd>{v(requirement.source)}</dd></dl></article>}
+
+type RequirementDetailProps = Readonly<{
+    requirement: DemoRequirement;
+}>;
+
+const displayOptionalValue = (value: string | null) => value ?? 'Not specified';
+
+export function RequirementDetail({ requirement }: RequirementDetailProps) {
+    return (
+        <article className="requirement-detail detail">
+            <h2 className="requirement-detail__heading">{requirement.visibleKey}</h2>
+            <p className="requirement-detail__status-line">
+                <span className={`requirement-detail__status badge ${requirement.status}`}>{requirement.status}</span>
+            </p>
+            <dl className="requirement-detail__definition-list">
+                <dt>Category</dt>
+                <dd>
+                    {requirement.categoryName} ({requirement.categoryKey})
+                </dd>
+                <dt>Type</dt>
+                <dd>{requirement.type}</dd>
+                <dt>Description</dt>
+                <dd>{requirement.description}</dd>
+                <dt>Priority</dt>
+                <dd>{requirement.priority}</dd>
+                <dt>Owner</dt>
+                <dd>{displayOptionalValue(requirement.owner)}</dd>
+                <dt>Rationale</dt>
+                <dd>{displayOptionalValue(requirement.rationale)}</dd>
+                <dt>Source</dt>
+                <dd>{displayOptionalValue(requirement.source)}</dd>
+            </dl>
+        </article>
+    );
+}

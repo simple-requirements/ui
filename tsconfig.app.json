@@ -6,7 +6,7 @@
         "module": "esnext",
         "types": ["vite/client"],
         "baseUrl": ".",
-        "paths": { "@/*": ["src/*"] },
+        "paths": { "@/*": ["src/*"], "@tanstack/react-store": ["src/vendor/tanstackReactStore.ts"] },
         "skipLibCheck": true,
         "ignoreDeprecations": "6.0",
 

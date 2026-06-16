@@ -1,3 +1,4 @@
+import { Store } from '@tanstack/react-store';
 import type {
     CreateRequirementInput,
     DemoRequirement,
@@ -5,7 +6,7 @@ import type {
     RequirementStatus,
 } from '@/demo/demoTypes';
 
-/** Snapshot shape for future requirement store subscriptions. */
+/** Snapshot shape for requirement store subscriptions. */
 export interface RequirementsStoreState {
     requirements: readonly DemoRequirement[];
     selectedRequirement: DemoRequirement | null;
@@ -14,14 +15,44 @@ export interface RequirementsStoreState {
     error: string | null;
 }
 
-/** Creates requirement data operations backed by the replaceable demo repository boundary. */
+/** Creates requirement data operations backed by a TanStack-style store and the replaceable demo repository boundary. */
 export function createRequirementsStore(requirementRepository: DemoRequirementRepository) {
+    const store = new Store<RequirementsStoreState>({
+        requirements: [],
+        selectedRequirement: null,
+        listLoading: false,
+        detailLoading: false,
+        error: null,
+    });
+
     return {
+        store,
         async loadRequirements(projectId: string) {
-            return [...(await requirementRepository.listRequirements(projectId))];
+            store.setState((currentState) => ({ ...currentState, listLoading: true, error: null }));
+            try {
+                const requirements = [...(await requirementRepository.listRequirements(projectId))];
+                store.setState((currentState) => ({ ...currentState, requirements, listLoading: false, error: null }));
+                return requirements;
+            } catch (error) {
+                store.setState((currentState) => ({ ...currentState, listLoading: false, error: (error as Error).message }));
+                throw error;
+            }
         },
         async loadRequirementDetail(requirementId: string) {
-            return requirementRepository.getRequirement(requirementId);
+            store.setState((currentState) => ({ ...currentState, detailLoading: true, error: null }));
+            try {
+                const selectedRequirement = await requirementRepository.getRequirement(requirementId);
+                store.setState((currentState) => ({ ...currentState, selectedRequirement, detailLoading: false, error: null }));
+                return selectedRequirement;
+            } catch (error) {
+                store.setState((currentState) => ({
+                    ...currentState,
+                    selectedRequirement: null,
+                    detailLoading: false,
+                    error: (error as Error).message,
+                }));
+                throw error;
+            }
         },
         async createRequirement(projectId: string, input: CreateRequirementInput) {
             return requirementRepository.createRequirement(projectId, input);

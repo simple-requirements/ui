@@ -18,4 +18,5 @@ export default defineConfig({
             exclude: ['test/**/*.spec.{ts,tsx}', 'src/main.tsx', 'src/**/*.d.ts'],
         },
     },
+    server: { port: 5173, host: '127.0.0.1' },
 });

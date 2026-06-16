@@ -9,7 +9,9 @@ export interface CategoriesStoreState {
 }
 
 /** Creates category data operations backed by a TanStack-style store and the replaceable demo repository boundary. */
-export function createCategoriesStore(categoryRepository: Pick<DemoRequirementRepository, 'listCategories' | 'createCategory'>) {
+export function createCategoriesStore(
+    categoryRepository: Pick<DemoRequirementRepository, 'listCategories' | 'createCategory'>,
+) {
     const store = new Store<CategoriesStoreState>({ categories: [], loading: false, error: null });
 
     return {
@@ -21,7 +23,11 @@ export function createCategoriesStore(categoryRepository: Pick<DemoRequirementRe
                 store.setState(() => ({ categories, loading: false, error: null }));
                 return categories;
             } catch (error) {
-                store.setState((currentState) => ({ ...currentState, loading: false, error: (error as Error).message }));
+                store.setState((currentState) => ({
+                    ...currentState,
+                    loading: false,
+                    error: (error as Error).message,
+                }));
                 throw error;
             }
         },

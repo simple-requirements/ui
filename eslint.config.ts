@@ -50,7 +50,7 @@ export default defineConfig(
     {
         languageOptions: {
             parserOptions: {
-                projectService: { defaultProject: 'tsconfig.node.json', allowDefaultProject: ['test/*.spec.ts'] },
+                projectService: { defaultProject: 'tsconfig.node.json' },
                 tsconfigRootDir: configDirectory,
             },
         },

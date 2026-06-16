@@ -128,7 +128,7 @@ export function Workspace({
                                     value={[...categories]}
                                     dataKey='key'
                                     className='req-list'
-                                    tableProps={{ 'aria-label': 'Categories' }}>
+                                    aria-label="Categories">
                                     <Column
                                         field='key'
                                         header='Key'

@@ -21,7 +21,11 @@ export function createProjectsStore(projectRepository: DemoProjectRepository) {
                 store.setState(() => ({ projects, loading: false, error: null }));
                 return projects;
             } catch (error) {
-                store.setState((currentState) => ({ ...currentState, loading: false, error: (error as Error).message }));
+                store.setState((currentState) => ({
+                    ...currentState,
+                    loading: false,
+                    error: (error as Error).message,
+                }));
                 throw error;
             }
         },

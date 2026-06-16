@@ -34,7 +34,11 @@ export function createRequirementsStore(requirementRepository: DemoRequirementRe
                 store.setState((currentState) => ({ ...currentState, requirements, listLoading: false, error: null }));
                 return requirements;
             } catch (error) {
-                store.setState((currentState) => ({ ...currentState, listLoading: false, error: (error as Error).message }));
+                store.setState((currentState) => ({
+                    ...currentState,
+                    listLoading: false,
+                    error: (error as Error).message,
+                }));
                 throw error;
             }
         },
@@ -42,7 +46,12 @@ export function createRequirementsStore(requirementRepository: DemoRequirementRe
             store.setState((currentState) => ({ ...currentState, detailLoading: true, error: null }));
             try {
                 const selectedRequirement = await requirementRepository.getRequirement(requirementId);
-                store.setState((currentState) => ({ ...currentState, selectedRequirement, detailLoading: false, error: null }));
+                store.setState((currentState) => ({
+                    ...currentState,
+                    selectedRequirement,
+                    detailLoading: false,
+                    error: null,
+                }));
                 return selectedRequirement;
             } catch (error) {
                 store.setState((currentState) => ({

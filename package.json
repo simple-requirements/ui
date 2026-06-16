@@ -19,12 +19,12 @@
         "test:e2e:ui": "npm run build && bddgen && playwright test --ui"
     },
     "dependencies": {
+        "@tanstack/react-store": "^0.11.0",
         "primeicons": "latest",
         "primereact": "latest",
         "react": "^19.2",
         "react-dom": "^19.2",
-        "zod": "^4.4.3",
-        "@tanstack/react-store": "^0.11.0"
+        "zod": "^4.4.3"
     },
     "devDependencies": {
         "@eslint/compat": "latest",

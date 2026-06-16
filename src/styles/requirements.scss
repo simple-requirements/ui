@@ -93,3 +93,32 @@
         background: $background;
     }
 }
+
+.requirements-split {
+    &__separator {
+        height: var(--splitter-size);
+        background: #eef2f7;
+        cursor: row-resize;
+        touch-action: none;
+
+        &:focus {
+            outline: 3px solid var(--focus-ring);
+            z-index: 1;
+        }
+    }
+
+    &__separator-handle {
+        width: 100%;
+        height: 2px;
+        background: #94a3b8;
+    }
+
+    &__pane {
+        min-height: 120px;
+        overflow: auto;
+
+        &--detail {
+            border-top: 1px solid var(--border);
+        }
+    }
+}

@@ -4,11 +4,11 @@ import { DataTable, type DataTableRowClickEvent, type DataTableRowDoubleClickEve
 import type { DemoRequirement } from '@/demo/demoTypes';
 import type { Action } from '@/state/workspaceReducer';
 
-interface RequirementsListProps {
+type RequirementsListProps = Readonly<{
     requirements: readonly DemoRequirement[];
     selectedRequirementId: string | null;
     dispatch: (action: Action) => void;
-}
+}>;
 
 export function RequirementsList({ requirements, selectedRequirementId, dispatch }: RequirementsListProps) {
     function selectRequirement(requirement: DemoRequirement) {

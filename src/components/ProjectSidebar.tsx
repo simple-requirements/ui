@@ -3,11 +3,11 @@ import { ProjectRow } from '@/features/projects/ProjectRow';
 import type { ProjectSummary } from '@/demo/demoTypes';
 import type { Action } from '@/state/workspaceReducer';
 
-interface ProjectSidebarProps {
+type ProjectSidebarProps = Readonly<{
     projects: readonly ProjectSummary[];
     activeProjectId: string | null;
     dispatch: (action: Action) => void;
-}
+}>;
 
 export function ProjectSidebar({ projects, activeProjectId, dispatch }: ProjectSidebarProps) {
     return (

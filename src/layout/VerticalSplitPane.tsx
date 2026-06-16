@@ -1,4 +1,76 @@
-/* eslint-disable */
-import type { ReactNode, KeyboardEvent } from 'react';
+import type { KeyboardEvent, PointerEvent, ReactNode } from 'react';
+import { Splitter, SplitterPanel } from 'primereact/splitter';
 import { clampSplitter } from '@/state/workspaceReducer';
-export function VerticalSplitPane({position,onChange,top,bottom}:{position:number;onChange:(n:number)=>void;top:ReactNode;bottom:ReactNode}){function key(e:KeyboardEvent){let n=position; if(e.key==='ArrowUp')n-=e.shiftKey ? .1 : .04; else if(e.key==='ArrowDown')n+=e.shiftKey ? .1 : .04; else if(e.key==='Home')n=.25; else if(e.key==='End')n=.8; else return; e.preventDefault(); onChange(clampSplitter(n));} return <div className="split"><div className="split-pane" style={{flexBasis:`${position*100}%`}}>{top}</div><div className="splitter" role="separator" aria-orientation="horizontal" aria-valuemin={25} aria-valuemax={80} aria-valuenow={Math.round(position*100)} tabIndex={0} onKeyDown={key} onPointerDown={e=>{const root=e.currentTarget.parentElement!; const rect=root.getBoundingClientRect(); e.currentTarget.setPointerCapture(e.pointerId); document.body.classList.add('resizing'); const move=(ev:PointerEvent)=>onChange(clampSplitter((ev.clientY-rect.top)/rect.height)); const up=()=>{removeEventListener('pointermove',move);document.body.classList.remove('resizing')}; addEventListener('pointermove',move); addEventListener('pointerup',up,{once:true});}}><span/></div><div className="split-pane detail-pane">{bottom}</div></div>}
+
+type VerticalSplitPaneProps = Readonly<{
+    position: number;
+    onChange: (nextPosition: number) => void;
+    top: ReactNode;
+    bottom: ReactNode;
+}>;
+
+const SMALL_KEYBOARD_STEP = 0.04;
+const LARGE_KEYBOARD_STEP = 0.1;
+const MINIMUM_LIST_POSITION = 0.25;
+const MAXIMUM_LIST_POSITION = 0.8;
+
+export function VerticalSplitPane({ position, onChange, top, bottom }: VerticalSplitPaneProps) {
+    const listPaneSize = Math.round(position * 100);
+    const detailPaneSize = 100 - listPaneSize;
+
+    const handleOnKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        let nextPosition = position;
+
+        if (event.key === 'ArrowUp') {
+            nextPosition -= event.shiftKey ? LARGE_KEYBOARD_STEP : SMALL_KEYBOARD_STEP;
+        } else if (event.key === 'ArrowDown') {
+            nextPosition += event.shiftKey ? LARGE_KEYBOARD_STEP : SMALL_KEYBOARD_STEP;
+        } else if (event.key === 'Home') {
+            nextPosition = MINIMUM_LIST_POSITION;
+        } else if (event.key === 'End') {
+            nextPosition = MAXIMUM_LIST_POSITION;
+        } else {
+            return;
+        }
+
+        event.preventDefault();
+        onChange(clampSplitter(nextPosition));
+    };
+
+    const handleOnPointerDown = (event: PointerEvent<HTMLDivElement>) => {
+        event.currentTarget.setPointerCapture(event.pointerId);
+        document.body.classList.add('resizing');
+        const handleOnPointerUp = () => document.body.classList.remove('resizing');
+        addEventListener('pointerup', handleOnPointerUp, { once: true });
+    };
+
+    return (
+        <Splitter
+            layout="vertical"
+            className="requirements-split split"
+            gutterSize={10}
+            onResizeEnd={(event) => onChange(clampSplitter((event.sizes[0] ?? listPaneSize) / 100))}
+            pt={{
+                gutter: {
+                    role: 'separator',
+                    'aria-orientation': 'horizontal',
+                    'aria-valuemin': 25,
+                    'aria-valuemax': 80,
+                    'aria-valuenow': listPaneSize,
+                    tabIndex: 0,
+                    className: 'requirements-split__separator splitter',
+                    onKeyDown: handleOnKeyDown,
+                    onPointerDown: handleOnPointerDown,
+                },
+                gutterHandler: { className: 'requirements-split__separator-handle' },
+            }}
+        >
+            <SplitterPanel className="requirements-split__pane split-pane" size={listPaneSize} minSize={25}>
+                {top}
+            </SplitterPanel>
+            <SplitterPanel className="requirements-split__pane requirements-split__pane--detail split-pane detail-pane" size={detailPaneSize} minSize={20}>
+                {bottom}
+            </SplitterPanel>
+        </Splitter>
+    );
+}

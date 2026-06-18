@@ -19,7 +19,8 @@ export function useProjectsQuery() {
         if (query.data) replaceCollectionRows(projectsCollection, query.data);
     }, [query.data]);
 
-    return { ...query, data: liveProjects.data as ProjectSummary[] };
+    const data = liveProjects.data as ProjectSummary[] | undefined;
+    return { ...query, data: data ?? [] };
 }
 
 /** Creates a project through the backend when the OpenAPI project contract is available. */

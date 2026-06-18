@@ -1,6 +1,9 @@
 import { apiFetch } from '@/api/client/config';
 import type { CategoryResponseDto, CreateCategoryDto } from '@/api/generated/models';
+import { createDemoRepositories } from '@/demo/demoRepositories';
 import type { Category } from '@/types/domain';
+
+const demoRepositories = createDemoRepositories();
 
 /** Maps the generated category DTO into the UI category view model. */
 export function mapCategory(dto: CategoryResponseDto): Category {
@@ -9,6 +12,9 @@ export function mapCategory(dto: CategoryResponseDto): Category {
 
 /** Lists global categories using the backend path described by the OpenAPI contract. */
 export async function listCategories(init?: RequestInit) {
+    if (new URLSearchParams(location.search).get('demo') !== 'backend') {
+        return (await demoRepositories.listCategories()).map((category) => ({ ...category, id: category.key }));
+    }
     return (await apiFetch<CategoryResponseDto[]>('/categories', { ...init, method: 'GET' })).map(mapCategory);
 }
 

@@ -15,6 +15,11 @@ import {
 } from '@/utils/dbCollections';
 import type { RequirementView } from '@/types/domain';
 
+export const requirementDetailFromLiveRows = (
+    liveRows: readonly RequirementView[] | undefined,
+    queryData: RequirementView | undefined,
+) => liveRows?.[0] ?? queryData;
+
 /** Loads the active project's requirement list into a React DB collection when the backend exposes a project scope. */
 export function useProjectRequirementsQuery(projectId: string | null) {
     const query = useQuery({
@@ -29,7 +34,8 @@ export function useProjectRequirementsQuery(projectId: string | null) {
         if (query.data) replaceCollectionRows(requirementsCollection, query.data);
     }, [query.data]);
 
-    return { ...query, data: liveRequirements.data as RequirementView[] };
+    const data = liveRequirements.data as RequirementView[] | undefined;
+    return { ...query, data: data ?? [] };
 }
 
 /** Loads a requirement detail by immutable backend requirement ID into a React DB collection. */
@@ -54,7 +60,7 @@ export function useRequirementDetailQuery(requirementId: string | null | undefin
         if (query.data) upsertCollectionRow(requirementDetailsCollection, query.data);
     }, [query.data]);
 
-    return { ...query, data: liveRequirement.data[0] as RequirementView | undefined };
+    return { ...query, data: requirementDetailFromLiveRows(liveRequirement.data, query.data) };
 }
 
 /** Performs exact current visible-key lookup through the backend and stores the result in React DB. */

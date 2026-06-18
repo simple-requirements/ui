@@ -1,9 +1,8 @@
 import type { ProjectSummary } from '@/types/domain';
+import { createDemoRepositories } from '@/demo/demoRepositories';
+
+const demoRepositories = createDemoRepositories();
 
 export function listProjects(): Promise<ProjectSummary[]> {
-    return Promise.reject(
-        new Error(
-            'Backend contract gap: openapi/backend-api.json does not expose GET /projects or project requirement counts.',
-        ),
-    );
+    return demoRepositories.listProjects().then((projects) => [...projects]);
 }

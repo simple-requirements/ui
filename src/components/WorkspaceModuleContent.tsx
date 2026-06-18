@@ -16,6 +16,7 @@ type WorkspaceModuleContentProps = Readonly<{
     projectError: string | null;
     projectContentLoading: boolean;
     requirementDetailLoading: boolean;
+    requirementDetailError: string | null;
     selectedRequirement: RequirementView | null;
     selectedRequirementId: string | null;
     splitterPosition: number;
@@ -37,6 +38,7 @@ export function WorkspaceModuleContent({
     projectError,
     projectContentLoading,
     requirementDetailLoading,
+    requirementDetailError,
     selectedRequirement,
     selectedRequirementId,
     splitterPosition,
@@ -59,6 +61,7 @@ export function WorkspaceModuleContent({
                     Loading requirement detail…
                 </div>
             );
+        if (requirementDetailError) return <div className='state'>{requirementDetailError}</div>;
         if (selectedRequirement && mode === 'history')
             return (
                 <RequirementHistory

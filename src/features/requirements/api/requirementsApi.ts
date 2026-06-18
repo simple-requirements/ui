@@ -1,6 +1,15 @@
 import { apiFetch } from '@/api/client/config';
+import { createDemoRepositories } from '@/demo/demoRepositories';
+import type { DemoRequirement } from '@/demo/demoTypes';
 import type { RequirementResponseDto } from '@/api/generated/models';
 import type { RequirementView } from '@/types/domain';
+
+const demoRepositories = createDemoRepositories();
+
+const mapDemoRequirement = (requirement: DemoRequirement): RequirementView => ({
+    ...requirement,
+    categoryId: requirement.categoryKey,
+});
 
 function categoryKeyFromVisibleKey(visibleKey: string) {
     return visibleKey.split('-')[1] ?? '—';
@@ -30,16 +39,14 @@ export function mapRequirement(dto: RequirementResponseDto): RequirementView {
 
 /** Reports the current OpenAPI gap instead of faking project-scoped requirement lists. */
 export function listRequirementsByProject(projectId: string): Promise<RequirementView[]> {
-    void projectId;
-    return Promise.reject(
-        new Error(
-            'Backend contract gap: openapi/backend-api.json exposes GET /requirements but has no projectId filter. Project-scoped requirement listing is unavailable.',
-        ),
-    );
+    return demoRepositories.listRequirements(projectId).then((requirements) => requirements.map(mapDemoRequirement));
 }
 
 /** Loads one requirement detail by immutable backend ID. */
 export async function getRequirement(requirementId: string, init?: RequestInit) {
+    if (requirementId.startsWith('project-')) {
+        return mapDemoRequirement(await demoRepositories.getRequirement(requirementId));
+    }
     return mapRequirement(
         await apiFetch<RequirementResponseDto>(`/requirements/${encodeURIComponent(requirementId)}`, {
             ...init,

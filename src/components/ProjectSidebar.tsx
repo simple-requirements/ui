@@ -1,6 +1,6 @@
 import { Button } from 'primereact/button';
 import { ProjectRow } from '@/features/projects/ProjectRow';
-import type { ProjectSummary } from '@/demo/demoTypes';
+import type { ProjectSummary } from '@/types/domain';
 import type { Action } from '@/state/workspaceReducer';
 
 type ProjectSidebarProps = Readonly<{

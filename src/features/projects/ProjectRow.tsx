@@ -1,5 +1,5 @@
 import { Button } from 'primereact/button';
-import type { ProjectSummary } from '@/demo/demoTypes';
+import type { ProjectSummary } from '@/types/domain';
 
 type ProjectRowProps = Readonly<{ project: ProjectSummary; active: boolean; onSelect: () => void }>;
 

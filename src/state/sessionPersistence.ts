@@ -1,5 +1,5 @@
 import { initialWorkspaceState, type WorkspaceState } from '@/state/workspaceReducer';
-export const WORKSPACE_STATE_KEY = 'requirements-app.demo-workspace.v1';
+export const WORKSPACE_STATE_KEY = 'requirements-app.backend-workspace.v1';
 /** Loads versioned workspace state from session storage and falls back safely on corruption. */
 export function loadWorkspaceState(): WorkspaceState {
     try {

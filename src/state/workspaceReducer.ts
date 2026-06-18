@@ -11,7 +11,7 @@ export interface WorkspaceState {
     activeModule: Module;
     selectedRequirementId: string | null;
     splitterPosition: number;
-    mode: 'workspace' | 'newProject' | 'newRequirement' | 'newCategory';
+    mode: 'workspace' | 'newProject' | 'newCategory';
 }
 export const WORKSPACE_TAB_ID = 'workspace';
 export const initialWorkspaceState: WorkspaceState = {

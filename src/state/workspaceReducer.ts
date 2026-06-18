@@ -37,44 +37,44 @@ export function clampSplitter(v: number) {
     return Math.min(0.8, Math.max(0.25, v));
 }
 /** Applies workspace navigation, tab, selection, and layout actions without invalid duplicate tabs. */
-export function workspaceReducer(s: WorkspaceState, a: Action): WorkspaceState {
-    switch (a.type) {
+export function workspaceReducer(state: WorkspaceState, action: Action): WorkspaceState {
+    switch (action.type) {
         case 'selectProject':
             return {
-                ...s,
-                activeProjectId: a.projectId,
+                ...state,
+                activeProjectId: action.projectId,
                 selectedRequirementId: null,
                 mode: 'workspace',
                 activeModule: 'requirements',
                 activeAppTabId: WORKSPACE_TAB_ID,
             };
         case 'selectModule':
-            return { ...s, activeModule: a.module, mode: 'workspace' };
+            return { ...state, activeModule: action.module, mode: 'workspace' };
         case 'selectRequirement':
-            return { ...s, selectedRequirementId: a.requirementId };
+            return { ...state, selectedRequirementId: action.requirementId };
         case 'openRequirementTab': {
-            const id = `req-tab-${a.requirementId}`;
+            const id = `req-tab-${action.requirementId}`;
             const tabs =
-                s.openRequirementTabs.some((t) => t.id === id) ?
-                    s.openRequirementTabs
-                :   [...s.openRequirementTabs, { id, requirementId: a.requirementId, visibleKey: a.visibleKey }];
-            return { ...s, openRequirementTabs: tabs, activeAppTabId: id };
+                state.openRequirementTabs.some((t) => t.id === id) ?
+                    state.openRequirementTabs
+                :   [...state.openRequirementTabs, { id, requirementId: action.requirementId, visibleKey: action.visibleKey }];
+            return { ...state, openRequirementTabs: tabs, activeAppTabId: id };
         }
         case 'closeTab': {
-            const tabs = s.openRequirementTabs.filter((t) => t.id !== a.tabId);
+            const tabs = state.openRequirementTabs.filter((t) => t.id !== action.tabId);
             return {
-                ...s,
+                ...state,
                 openRequirementTabs: tabs,
-                activeAppTabId: s.activeAppTabId === a.tabId ? WORKSPACE_TAB_ID : s.activeAppTabId,
+                activeAppTabId: state.activeAppTabId === action.tabId ? WORKSPACE_TAB_ID : state.activeAppTabId,
             };
         }
         case 'activateTab':
-            return { ...s, activeAppTabId: a.tabId };
+            return { ...state, activeAppTabId: action.tabId };
         case 'setSplitter':
-            return { ...s, splitterPosition: clampSplitter(a.position) };
+            return { ...state, splitterPosition: clampSplitter(action.position) };
         case 'setMode':
-            return { ...s, mode: a.mode };
+            return { ...state, mode: action.mode };
         default:
-            return s;
+            return state;
     }
 }

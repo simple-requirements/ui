@@ -1,4 +1,5 @@
-import { apiFetch } from '@/api/client/config';
+import { runOrvalFetch } from '@/api/client/config';
+import { getRequirementsId, getRequirementsKeyVisibleKey } from '@/api/generated/endpoints/requirements/requirements';
 import type { RequirementResponseDto } from '@/api/generated/models';
 import type { RequirementView } from '@/types/domain';
 
@@ -34,18 +35,8 @@ export function listRequirementsByProject(projectId: string): Promise<Requiremen
     );
 }
 export async function getRequirement(requirementId: string, init?: RequestInit) {
-    return mapRequirement(
-        await apiFetch<RequirementResponseDto>(`/requirements/${encodeURIComponent(requirementId)}`, {
-            ...init,
-            method: 'GET',
-        }),
-    );
+    return mapRequirement(await runOrvalFetch(() => getRequirementsId(requirementId, init)));
 }
 export async function lookupRequirementByVisibleKey(visibleKey: string, init?: RequestInit) {
-    return mapRequirement(
-        await apiFetch<RequirementResponseDto>(`/requirements/key/${encodeURIComponent(visibleKey)}`, {
-            ...init,
-            method: 'GET',
-        }),
-    );
+    return mapRequirement(await runOrvalFetch(() => getRequirementsKeyVisibleKey(visibleKey, init)));
 }

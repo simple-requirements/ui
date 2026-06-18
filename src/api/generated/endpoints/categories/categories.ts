@@ -5,328 +5,314 @@
  * HTTP API for the Requirements Management app.
  * OpenAPI spec version: 0.0.1
  */
-import {
-  useMutation,
-  useQuery
-} from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import type {
-  DataTag,
-  DefinedInitialDataOptions,
-  DefinedUseQueryResult,
-  MutationFunction,
-  QueryClient,
-  QueryFunction,
-  QueryKey,
-  UndefinedInitialDataOptions,
-  UseMutationOptions,
-  UseMutationResult,
-  UseQueryOptions,
-  UseQueryResult
+    DataTag,
+    DefinedInitialDataOptions,
+    DefinedUseQueryResult,
+    MutationFunction,
+    QueryClient,
+    QueryFunction,
+    QueryKey,
+    UndefinedInitialDataOptions,
+    UseMutationOptions,
+    UseMutationResult,
+    UseQueryOptions,
+    UseQueryResult,
 } from '@tanstack/react-query';
 
 import type {
-  BadRequestResponse,
-  CategoryResponseDto,
-  ConflictResponse,
-  CreateCategoryDto,
-  NotFoundResponse
+    BadRequestResponse,
+    CategoryResponseDto,
+    ConflictResponse,
+    CreateCategoryDto,
+    NotFoundResponse,
 } from '../../models';
 
-
-
-
+type CategoryResponseDtoSuccess = CategoryResponseDto;
+type CategoryResponseDtoError = BadRequestResponse | ConflictResponse | NotFoundResponse;
+type CategoryResponseDtoListSuccess = CategoryResponseDto[];
 
 export const getPostCategoriesUrl = () => {
-
-
-
-
-  return `/categories`
-}
+    return `/categories`;
+};
 
 /**
  * @summary Create a category.
  */
-export const postCategories = async (createCategoryDto: CreateCategoryDto, options?: RequestInit): Promise<CategoryResponseDtoSuccess> => {
+export const postCategories = async (
+    createCategoryDto: CreateCategoryDto,
+    options?: RequestInit,
+): Promise<CategoryResponseDtoSuccess> => {
+    const res = await fetch(getPostCategoriesUrl(), {
+        ...options,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...options?.headers },
+        body: JSON.stringify(createCategoryDto),
+    });
 
-  const res = await fetch(getPostCategoriesUrl(),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(createCategoryDto)
-  }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  if (!res.ok) {
-
-    const err: globalThis.Error & {info?: CategoryResponseDtoError, status?: number} = new globalThis.Error();
-    const data : CategoryResponseDtoError = body ? JSON.parse(body) : {}
-    err.info = data;
-    err.status = res.status;
-    throw err;
-  }
-  const data: CategoryResponseDtoSuccess = body ? JSON.parse(body) : {}
-  return data
-}
-
-
-
-
-
-export const getPostCategoriesQueryKey = (createCategoryDto?: CreateCategoryDto,) => {
-    return [
-    'POST', `/categories`, createCategoryDto
-    ] as const;
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    if (!res.ok) {
+        const err: globalThis.Error & { info?: CategoryResponseDtoError; status?: number } = new globalThis.Error();
+        const data: CategoryResponseDtoError = body ? JSON.parse(body) : {};
+        err.info = data;
+        err.status = res.status;
+        throw err;
     }
+    const data: CategoryResponseDtoSuccess = body ? JSON.parse(body) : {};
+    return data;
+};
 
+export const getPostCategoriesQueryKey = (createCategoryDto?: CreateCategoryDto) => {
+    return ['POST', `/categories`, createCategoryDto] as const;
+};
 
-export const getPostCategoriesQueryOptions = <TData = Awaited<ReturnType<typeof postCategories>>, TError = globalThis.Error & { info?: BadRequestResponse | ConflictResponse; status?: number }>(createCategoryDto: CreateCategoryDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof postCategories>>, TError, TData>>, fetch?: RequestInit}
+export const getPostCategoriesQueryOptions = <
+    TData = Awaited<ReturnType<typeof postCategories>>,
+    TError = globalThis.Error & { info?: BadRequestResponse | ConflictResponse; status?: number },
+>(
+    createCategoryDto: CreateCategoryDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof postCategories>>, TError, TData>>;
+        fetch?: RequestInit;
+    },
 ) => {
+    const { query: queryOptions, fetch: fetchOptions } = options ?? {};
 
-const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+    const queryKey = queryOptions?.queryKey ?? getPostCategoriesQueryKey(createCategoryDto);
 
-  const queryKey =  queryOptions?.queryKey ?? getPostCategoriesQueryKey(createCategoryDto);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof postCategories>>> = ({ signal }) =>
+        postCategories(createCategoryDto, { signal, ...fetchOptions });
 
+    return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+        Awaited<ReturnType<typeof postCategories>>,
+        TError,
+        TData
+    > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
+export type PostCategoriesQueryResult = NonNullable<Awaited<ReturnType<typeof postCategories>>>;
+export type PostCategoriesQueryError = globalThis.Error & {
+    info?: BadRequestResponse | ConflictResponse;
+    status?: number;
+};
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof postCategories>>> = ({ signal }) => postCategories(createCategoryDto, { signal, ...fetchOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof postCategories>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type PostCategoriesQueryResult = NonNullable<Awaited<ReturnType<typeof postCategories>>>
-export type PostCategoriesQueryError = globalThis.Error & { info?: BadRequestResponse | ConflictResponse; status?: number }
-
-
-export function usePostCategories<TData = Awaited<ReturnType<typeof postCategories>>, TError = globalThis.Error & { info?: BadRequestResponse | ConflictResponse; status?: number }>(
- createCategoryDto: CreateCategoryDto, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof postCategories>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof postCategories>>,
-          TError,
-          Awaited<ReturnType<typeof postCategories>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function usePostCategories<TData = Awaited<ReturnType<typeof postCategories>>, TError = globalThis.Error & { info?: BadRequestResponse | ConflictResponse; status?: number }>(
- createCategoryDto: CreateCategoryDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof postCategories>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof postCategories>>,
-          TError,
-          Awaited<ReturnType<typeof postCategories>>
-        > , 'initialData'
-      >, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function usePostCategories<TData = Awaited<ReturnType<typeof postCategories>>, TError = globalThis.Error & { info?: BadRequestResponse | ConflictResponse; status?: number }>(
- createCategoryDto: CreateCategoryDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof postCategories>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePostCategories<
+    TData = Awaited<ReturnType<typeof postCategories>>,
+    TError = globalThis.Error & { info?: BadRequestResponse | ConflictResponse; status?: number },
+>(
+    createCategoryDto: CreateCategoryDto,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof postCategories>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof postCategories>>,
+                    TError,
+                    Awaited<ReturnType<typeof postCategories>>
+                >,
+                'initialData'
+            >;
+        fetch?: RequestInit;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function usePostCategories<
+    TData = Awaited<ReturnType<typeof postCategories>>,
+    TError = globalThis.Error & { info?: BadRequestResponse | ConflictResponse; status?: number },
+>(
+    createCategoryDto: CreateCategoryDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof postCategories>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof postCategories>>,
+                    TError,
+                    Awaited<ReturnType<typeof postCategories>>
+                >,
+                'initialData'
+            >;
+        fetch?: RequestInit;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function usePostCategories<
+    TData = Awaited<ReturnType<typeof postCategories>>,
+    TError = globalThis.Error & { info?: BadRequestResponse | ConflictResponse; status?: number },
+>(
+    createCategoryDto: CreateCategoryDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof postCategories>>, TError, TData>>;
+        fetch?: RequestInit;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
  * @summary Create a category.
  */
 
-export function usePostCategories<TData = Awaited<ReturnType<typeof postCategories>>, TError = globalThis.Error & { info?: BadRequestResponse | ConflictResponse; status?: number }>(
- createCategoryDto: CreateCategoryDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof postCategories>>, TError, TData>>, fetch?: RequestInit}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function usePostCategories<
+    TData = Awaited<ReturnType<typeof postCategories>>,
+    TError = globalThis.Error & { info?: BadRequestResponse | ConflictResponse; status?: number },
+>(
+    createCategoryDto: CreateCategoryDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof postCategories>>, TError, TData>>;
+        fetch?: RequestInit;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getPostCategoriesQueryOptions(createCategoryDto, options);
 
-  const queryOptions = getPostCategoriesQueryOptions(createCategoryDto,options)
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return { ...query, queryKey: queryOptions.queryKey };
+    return { ...query, queryKey: queryOptions.queryKey };
 }
 
 /**
  * @summary Create a category.
  */
-export const prefetchPostCategoriesQuery = async <TData = Awaited<ReturnType<typeof postCategories>>, TError = globalThis.Error & { info?: BadRequestResponse | ConflictResponse; status?: number }>(
- queryClient: QueryClient, createCategoryDto: CreateCategoryDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof postCategories>>, TError, TData>>, fetch?: RequestInit}
+export const prefetchPostCategoriesQuery = async <
+    TData = Awaited<ReturnType<typeof postCategories>>,
+    TError = globalThis.Error & { info?: BadRequestResponse | ConflictResponse; status?: number },
+>(
+    queryClient: QueryClient,
+    createCategoryDto: CreateCategoryDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof postCategories>>, TError, TData>>;
+        fetch?: RequestInit;
+    },
+): Promise<QueryClient> => {
+    const queryOptions = getPostCategoriesQueryOptions(createCategoryDto, options);
 
-  ): Promise<QueryClient> => {
+    await queryClient.prefetchQuery(queryOptions);
 
-  const queryOptions = getPostCategoriesQueryOptions(createCategoryDto,options)
-
-  await queryClient.prefetchQuery(queryOptions);
-
-  return queryClient;
-}
-
-
-
-
+    return queryClient;
+};
 
 export const getGetCategoriesUrl = () => {
-
-
-
-
-  return `/categories`
-}
+    return `/categories`;
+};
 
 /**
  * @summary List categories ordered by key.
  */
-export const getCategories = async ( options?: RequestInit): Promise<CategoryResponseDto[]Success> => {
+export const getCategories = async (options?: RequestInit): Promise<CategoryResponseDtoListSuccess> => {
+    const res = await fetch(getGetCategoriesUrl(), { ...options, method: 'GET' });
 
-  const res = await fetch(getGetCategoriesUrl(),
-  {
-    ...options,
-    method: 'GET'
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    if (!res.ok) {
+        const err: globalThis.Error & { info?: any; status?: number } = new globalThis.Error();
+        const data = body ? JSON.parse(body) : {};
+        err.info = data;
+        err.status = res.status;
+        throw err;
+    }
+    const data: CategoryResponseDtoListSuccess = body ? JSON.parse(body) : {};
+    return data;
+};
 
+export const getGetCategoriesMutationOptions = <
+    TError = globalThis.Error & { info?: unknown; status?: number },
+    TContext = unknown,
+>(options?: {
+    mutation?: UseMutationOptions<Awaited<ReturnType<typeof getCategories>>, TError, void, TContext>;
+    fetch?: RequestInit;
+}): UseMutationOptions<Awaited<ReturnType<typeof getCategories>>, TError, void, TContext> => {
+    const mutationKey = ['getCategories'];
+    const { mutation: mutationOptions, fetch: fetchOptions } =
+        options ?
+            options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+                options
+            :   { ...options, mutation: { ...options.mutation, mutationKey } }
+        :   { mutation: { mutationKey }, fetch: undefined };
 
-  }
-)
+    const mutationFn: MutationFunction<Awaited<ReturnType<typeof getCategories>>, void> = () => {
+        return getCategories(fetchOptions);
+    };
 
+    return { mutationFn, ...mutationOptions };
+};
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  if (!res.ok) {
+export type GetCategoriesMutationResult = NonNullable<Awaited<ReturnType<typeof getCategories>>>;
 
-    const err: globalThis.Error & {info?: any, status?: number} = new globalThis.Error();
-    const data  = body ? JSON.parse(body) : {}
-    err.info = data;
-    err.status = res.status;
-    throw err;
-  }
-  const data: CategoryResponseDto[]Success = body ? JSON.parse(body) : {}
-  return data
-}
+export type GetCategoriesMutationError = globalThis.Error & { info?: unknown; status?: number };
 
-
-
-
-export const getGetCategoriesMutationOptions = <TError = globalThis.Error & { info?: unknown; status?: number },
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getCategories>>, TError,void, TContext>, fetch?: RequestInit}
-): UseMutationOptions<Awaited<ReturnType<typeof getCategories>>, TError,void, TContext> => {
-
-const mutationKey = ['getCategories'];
-const {mutation: mutationOptions, fetch: fetchOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, fetch: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getCategories>>, void> = () => {
-
-
-          return  getCategories(fetchOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type GetCategoriesMutationResult = NonNullable<Awaited<ReturnType<typeof getCategories>>>
-
-    export type GetCategoriesMutationError = globalThis.Error & { info?: unknown; status?: number }
-
-    /**
+/**
  * @summary List categories ordered by key.
  */
-export const useGetCategories = <TError = globalThis.Error & { info?: unknown; status?: number },
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getCategories>>, TError,void, TContext>, fetch?: RequestInit}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof getCategories>>,
-        TError,
-        void,
-        TContext
-      > => {
-      return useMutation(getGetCategoriesMutationOptions(options), queryClient);
-    }
-    export const getGetCategoriesIdUrl = (id: string,) => {
-
-
-
-
-  return `/categories/${encodeURIComponent(String(id))}`
-}
+export const useGetCategories = <TError = globalThis.Error & { info?: unknown; status?: number }, TContext = unknown>(
+    options?: {
+        mutation?: UseMutationOptions<Awaited<ReturnType<typeof getCategories>>, TError, void, TContext>;
+        fetch?: RequestInit;
+    },
+    queryClient?: QueryClient,
+): UseMutationResult<Awaited<ReturnType<typeof getCategories>>, TError, void, TContext> => {
+    return useMutation(getGetCategoriesMutationOptions(options), queryClient);
+};
+export const getGetCategoriesIdUrl = (id: string) => {
+    return `/categories/${encodeURIComponent(String(id))}`;
+};
 
 /**
  * @summary Retrieve a category by UUID.
  */
 export const getCategoriesId = async (id: string, options?: RequestInit): Promise<CategoryResponseDtoSuccess> => {
+    const res = await fetch(getGetCategoriesIdUrl(id), { ...options, method: 'GET' });
 
-  const res = await fetch(getGetCategoriesIdUrl(id),
-  {
-    ...options,
-    method: 'GET'
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    if (!res.ok) {
+        const err: globalThis.Error & { info?: CategoryResponseDtoError; status?: number } = new globalThis.Error();
+        const data: CategoryResponseDtoError = body ? JSON.parse(body) : {};
+        err.info = data;
+        err.status = res.status;
+        throw err;
+    }
+    const data: CategoryResponseDtoSuccess = body ? JSON.parse(body) : {};
+    return data;
+};
 
+export const getGetCategoriesIdMutationOptions = <
+    TError = globalThis.Error & { info?: NotFoundResponse; status?: number },
+    TContext = unknown,
+>(options?: {
+    mutation?: UseMutationOptions<Awaited<ReturnType<typeof getCategoriesId>>, TError, { id: string }, TContext>;
+    fetch?: RequestInit;
+}): UseMutationOptions<Awaited<ReturnType<typeof getCategoriesId>>, TError, { id: string }, TContext> => {
+    const mutationKey = ['getCategoriesId'];
+    const { mutation: mutationOptions, fetch: fetchOptions } =
+        options ?
+            options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+                options
+            :   { ...options, mutation: { ...options.mutation, mutationKey } }
+        :   { mutation: { mutationKey }, fetch: undefined };
 
-  }
-)
+    const mutationFn: MutationFunction<Awaited<ReturnType<typeof getCategoriesId>>, { id: string }> = (props) => {
+        const { id } = props ?? {};
 
+        return getCategoriesId(id, fetchOptions);
+    };
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  if (!res.ok) {
+    return { mutationFn, ...mutationOptions };
+};
 
-    const err: globalThis.Error & {info?: CategoryResponseDtoError, status?: number} = new globalThis.Error();
-    const data : CategoryResponseDtoError = body ? JSON.parse(body) : {}
-    err.info = data;
-    err.status = res.status;
-    throw err;
-  }
-  const data: CategoryResponseDtoSuccess = body ? JSON.parse(body) : {}
-  return data
-}
+export type GetCategoriesIdMutationResult = NonNullable<Awaited<ReturnType<typeof getCategoriesId>>>;
 
+export type GetCategoriesIdMutationError = globalThis.Error & { info?: NotFoundResponse; status?: number };
 
-
-
-export const getGetCategoriesIdMutationOptions = <TError = globalThis.Error & { info?: NotFoundResponse; status?: number },
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getCategoriesId>>, TError,{id: string}, TContext>, fetch?: RequestInit}
-): UseMutationOptions<Awaited<ReturnType<typeof getCategoriesId>>, TError,{id: string}, TContext> => {
-
-const mutationKey = ['getCategoriesId'];
-const {mutation: mutationOptions, fetch: fetchOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, fetch: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getCategoriesId>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
-
-          return  getCategoriesId(id,fetchOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type GetCategoriesIdMutationResult = NonNullable<Awaited<ReturnType<typeof getCategoriesId>>>
-
-    export type GetCategoriesIdMutationError = globalThis.Error & { info?: NotFoundResponse; status?: number }
-
-    /**
+/**
  * @summary Retrieve a category by UUID.
  */
-export const useGetCategoriesId = <TError = globalThis.Error & { info?: NotFoundResponse; status?: number },
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getCategoriesId>>, TError,{id: string}, TContext>, fetch?: RequestInit}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof getCategoriesId>>,
-        TError,
-        {id: string},
-        TContext
-      > => {
-      return useMutation(getGetCategoriesIdMutationOptions(options), queryClient);
-    }
+export const useGetCategoriesId = <
+    TError = globalThis.Error & { info?: NotFoundResponse; status?: number },
+    TContext = unknown,
+>(
+    options?: {
+        mutation?: UseMutationOptions<Awaited<ReturnType<typeof getCategoriesId>>, TError, { id: string }, TContext>;
+        fetch?: RequestInit;
+    },
+    queryClient?: QueryClient,
+): UseMutationResult<Awaited<ReturnType<typeof getCategoriesId>>, TError, { id: string }, TContext> => {
+    return useMutation(getGetCategoriesIdMutationOptions(options), queryClient);
+};

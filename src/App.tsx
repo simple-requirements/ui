@@ -42,8 +42,9 @@ export default function App() {
     const tabDetailQuery = useRequirementDetailQuery(activeRequirementTab?.requirementId);
 
     useEffect(() => {
-        if (!projectsQuery.data || workspaceState.activeProjectId) return;
-        if (projectsQuery.data[0]) dispatch({ type: 'selectProject', projectId: projectsQuery.data[0].id });
+        if (workspaceState.activeProjectId) return;
+        if (projectsQuery.data.length === 0) return;
+        dispatch({ type: 'selectProject', projectId: projectsQuery.data[0].id });
     }, [projectsQuery.data, workspaceState.activeProjectId]);
 
     useEffect(() => {
@@ -57,7 +58,7 @@ export default function App() {
     }, [workspaceState.activeProjectId, workspaceState.activeModule]);
 
     useEffect(() => {
-        if (!requirementsQuery.data || !workspaceState.selectedRequirementId) return;
+        if (!workspaceState.selectedRequirementId) return;
         if (!requirementsQuery.data.some((requirement) => requirement.id === workspaceState.selectedRequirementId)) {
             dispatch({ type: 'selectRequirement', requirementId: null });
         }
@@ -86,7 +87,7 @@ export default function App() {
         if (lookupMutation.isError) setLookupMessage(mapApiError(lookupMutation.error).message);
     }, [lookupMutation.isError, lookupMutation.error]);
 
-    const projects = projectsQuery.data ?? [];
+    const projects = projectsQuery.data;
     const activeProjectKnown =
         !workspaceState.activeProjectId || projects.some((project) => project.id === workspaceState.activeProjectId);
 
@@ -98,7 +99,7 @@ export default function App() {
             activeModule={workspaceState.activeModule}
             selectedRequirementId={workspaceState.selectedRequirementId}
             splitterPosition={workspaceState.splitterPosition}
-            categories={categoriesQuery.data ?? []}
+            categories={categoriesQuery.data}
             projectError={
                 projectsQuery.isError ? mapApiError(projectsQuery.error).message
                 : !activeProjectKnown ?
@@ -110,7 +111,7 @@ export default function App() {
             selectedRequirement={detailQuery.data ?? null}
             requirementsList={
                 <RequirementsList
-                    requirements={requirementsQuery.data ?? []}
+                    requirements={requirementsQuery.data}
                     selectedRequirementId={workspaceState.selectedRequirementId}
                     dispatch={dispatch}
                 />

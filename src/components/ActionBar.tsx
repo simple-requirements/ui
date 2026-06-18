@@ -7,6 +7,8 @@ import type { RequirementView } from '@/types/domain';
 type ActionBarProps = Readonly<{
     activeProjectId: string | null;
     selectedRequirement: RequirementView | null;
+    canCreateRequirement?: boolean;
+    createUnavailableReason?: string;
     dedicated?: boolean;
     dispatch: (action: Action) => void;
     lookupMessage?: string | null;
@@ -19,13 +21,15 @@ export function ActionBar({
     selectedRequirement,
     dedicated = false,
     dispatch,
+    canCreateRequirement = false,
+    createUnavailableReason = 'Select a loaded project and load categories before creating a requirement.',
     lookupMessage,
     lookupPending = false,
     onLookup,
 }: ActionBarProps) {
     const [visibleKey, setVisibleKey] = useState('');
     const handleOpenInTab = () =>
-        selectedRequirement
+        selectedRequirement?.id
         && dispatch({
             type: 'openRequirementTab',
             requirementId: selectedRequirement.id,
@@ -59,17 +63,27 @@ export function ActionBar({
                     </form>
                     <Button
                         type='button'
-                        disabled
-                        tooltip='Requirement creation is not implemented in this package.'
-                        aria-describedby='new-requirement-unavailable'>
+                        disabled={!canCreateRequirement}
+                        tooltip={canCreateRequirement ? undefined : createUnavailableReason}
+                        aria-describedby='new-requirement-unavailable'
+                        onClick={() => dispatch({ type: 'setMode', mode: 'newRequirement' })}>
                         New requirement
                     </Button>
                     <span
                         id='new-requirement-unavailable'
                         className='sr-only'>
-                        Requirement creation is not implemented in this package.
+                        {createUnavailableReason}
                     </span>
                 </>
+            :   null}
+            {selectedRequirement?.status === 'draft' ?
+                <Button
+                    type='button'
+                    onClick={() =>
+                        dispatch({ type: 'setMode', mode: dedicated ? 'editRequirementTab' : 'editRequirement' })
+                    }>
+                    Edit
+                </Button>
             :   null}
             {selectedRequirement && !dedicated ?
                 <Button

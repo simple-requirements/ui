@@ -1,4 +1,4 @@
-import { Store } from '@tanstack/react-store';
+import { createSimpleStore } from '@/stores/simpleStore';
 import type { Category, DemoRequirementRepository } from '@/demo/demoTypes';
 
 /** Snapshot shape for category store subscriptions. */
@@ -12,7 +12,7 @@ export interface CategoriesStoreState {
 export function createCategoriesStore(
     categoryRepository: Pick<DemoRequirementRepository, 'listCategories' | 'createCategory'>,
 ) {
-    const store = new Store<CategoriesStoreState>({ categories: [], loading: false, error: null });
+    const store = createSimpleStore<CategoriesStoreState>({ categories: [], loading: false, error: null });
 
     return {
         store,

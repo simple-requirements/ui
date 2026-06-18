@@ -1,4 +1,5 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string | undefined;
+/** Returns the configured backend origin because current Orval fetch functions emit relative URLs only. */
 export function getApiBaseUrl() {
     if (!API_BASE_URL)
         throw new Error('Missing VITE_API_BASE_URL. Configure the backend API base URL before starting the UI.');
@@ -8,6 +9,7 @@ export function getApiBaseUrl() {
         throw new Error('VITE_API_BASE_URL must be a valid absolute URL.');
     }
 }
+/** Fetches a typed JSON response from a generated endpoint path using the configured backend origin. */
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
     const response = await fetch(`${getApiBaseUrl()}${path}`, init);
     const body = [204, 205, 304].includes(response.status) ? '' : await response.text();

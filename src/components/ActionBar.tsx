@@ -16,6 +16,7 @@ type ActionBarProps = Readonly<{
     onLookup?: (visibleKey: string) => void;
 }>;
 
+/** Renders context actions for the selected current requirement without exposing actions for historical snapshots. */
 export function ActionBar({
     activeProjectId,
     selectedRequirement,
@@ -28,19 +29,70 @@ export function ActionBar({
     onLookup,
 }: ActionBarProps) {
     const [visibleKey, setVisibleKey] = useState('');
-    const handleOpenInTab = () =>
-        selectedRequirement?.id
-        && dispatch({
+    const handleOpenInTab = () => {
+        if (!selectedRequirement) return;
+        dispatch({
             type: 'openRequirementTab',
             requirementId: selectedRequirement.id,
             visibleKey: selectedRequirement.visibleKey,
         });
-    const handleCopyVisibleKey = () =>
-        selectedRequirement && void navigator.clipboard.writeText(selectedRequirement.visibleKey);
+    };
+    const handleCopyVisibleKey = () => {
+        if (selectedRequirement) void navigator.clipboard.writeText(selectedRequirement.visibleKey);
+    };
     const handleLookup = (event: SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (visibleKey.trim()) onLookup?.(visibleKey);
     };
+
+    const renderRequirementActions = () => {
+        if (!selectedRequirement) {
+            return (
+                <>
+                    <Button
+                        type='button'
+                        disabled
+                        tooltip='Load a requirement before opening history.'>
+                        History
+                    </Button>
+                    <span className='sr-only'>Load a requirement before opening history.</span>
+                </>
+            );
+        }
+
+        return (
+            <>
+                <Button
+                    type='button'
+                    aria-label={`Open revision history for ${selectedRequirement.visibleKey}`}
+                    onClick={() => dispatch({ type: 'setMode', mode: dedicated ? 'historyTab' : 'history' })}>
+                    History
+                </Button>
+                {selectedRequirement.status === 'draft' ?
+                    <Button
+                        type='button'
+                        onClick={() =>
+                            dispatch({ type: 'setMode', mode: dedicated ? 'editRequirementTab' : 'editRequirement' })
+                        }>
+                        Edit
+                    </Button>
+                :   null}
+                {!dedicated ?
+                    <Button
+                        type='button'
+                        onClick={handleOpenInTab}>
+                        Open in tab
+                    </Button>
+                :   null}
+                <Button
+                    type='button'
+                    onClick={handleCopyVisibleKey}>
+                    Copy visible key
+                </Button>
+            </>
+        );
+    };
+
     return (
         <div className='workspace-actionbar actionbar'>
             {!dedicated ?
@@ -76,29 +128,7 @@ export function ActionBar({
                     </span>
                 </>
             :   null}
-            {selectedRequirement?.status === 'draft' ?
-                <Button
-                    type='button'
-                    onClick={() =>
-                        dispatch({ type: 'setMode', mode: dedicated ? 'editRequirementTab' : 'editRequirement' })
-                    }>
-                    Edit
-                </Button>
-            :   null}
-            {selectedRequirement && !dedicated ?
-                <Button
-                    type='button'
-                    onClick={handleOpenInTab}>
-                    Open in tab
-                </Button>
-            :   null}
-            {selectedRequirement ?
-                <Button
-                    type='button'
-                    onClick={handleCopyVisibleKey}>
-                    Copy visible key
-                </Button>
-            :   null}
+            {renderRequirementActions()}
         </div>
     );
 }

@@ -6,14 +6,9 @@ import { AppTabBar } from '@/components/AppTabBar';
 import { RequirementsList } from '@/components/RequirementsList';
 import { Workspace } from '@/components/Workspace';
 import { mapApiError } from '@/api/errors/apiError';
-import {
-    assertImmutableRequirementFields,
-    createRequirement,
-    isRequirementEditable,
-    synchronizeRequirementFromServer,
-    updateRequirement,
-} from '@/features/requirements/requirementForms';
+import { createRequirement, synchronizeRequirementFromServer } from '@/features/requirements/requirementForms';
 import { RequirementDetail } from '@/features/requirements/RequirementDetail';
+import { RequirementHistory } from '@/features/requirements/RequirementHistory';
 import { RequirementForm } from '@/components/RequirementForm';
 import { LoadingOverlay } from '@/layout/LoadingOverlay';
 import { useCategoriesQuery, useCreateCategoryMutation } from '@/utils/categoryQueries';
@@ -25,11 +20,8 @@ import {
 } from '@/utils/requirementQueries';
 import { loadWorkspaceState, saveWorkspaceState } from '@/state/sessionPersistence';
 import { workspaceReducer } from '@/state/workspaceReducer';
-
-function formValue(formData: FormData, fieldName: string) {
-    const value = formData.get(fieldName);
-    return typeof value === 'string' ? value : '';
-}
+import { formValue } from '@/utils/formData';
+import { useEditRequirementMutation } from '@/utils/editRequirementMutation';
 
 /** Coordinates backend server state, workspace state, and top-level application layout. */
 export default function App() {
@@ -95,24 +87,12 @@ export default function App() {
             dispatch({ type: 'selectRequirement', requirementId: requirement.id });
         },
     });
-    const editRequirementMutation = useMutation({
-        mutationFn: async (values: Parameters<typeof updateRequirement>[1]) => {
-            const current = workspaceState.activeAppTabId === 'workspace' ? detailQuery.data : tabDetailQuery.data;
-            if (!current) throw new Error('Requirement detail must load before editing.');
-            if (!isRequirementEditable(current.status)) throw new Error('Only draft requirements can be edited.');
-            const updated = await updateRequirement(current.id, values);
-            assertImmutableRequirementFields(current, updated);
-            return updated;
-        },
-        onSuccess: async (requirement) => {
-            await synchronizeRequirementFromServer({
-                requirement,
-                projectId: workspaceState.activeProjectId,
-                reason: 'updated',
-                queryClient,
-            });
-            dispatch({ type: 'setMode', mode: 'workspace' });
-        },
+    const editRequirementMutation = useEditRequirementMutation({
+        queryClient,
+        projectId: workspaceState.activeProjectId,
+        getCurrentRequirement: () =>
+            workspaceState.activeAppTabId === 'workspace' ? detailQuery.data : tabDetailQuery.data,
+        onEdited: () => dispatch({ type: 'setMode', mode: 'workspace' }),
     });
 
     useEffect(() => {
@@ -230,7 +210,12 @@ export default function App() {
                 {tabDetailQuery.isFetching ?
                     <div className='workspace-state state'>Loading requirement detail…</div>
                 :   null}
-                {tabDetailQuery.data && workspaceState.mode === 'editRequirementTab' ?
+                {tabDetailQuery.data && workspaceState.mode === 'historyTab' ?
+                    <RequirementHistory
+                        requirement={tabDetailQuery.data}
+                        onClose={() => dispatch({ type: 'setMode', mode: 'workspace' })}
+                    />
+                : tabDetailQuery.data && workspaceState.mode === 'editRequirementTab' ?
                     <RequirementForm
                         mode='edit'
                         project={activeProject}

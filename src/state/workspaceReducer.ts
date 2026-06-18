@@ -11,7 +11,15 @@ export interface WorkspaceState {
     activeModule: Module;
     selectedRequirementId: string | null;
     splitterPosition: number;
-    mode: 'workspace' | 'newProject' | 'newCategory' | 'newRequirement' | 'editRequirement' | 'editRequirementTab';
+    mode:
+        | 'workspace'
+        | 'newProject'
+        | 'newCategory'
+        | 'newRequirement'
+        | 'editRequirement'
+        | 'editRequirementTab'
+        | 'history'
+        | 'historyTab';
 }
 export const WORKSPACE_TAB_ID = 'workspace';
 export const initialWorkspaceState: WorkspaceState = {
@@ -51,13 +59,20 @@ export function workspaceReducer(state: WorkspaceState, action: Action): Workspa
         case 'selectModule':
             return { ...state, activeModule: action.module, mode: 'workspace' };
         case 'selectRequirement':
-            return { ...state, selectedRequirementId: action.requirementId };
+            return {
+                ...state,
+                selectedRequirementId: action.requirementId,
+                mode: state.mode === 'history' ? 'workspace' : state.mode,
+            };
         case 'openRequirementTab': {
             const id = `req-tab-${action.requirementId}`;
             const tabs =
                 state.openRequirementTabs.some((t) => t.id === id) ?
                     state.openRequirementTabs
-                :   [...state.openRequirementTabs, { id, requirementId: action.requirementId, visibleKey: action.visibleKey }];
+                :   [
+                        ...state.openRequirementTabs,
+                        { id, requirementId: action.requirementId, visibleKey: action.visibleKey },
+                    ];
             return { ...state, openRequirementTabs: tabs, activeAppTabId: id };
         }
         case 'closeTab': {

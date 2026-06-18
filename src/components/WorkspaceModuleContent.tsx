@@ -6,6 +6,7 @@ import type { Action, Module } from '@/state/workspaceReducer';
 import type { Category, ProjectSummary, RequirementView } from '@/types/domain';
 import { ModuleNavigation } from '@/components/ModuleNavigation';
 import { RequirementDetail } from '@/features/requirements/RequirementDetail';
+import { RequirementHistory } from '@/features/requirements/RequirementHistory';
 import { RequirementForm } from '@/components/RequirementForm';
 import { VerticalSplitPane } from '@/layout/VerticalSplitPane';
 
@@ -57,6 +58,13 @@ export function WorkspaceModuleContent({
                     role='status'>
                     Loading requirement detail…
                 </div>
+            );
+        if (selectedRequirement && mode === 'history')
+            return (
+                <RequirementHistory
+                    requirement={selectedRequirement}
+                    onClose={() => dispatch({ type: 'setMode', mode: 'workspace' })}
+                />
             );
         if (selectedRequirement && mode === 'editRequirement')
             return (

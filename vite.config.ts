@@ -15,7 +15,7 @@ export default defineConfig({
             provider: 'istanbul',
             reporter: ['text', 'html', 'lcov'],
             include: ['src/**/*.{ts,tsx}'],
-            exclude: ['test/**/*.spec.{ts,tsx}', 'src/main.tsx', 'src/**/*.d.ts'],
+            exclude: ['test/**/*.spec.{ts,tsx}', 'src/main.tsx', 'src/**/*.d.ts', 'src/api/generated/**'],
         },
     },
     server: { port: 5173, host: '127.0.0.1' },

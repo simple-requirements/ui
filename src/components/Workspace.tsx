@@ -3,6 +3,7 @@ import type { Action, Module, WorkspaceState } from '@/state/workspaceReducer';
 import type { Category, ProjectSummary, RequirementView } from '@/types/domain';
 import { NewCategoryForm } from '@/components/NewCategoryForm';
 import { NewProjectForm } from '@/components/NewProjectForm';
+import { RequirementForm } from '@/components/RequirementForm';
 import { ProjectSidebar } from '@/components/ProjectSidebar';
 import { WorkspaceModuleContent } from '@/components/WorkspaceModuleContent';
 
@@ -14,6 +15,7 @@ type WorkspaceProps = Readonly<{
     selectedRequirementId: string | null;
     splitterPosition: number;
     categories: readonly Category[];
+    activeProject: ProjectSummary | null;
     projectError: string | null;
     projectContentLoading: boolean;
     requirementDetailLoading: boolean;
@@ -25,6 +27,12 @@ type WorkspaceProps = Readonly<{
     createProjectError: string | null;
     createProjectPending: boolean;
     onCreateCategory: (formData: FormData) => void;
+    onCreateRequirement: Parameters<typeof RequirementForm>[0]['onSubmit'];
+    createRequirementError: string | null;
+    createRequirementPending: boolean;
+    onEditRequirement: Parameters<typeof RequirementForm>[0]['onSubmit'];
+    editRequirementError: string | null;
+    editRequirementPending: boolean;
     createCategoryError: string | null;
     createCategoryPending: boolean;
     onRetry: () => void;
@@ -39,6 +47,7 @@ export function Workspace({
     selectedRequirementId,
     splitterPosition,
     categories,
+    activeProject,
     projectError,
     projectContentLoading,
     requirementDetailLoading,
@@ -52,6 +61,12 @@ export function Workspace({
     onCreateCategory,
     createCategoryError,
     createCategoryPending,
+    onCreateRequirement,
+    createRequirementError,
+    createRequirementPending,
+    onEditRequirement,
+    editRequirementError,
+    editRequirementPending,
     onRetry,
 }: WorkspaceProps) {
     const handleCancelForm = () => dispatch({ type: 'setMode', mode: 'workspace' });
@@ -64,6 +79,22 @@ export function Workspace({
                     pending={createProjectPending}
                     onSubmit={onCreateProject}
                     onCancel={handleCancelForm}
+                />
+            );
+        }
+
+        if (mode === 'newRequirement') {
+            return (
+                <RequirementForm
+                    mode='create'
+                    project={activeProject}
+                    categories={categories}
+                    error={createRequirementError}
+                    pending={createRequirementPending}
+                    onSubmit={onCreateRequirement}
+                    onCancel={(dirty) => {
+                        if (!dirty || confirm('Discard unsaved requirement changes?')) handleCancelForm();
+                    }}
                 />
             );
         }
@@ -93,6 +124,11 @@ export function Workspace({
                 actionBar={actionBar}
                 dispatch={dispatch}
                 onRetry={onRetry}
+                activeProject={activeProject}
+                editError={editRequirementError}
+                editPending={editRequirementPending}
+                mode={mode}
+                onEditRequirement={onEditRequirement}
             />
         );
     };

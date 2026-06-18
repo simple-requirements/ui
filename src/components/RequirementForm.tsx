@@ -1,77 +1,195 @@
-import type { SyntheticEvent } from 'react';
+import { useMemo, useRef, useState, type SyntheticEvent } from 'react';
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
-import type { Category } from '@/types/domain';
+import type { Category, ProjectSummary, RequirementView } from '@/types/domain';
+import {
+    categoryOptionLabel,
+    priorityOptions,
+    type RequirementFormValues,
+} from '@/features/requirements/requirementForms';
 
 type RequirementFormProps = Readonly<{
+    mode: 'create' | 'edit';
+    project: ProjectSummary | null;
     categories: readonly Category[];
-    onSubmit: (formData: FormData) => void;
-    onCancel: () => void;
+    initialRequirement?: RequirementView | null;
+    error: string | null;
+    pending: boolean;
+    onSubmit: (values: RequirementFormValues) => void;
+    onCancel: (dirty: boolean) => void;
 }>;
 
-const priorityOptions = ['P1', 'P2', 'P3', 'P4'];
+const emptyValues: RequirementFormValues = {
+    categoryId: '',
+    description: '',
+    priority: 'P1',
+    owner: '',
+    rationale: '',
+    source: '',
+};
 
-/** Collects local demo requirement data while deriving type from the selected category. */
-export function RequirementForm({ categories, onSubmit, onCancel }: RequirementFormProps) {
-    function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
+/** Collects requirement fields while keeping project, type, key, and status immutable UI context only. */
+export function RequirementForm({
+    mode,
+    project,
+    categories,
+    initialRequirement,
+    error,
+    pending,
+    onSubmit,
+    onCancel,
+}: RequirementFormProps) {
+    const initialValues = useMemo<RequirementFormValues>(() => {
+        if (!initialRequirement) return { ...emptyValues, categoryId: categories[0]?.id ?? '' };
+        return {
+            categoryId: initialRequirement.categoryId,
+            description: initialRequirement.description,
+            priority: initialRequirement.priority,
+            owner: initialRequirement.owner ?? '',
+            rationale: initialRequirement.rationale ?? '',
+            source: initialRequirement.source ?? '',
+        };
+    }, [categories, initialRequirement]);
+    const [values, setValues] = useState(initialValues);
+    const descriptionRef = useRef<HTMLTextAreaElement>(null);
+    const selectedCategory = categories.find((category) => category.id === values.categoryId);
+    const dirty = JSON.stringify(values) !== JSON.stringify(initialValues);
+    const categoryOptions = categories.map((category) => ({
+        label: categoryOptionLabel(category),
+        value: category.id,
+    }));
+
+    const handleSubmit = (event: SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
-        onSubmit(new FormData(event.currentTarget));
-    }
+        if (!values.description.trim()) {
+            descriptionRef.current?.focus();
+            return;
+        }
+        onSubmit(values);
+    };
 
     return (
         <form
-            className='form'
-            onSubmit={handleSubmit}>
-            <h2>New requirement</h2>
-            <label>
-                Category
-                <Dropdown
-                    name='category'
-                    options={[...categories]}
-                    optionLabel='name'
-                    optionValue='key'
-                    itemTemplate={(category: Category) => `${category.key} — ${category.name} (${category.type})`}
-                    value={categories[0]?.key ?? null}
+            className='form requirement-form'
+            onSubmit={handleSubmit}
+            aria-busy={pending}>
+            <h2>{mode === 'create' ? 'New requirement' : `Edit ${initialRequirement?.visibleKey ?? 'requirement'}`}</h2>
+            {error ?
+                <div
+                    className='form__error'
+                    role='alert'>
+                    {error}
+                </div>
+            :   null}
+            <section
+                className='form__context'
+                aria-label='Immutable requirement context'>
+                <p>
+                    <strong>Project:</strong> {project?.name ?? 'No active project'}
+                </p>
+                {mode === 'edit' && initialRequirement ?
+                    <>
+                        <p>
+                            <strong>Visible key:</strong> {initialRequirement.visibleKey}
+                        </p>
+                        <p>
+                            <strong>Category:</strong> {initialRequirement.categoryName} (
+                            {initialRequirement.categoryKey})
+                        </p>
+                        <p>
+                            <strong>Type:</strong> {initialRequirement.type}
+                        </p>
+                        <p>
+                            <strong>Status:</strong> {initialRequirement.status}
+                        </p>
+                    </>
+                :   null}
+            </section>
+            {mode === 'create' ?
+                <label htmlFor='requirement-category'>
+                    Category<span aria-hidden='true'> *</span>
+                    <Dropdown
+                        inputId='requirement-category'
+                        value={values.categoryId}
+                        options={categoryOptions}
+                        onChange={(event) =>
+                            setValues((current) => ({ ...current, categoryId: event.value as string }))
+                        }
+                        aria-label='Category'
+                        required
+                    />
+                </label>
+            :   null}
+            {mode === 'create' ?
+                <p aria-live='polite'>
+                    <strong>Derived type:</strong> {selectedCategory?.type ?? 'Select a category'}
+                </p>
+            :   null}
+            <label htmlFor='requirement-description'>
+                Description<span aria-hidden='true'> *</span>
+                <InputTextarea
+                    id='requirement-description'
+                    ref={descriptionRef}
+                    value={values.description}
+                    onChange={(event) =>
+                        setValues((current) => ({ ...current, description: event.currentTarget.value }))
+                    }
+                    required
+                    autoResize
+                    rows={5}
                 />
             </label>
-            <label>
-                Description
-                <InputTextarea
-                    name='description'
+            <label htmlFor='requirement-priority'>
+                Priority<span aria-hidden='true'> *</span>
+                <Dropdown
+                    inputId='requirement-priority'
+                    value={values.priority}
+                    options={[...priorityOptions]}
+                    onChange={(event) => setValues((current) => ({ ...current, priority: event.value as string }))}
                     required
                 />
             </label>
-            <label>
-                Priority
-                <Dropdown
-                    name='priority'
-                    options={priorityOptions}
-                    value='P1'
+            <label htmlFor='requirement-owner'>
+                Owner
+                <InputText
+                    id='requirement-owner'
+                    value={values.owner}
+                    onChange={(event) => setValues((current) => ({ ...current, owner: event.currentTarget.value }))}
                 />
             </label>
-            <label>
-                Owner
-                <InputText name='owner' />
-            </label>
-            <label>
+            <label htmlFor='requirement-rationale'>
                 Rationale
-                <InputText name='rationale' />
+                <InputText
+                    id='requirement-rationale'
+                    value={values.rationale}
+                    onChange={(event) => setValues((current) => ({ ...current, rationale: event.currentTarget.value }))}
+                />
             </label>
-            <label>
+            <label htmlFor='requirement-source'>
                 Source
-                <InputText name='source' />
+                <InputText
+                    id='requirement-source'
+                    value={values.source}
+                    onChange={(event) => setValues((current) => ({ ...current, source: event.currentTarget.value }))}
+                />
             </label>
-            <Button
-                type='submit'
-                label='Create'
-            />
-            <Button
-                type='button'
-                label='Cancel'
-                onClick={onCancel}
-            />
+            <div className='form__actions'>
+                <Button
+                    type='submit'
+                    label={mode === 'create' ? 'Create requirement' : 'Save changes'}
+                    disabled={pending || !project || (mode === 'create' && !values.categoryId)}
+                    loading={pending}
+                />
+                <Button
+                    type='button'
+                    label='Cancel'
+                    outlined
+                    onClick={() => onCancel(dirty)}
+                    disabled={pending}
+                />
+            </div>
         </form>
     );
 }

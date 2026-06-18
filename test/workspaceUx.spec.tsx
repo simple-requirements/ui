@@ -1,11 +1,13 @@
 import { act } from 'react';
 import type React from 'react';
 import { createRoot, type Root } from 'react-dom/client';
+import { readFileSync } from 'node:fs';
 import { describe, expect, it, vi, afterEach } from 'vitest';
 import { ActionBar } from '@/components/ActionBar';
 import { AppTabBar } from '@/components/AppTabBar';
 import { NewCategoryForm } from '@/components/NewCategoryForm';
 import { RequirementForm } from '@/components/RequirementForm';
+import { ProjectSidebar } from '@/components/ProjectSidebar';
 import type { Category, ProjectSummary, RequirementView } from '@/types/domain';
 
 let root: Root | null = null;
@@ -67,6 +69,28 @@ describe('workspace UX regressions', () => {
             await Promise.resolve();
         });
         expect(host.textContent).toContain('Could not copy the key.');
+    });
+
+    it('keeps the New Project button centered without offsets and lets right-pane forms span the pane', () => {
+        const host = render(
+            <ProjectSidebar
+                projects={[project]}
+                activeProjectId='project-beta'
+                dispatch={() => undefined}
+            />,
+        );
+        expect(host.querySelector('button.new-project')?.textContent).toContain('New Project');
+
+        const sidebarStyles = readFileSync('src/styles/sidebar.scss', 'utf8');
+        expect(sidebarStyles).toContain('.new-project.p-button');
+        expect(sidebarStyles).toContain('align-items: center;');
+        expect(sidebarStyles).toContain('justify-content: center;');
+        expect(sidebarStyles).not.toMatch(/translateY|top:\s*-|margin-top:\s*-/);
+
+        const formStyles = readFileSync('src/styles/forms.scss', 'utf8');
+        expect(formStyles).toContain('.right-pane > .form');
+        expect(formStyles).toContain('grid-row: 1 / -1;');
+        expect(formStyles).toContain('min-height: 0;');
     });
 
     it('renders accessible lookup, form fields, radio group, and tab close controls', () => {

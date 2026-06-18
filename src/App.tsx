@@ -1,3 +1,5 @@
+import 'primereact/resources/themes/lara-light-blue/theme.css';
+import 'primereact/resources/primereact.css';
 import 'primeicons/primeicons.css';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useReducer, useState } from 'react';
@@ -22,6 +24,7 @@ import { loadWorkspaceState, saveWorkspaceState } from '@/state/sessionPersisten
 import { workspaceReducer } from '@/state/workspaceReducer';
 import { formValue } from '@/utils/formData';
 import { useEditRequirementMutation } from '@/utils/editRequirementMutation';
+import { deriveProjectAvailability } from '@/features/projects/projectAvailability';
 
 /** Coordinates backend server state, workspace state, and top-level application layout. */
 export default function App() {
@@ -71,15 +74,18 @@ export default function App() {
     }, [requirementsQuery.data, workspaceState.activeProjectId, workspaceState.selectedRequirementId]);
 
     const projects = projectsQuery.data;
-    const activeProjectKnown =
-        !workspaceState.activeProjectId || projects.some((project) => project.id === workspaceState.activeProjectId);
+    const projectAvailability = deriveProjectAvailability(
+        workspaceState.activeProjectId,
+        projects,
+        projectsQuery.isLoading || projectsQuery.isFetching,
+    );
 
     const createProjectMutation = useCreateProjectMutation(queryClient);
     const createCategoryMutation = useCreateCategoryMutation(queryClient, () =>
         dispatch({ type: 'setMode', mode: 'workspace' }),
     );
     const lookupMutation = useRequirementLookupMutation();
-    const activeProject = projects.find((project) => project.id === workspaceState.activeProjectId) ?? null;
+    const activeProject = projectAvailability.activeProject;
     const createRequirementMutation = useMutation({
         mutationFn: createRequirement,
         onSuccess: async (requirement) => {
@@ -130,7 +136,7 @@ export default function App() {
             activeProject={activeProject}
             projectError={
                 projectsQuery.isError ? mapApiError(projectsQuery.error).message
-                : !activeProjectKnown ?
+                : projectAvailability.state === 'unavailable' ?
                     'The project in the URL is not available.'
                 :   null
             }
@@ -151,17 +157,15 @@ export default function App() {
                     selectedRequirement={detailQuery.data ?? null}
                     canCreateRequirement={Boolean(
                         workspaceState.activeProjectId
-                        && activeProjectKnown
+                        && projectAvailability.canUseProject
                         && !categoriesQuery.isError
                         && categoriesQuery.data.length > 0,
                     )}
                     createUnavailableReason={
-                        !workspaceState.activeProjectId ? 'Select a project before creating a requirement.'
-                        : categoriesQuery.isError ?
-                            'Categories could not be loaded.'
-                        : categoriesQuery.data.length === 0 ?
-                            'Create a category before creating a requirement.'
-                        :   'Project is not available.'
+                        projectAvailability.message
+                        ?? (categoriesQuery.isError ? 'Categories could not be loaded.'
+                        : categoriesQuery.data.length === 0 ? 'Create a category before creating a requirement.'
+                        : 'Select a project to continue.')
                     }
                     lookupMessage={lookupMessage}
                     lookupPending={lookupMutation.isPending}

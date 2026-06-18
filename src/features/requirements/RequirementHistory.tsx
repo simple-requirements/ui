@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
 import { mapApiError } from '@/api/errors/apiError';
+import { mapRevisionHistoryError } from '@/api/errors/userSafeError';
 import {
     compareSources,
     makeCurrentSource,
@@ -78,6 +79,7 @@ export function RequirementHistory({ requirement, onClose }: Props) {
     }, [revisionsQuery.data, selectedRevision, rightKey]);
 
     const detailQuery = useRequirementRevisionDetailQuery(requirement.id, selectedRevision);
+    const revisionListError = revisionsQuery.isError ? mapRevisionHistoryError(revisionsQuery.error) : null;
     const sources = useMemo(
         () => [
             { key: 'current', label: 'Current requirement', source: makeCurrentSource(requirement) },
@@ -142,16 +144,18 @@ export function RequirementHistory({ requirement, onClose }: Props) {
                     Loading revision history…
                 </div>
             :   null}
-            {revisionsQuery.isError ?
+            {revisionListError ?
                 <div
                     role='alert'
                     className='state'>
-                    Unable to load revision history. {mapApiError(revisionsQuery.error).message}
-                    <Button
-                        type='button'
-                        label='Retry'
-                        onClick={() => void revisionsQuery.refetch()}
-                    />
+                    {revisionListError.message}
+                    {revisionListError.retryable ?
+                        <Button
+                            type='button'
+                            label='Retry'
+                            onClick={() => void revisionsQuery.refetch()}
+                        />
+                    :   null}
                 </div>
             :   null}
             {!revisionsQuery.isLoading && !revisionsQuery.isError && revisionsQuery.data?.length === 0 ?

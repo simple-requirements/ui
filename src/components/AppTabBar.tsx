@@ -25,30 +25,31 @@ export function AppTabBar({ activeAppTabId, openRequirementTabs, dispatch }: App
     );
 
     const renderRequirementTab = (tab: RequirementTabState) => (
-        <Button
-            type='button'
-            role='tab'
-            className='app-tabs__tab app-tabs__tab--requirement'
-            aria-selected={activeAppTabId === tab.id}
-            key={tab.id}
-            onClick={() => handleActivateTab(tab.id)}
-            onKeyDown={(event) => {
-                if (event.key === 'Delete') {
-                    handleCloseTab(tab.id);
-                }
-            }}>
-            {tab.visibleKey}
-            <span
+        <span
+            className='app-tabs__tab-shell'
+            key={tab.id}>
+            <Button
+                type='button'
+                role='tab'
+                className='app-tabs__tab app-tabs__tab--requirement'
+                aria-selected={activeAppTabId === tab.id}
+                onClick={() => handleActivateTab(tab.id)}
+                onKeyDown={(event) => {
+                    if (event.key === 'Delete') handleCloseTab(tab.id);
+                }}>
+                <span className='app-tabs__label'>{tab.visibleKey}</span>
+            </Button>
+            <Button
+                type='button'
                 className='app-tabs__close'
                 aria-label={`Close ${tab.visibleKey}`}
-                onClick={(event) => {
-                    event.stopPropagation();
-                    handleCloseTab(tab.id);
-                }}>
-                {' '}
-                ×
-            </span>
-        </Button>
+                onClick={() => handleCloseTab(tab.id)}>
+                <span
+                    className='pi pi-times'
+                    aria-hidden='true'
+                />
+            </Button>
+        </span>
     );
 
     return (

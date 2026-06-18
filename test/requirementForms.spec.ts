@@ -9,6 +9,8 @@ import {
     toUpdateRequirementRequest,
 } from '@/features/requirements/requirementForms';
 import type { Category, RequirementView } from '@/types/domain';
+import { deriveProjectAvailability } from '@/features/projects/projectAvailability';
+import { mapRevisionHistoryError } from '@/api/errors/userSafeError';
 
 const requirement: RequirementView = {
     id: '11111111-1111-4111-8111-111111111111',
@@ -108,5 +110,32 @@ describe('requirement domain helpers', () => {
         await synchronizeRequirementFromServer({ requirement, projectId: 'project-1', reason: 'updated', queryClient });
         expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['requirements', 'list', 'project-1'] });
         expect(invalidateSpy).not.toHaveBeenCalledWith({ queryKey: ['projects'] });
+    });
+});
+
+describe('project availability', () => {
+    const projects = [{ id: 'project-beta', name: 'Customer Portal', requirementCount: 12 }];
+
+    it('treats a selected loaded project as available', () => {
+        expect(deriveProjectAvailability('project-beta', projects, false)).toMatchObject({
+            state: 'available',
+            canUseProject: true,
+            activeProject: projects[0],
+        });
+    });
+
+    it('keeps no selection, loading, and stale route states distinct', () => {
+        expect(deriveProjectAvailability(null, projects, false).message).toBe('Select a project to continue.');
+        expect(deriveProjectAvailability('missing', projects, true).state).toBe('loading');
+        expect(deriveProjectAvailability('missing', projects, false).state).toBe('unavailable');
+    });
+});
+
+describe('user-safe error mapping', () => {
+    it('hides internal configuration variable names in revision history errors', () => {
+        const mapped = mapRevisionHistoryError(new Error('Missing VITE_API_BASE_URL. Configure the backend.'));
+        expect(mapped.message).toBe('Revision history is currently unavailable. Please try again later.');
+        expect(mapped.message).not.toContain('VITE_API_BASE_URL');
+        expect(mapped.retryable).toBe(false);
     });
 });

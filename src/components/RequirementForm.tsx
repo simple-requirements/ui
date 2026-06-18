@@ -108,8 +108,10 @@ export function RequirementForm({
                 :   null}
             </section>
             {mode === 'create' ?
-                <label htmlFor='requirement-category'>
-                    Category<span aria-hidden='true'> *</span>
+                <div className='form__field'>
+                    <label htmlFor='requirement-category'>
+                        Category<span aria-hidden='true'> *</span>
+                    </label>
                     <Dropdown
                         inputId='requirement-category'
                         value={values.categoryId}
@@ -117,18 +119,22 @@ export function RequirementForm({
                         onChange={(event) =>
                             setValues((current) => ({ ...current, categoryId: event.value as string }))
                         }
-                        aria-label='Category'
                         required
+                        appendTo={document.body}
                     />
-                </label>
+                </div>
             :   null}
             {mode === 'create' ?
-                <p aria-live='polite'>
+                <p
+                    className='form__derived-value'
+                    aria-live='polite'>
                     <strong>Derived type:</strong> {selectedCategory?.type ?? 'Select a category'}
                 </p>
             :   null}
-            <label htmlFor='requirement-description'>
-                Description<span aria-hidden='true'> *</span>
+            <div className='form__field'>
+                <label htmlFor='requirement-description'>
+                    Description<span aria-hidden='true'> *</span>
+                </label>
                 <InputTextarea
                     id='requirement-description'
                     ref={descriptionRef}
@@ -140,41 +146,44 @@ export function RequirementForm({
                     autoResize
                     rows={5}
                 />
-            </label>
-            <label htmlFor='requirement-priority'>
-                Priority<span aria-hidden='true'> *</span>
+            </div>
+            <div className='form__field'>
+                <label htmlFor='requirement-priority'>
+                    Priority<span aria-hidden='true'> *</span>
+                </label>
                 <Dropdown
                     inputId='requirement-priority'
                     value={values.priority}
                     options={[...priorityOptions]}
                     onChange={(event) => setValues((current) => ({ ...current, priority: event.value as string }))}
                     required
+                    appendTo={document.body}
                 />
-            </label>
-            <label htmlFor='requirement-owner'>
-                Owner
+            </div>
+            <div className='form__field'>
+                <label htmlFor='requirement-owner'>Owner</label>
                 <InputText
                     id='requirement-owner'
                     value={values.owner}
                     onChange={(event) => setValues((current) => ({ ...current, owner: event.currentTarget.value }))}
                 />
-            </label>
-            <label htmlFor='requirement-rationale'>
-                Rationale
+            </div>
+            <div className='form__field'>
+                <label htmlFor='requirement-rationale'>Rationale</label>
                 <InputText
                     id='requirement-rationale'
                     value={values.rationale}
                     onChange={(event) => setValues((current) => ({ ...current, rationale: event.currentTarget.value }))}
                 />
-            </label>
-            <label htmlFor='requirement-source'>
-                Source
+            </div>
+            <div className='form__field'>
+                <label htmlFor='requirement-source'>Source</label>
                 <InputText
                     id='requirement-source'
                     value={values.source}
                     onChange={(event) => setValues((current) => ({ ...current, source: event.currentTarget.value }))}
                 />
-            </label>
+            </div>
             <div className='form__actions'>
                 <Button
                     type='submit'

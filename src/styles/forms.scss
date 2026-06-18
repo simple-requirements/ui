@@ -3,26 +3,79 @@
 .form {
     padding: 24px;
     display: grid;
-    gap: 12px;
+    gap: 14px;
     align-content: start;
     max-width: 720px;
+    overflow: auto;
+
+    label,
+    legend {
+        font-weight: 700;
+    }
+
+    .p-inputtext,
+    .p-dropdown,
+    textarea,
+    input,
+    select {
+        width: 100%;
+    }
+
+    textarea {
+        min-height: 8rem;
+    }
+}
+
+.form__field {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+}
+
+.form__context,
+.form__derived-value {
+    border: 1px solid var(--border);
+    background: var(--surface-muted);
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+
+.form__fieldset {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    display: grid;
+    gap: 10px;
+}
+
+.form__radio-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 
     label {
-        display: grid;
-        gap: 5px;
+        font-weight: 400;
+        cursor: pointer;
     }
+}
 
-    input,
-    select,
-    textarea {
-        border: 1px solid var(--border);
-        border-radius: 6px;
-        padding: 8px;
+.form__actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+
+    .p-button {
+        min-height: 2.5rem;
+        padding-inline: 1rem;
     }
+}
 
-    button {
-        @include control-surface;
-
-        padding: 6px 10px;
-    }
+.form__error {
+    color: #b91c1c;
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 10px 12px;
 }

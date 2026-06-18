@@ -29,6 +29,7 @@ export function ActionBar({
     onLookup,
 }: ActionBarProps) {
     const [visibleKey, setVisibleKey] = useState('');
+    const [copyMessage, setCopyMessage] = useState<string | null>(null);
     const handleOpenInTab = () => {
         if (!selectedRequirement) return;
         dispatch({
@@ -37,8 +38,16 @@ export function ActionBar({
             visibleKey: selectedRequirement.visibleKey,
         });
     };
-    const handleCopyVisibleKey = () => {
-        if (selectedRequirement) void navigator.clipboard.writeText(selectedRequirement.visibleKey);
+    const handleCopyVisibleKey = async () => {
+        if (!selectedRequirement) return;
+        setCopyMessage(null);
+        try {
+            await navigator.clipboard.writeText(selectedRequirement.visibleKey);
+            setCopyMessage('Key copied.');
+        } catch (error) {
+            console.error('Copy key failed:', error);
+            setCopyMessage('Could not copy the key.');
+        }
     };
     const handleLookup = (event: SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -86,9 +95,15 @@ export function ActionBar({
                 :   null}
                 <Button
                     type='button'
-                    onClick={handleCopyVisibleKey}>
-                    Copy visible key
+                    onClick={() => void handleCopyVisibleKey()}>
+                    Copy key
                 </Button>
+                <span
+                    role='status'
+                    aria-live='polite'
+                    className='actionbar__feedback'>
+                    {copyMessage}
+                </span>
             </>
         );
     };
@@ -98,13 +113,14 @@ export function ActionBar({
             {!dedicated ?
                 <>
                     <form
+                        className='actionbar__lookup'
                         onSubmit={handleLookup}
-                        aria-label='Exact visible-key lookup'>
+                        aria-label='Exact key lookup'>
                         <InputText
                             value={visibleKey}
                             onChange={(event) => setVisibleKey(event.currentTarget.value)}
                             placeholder='FR-KEY-0001'
-                            aria-label='Visible key'
+                            aria-label='Requirement key'
                         />
                         <Button
                             type='submit'

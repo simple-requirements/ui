@@ -31,10 +31,10 @@ describe('backend integration helpers', () => {
     it('maps requirement responses and keeps absent project identity explicit', () => {
         expect(
             mapRequirement({
-                id: 'req-1',
+                id: '11111111-1111-4111-8111-111111111111',
                 visibleKey: 'FR-UX-0001',
                 type: 'FR',
-                categoryId: 'cat-1',
+                categoryId: '22222222-2222-4222-8222-222222222222',
                 sequenceNumber: 1,
                 status: 'draft',
                 description: 'Usable',
@@ -81,5 +81,88 @@ describe('backend integration helpers', () => {
         ]);
         saveWorkspaceState(state);
         expect(sessionStorage.getItem(WORKSPACE_STATE_KEY)).not.toContain('description');
+    });
+});
+
+import {
+    classifyDifference,
+    compareSources,
+    makeCurrentSource,
+    makeRevisionSource,
+    mapRequirementRevision,
+    shouldAcceptRevisionResponse,
+    validateComparisonSources,
+} from '@/features/requirements/revisions';
+
+describe('requirement revision helpers', () => {
+    const revisionDto = {
+        id: '11111111-1111-4111-8111-111111111111',
+        requirementId: '11111111-1111-4111-8111-111111111111',
+        visibleKey: 'FR-UX-0001',
+        type: 'FR' as const,
+        categoryId: '22222222-2222-4222-8222-222222222222',
+        sequenceNumber: 1,
+        status: 'draft' as const,
+        description: 'Old description',
+        priority: 'P2',
+        owner: null,
+        rationale: '',
+        source: 'Interview',
+        rejectionReason: null,
+        reviewer: null,
+        rejectedAt: null,
+        deletedAt: null,
+        approvedAt: null,
+        implementedAt: null,
+        obsolescenceReason: null,
+        obsoleteAt: null,
+        createdAt: '2026-01-01T00:00:00Z',
+        updatedAt: '2026-01-02T00:00:00Z',
+        revisionNumber: 2,
+        requirementCreatedAt: '2026-01-01T00:00:00Z',
+        requirementUpdatedAt: '2026-01-02T00:00:00Z',
+    };
+
+    it('maps immutable revision snapshots and preserves null versus empty values', () => {
+        const revision = mapRequirementRevision(revisionDto);
+        expect(revision).toMatchObject({
+            requirementId: '11111111-1111-4111-8111-111111111111',
+            revisionNumber: 2,
+            readOnly: true,
+            owner: null,
+            rationale: '',
+        });
+    });
+
+    it('classifies unchanged, added, removed, changed, and null-versus-empty differences', () => {
+        expect(classifyDifference('P1', 'P1')).toBe('unchanged');
+        expect(classifyDifference(null, 'Alice')).toBe('added');
+        expect(classifyDifference('Alice', null)).toBe('removed');
+        expect(classifyDifference('P2', 'P1')).toBe('changed');
+        expect(classifyDifference(null, '')).toBe('added');
+    });
+
+    it('validates comparison sources and prevents same-source comparison', () => {
+        const revision = mapRequirementRevision(revisionDto);
+        expect(validateComparisonSources(makeRevisionSource(revision), makeRevisionSource(revision))).toBe(
+            'Select two different comparison sources.',
+        );
+        expect(validateComparisonSources(makeCurrentSource(revision), makeRevisionSource(revision))).toBeNull();
+    });
+
+    it('compares current and historical sources field by field', () => {
+        const revision = mapRequirementRevision(revisionDto);
+        const current = { ...revision, description: 'New description', owner: 'Alice', source: null };
+        const compared = compareSources(makeRevisionSource(revision), makeCurrentSource(current));
+        expect(compared.find((field) => field.field === 'description')?.difference).toBe('changed');
+        expect(compared.find((field) => field.field === 'owner')?.difference).toBe('added');
+        expect(compared.find((field) => field.field === 'source')?.difference).toBe('removed');
+    });
+
+    it('guards stale revision detail responses by requirement and selected revision', () => {
+        const revision = mapRequirementRevision(revisionDto);
+        expect(shouldAcceptRevisionResponse('11111111-1111-4111-8111-111111111111', 2, revision)).toBe(true);
+        expect(shouldAcceptRevisionResponse('33333333-3333-4333-8333-333333333333', 2, revision)).toBe(false);
+        expect(shouldAcceptRevisionResponse('11111111-1111-4111-8111-111111111111', 3, revision)).toBe(false);
     });
 });

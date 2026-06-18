@@ -11,3 +11,10 @@ export const requirementKeys = {
     detail: (requirementId: string) => ['requirements', 'detail', requirementId] as const,
     byVisibleKey: (visibleKey: string) => ['requirements', 'visible-key', visibleKey] as const,
 };
+
+export const requirementRevisionKeys = {
+    all: (requirementId: string) => ['requirements', requirementId, 'revisions'] as const,
+    list: (requirementId: string) => ['requirements', requirementId, 'revisions', 'list'] as const,
+    detail: (requirementId: string, revisionNumber: number) =>
+        ['requirements', requirementId, 'revisions', revisionNumber] as const,
+};

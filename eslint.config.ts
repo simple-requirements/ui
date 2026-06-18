@@ -19,7 +19,7 @@ const reactHooksRecommendedRules = reactHooks.configs.recommended.rules;
 
 export default defineConfig(
     includeIgnoreFile(gitignorePath),
-    { ignores: ['test/e2e/**', 'src/api/generated/**', 'src/stores/**', 'orval.config.ts'] },
+    { ignores: ['test/e2e/**', 'src/api/generated/**', 'orval.config.ts'] },
 
     js.configs.recommended,
 

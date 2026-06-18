@@ -1,4 +1,4 @@
-import { Store } from '@tanstack/react-store';
+import { createSimpleStore } from '@/stores/simpleStore';
 import type {
     CreateRequirementInput,
     DemoRequirement,
@@ -17,7 +17,7 @@ export interface RequirementsStoreState {
 
 /** Creates requirement data operations backed by a TanStack-style store and the replaceable demo repository boundary. */
 export function createRequirementsStore(requirementRepository: DemoRequirementRepository) {
-    const store = new Store<RequirementsStoreState>({
+    const store = createSimpleStore<RequirementsStoreState>({
         requirements: [],
         selectedRequirement: null,
         listLoading: false,

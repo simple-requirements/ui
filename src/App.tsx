@@ -1,21 +1,20 @@
 import 'primeicons/primeicons.css';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useReducer, useState } from 'react';
 import { ActionBar } from '@/components/ActionBar';
 import { AppTabBar } from '@/components/AppTabBar';
 import { RequirementsList } from '@/components/RequirementsList';
 import { Workspace } from '@/components/Workspace';
 import { mapApiError } from '@/api/errors/apiError';
-import { categoryKeys, projectKeys, requirementKeys } from '@/api/queryKeys';
-import { createCategory, listCategories } from '@/features/categories/api/categoriesApi';
-import { listProjects } from '@/features/projects/api/projectsApi';
-import {
-    getRequirement,
-    listRequirementsByProject,
-    lookupRequirementByVisibleKey,
-} from '@/features/requirements/api/requirementsApi';
 import { RequirementDetail } from '@/features/requirements/RequirementDetail';
 import { LoadingOverlay } from '@/layout/LoadingOverlay';
+import { useCategoriesQuery, useCreateCategoryMutation } from '@/utils/categoryQueries';
+import { useCreateProjectMutation, useProjectsQuery } from '@/utils/projectQueries';
+import {
+    useProjectRequirementsQuery,
+    useRequirementDetailQuery,
+    useRequirementLookupMutation,
+} from '@/utils/requirementQueries';
 import { loadWorkspaceState, saveWorkspaceState } from '@/state/sessionPersistence';
 import { workspaceReducer } from '@/state/workspaceReducer';
 
@@ -32,47 +31,15 @@ export default function App() {
 
     useEffect(() => saveWorkspaceState(workspaceState), [workspaceState]);
 
-    const projectsQuery = useQuery({
-        queryKey: projectKeys.all,
-        queryFn: ({ signal }) => listProjects({ signal }),
-        retry: false,
-    });
-    const categoriesQuery = useQuery({
-        queryKey: categoryKeys.all,
-        queryFn: ({ signal }) => listCategories({ signal }),
-        retry: false,
-    });
-    const requirementsQuery = useQuery({
-        queryKey:
-            workspaceState.activeProjectId ?
-                requirementKeys.list(workspaceState.activeProjectId)
-            :   requirementKeys.list('none'),
-        queryFn: ({ signal }) => listRequirementsByProject(workspaceState.activeProjectId ?? '', { signal }),
-        enabled: Boolean(workspaceState.activeProjectId),
-        retry: false,
-    });
-    const detailQuery = useQuery({
-        queryKey:
-            workspaceState.selectedRequirementId ?
-                requirementKeys.detail(workspaceState.selectedRequirementId)
-            :   requirementKeys.detail('none'),
-        queryFn: ({ signal }) => getRequirement(workspaceState.selectedRequirementId ?? '', { signal }),
-        enabled: Boolean(workspaceState.selectedRequirementId),
-        retry: false,
-    });
+    const projectsQuery = useProjectsQuery();
+    const categoriesQuery = useCategoriesQuery();
+    const requirementsQuery = useProjectRequirementsQuery(workspaceState.activeProjectId);
+    const detailQuery = useRequirementDetailQuery(workspaceState.selectedRequirementId);
 
     const activeRequirementTab = workspaceState.openRequirementTabs.find(
         (tab) => tab.id === workspaceState.activeAppTabId,
     );
-    const tabDetailQuery = useQuery({
-        queryKey:
-            activeRequirementTab ?
-                requirementKeys.detail(activeRequirementTab.requirementId)
-            :   requirementKeys.detail('none'),
-        queryFn: ({ signal }) => getRequirement(activeRequirementTab?.requirementId ?? '', { signal }),
-        enabled: Boolean(activeRequirementTab),
-        retry: false,
-    });
+    const tabDetailQuery = useRequirementDetailQuery(activeRequirementTab?.requirementId);
 
     useEffect(() => {
         if (!projectsQuery.data || workspaceState.activeProjectId) return;
@@ -96,40 +63,28 @@ export default function App() {
         }
     }, [requirementsQuery.data, workspaceState.selectedRequirementId]);
 
-    const createProjectMutation = useMutation({
-        mutationFn: () =>
-            Promise.reject(new Error('Backend contract gap: openapi/backend-api.json does not expose POST /projects.')),
-        onSuccess: async () => queryClient.invalidateQueries({ queryKey: projectKeys.all }),
-    });
+    const createProjectMutation = useCreateProjectMutation(queryClient);
+    const createCategoryMutation = useCreateCategoryMutation(queryClient, () =>
+        dispatch({ type: 'setMode', mode: 'workspace' }),
+    );
+    const lookupMutation = useRequirementLookupMutation();
 
-    const createCategoryMutation = useMutation({
-        mutationFn: (formData: FormData) =>
-            createCategory({
-                name: formValue(formData, 'name'),
-                key: formValue(formData, 'key'),
-                type: formValue(formData, 'type') === 'NFR' ? 'NFR' : 'FR',
-            }),
-        onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: categoryKeys.all });
-            dispatch({ type: 'setMode', mode: 'workspace' });
-        },
-    });
+    useEffect(() => {
+        if (!lookupMutation.isSuccess) return;
+        const requirement = lookupMutation.data;
+        if (requirement.projectId && requirement.projectId !== workspaceState.activeProjectId) {
+            setLookupMessage(
+                `Requirement ${requirement.visibleKey} belongs to project ${requirement.projectId}. Switch projects explicitly before opening it.`,
+            );
+            return;
+        }
+        dispatch({ type: 'selectRequirement', requirementId: requirement.id });
+        setLookupMessage(`Selected ${requirement.visibleKey}.`);
+    }, [lookupMutation.isSuccess, lookupMutation.data, workspaceState.activeProjectId]);
 
-    const lookupMutation = useMutation({
-        mutationFn: (visibleKey: string) => lookupRequirementByVisibleKey(visibleKey.trim()),
-        onMutate: () => setLookupMessage(null),
-        onSuccess: (requirement) => {
-            if (requirement.projectId && requirement.projectId !== workspaceState.activeProjectId) {
-                setLookupMessage(
-                    `Requirement ${requirement.visibleKey} belongs to project ${requirement.projectId}. Switch projects explicitly before opening it.`,
-                );
-                return;
-            }
-            dispatch({ type: 'selectRequirement', requirementId: requirement.id });
-            setLookupMessage(`Selected ${requirement.visibleKey}.`);
-        },
-        onError: (error) => setLookupMessage(mapApiError(error).message),
-    });
+    useEffect(() => {
+        if (lookupMutation.isError) setLookupMessage(mapApiError(lookupMutation.error).message);
+    }, [lookupMutation.isError, lookupMutation.error]);
 
     const projects = projectsQuery.data ?? [];
     const activeProjectKnown =
@@ -166,7 +121,10 @@ export default function App() {
                     selectedRequirement={detailQuery.data ?? null}
                     lookupMessage={lookupMessage}
                     lookupPending={lookupMutation.isPending}
-                    onLookup={(visibleKey) => lookupMutation.mutate(visibleKey)}
+                    onLookup={(visibleKey) => {
+                        setLookupMessage(null);
+                        lookupMutation.mutate(visibleKey);
+                    }}
                     dispatch={dispatch}
                 />
             }
@@ -174,7 +132,13 @@ export default function App() {
             onCreateProject={() => createProjectMutation.mutate()}
             createProjectError={createProjectMutation.error ? mapApiError(createProjectMutation.error).message : null}
             createProjectPending={createProjectMutation.isPending}
-            onCreateCategory={(formData) => createCategoryMutation.mutate(formData)}
+            onCreateCategory={(formData) =>
+                createCategoryMutation.mutate({
+                    name: formValue(formData, 'name'),
+                    key: formValue(formData, 'key'),
+                    type: formValue(formData, 'type') === 'NFR' ? 'NFR' : 'FR',
+                })
+            }
             createCategoryError={
                 createCategoryMutation.error ? mapApiError(createCategoryMutation.error).message : null
             }

@@ -1,4 +1,4 @@
-import { Store } from '@tanstack/react-store';
+import { createSimpleStore } from '@/stores/simpleStore';
 import type { CreateProjectInput, DemoProjectRepository, ProjectSummary } from '@/demo/demoTypes';
 
 /** Snapshot shape for project store subscriptions. */
@@ -10,7 +10,7 @@ export interface ProjectsStoreState {
 
 /** Creates project data operations backed by a TanStack-style store and the replaceable demo repository boundary. */
 export function createProjectsStore(projectRepository: DemoProjectRepository) {
-    const store = new Store<ProjectsStoreState>({ projects: [], loading: false, error: null });
+    const store = createSimpleStore<ProjectsStoreState>({ projects: [], loading: false, error: null });
 
     return {
         store,

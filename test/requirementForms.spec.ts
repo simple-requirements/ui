@@ -11,6 +11,7 @@ import {
 import type { Category, RequirementView } from '@/types/domain';
 import { deriveProjectAvailability } from '@/features/projects/projectAvailability';
 import { mapRevisionHistoryError } from '@/api/errors/userSafeError';
+import { ProjectCreationUnavailableError } from '@/utils/projectQueries';
 
 const requirement: RequirementView = {
     id: '11111111-1111-4111-8111-111111111111',
@@ -137,5 +138,14 @@ describe('user-safe error mapping', () => {
         expect(mapped.message).toBe('Revision history is currently unavailable. Please try again later.');
         expect(mapped.message).not.toContain('VITE_API_BASE_URL');
         expect(mapped.retryable).toBe(false);
+    });
+});
+
+describe('project creation error safety', () => {
+    it('uses a user-safe message for the missing backend project creation contract', () => {
+        const error = new ProjectCreationUnavailableError();
+        expect(error.message).toBe('Project creation is currently unavailable.');
+        expect(error.message).not.toContain('openapi/backend-api.json');
+        expect(error.message).not.toContain('POST /projects');
     });
 });

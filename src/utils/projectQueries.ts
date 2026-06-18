@@ -23,11 +23,20 @@ export function useProjectsQuery() {
     return { ...query, data: data ?? [] };
 }
 
+export class ProjectCreationUnavailableError extends Error {
+    constructor() {
+        super('Project creation is currently unavailable.');
+        this.name = 'ProjectCreationUnavailableError';
+    }
+}
+
 /** Creates a project through the backend when the OpenAPI project contract is available. */
 export function useCreateProjectMutation(queryClient: QueryClient) {
     return useMutation({
-        mutationFn: () =>
-            Promise.reject(new Error('Backend contract gap: openapi/backend-api.json does not expose POST /projects.')),
+        mutationFn: () => {
+            console.error('Backend contract gap: the OpenAPI contract does not expose POST /projects.');
+            return Promise.reject(new ProjectCreationUnavailableError());
+        },
         onSuccess: async () => queryClient.invalidateQueries({ queryKey: projectKeys.all }),
     });
 }

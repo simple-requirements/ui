@@ -1,13 +1,12 @@
 import { act } from 'react';
 import type React from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { readFileSync } from 'node:fs';
 import { describe, expect, it, vi, afterEach } from 'vitest';
 import { ActionBar } from '@/components/ActionBar';
 import { AppTabBar } from '@/components/AppTabBar';
 import { NewCategoryForm } from '@/components/NewCategoryForm';
 import { RequirementForm } from '@/components/RequirementForm';
-import { ProjectSidebar } from '@/components/ProjectSidebar';
+import { NewProjectForm } from '@/components/NewProjectForm';
 import type { Category, ProjectSummary, RequirementView } from '@/types/domain';
 
 let root: Root | null = null;
@@ -71,26 +70,26 @@ describe('workspace UX regressions', () => {
         expect(host.textContent).toContain('Could not copy the key.');
     });
 
-    it('keeps the New Project button centered without offsets and lets right-pane forms span the pane', () => {
+    it('renders New Project form with safe errors and primary/secondary actions', () => {
         const host = render(
-            <ProjectSidebar
-                projects={[project]}
-                activeProjectId='project-beta'
-                dispatch={() => undefined}
+            <NewProjectForm
+                error='Project creation is currently unavailable.'
+                pending={false}
+                onSubmit={() => undefined}
+                onCancel={() => undefined}
             />,
         );
-        expect(host.querySelector('button.new-project')?.textContent).toContain('New Project');
-
-        const sidebarStyles = readFileSync('src/styles/sidebar.scss', 'utf8');
-        expect(sidebarStyles).toContain('.new-project.p-button');
-        expect(sidebarStyles).toContain('align-items: center;');
-        expect(sidebarStyles).toContain('justify-content: center;');
-        expect(sidebarStyles).not.toMatch(/translateY|top:\s*-|margin-top:\s*-/);
-
-        const formStyles = readFileSync('src/styles/forms.scss', 'utf8');
-        expect(formStyles).toContain('.right-pane > .form');
-        expect(formStyles).toContain('grid-row: 1 / -1;');
-        expect(formStyles).toContain('min-height: 0;');
+        expect(host.querySelector('label[for="project-name"]')?.textContent).toBe('Project name');
+        expect(host.querySelector('#project-form-error')?.textContent).toBe(
+            'Project creation is currently unavailable.',
+        );
+        expect(host.querySelector('#project-form-error')?.getAttribute('role')).toBe('alert');
+        const create = Array.from(host.querySelectorAll('button')).find((button) => button.textContent === 'Create');
+        const cancel = Array.from(host.querySelectorAll('button')).find((button) => button.textContent === 'Cancel');
+        expect(create?.getAttribute('type')).toBe('submit');
+        expect(cancel?.className).toContain('p-button-outlined');
+        expect(host.textContent).not.toContain('openapi/backend-api.json');
+        expect(host.textContent).not.toContain('POST /projects');
     });
 
     it('renders accessible lookup, form fields, radio group, and tab close controls', () => {

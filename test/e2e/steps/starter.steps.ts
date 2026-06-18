@@ -79,3 +79,53 @@ Then('the complete New Requirement form is visible without pane-level scroll gli
     expect(descriptionBox.y).toBeGreaterThan(categoryBox.y + categoryBox.height);
     expect(actionsBox.y).toBeGreaterThan(descriptionBox.y + descriptionBox.height);
 });
+
+When('I open a new project form', async ({ page }) => {
+    await page.getByRole('button', { name: 'New Project' }).click();
+});
+
+Then('the New Project form matches the desktop snapshot', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const form = page.locator('form').filter({ has: page.getByRole('heading', { name: 'New Project' }) });
+    await expect(form.getByLabel('Project name')).toBeVisible();
+    await expect(form.getByRole('button', { name: 'Create' })).toBeVisible();
+    await expect(form.getByRole('button', { name: 'Cancel' })).toBeVisible();
+    await expect(form).toHaveScreenshot('new-project-form-desktop.png');
+});
+
+When('I submit the New Project form with {string}', async ({ page }, projectName: string) => {
+    const form = page.locator('form').filter({ has: page.getByRole('heading', { name: 'New Project' }) });
+    await form.getByLabel('Project name').fill(projectName);
+    await form.getByRole('button', { name: 'Create' }).click();
+});
+
+Then('project creation shows a safe unavailable error', async ({ page }) => {
+    const form = page.locator('form').filter({ has: page.getByRole('heading', { name: 'New Project' }) });
+    await expect(form.getByRole('alert')).toHaveText('Project creation is currently unavailable.');
+    await expect(form).not.toContainText('openapi/backend-api.json');
+    await expect(form).not.toContainText('POST /projects');
+});
+
+Then('the New Project error state matches the desktop snapshot', async ({ page }) => {
+    const form = page.locator('form').filter({ has: page.getByRole('heading', { name: 'New Project' }) });
+    await expect(form.getByRole('alert')).toBeVisible();
+    await expect(form).toHaveScreenshot('new-project-form-error-desktop.png');
+});
+
+When('I resize the viewport to {int} by {int}', async ({ page }, width: number, height: number) => {
+    await page.setViewportSize({ width, height });
+});
+
+Then('the New Project form matches the narrow snapshot', async ({ page }) => {
+    const form = page.locator('form').filter({ has: page.getByRole('heading', { name: 'New Project' }) });
+    await expect(form.getByLabel('Project name')).toBeVisible();
+    await expect(form.getByRole('button', { name: 'Create' })).toBeVisible();
+    await expect(form.getByRole('button', { name: 'Cancel' })).toBeVisible();
+    const formBox = await form.boundingBox();
+    const viewport = page.viewportSize();
+    expect(formBox).not.toBeNull();
+    expect(viewport).not.toBeNull();
+    if (!formBox || !viewport) return;
+    expect(formBox.x + formBox.width).toBeLessThanOrEqual(viewport.width);
+    await expect(form).toHaveScreenshot('new-project-form-narrow.png');
+});

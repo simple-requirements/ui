@@ -24,30 +24,37 @@ export function NewProjectForm({ error, pending, onSubmit, onCancel }: NewProjec
             onSubmit={handleSubmit}
             aria-describedby={error ? 'project-form-error' : undefined}>
             <h2>New Project</h2>
-            <label>
-                Project name
+            <div className='form__field'>
+                <label htmlFor='project-name'>Project name</label>
                 <InputText
+                    id='project-name'
                     name='name'
                     required
                 />
-            </label>
+            </div>
             {error ?
                 <p
                     id='project-form-error'
-                    className='form__error'>
+                    className='form__error'
+                    role='alert'>
                     {error}
                 </p>
             :   null}
-            <Button
-                type='submit'
-                label='Create'
-                disabled={pending}
-            />
-            <Button
-                type='button'
-                label='Cancel'
-                onClick={onCancel}
-            />
+            <div className='form__actions'>
+                <Button
+                    type='submit'
+                    label='Create'
+                    disabled={pending}
+                    loading={pending}
+                />
+                <Button
+                    type='button'
+                    label='Cancel'
+                    outlined
+                    onClick={onCancel}
+                    disabled={pending}
+                />
+            </div>
         </form>
     );
 }

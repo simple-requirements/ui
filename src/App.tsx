@@ -14,7 +14,7 @@ import { RequirementHistory } from '@/features/requirements/RequirementHistory';
 import { RequirementForm } from '@/components/RequirementForm';
 import { LoadingOverlay } from '@/layout/LoadingOverlay';
 import { useCategoriesQuery, useCreateCategoryMutation } from '@/utils/categoryQueries';
-import { useCreateProjectMutation, useProjectsQuery } from '@/utils/projectQueries';
+import { ProjectCreationUnavailableError, useCreateProjectMutation, useProjectsQuery } from '@/utils/projectQueries';
 import {
     useProjectRequirementsQuery,
     useRequirementDetailQuery,
@@ -178,7 +178,13 @@ export default function App() {
             }
             dispatch={dispatch}
             onCreateProject={() => createProjectMutation.mutate()}
-            createProjectError={createProjectMutation.error ? mapApiError(createProjectMutation.error).message : null}
+            createProjectError={
+                createProjectMutation.error instanceof ProjectCreationUnavailableError ?
+                    createProjectMutation.error.message
+                : createProjectMutation.error ?
+                    mapApiError(createProjectMutation.error).message
+                :   null
+            }
             createProjectPending={createProjectMutation.isPending}
             onCreateCategory={(formData) =>
                 createCategoryMutation.mutate({

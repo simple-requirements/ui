@@ -1,4 +1,4 @@
-import type { RequirementStatus } from '@/demo/demoTypes';
+import type { RequirementStatus } from '@/types/domain';
 /** Returns direct demo lifecycle actions that are valid for a requirement status. */
 export function lifecycleActions(status: RequirementStatus) {
     if (status === 'draft') return ['Edit', 'Approve', 'Reject'];

@@ -3,7 +3,7 @@ import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
-import type { Category } from '@/demo/demoTypes';
+import type { Category } from '@/types/domain';
 
 type RequirementFormProps = Readonly<{
     categories: readonly Category[];

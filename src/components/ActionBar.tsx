@@ -1,104 +1,92 @@
 import { Button } from 'primereact/button';
-import type { DemoRequirement } from '@/demo/demoTypes';
-import { lifecycleActions } from '@/features/requirements/requirementActions';
+import { InputText } from 'primereact/inputtext';
+import { useState, type SyntheticEvent } from 'react';
 import type { Action } from '@/state/workspaceReducer';
+import type { RequirementView } from '@/types/domain';
 
 type ActionBarProps = Readonly<{
     activeProjectId: string | null;
-    selectedRequirement: DemoRequirement | null;
+    selectedRequirement: RequirementView | null;
     dedicated?: boolean;
     dispatch: (action: Action) => void;
-    onTransition: (actionLabel: string) => void;
-    onDeleteDraft: () => void;
+    lookupMessage?: string | null;
+    lookupPending?: boolean;
+    onLookup?: (visibleKey: string) => void;
 }>;
 
-/** Renders context-sensitive requirement actions for workspace and dedicated requirement views. */
 export function ActionBar({
     activeProjectId,
     selectedRequirement,
     dedicated = false,
     dispatch,
-    onTransition,
-    onDeleteDraft,
+    lookupMessage,
+    lookupPending = false,
+    onLookup,
 }: ActionBarProps) {
-    const handleNewRequirement = () => dispatch({ type: 'setMode', mode: 'newRequirement' });
-
-    const handleOpenInTab = () => {
-        if (!selectedRequirement) {
-            return;
-        }
-
-        dispatch({
+    const [visibleKey, setVisibleKey] = useState('');
+    const handleOpenInTab = () =>
+        selectedRequirement
+        && dispatch({
             type: 'openRequirementTab',
             requirementId: selectedRequirement.id,
             visibleKey: selectedRequirement.visibleKey,
         });
+    const handleCopyVisibleKey = () =>
+        selectedRequirement && void navigator.clipboard.writeText(selectedRequirement.visibleKey);
+    const handleLookup = (event: SyntheticEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (visibleKey.trim()) onLookup?.(visibleKey);
     };
-
-    const handleCopyVisibleKey = () => {
-        if (selectedRequirement) {
-            void navigator.clipboard.writeText(selectedRequirement.visibleKey);
-        }
-    };
-
-    const renderOpenInTabButton = () => {
-        if (dedicated || !selectedRequirement) {
-            return null;
-        }
-
-        return (
-            <Button
-                type='button'
-                aria-label='Open in tab'
-                onClick={handleOpenInTab}>
-                Open in tab
-            </Button>
-        );
-    };
-
-    const renderRequirementActions = () => {
-        if (!selectedRequirement) {
-            return null;
-        }
-
-        return (
-            <>
-                <Button type='button'>History</Button>
-                {renderOpenInTabButton()}
-                {lifecycleActions(selectedRequirement.status).map((actionLabel) => (
+    return (
+        <div className='workspace-actionbar actionbar'>
+            {!dedicated ?
+                <form
+                    onSubmit={handleLookup}
+                    aria-label='Exact visible-key lookup'>
+                    <InputText
+                        value={visibleKey}
+                        onChange={(event) => setVisibleKey(event.currentTarget.value)}
+                        placeholder='FR-KEY-0001'
+                        aria-label='Visible key'
+                    />
                     <Button
-                        type='button'
-                        key={actionLabel}
-                        onClick={() => onTransition(actionLabel)}>
-                        {actionLabel}
+                        type='submit'
+                        disabled={!activeProjectId || lookupPending}>
+                        Find key
                     </Button>
-                ))}
+                    <span role='status'>{lookupMessage}</span>
+                </form>
+            :   null}
+            {!dedicated ?
+                <Button
+                    type='button'
+                    disabled
+                    tooltip='Requirement creation is not implemented in this package.'
+                    aria-describedby='new-requirement-unavailable'>
+                    New requirement
+                </Button>
+            :   null}
+            {!dedicated ?
+                <span
+                    id='new-requirement-unavailable'
+                    className='sr-only'>
+                    Requirement creation is not implemented in this package.
+                </span>
+            :   null}
+            {selectedRequirement && !dedicated ?
+                <Button
+                    type='button'
+                    onClick={handleOpenInTab}>
+                    Open in tab
+                </Button>
+            :   null}
+            {selectedRequirement ?
                 <Button
                     type='button'
                     onClick={handleCopyVisibleKey}>
                     Copy visible key
                 </Button>
-                {selectedRequirement.status === 'draft' ?
-                    <Button
-                        type='button'
-                        className='actionbar__button--danger danger'
-                        onClick={onDeleteDraft}>
-                        Delete draft
-                    </Button>
-                :   null}
-            </>
-        );
-    };
-
-    return (
-        <div className='workspace-actionbar actionbar'>
-            <Button
-                type='button'
-                onClick={handleNewRequirement}
-                disabled={!activeProjectId}>
-                New requirement
-            </Button>
-            {renderRequirementActions()}
+            :   null}
         </div>
     );
 }

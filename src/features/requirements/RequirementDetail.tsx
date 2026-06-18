@@ -1,6 +1,6 @@
-import type { DemoRequirement } from '@/demo/demoTypes';
+import type { RequirementView } from '@/types/domain';
 
-type RequirementDetailProps = Readonly<{ requirement: DemoRequirement }>;
+type RequirementDetailProps = Readonly<{ requirement: RequirementView }>;
 
 const displayOptionalValue = (value: string | null) => value ?? 'Not specified';
 

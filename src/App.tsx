@@ -1,213 +1,139 @@
 import 'primeicons/primeicons.css';
-import { Button } from 'primereact/button';
-import { useEffect, useMemo, useReducer, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useReducer, useState } from 'react';
 import { ActionBar } from '@/components/ActionBar';
 import { AppTabBar } from '@/components/AppTabBar';
 import { RequirementsList } from '@/components/RequirementsList';
 import { Workspace } from '@/components/Workspace';
-import { createDemoRepositories } from '@/demo/demoRepositories';
-import { createCategoriesStore } from '@/stores/categoriesStore';
-import { createProjectsStore } from '@/stores/projectsStore';
-import { createRequirementsStore } from '@/stores/requirementsStore';
-import type { Category, DemoRequirement, Priority, ProjectSummary } from '@/demo/demoTypes';
+import { mapApiError } from '@/api/errors/apiError';
+import { categoryKeys, projectKeys, requirementKeys } from '@/api/queryKeys';
+import { createCategory, listCategories } from '@/features/categories/api/categoriesApi';
+import { listProjects } from '@/features/projects/api/projectsApi';
+import {
+    getRequirement,
+    listRequirementsByProject,
+    lookupRequirementByVisibleKey,
+} from '@/features/requirements/api/requirementsApi';
 import { RequirementDetail } from '@/features/requirements/RequirementDetail';
 import { LoadingOverlay } from '@/layout/LoadingOverlay';
 import { loadWorkspaceState, saveWorkspaceState } from '@/state/sessionPersistence';
 import { workspaceReducer } from '@/state/workspaceReducer';
-
-const lifecycleTransitionByLabel: Record<string, DemoRequirement['status']> = {
-    'Approve': 'approved',
-    'Reject': 'rejected',
-    'Mark implemented': 'implemented',
-    'Mark obsolete': 'obsolete',
-};
 
 function formValue(formData: FormData, fieldName: string) {
     const value = formData.get(fieldName);
     return typeof value === 'string' ? value : '';
 }
 
-/** Coordinates demo repositories, workspace state, and top-level application layout. */
+/** Coordinates backend server state, workspace state, and top-level application layout. */
 export default function App() {
-    const demoRepository = useMemo(() => createDemoRepositories(), []);
-    const projectsStore = useMemo(() => createProjectsStore(demoRepository), [demoRepository]);
-    const requirementsStore = useMemo(() => createRequirementsStore(demoRepository), [demoRepository]);
-    const categoriesStore = useMemo(() => createCategoriesStore(demoRepository), [demoRepository]);
+    const queryClient = useQueryClient();
     const [workspaceState, dispatch] = useReducer(workspaceReducer, undefined, loadWorkspaceState);
-    const [bootstrapping, setBootstrapping] = useState(true);
-    const [projects, setProjects] = useState<ProjectSummary[]>([]);
-    const [requirements, setRequirements] = useState<DemoRequirement[]>([]);
-    const [selectedRequirement, setSelectedRequirement] = useState<DemoRequirement | null>(null);
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [rightPaneError, setRightPaneError] = useState<string | null>(null);
-    const [projectContentLoading, setProjectContentLoading] = useState(false);
-    const [requirementDetailLoading, setRequirementDetailLoading] = useState(false);
+    const [lookupMessage, setLookupMessage] = useState<string | null>(null);
 
     useEffect(() => saveWorkspaceState(workspaceState), [workspaceState]);
 
-    const loadProjects = async () => {
-        setBootstrapping(true);
-        setRightPaneError(null);
-        try {
-            const loadedProjects = await projectsStore.loadProjects();
-            setProjects(loadedProjects);
-            if (!workspaceState.activeProjectId && loadedProjects[0]) {
-                dispatch({ type: 'selectProject', projectId: loadedProjects[0].id });
-            }
-        } catch (error) {
-            setProjects([]);
-            setRightPaneError((error as Error).message);
-        } finally {
-            setBootstrapping(false);
-        }
-    };
-
-    useEffect(() => {
-        const bootstrapWorkspace = async () => {
-            await loadProjects();
-            const loadedCategories = await categoriesStore.loadCategories();
-            setCategories(loadedCategories);
-        };
-
-        void bootstrapWorkspace();
-    }, []);
-
-    useEffect(() => {
-        const loadProjectContent = async (activeProjectId: string) => {
-            setProjectContentLoading(true);
-            setRightPaneError(null);
-            try {
-                const loadedRequirements = await requirementsStore.loadRequirements(activeProjectId);
-                setRequirements([...loadedRequirements]);
-                const selectedRequirementId =
-                    (
-                        workspaceState.selectedRequirementId
-                        && loadedRequirements.some(
-                            (requirement) => requirement.id === workspaceState.selectedRequirementId,
-                        )
-                    ) ?
-                        workspaceState.selectedRequirementId
-                    :   (loadedRequirements[0]?.id ?? null);
-                dispatch({ type: 'selectRequirement', requirementId: selectedRequirementId });
-                history.replaceState(null, '', `/workspace/projects/${activeProjectId}/${workspaceState.activeModule}`);
-            } catch (error) {
-                setRequirements([]);
-                setRightPaneError((error as Error).message);
-            } finally {
-                setProjectContentLoading(false);
-            }
-        };
-
-        const activeProjectId = workspaceState.activeProjectId;
-        if (activeProjectId) {
-            void loadProjectContent(activeProjectId);
-        }
-    }, [workspaceState.activeProjectId, workspaceState.activeModule]);
-
-    useEffect(() => {
-        const loadRequirementDetail = async (requirementId: string) => {
-            setRequirementDetailLoading(true);
-            try {
-                const requirementDetail = await requirementsStore.loadRequirementDetail(requirementId);
-                setSelectedRequirement(requirementDetail);
-            } catch (error) {
-                setSelectedRequirement(null);
-                setRightPaneError((error as Error).message);
-            } finally {
-                setRequirementDetailLoading(false);
-            }
-        };
-
-        if (!workspaceState.selectedRequirementId) {
-            setSelectedRequirement(null);
-            return;
-        }
-
-        void loadRequirementDetail(workspaceState.selectedRequirementId);
-    }, [workspaceState.selectedRequirementId]);
+    const projectsQuery = useQuery({
+        queryKey: projectKeys.all,
+        queryFn: ({ signal }) => listProjects({ signal }),
+        retry: false,
+    });
+    const categoriesQuery = useQuery({
+        queryKey: categoryKeys.all,
+        queryFn: ({ signal }) => listCategories({ signal }),
+        retry: false,
+    });
+    const requirementsQuery = useQuery({
+        queryKey:
+            workspaceState.activeProjectId ?
+                requirementKeys.list(workspaceState.activeProjectId)
+            :   requirementKeys.list('none'),
+        queryFn: ({ signal }) => listRequirementsByProject(workspaceState.activeProjectId ?? '', { signal }),
+        enabled: Boolean(workspaceState.activeProjectId),
+        retry: false,
+    });
+    const detailQuery = useQuery({
+        queryKey:
+            workspaceState.selectedRequirementId ?
+                requirementKeys.detail(workspaceState.selectedRequirementId)
+            :   requirementKeys.detail('none'),
+        queryFn: ({ signal }) => getRequirement(workspaceState.selectedRequirementId ?? '', { signal }),
+        enabled: Boolean(workspaceState.selectedRequirementId),
+        retry: false,
+    });
 
     const activeRequirementTab = workspaceState.openRequirementTabs.find(
         (tab) => tab.id === workspaceState.activeAppTabId,
     );
+    const tabDetailQuery = useQuery({
+        queryKey:
+            activeRequirementTab ?
+                requirementKeys.detail(activeRequirementTab.requirementId)
+            :   requirementKeys.detail('none'),
+        queryFn: ({ signal }) => getRequirement(activeRequirementTab?.requirementId ?? '', { signal }),
+        enabled: Boolean(activeRequirementTab),
+        retry: false,
+    });
 
-    const refreshWorkspace = async () => {
-        await loadProjects();
-        const currentActiveProjectId = workspaceState.activeProjectId;
-        if (currentActiveProjectId) {
-            const loadedRequirements = await requirementsStore.loadRequirements(currentActiveProjectId);
-            setRequirements([...loadedRequirements]);
+    useEffect(() => {
+        if (!projectsQuery.data || workspaceState.activeProjectId) return;
+        if (projectsQuery.data[0]) dispatch({ type: 'selectProject', projectId: projectsQuery.data[0].id });
+    }, [projectsQuery.data, workspaceState.activeProjectId]);
+
+    useEffect(() => {
+        if (workspaceState.activeProjectId) {
+            history.replaceState(
+                null,
+                '',
+                `/workspace/projects/${workspaceState.activeProjectId}/${workspaceState.activeModule}`,
+            );
         }
-    };
+    }, [workspaceState.activeProjectId, workspaceState.activeModule]);
 
-    const createProject = async (formData: FormData) => {
-        const project = await projectsStore.createProject({ name: formValue(formData, 'name') });
-        setProjects(await projectsStore.loadProjects());
-        dispatch({ type: 'selectProject', projectId: project.id });
-    };
-
-    const createRequirement = async (formData: FormData) => {
-        if (!workspaceState.activeProjectId) {
-            return;
-        }
-
-        const requirement = await requirementsStore.createRequirement(workspaceState.activeProjectId, {
-            categoryKey: formValue(formData, 'category'),
-            description: formValue(formData, 'description'),
-            priority: formValue(formData, 'priority') as Priority,
-            owner: formValue(formData, 'owner') || null,
-            rationale: formValue(formData, 'rationale') || null,
-            source: formValue(formData, 'source') || null,
-        });
-        dispatch({ type: 'setMode', mode: 'workspace' });
-        dispatch({ type: 'selectRequirement', requirementId: requirement.id });
-        void refreshWorkspace();
-    };
-
-    const handleTransitionRequirement = async (actionLabel: string) => {
-        if (!selectedRequirement) {
-            return;
-        }
-
-        await requirementsStore.transitionRequirement(selectedRequirement.id, lifecycleTransitionByLabel[actionLabel]);
-        void refreshWorkspace();
-    };
-
-    const handleDeleteDraftRequirement = async () => {
-        if (selectedRequirement && confirm('Delete draft requirement?')) {
-            await requirementsStore.deleteDraftRequirement(selectedRequirement.id);
+    useEffect(() => {
+        if (!requirementsQuery.data || !workspaceState.selectedRequirementId) return;
+        if (!requirementsQuery.data.some((requirement) => requirement.id === workspaceState.selectedRequirementId)) {
             dispatch({ type: 'selectRequirement', requirementId: null });
-            void refreshWorkspace();
         }
-    };
+    }, [requirementsQuery.data, workspaceState.selectedRequirementId]);
 
-    const workspaceActionBar = (
-        <ActionBar
-            activeProjectId={workspaceState.activeProjectId}
-            selectedRequirement={selectedRequirement}
-            dispatch={dispatch}
-            onTransition={(actionLabel) => void handleTransitionRequirement(actionLabel)}
-            onDeleteDraft={() => void handleDeleteDraftRequirement()}
-        />
-    );
+    const createProjectMutation = useMutation({
+        mutationFn: () =>
+            Promise.reject(new Error('Backend contract gap: openapi/backend-api.json does not expose POST /projects.')),
+        onSuccess: async () => queryClient.invalidateQueries({ queryKey: projectKeys.all }),
+    });
 
-    const dedicatedActionBar = (
-        <ActionBar
-            activeProjectId={workspaceState.activeProjectId}
-            selectedRequirement={selectedRequirement}
-            dedicated
-            dispatch={dispatch}
-            onTransition={(actionLabel) => void handleTransitionRequirement(actionLabel)}
-            onDeleteDraft={() => void handleDeleteDraftRequirement()}
-        />
-    );
+    const createCategoryMutation = useMutation({
+        mutationFn: (formData: FormData) =>
+            createCategory({
+                name: formValue(formData, 'name'),
+                key: formValue(formData, 'key'),
+                type: formValue(formData, 'type') === 'NFR' ? 'NFR' : 'FR',
+            }),
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: categoryKeys.all });
+            dispatch({ type: 'setMode', mode: 'workspace' });
+        },
+    });
 
-    const requirementsList = (
-        <RequirementsList
-            requirements={requirements}
-            selectedRequirementId={workspaceState.selectedRequirementId}
-            dispatch={dispatch}
-        />
-    );
+    const lookupMutation = useMutation({
+        mutationFn: (visibleKey: string) => lookupRequirementByVisibleKey(visibleKey.trim()),
+        onMutate: () => setLookupMessage(null),
+        onSuccess: (requirement) => {
+            if (requirement.projectId && requirement.projectId !== workspaceState.activeProjectId) {
+                setLookupMessage(
+                    `Requirement ${requirement.visibleKey} belongs to project ${requirement.projectId}. Switch projects explicitly before opening it.`,
+                );
+                return;
+            }
+            dispatch({ type: 'selectRequirement', requirementId: requirement.id });
+            setLookupMessage(`Selected ${requirement.visibleKey}.`);
+        },
+        onError: (error) => setLookupMessage(mapApiError(error).message),
+    });
+
+    const projects = projectsQuery.data ?? [];
+    const activeProjectKnown =
+        !workspaceState.activeProjectId || projects.some((project) => project.id === workspaceState.activeProjectId);
 
     const workspace = (
         <Workspace
@@ -217,50 +143,65 @@ export default function App() {
             activeModule={workspaceState.activeModule}
             selectedRequirementId={workspaceState.selectedRequirementId}
             splitterPosition={workspaceState.splitterPosition}
-            categories={categories}
-            projectError={rightPaneError}
-            projectContentLoading={projectContentLoading}
-            requirementDetailLoading={requirementDetailLoading}
-            selectedRequirement={selectedRequirement}
-            requirementsList={requirementsList}
-            actionBar={workspaceActionBar}
+            categories={categoriesQuery.data ?? []}
+            projectError={
+                projectsQuery.isError ? mapApiError(projectsQuery.error).message
+                : !activeProjectKnown ?
+                    'The project in the URL is not available.'
+                :   null
+            }
+            projectContentLoading={requirementsQuery.isFetching || categoriesQuery.isFetching}
+            requirementDetailLoading={detailQuery.isFetching}
+            selectedRequirement={detailQuery.data ?? null}
+            requirementsList={
+                <RequirementsList
+                    requirements={requirementsQuery.data ?? []}
+                    selectedRequirementId={workspaceState.selectedRequirementId}
+                    dispatch={dispatch}
+                />
+            }
+            actionBar={
+                <ActionBar
+                    activeProjectId={workspaceState.activeProjectId}
+                    selectedRequirement={detailQuery.data ?? null}
+                    lookupMessage={lookupMessage}
+                    lookupPending={lookupMutation.isPending}
+                    onLookup={(visibleKey) => lookupMutation.mutate(visibleKey)}
+                    dispatch={dispatch}
+                />
+            }
             dispatch={dispatch}
-            onCreateProject={(formData) => void createProject(formData)}
-            onCreateRequirement={(formData) => void createRequirement(formData)}
-            onRetry={() => void refreshWorkspace()}
+            onCreateProject={() => createProjectMutation.mutate()}
+            createProjectError={createProjectMutation.error ? mapApiError(createProjectMutation.error).message : null}
+            createProjectPending={createProjectMutation.isPending}
+            onCreateCategory={(formData) => createCategoryMutation.mutate(formData)}
+            createCategoryError={
+                createCategoryMutation.error ? mapApiError(createCategoryMutation.error).message : null
+            }
+            createCategoryPending={createCategoryMutation.isPending}
+            onRetry={() => void projectsQuery.refetch()}
         />
     );
 
-    const renderDedicatedRequirementTab = () => {
-        if (rightPaneError) {
-            return (
-                <div className='workspace-state state'>
-                    {rightPaneError}
-                    <Button
-                        type='button'
-                        label='Retry'
-                        onClick={() => void refreshWorkspace()}
-                    />
-                </div>
-            );
-        }
-
-        if (selectedRequirement) {
-            return <RequirementDetail requirement={selectedRequirement} />;
-        }
-
-        return <div className='workspace-state state'>Loading requirement detail…</div>;
-    };
-
     const renderActivePanel = () => {
-        if (!activeRequirementTab) {
-            return workspace;
-        }
-
+        if (!activeRequirementTab) return workspace;
         return (
             <main className='workspace-dedicated dedicated'>
-                {dedicatedActionBar}
-                {renderDedicatedRequirementTab()}
+                <ActionBar
+                    activeProjectId={workspaceState.activeProjectId}
+                    selectedRequirement={tabDetailQuery.data ?? null}
+                    dedicated
+                    dispatch={dispatch}
+                />
+                {tabDetailQuery.isError ?
+                    <div className='workspace-state state'>{mapApiError(tabDetailQuery.error).message}</div>
+                :   null}
+                {tabDetailQuery.isFetching ?
+                    <div className='workspace-state state'>Loading requirement detail…</div>
+                :   null}
+                {tabDetailQuery.data ?
+                    <RequirementDetail requirement={tabDetailQuery.data} />
+                :   null}
             </main>
         );
     };
@@ -277,7 +218,7 @@ export default function App() {
                 role='tabpanel'>
                 {renderActivePanel()}
             </section>
-            {bootstrapping ?
+            {projectsQuery.isLoading ?
                 <LoadingOverlay />
             :   null}
         </div>

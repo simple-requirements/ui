@@ -3,13 +3,12 @@ import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
-import type { Category, DemoRequirement, ProjectSummary } from '@/demo/demoTypes';
+import type { Category, ProjectSummary, RequirementView } from '@/types/domain';
 import { RequirementDetail } from '@/features/requirements/RequirementDetail';
 import { VerticalSplitPane } from '@/layout/VerticalSplitPane';
 import type { Action, Module, WorkspaceState } from '@/state/workspaceReducer';
 import { ModuleNavigation } from '@/components/ModuleNavigation';
 import { ProjectSidebar } from '@/components/ProjectSidebar';
-import { RequirementForm } from '@/components/RequirementForm';
 
 type WorkspaceProps = Readonly<{
     projects: readonly ProjectSummary[];
@@ -22,16 +21,19 @@ type WorkspaceProps = Readonly<{
     projectError: string | null;
     projectContentLoading: boolean;
     requirementDetailLoading: boolean;
-    selectedRequirement: DemoRequirement | null;
+    selectedRequirement: RequirementView | null;
     requirementsList: ReactNode;
     actionBar: ReactNode;
     dispatch: (action: Action) => void;
     onCreateProject: (formData: FormData) => void;
-    onCreateRequirement: (formData: FormData) => void;
+    createProjectError: string | null;
+    createProjectPending: boolean;
+    onCreateCategory: (formData: FormData) => void;
+    createCategoryError: string | null;
+    createCategoryPending: boolean;
     onRetry: () => void;
 }>;
 
-/** Composes the project sidebar with the active right-pane workspace content. */
 export function Workspace({
     projects,
     activeProjectId,
@@ -48,14 +50,19 @@ export function Workspace({
     actionBar,
     dispatch,
     onCreateProject,
-    onCreateRequirement,
+    createProjectError,
+    createProjectPending,
+    onCreateCategory,
+    createCategoryError,
+    createCategoryPending,
     onRetry,
 }: WorkspaceProps) {
-    function handleCreateProjectSubmit(event: SyntheticEvent<HTMLFormElement>) {
-        event.preventDefault();
-        onCreateProject(new FormData(event.currentTarget));
+    function handleSubmit(callback: (formData: FormData) => void) {
+        return (event: SyntheticEvent<HTMLFormElement>) => {
+            event.preventDefault();
+            callback(new FormData(event.currentTarget));
+        };
     }
-
     return (
         <div className='workspace'>
             <ProjectSidebar
@@ -67,7 +74,8 @@ export function Workspace({
                 {mode === 'newProject' ?
                     <form
                         className='form'
-                        onSubmit={handleCreateProjectSubmit}>
+                        onSubmit={handleSubmit(onCreateProject)}
+                        aria-describedby={createProjectError ? 'project-form-error' : undefined}>
                         <h2>New Project</h2>
                         <label>
                             Project name
@@ -76,9 +84,17 @@ export function Workspace({
                                 required
                             />
                         </label>
+                        {createProjectError ?
+                            <p
+                                id='project-form-error'
+                                className='form__error'>
+                                {createProjectError}
+                            </p>
+                        :   null}
                         <Button
                             type='submit'
                             label='Create'
+                            disabled={createProjectPending}
                         />
                         <Button
                             type='button'
@@ -86,12 +102,62 @@ export function Workspace({
                             onClick={() => dispatch({ type: 'setMode', mode: 'workspace' })}
                         />
                     </form>
-                : mode === 'newRequirement' ?
-                    <RequirementForm
-                        categories={categories}
-                        onSubmit={onCreateRequirement}
-                        onCancel={() => dispatch({ type: 'setMode', mode: 'workspace' })}
-                    />
+                : mode === 'newCategory' ?
+                    <form
+                        className='form'
+                        onSubmit={handleSubmit(onCreateCategory)}
+                        aria-describedby={createCategoryError ? 'category-form-error' : undefined}>
+                        <h2>New Category</h2>
+                        <label>
+                            Category key
+                            <InputText
+                                name='key'
+                                required
+                                pattern='[A-Z][A-Z0-9_]*'
+                            />
+                        </label>
+                        <label>
+                            Category name
+                            <InputText
+                                name='name'
+                                required
+                            />
+                        </label>
+                        <label>
+                            <input
+                                type='radio'
+                                name='type'
+                                value='FR'
+                                defaultChecked
+                            />{' '}
+                            Functional (FR)
+                        </label>
+                        <label>
+                            <input
+                                type='radio'
+                                name='type'
+                                value='NFR'
+                            />{' '}
+                            Non-functional (NFR)
+                        </label>
+                        {createCategoryError ?
+                            <p
+                                id='category-form-error'
+                                className='form__error'>
+                                {createCategoryError}
+                            </p>
+                        :   null}
+                        <Button
+                            type='submit'
+                            label='Create'
+                            disabled={createCategoryPending}
+                        />
+                        <Button
+                            type='button'
+                            label='Cancel'
+                            onClick={() => dispatch({ type: 'setMode', mode: 'workspace' })}
+                        />
+                    </form>
                 :   <>
                         <ModuleNavigation
                             activeModule={activeModule}
@@ -99,7 +165,7 @@ export function Workspace({
                         />
                         {projectError ?
                             <section className='state'>
-                                <h2>Unable to load demo data</h2>
+                                <h2>Unable to load backend data</h2>
                                 <p>{projectError}</p>
                                 <Button
                                     type='button'
@@ -146,7 +212,7 @@ export function Workspace({
                         :   null}
                         {!projectError && !projectContentLoading && activeModule === 'requirements' ?
                             <>
-                                {actionBar}
+                                <>{actionBar}</>
                                 <VerticalSplitPane
                                     position={splitterPosition}
                                     onChange={(position) => dispatch({ type: 'setSplitter', position })}

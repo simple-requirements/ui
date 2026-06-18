@@ -1,11 +1,12 @@
-import { runOrvalFetch } from '@/api/client/config';
-import { getRequirementsId, getRequirementsKeyVisibleKey } from '@/api/generated/endpoints/requirements/requirements';
+import { apiFetch } from '@/api/client/config';
 import type { RequirementResponseDto } from '@/api/generated/models';
 import type { RequirementView } from '@/types/domain';
 
 function categoryKeyFromVisibleKey(visibleKey: string) {
     return visibleKey.split('-')[1] ?? '—';
 }
+
+/** Maps generated requirement DTOs into the read-only UI requirement view model. */
 export function mapRequirement(dto: RequirementResponseDto): RequirementView {
     const maybeProjectId = (dto as RequirementResponseDto & { projectId?: string }).projectId;
     return {
@@ -26,6 +27,8 @@ export function mapRequirement(dto: RequirementResponseDto): RequirementView {
         updatedAt: dto.updatedAt,
     };
 }
+
+/** Reports the current OpenAPI gap instead of faking project-scoped requirement lists. */
 export function listRequirementsByProject(projectId: string): Promise<RequirementView[]> {
     void projectId;
     return Promise.reject(
@@ -34,9 +37,23 @@ export function listRequirementsByProject(projectId: string): Promise<Requiremen
         ),
     );
 }
+
+/** Loads one requirement detail by immutable backend ID. */
 export async function getRequirement(requirementId: string, init?: RequestInit) {
-    return mapRequirement(await runOrvalFetch(() => getRequirementsId(requirementId, init)));
+    return mapRequirement(
+        await apiFetch<RequirementResponseDto>(`/requirements/${encodeURIComponent(requirementId)}`, {
+            ...init,
+            method: 'GET',
+        }),
+    );
 }
+
+/** Performs exact visible-key lookup with the backend endpoint from the OpenAPI contract. */
 export async function lookupRequirementByVisibleKey(visibleKey: string, init?: RequestInit) {
-    return mapRequirement(await runOrvalFetch(() => getRequirementsKeyVisibleKey(visibleKey, init)));
+    return mapRequirement(
+        await apiFetch<RequirementResponseDto>(`/requirements/key/${encodeURIComponent(visibleKey)}`, {
+            ...init,
+            method: 'GET',
+        }),
+    );
 }

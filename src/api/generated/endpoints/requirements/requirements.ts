@@ -5,1610 +5,1383 @@
  * HTTP API for the Requirements Management app.
  * OpenAPI spec version: 0.0.1
  */
-import { useMutation, useQuery } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQuery
+} from '@tanstack/react-query';
 import type {
-    DataTag,
-    DefinedInitialDataOptions,
-    DefinedUseQueryResult,
-    MutationFunction,
-    QueryClient,
-    QueryFunction,
-    QueryKey,
-    UndefinedInitialDataOptions,
-    UseMutationOptions,
-    UseMutationResult,
-    UseQueryOptions,
-    UseQueryResult,
+  DataTag,
+  DefinedInitialDataOptions,
+  DefinedUseQueryResult,
+  MutationFunction,
+  QueryClient,
+  QueryFunction,
+  QueryKey,
+  UndefinedInitialDataOptions,
+  UseMutationOptions,
+  UseMutationResult,
+  UseQueryOptions,
+  UseQueryResult
 } from '@tanstack/react-query';
 
 import type {
-    BadRequestResponse,
-    ConflictResponse,
-    CreateRequirementDto,
-    GetRequirementsParams,
-    MarkObsoleteRequirementDto,
-    NotFoundResponse,
-    RejectRequirementDto,
-    RequirementResponseDto,
-    RequirementRevisionResponseDto,
-    UpdateRequirementDto,
+  BadRequestResponse,
+  ConflictResponse,
+  CreateRequirementDto,
+  GetRequirementsParams,
+  MarkObsoleteRequirementDto,
+  NotFoundResponse,
+  RejectRequirementDto,
+  RequirementResponseDto,
+  RequirementRevisionResponseDto,
+  UpdateRequirementDto
 } from '../../models';
 
-type RequirementResponseDtoSuccess = RequirementResponseDto;
-type RequirementResponseDtoError = BadRequestResponse | NotFoundResponse | ConflictResponse;
-type RequirementResponseDtoListSuccess = RequirementResponseDto[];
-type RequirementResponseDtoListError = BadRequestResponse;
-type RequirementRevisionResponseDtoSuccess = RequirementRevisionResponseDto;
-type RequirementRevisionResponseDtoError = BadRequestResponse | NotFoundResponse;
-type RequirementRevisionResponseDtoListSuccess = RequirementRevisionResponseDto[];
-type RequirementRevisionResponseDtoListError = BadRequestResponse | NotFoundResponse;
+
+
+
 
 export const getPostRequirementsUrl = () => {
-    return `/requirements`;
-};
 
-/**
- * @summary Create a draft requirement and allocate its visible key.
- */
-export const postRequirements = async (
-    createRequirementDto: CreateRequirementDto,
-    options?: RequestInit,
-): Promise<RequirementResponseDtoSuccess> => {
-    const res = await fetch(getPostRequirementsUrl(), {
-        ...options,
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...options?.headers },
-        body: JSON.stringify(createRequirementDto),
-    });
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-    if (!res.ok) {
-        const err: globalThis.Error & { info?: RequirementResponseDtoError; status?: number } = new globalThis.Error();
-        const data: RequirementResponseDtoError = body ? JSON.parse(body) : {};
-        err.info = data;
-        err.status = res.status;
-        throw err;
-    }
-    const data: RequirementResponseDtoSuccess = body ? JSON.parse(body) : {};
-    return data;
-};
 
-export const getPostRequirementsQueryKey = (createRequirementDto?: CreateRequirementDto) => {
-    return ['POST', `/requirements`, createRequirementDto] as const;
-};
 
-export const getPostRequirementsQueryOptions = <
-    TData = Awaited<ReturnType<typeof postRequirements>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    createRequirementDto: CreateRequirementDto,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof postRequirements>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-) => {
-    const { query: queryOptions, fetch: fetchOptions } = options ?? {};
-
-    const queryKey = queryOptions?.queryKey ?? getPostRequirementsQueryKey(createRequirementDto);
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof postRequirements>>> = ({ signal }) =>
-        postRequirements(createRequirementDto, { signal, ...fetchOptions });
-
-    return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-        Awaited<ReturnType<typeof postRequirements>>,
-        TError,
-        TData
-    > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
-
-export type PostRequirementsQueryResult = NonNullable<Awaited<ReturnType<typeof postRequirements>>>;
-export type PostRequirementsQueryError = globalThis.Error & {
-    info?: BadRequestResponse | NotFoundResponse | ConflictResponse;
-    status?: number;
-};
-
-export function usePostRequirements<
-    TData = Awaited<ReturnType<typeof postRequirements>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    createRequirementDto: CreateRequirementDto,
-    options: {
-        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof postRequirements>>, TError, TData>>
-            & Pick<
-                DefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof postRequirements>>,
-                    TError,
-                    Awaited<ReturnType<typeof postRequirements>>
-                >,
-                'initialData'
-            >;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function usePostRequirements<
-    TData = Awaited<ReturnType<typeof postRequirements>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    createRequirementDto: CreateRequirementDto,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof postRequirements>>, TError, TData>>
-            & Pick<
-                UndefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof postRequirements>>,
-                    TError,
-                    Awaited<ReturnType<typeof postRequirements>>
-                >,
-                'initialData'
-            >;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function usePostRequirements<
-    TData = Awaited<ReturnType<typeof postRequirements>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    createRequirementDto: CreateRequirementDto,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof postRequirements>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Create a draft requirement and allocate its visible key.
- */
-
-export function usePostRequirements<
-    TData = Awaited<ReturnType<typeof postRequirements>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    createRequirementDto: CreateRequirementDto,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof postRequirements>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-    const queryOptions = getPostRequirementsQueryOptions(createRequirementDto, options);
-
-    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-        queryKey: DataTag<QueryKey, TData, TError>;
-    };
-
-    return { ...query, queryKey: queryOptions.queryKey };
+  return `/requirements`
 }
 
 /**
  * @summary Create a draft requirement and allocate its visible key.
  */
-export const prefetchPostRequirementsQuery = async <
-    TData = Awaited<ReturnType<typeof postRequirements>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    queryClient: QueryClient,
-    createRequirementDto: CreateRequirementDto,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof postRequirements>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-): Promise<QueryClient> => {
-    const queryOptions = getPostRequirementsQueryOptions(createRequirementDto, options);
+export const postRequirements = async (createRequirementDto: CreateRequirementDto, options?: RequestInit): Promise<RequirementResponseDtoSuccess> => {
 
-    await queryClient.prefetchQuery(queryOptions);
+  const res = await fetch(getPostRequirementsUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(createRequirementDto)
+  }
+)
 
-    return queryClient;
-};
 
-export const getGetRequirementsUrl = (params?: GetRequirementsParams) => {
-    const normalizedParams = new URLSearchParams();
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+  if (!res.ok) {
 
-    Object.entries(params || {}).forEach(([key, value]) => {
-        if (value !== undefined) {
-            normalizedParams.append(key, value === null ? 'null' : String(value));
+    const err: globalThis.Error & {info?: RequirementResponseDtoError, status?: number} = new globalThis.Error();
+    const data : RequirementResponseDtoError = body ? JSON.parse(body) : {}
+    err.info = data;
+    err.status = res.status;
+    throw err;
+  }
+  const data: RequirementResponseDtoSuccess = body ? JSON.parse(body) : {}
+  return data
+}
+
+
+
+
+
+export const getPostRequirementsQueryKey = (createRequirementDto?: CreateRequirementDto,) => {
+    return [
+    'POST', `/requirements`, createRequirementDto
+    ] as const;
+    }
+
+
+export const getPostRequirementsQueryOptions = <TData = Awaited<ReturnType<typeof postRequirements>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(createRequirementDto: CreateRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof postRequirements>>, TError, TData>>, fetch?: RequestInit}
+) => {
+
+const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getPostRequirementsQueryKey(createRequirementDto);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof postRequirements>>> = ({ signal }) => postRequirements(createRequirementDto, { signal, ...fetchOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof postRequirements>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type PostRequirementsQueryResult = NonNullable<Awaited<ReturnType<typeof postRequirements>>>
+export type PostRequirementsQueryError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }
+
+
+export function usePostRequirements<TData = Awaited<ReturnType<typeof postRequirements>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ createRequirementDto: CreateRequirementDto, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof postRequirements>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof postRequirements>>,
+          TError,
+          Awaited<ReturnType<typeof postRequirements>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePostRequirements<TData = Awaited<ReturnType<typeof postRequirements>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ createRequirementDto: CreateRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof postRequirements>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof postRequirements>>,
+          TError,
+          Awaited<ReturnType<typeof postRequirements>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePostRequirements<TData = Awaited<ReturnType<typeof postRequirements>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ createRequirementDto: CreateRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof postRequirements>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Create a draft requirement and allocate its visible key.
+ */
+
+export function usePostRequirements<TData = Awaited<ReturnType<typeof postRequirements>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ createRequirementDto: CreateRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof postRequirements>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getPostRequirementsQueryOptions(createRequirementDto,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Create a draft requirement and allocate its visible key.
+ */
+export const prefetchPostRequirementsQuery = async <TData = Awaited<ReturnType<typeof postRequirements>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ queryClient: QueryClient, createRequirementDto: CreateRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof postRequirements>>, TError, TData>>, fetch?: RequestInit}
+
+  ): Promise<QueryClient> => {
+
+  const queryOptions = getPostRequirementsQueryOptions(createRequirementDto,options)
+
+  await queryClient.prefetchQuery(queryOptions);
+
+  return queryClient;
+}
+
+
+
+
+
+export const getGetRequirementsUrl = (params?: GetRequirementsParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/requirements?${stringifiedParams}` : `/requirements`
+}
+
+/**
+ * @summary List requirements with optional filters.
+ */
+export const getRequirements = async (params?: GetRequirementsParams, options?: RequestInit): Promise<RequirementResponseDto[]Success> => {
+
+  const res = await fetch(getGetRequirementsUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+)
+
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+  if (!res.ok) {
+
+    const err: globalThis.Error & {info?: RequirementResponseDto[]Error, status?: number} = new globalThis.Error();
+    const data : RequirementResponseDto[]Error = body ? JSON.parse(body) : {}
+    err.info = data;
+    err.status = res.status;
+    throw err;
+  }
+  const data: RequirementResponseDto[]Success = body ? JSON.parse(body) : {}
+  return data
+}
+
+
+
+
+export const getGetRequirementsMutationOptions = <TError = globalThis.Error & { info?: BadRequestResponse; status?: number },
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getRequirements>>, TError,{params?: GetRequirementsParams}, TContext>, fetch?: RequestInit}
+): UseMutationOptions<Awaited<ReturnType<typeof getRequirements>>, TError,{params?: GetRequirementsParams}, TContext> => {
+
+const mutationKey = ['getRequirements'];
+const {mutation: mutationOptions, fetch: fetchOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, fetch: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getRequirements>>, {params?: GetRequirementsParams}> = (props) => {
+          const {params} = props ?? {};
+
+          return  getRequirements(params,fetchOptions)
         }
-    });
 
-    const stringifiedParams = normalizedParams.toString();
 
-    return stringifiedParams.length > 0 ? `/requirements?${stringifiedParams}` : `/requirements`;
-};
 
-/**
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GetRequirementsMutationResult = NonNullable<Awaited<ReturnType<typeof getRequirements>>>
+
+    export type GetRequirementsMutationError = globalThis.Error & { info?: BadRequestResponse; status?: number }
+
+    /**
  * @summary List requirements with optional filters.
  */
-export const getRequirements = async (
-    params?: GetRequirementsParams,
-    options?: RequestInit,
-): Promise<RequirementResponseDtoListSuccess> => {
-    const res = await fetch(getGetRequirementsUrl(params), { ...options, method: 'GET' });
-
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-    if (!res.ok) {
-        const err: globalThis.Error & { info?: RequirementResponseDtoListError; status?: number } =
-            new globalThis.Error();
-        const data: RequirementResponseDtoListError = body ? JSON.parse(body) : {};
-        err.info = data;
-        err.status = res.status;
-        throw err;
-    }
-    const data: RequirementResponseDtoListSuccess = body ? JSON.parse(body) : {};
-    return data;
-};
-
-export const getGetRequirementsMutationOptions = <
-    TError = globalThis.Error & { info?: BadRequestResponse; status?: number },
-    TContext = unknown,
->(options?: {
-    mutation?: UseMutationOptions<
+export const useGetRequirements = <TError = globalThis.Error & { info?: BadRequestResponse; status?: number },
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getRequirements>>, TError,{params?: GetRequirementsParams}, TContext>, fetch?: RequestInit}
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof getRequirements>>,
         TError,
-        { params?: GetRequirementsParams },
+        {params?: GetRequirementsParams},
         TContext
-    >;
-    fetch?: RequestInit;
-}): UseMutationOptions<
-    Awaited<ReturnType<typeof getRequirements>>,
-    TError,
-    { params?: GetRequirementsParams },
-    TContext
-> => {
-    const mutationKey = ['getRequirements'];
-    const { mutation: mutationOptions, fetch: fetchOptions } =
-        options ?
-            options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-                options
-            :   { ...options, mutation: { ...options.mutation, mutationKey } }
-        :   { mutation: { mutationKey }, fetch: undefined };
+      > => {
+      return useMutation(getGetRequirementsMutationOptions(options), queryClient);
+    }
+    export const getGetRequirementsKeyVisibleKeyUrl = (visibleKey: string,) => {
 
-    const mutationFn: MutationFunction<
-        Awaited<ReturnType<typeof getRequirements>>,
-        { params?: GetRequirementsParams }
-    > = (props) => {
-        const { params } = props ?? {};
 
-        return getRequirements(params, fetchOptions);
-    };
 
-    return { mutationFn, ...mutationOptions };
-};
 
-export type GetRequirementsMutationResult = NonNullable<Awaited<ReturnType<typeof getRequirements>>>;
-
-export type GetRequirementsMutationError = globalThis.Error & { info?: BadRequestResponse; status?: number };
-
-/**
- * @summary List requirements with optional filters.
- */
-export const useGetRequirements = <
-    TError = globalThis.Error & { info?: BadRequestResponse; status?: number },
-    TContext = unknown,
->(
-    options?: {
-        mutation?: UseMutationOptions<
-            Awaited<ReturnType<typeof getRequirements>>,
-            TError,
-            { params?: GetRequirementsParams },
-            TContext
-        >;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseMutationResult<
-    Awaited<ReturnType<typeof getRequirements>>,
-    TError,
-    { params?: GetRequirementsParams },
-    TContext
-> => {
-    return useMutation(getGetRequirementsMutationOptions(options), queryClient);
-};
-export const getGetRequirementsKeyVisibleKeyUrl = (visibleKey: string) => {
-    return `/requirements/key/${encodeURIComponent(String(visibleKey))}`;
-};
+  return `/requirements/key/${encodeURIComponent(String(visibleKey))}`
+}
 
 /**
  * @summary Retrieve a requirement by visible key.
  */
-export const getRequirementsKeyVisibleKey = async (
-    visibleKey: string,
-    options?: RequestInit,
-): Promise<RequirementResponseDtoSuccess> => {
-    const res = await fetch(getGetRequirementsKeyVisibleKeyUrl(visibleKey), { ...options, method: 'GET' });
+export const getRequirementsKeyVisibleKey = async (visibleKey: string, options?: RequestInit): Promise<RequirementResponseDtoSuccess> => {
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-    if (!res.ok) {
-        const err: globalThis.Error & { info?: RequirementResponseDtoError; status?: number } = new globalThis.Error();
-        const data: RequirementResponseDtoError = body ? JSON.parse(body) : {};
-        err.info = data;
-        err.status = res.status;
-        throw err;
-    }
-    const data: RequirementResponseDtoSuccess = body ? JSON.parse(body) : {};
-    return data;
-};
+  const res = await fetch(getGetRequirementsKeyVisibleKeyUrl(visibleKey),
+  {
+    ...options,
+    method: 'GET'
 
-export const getGetRequirementsKeyVisibleKeyMutationOptions = <
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
-    TContext = unknown,
->(options?: {
-    mutation?: UseMutationOptions<
-        Awaited<ReturnType<typeof getRequirementsKeyVisibleKey>>,
-        TError,
-        { visibleKey: string },
-        TContext
-    >;
-    fetch?: RequestInit;
-}): UseMutationOptions<
-    Awaited<ReturnType<typeof getRequirementsKeyVisibleKey>>,
-    TError,
-    { visibleKey: string },
-    TContext
-> => {
-    const mutationKey = ['getRequirementsKeyVisibleKey'];
-    const { mutation: mutationOptions, fetch: fetchOptions } =
-        options ?
-            options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-                options
-            :   { ...options, mutation: { ...options.mutation, mutationKey } }
-        :   { mutation: { mutationKey }, fetch: undefined };
 
-    const mutationFn: MutationFunction<
-        Awaited<ReturnType<typeof getRequirementsKeyVisibleKey>>,
-        { visibleKey: string }
-    > = (props) => {
-        const { visibleKey } = props ?? {};
+  }
+)
 
-        return getRequirementsKeyVisibleKey(visibleKey, fetchOptions);
-    };
 
-    return { mutationFn, ...mutationOptions };
-};
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+  if (!res.ok) {
 
-export type GetRequirementsKeyVisibleKeyMutationResult = NonNullable<
-    Awaited<ReturnType<typeof getRequirementsKeyVisibleKey>>
->;
+    const err: globalThis.Error & {info?: RequirementResponseDtoError, status?: number} = new globalThis.Error();
+    const data : RequirementResponseDtoError = body ? JSON.parse(body) : {}
+    err.info = data;
+    err.status = res.status;
+    throw err;
+  }
+  const data: RequirementResponseDtoSuccess = body ? JSON.parse(body) : {}
+  return data
+}
 
-export type GetRequirementsKeyVisibleKeyMutationError = globalThis.Error & {
-    info?: BadRequestResponse | NotFoundResponse;
-    status?: number;
-};
 
-/**
+
+
+export const getGetRequirementsKeyVisibleKeyMutationOptions = <TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getRequirementsKeyVisibleKey>>, TError,{visibleKey: string}, TContext>, fetch?: RequestInit}
+): UseMutationOptions<Awaited<ReturnType<typeof getRequirementsKeyVisibleKey>>, TError,{visibleKey: string}, TContext> => {
+
+const mutationKey = ['getRequirementsKeyVisibleKey'];
+const {mutation: mutationOptions, fetch: fetchOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, fetch: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getRequirementsKeyVisibleKey>>, {visibleKey: string}> = (props) => {
+          const {visibleKey} = props ?? {};
+
+          return  getRequirementsKeyVisibleKey(visibleKey,fetchOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GetRequirementsKeyVisibleKeyMutationResult = NonNullable<Awaited<ReturnType<typeof getRequirementsKeyVisibleKey>>>
+
+    export type GetRequirementsKeyVisibleKeyMutationError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number }
+
+    /**
  * @summary Retrieve a requirement by visible key.
  */
-export const useGetRequirementsKeyVisibleKey = <
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
-    TContext = unknown,
->(
-    options?: {
-        mutation?: UseMutationOptions<
-            Awaited<ReturnType<typeof getRequirementsKeyVisibleKey>>,
-            TError,
-            { visibleKey: string },
-            TContext
-        >;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseMutationResult<
-    Awaited<ReturnType<typeof getRequirementsKeyVisibleKey>>,
-    TError,
-    { visibleKey: string },
-    TContext
-> => {
-    return useMutation(getGetRequirementsKeyVisibleKeyMutationOptions(options), queryClient);
-};
-export const getGetRequirementsIdUrl = (id: string) => {
-    return `/requirements/${encodeURIComponent(String(id))}`;
-};
+export const useGetRequirementsKeyVisibleKey = <TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getRequirementsKeyVisibleKey>>, TError,{visibleKey: string}, TContext>, fetch?: RequestInit}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof getRequirementsKeyVisibleKey>>,
+        TError,
+        {visibleKey: string},
+        TContext
+      > => {
+      return useMutation(getGetRequirementsKeyVisibleKeyMutationOptions(options), queryClient);
+    }
+    export const getGetRequirementsIdUrl = (id: string,) => {
+
+
+
+
+  return `/requirements/${encodeURIComponent(String(id))}`
+}
 
 /**
  * @summary Retrieve a requirement by UUID.
  */
 export const getRequirementsId = async (id: string, options?: RequestInit): Promise<RequirementResponseDtoSuccess> => {
-    const res = await fetch(getGetRequirementsIdUrl(id), { ...options, method: 'GET' });
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-    if (!res.ok) {
-        const err: globalThis.Error & { info?: RequirementResponseDtoError; status?: number } = new globalThis.Error();
-        const data: RequirementResponseDtoError = body ? JSON.parse(body) : {};
-        err.info = data;
-        err.status = res.status;
-        throw err;
-    }
-    const data: RequirementResponseDtoSuccess = body ? JSON.parse(body) : {};
-    return data;
-};
+  const res = await fetch(getGetRequirementsIdUrl(id),
+  {
+    ...options,
+    method: 'GET'
 
-export const getGetRequirementsIdMutationOptions = <
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
-    TContext = unknown,
->(options?: {
-    mutation?: UseMutationOptions<Awaited<ReturnType<typeof getRequirementsId>>, TError, { id: string }, TContext>;
-    fetch?: RequestInit;
-}): UseMutationOptions<Awaited<ReturnType<typeof getRequirementsId>>, TError, { id: string }, TContext> => {
-    const mutationKey = ['getRequirementsId'];
-    const { mutation: mutationOptions, fetch: fetchOptions } =
-        options ?
-            options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-                options
-            :   { ...options, mutation: { ...options.mutation, mutationKey } }
-        :   { mutation: { mutationKey }, fetch: undefined };
 
-    const mutationFn: MutationFunction<Awaited<ReturnType<typeof getRequirementsId>>, { id: string }> = (props) => {
-        const { id } = props ?? {};
+  }
+)
 
-        return getRequirementsId(id, fetchOptions);
-    };
 
-    return { mutationFn, ...mutationOptions };
-};
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+  if (!res.ok) {
 
-export type GetRequirementsIdMutationResult = NonNullable<Awaited<ReturnType<typeof getRequirementsId>>>;
+    const err: globalThis.Error & {info?: RequirementResponseDtoError, status?: number} = new globalThis.Error();
+    const data : RequirementResponseDtoError = body ? JSON.parse(body) : {}
+    err.info = data;
+    err.status = res.status;
+    throw err;
+  }
+  const data: RequirementResponseDtoSuccess = body ? JSON.parse(body) : {}
+  return data
+}
 
-export type GetRequirementsIdMutationError = globalThis.Error & {
-    info?: BadRequestResponse | NotFoundResponse;
-    status?: number;
-};
 
-/**
+
+
+export const getGetRequirementsIdMutationOptions = <TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getRequirementsId>>, TError,{id: string}, TContext>, fetch?: RequestInit}
+): UseMutationOptions<Awaited<ReturnType<typeof getRequirementsId>>, TError,{id: string}, TContext> => {
+
+const mutationKey = ['getRequirementsId'];
+const {mutation: mutationOptions, fetch: fetchOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, fetch: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getRequirementsId>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  getRequirementsId(id,fetchOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GetRequirementsIdMutationResult = NonNullable<Awaited<ReturnType<typeof getRequirementsId>>>
+
+    export type GetRequirementsIdMutationError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number }
+
+    /**
  * @summary Retrieve a requirement by UUID.
  */
-export const useGetRequirementsId = <
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
-    TContext = unknown,
->(
-    options?: {
-        mutation?: UseMutationOptions<Awaited<ReturnType<typeof getRequirementsId>>, TError, { id: string }, TContext>;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseMutationResult<Awaited<ReturnType<typeof getRequirementsId>>, TError, { id: string }, TContext> => {
-    return useMutation(getGetRequirementsIdMutationOptions(options), queryClient);
-};
-export const getPatchRequirementsIdUrl = (id: string) => {
-    return `/requirements/${encodeURIComponent(String(id))}`;
-};
-
-/**
- * @summary Edit editable fields of a draft requirement.
- */
-export const patchRequirementsId = async (
-    id: string,
-    updateRequirementDto: UpdateRequirementDto,
-    options?: RequestInit,
-): Promise<RequirementResponseDtoSuccess> => {
-    const res = await fetch(getPatchRequirementsIdUrl(id), {
-        ...options,
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', ...options?.headers },
-        body: JSON.stringify(updateRequirementDto),
-    });
-
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-    if (!res.ok) {
-        const err: globalThis.Error & { info?: RequirementResponseDtoError; status?: number } = new globalThis.Error();
-        const data: RequirementResponseDtoError = body ? JSON.parse(body) : {};
-        err.info = data;
-        err.status = res.status;
-        throw err;
-    }
-    const data: RequirementResponseDtoSuccess = body ? JSON.parse(body) : {};
-    return data;
-};
-
-export const getPatchRequirementsIdQueryKey = (id: string, updateRequirementDto?: UpdateRequirementDto) => {
-    return ['PATCH', `/requirements/${id}`, updateRequirementDto] as const;
-};
-
-export const getPatchRequirementsIdQueryOptions = <
-    TData = Awaited<ReturnType<typeof patchRequirementsId>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    updateRequirementDto: UpdateRequirementDto,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsId>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-) => {
-    const { query: queryOptions, fetch: fetchOptions } = options ?? {};
-
-    const queryKey = queryOptions?.queryKey ?? getPatchRequirementsIdQueryKey(id, updateRequirementDto);
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof patchRequirementsId>>> = ({ signal }) =>
-        patchRequirementsId(id, updateRequirementDto, { signal, ...fetchOptions });
-
-    return { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions } as UseQueryOptions<
-        Awaited<ReturnType<typeof patchRequirementsId>>,
+export const useGetRequirementsId = <TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getRequirementsId>>, TError,{id: string}, TContext>, fetch?: RequestInit}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof getRequirementsId>>,
         TError,
-        TData
-    > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
+        {id: string},
+        TContext
+      > => {
+      return useMutation(getGetRequirementsIdMutationOptions(options), queryClient);
+    }
+    export const getPatchRequirementsIdUrl = (id: string,) => {
 
-export type PatchRequirementsIdQueryResult = NonNullable<Awaited<ReturnType<typeof patchRequirementsId>>>;
-export type PatchRequirementsIdQueryError = globalThis.Error & {
-    info?: BadRequestResponse | NotFoundResponse | ConflictResponse;
-    status?: number;
-};
 
-export function usePatchRequirementsId<
-    TData = Awaited<ReturnType<typeof patchRequirementsId>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    updateRequirementDto: UpdateRequirementDto,
-    options: {
-        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsId>>, TError, TData>>
-            & Pick<
-                DefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof patchRequirementsId>>,
-                    TError,
-                    Awaited<ReturnType<typeof patchRequirementsId>>
-                >,
-                'initialData'
-            >;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function usePatchRequirementsId<
-    TData = Awaited<ReturnType<typeof patchRequirementsId>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    updateRequirementDto: UpdateRequirementDto,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsId>>, TError, TData>>
-            & Pick<
-                UndefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof patchRequirementsId>>,
-                    TError,
-                    Awaited<ReturnType<typeof patchRequirementsId>>
-                >,
-                'initialData'
-            >;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function usePatchRequirementsId<
-    TData = Awaited<ReturnType<typeof patchRequirementsId>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    updateRequirementDto: UpdateRequirementDto,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsId>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Edit editable fields of a draft requirement.
- */
 
-export function usePatchRequirementsId<
-    TData = Awaited<ReturnType<typeof patchRequirementsId>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    updateRequirementDto: UpdateRequirementDto,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsId>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-    const queryOptions = getPatchRequirementsIdQueryOptions(id, updateRequirementDto, options);
 
-    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-        queryKey: DataTag<QueryKey, TData, TError>;
-    };
-
-    return { ...query, queryKey: queryOptions.queryKey };
+  return `/requirements/${encodeURIComponent(String(id))}`
 }
 
 /**
  * @summary Edit editable fields of a draft requirement.
  */
-export const prefetchPatchRequirementsIdQuery = async <
-    TData = Awaited<ReturnType<typeof patchRequirementsId>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    queryClient: QueryClient,
-    id: string,
-    updateRequirementDto: UpdateRequirementDto,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsId>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-): Promise<QueryClient> => {
-    const queryOptions = getPatchRequirementsIdQueryOptions(id, updateRequirementDto, options);
+export const patchRequirementsId = async (id: string,
+    updateRequirementDto: UpdateRequirementDto, options?: RequestInit): Promise<RequirementResponseDtoSuccess> => {
 
-    await queryClient.prefetchQuery(queryOptions);
+  const res = await fetch(getPatchRequirementsIdUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(updateRequirementDto)
+  }
+)
 
-    return queryClient;
-};
 
-export const getDeleteRequirementsIdUrl = (id: string) => {
-    return `/requirements/${encodeURIComponent(String(id))}`;
-};
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+  if (!res.ok) {
+
+    const err: globalThis.Error & {info?: RequirementResponseDtoError, status?: number} = new globalThis.Error();
+    const data : RequirementResponseDtoError = body ? JSON.parse(body) : {}
+    err.info = data;
+    err.status = res.status;
+    throw err;
+  }
+  const data: RequirementResponseDtoSuccess = body ? JSON.parse(body) : {}
+  return data
+}
+
+
+
+
+
+export const getPatchRequirementsIdQueryKey = (id: string,
+    updateRequirementDto?: UpdateRequirementDto,) => {
+    return [
+    'PATCH', `/requirements/${id}`, updateRequirementDto
+    ] as const;
+    }
+
+
+export const getPatchRequirementsIdQueryOptions = <TData = Awaited<ReturnType<typeof patchRequirementsId>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(id: string,
+    updateRequirementDto: UpdateRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsId>>, TError, TData>>, fetch?: RequestInit}
+) => {
+
+const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getPatchRequirementsIdQueryKey(id,updateRequirementDto);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof patchRequirementsId>>> = ({ signal }) => patchRequirementsId(id,updateRequirementDto, { signal, ...fetchOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type PatchRequirementsIdQueryResult = NonNullable<Awaited<ReturnType<typeof patchRequirementsId>>>
+export type PatchRequirementsIdQueryError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }
+
+
+export function usePatchRequirementsId<TData = Awaited<ReturnType<typeof patchRequirementsId>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string,
+    updateRequirementDto: UpdateRequirementDto, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof patchRequirementsId>>,
+          TError,
+          Awaited<ReturnType<typeof patchRequirementsId>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePatchRequirementsId<TData = Awaited<ReturnType<typeof patchRequirementsId>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string,
+    updateRequirementDto: UpdateRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof patchRequirementsId>>,
+          TError,
+          Awaited<ReturnType<typeof patchRequirementsId>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePatchRequirementsId<TData = Awaited<ReturnType<typeof patchRequirementsId>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string,
+    updateRequirementDto: UpdateRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsId>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Edit editable fields of a draft requirement.
+ */
+
+export function usePatchRequirementsId<TData = Awaited<ReturnType<typeof patchRequirementsId>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string,
+    updateRequirementDto: UpdateRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsId>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getPatchRequirementsIdQueryOptions(id,updateRequirementDto,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Edit editable fields of a draft requirement.
+ */
+export const prefetchPatchRequirementsIdQuery = async <TData = Awaited<ReturnType<typeof patchRequirementsId>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ queryClient: QueryClient, id: string,
+    updateRequirementDto: UpdateRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsId>>, TError, TData>>, fetch?: RequestInit}
+
+  ): Promise<QueryClient> => {
+
+  const queryOptions = getPatchRequirementsIdQueryOptions(id,updateRequirementDto,options)
+
+  await queryClient.prefetchQuery(queryOptions);
+
+  return queryClient;
+}
+
+
+
+
+
+export const getDeleteRequirementsIdUrl = (id: string,) => {
+
+
+
+
+  return `/requirements/${encodeURIComponent(String(id))}`
+}
 
 /**
  * @summary Soft-delete a draft requirement.
  */
 export const deleteRequirementsId = async (id: string, options?: RequestInit): Promise<voidSuccess> => {
-    const res = await fetch(getDeleteRequirementsIdUrl(id), { ...options, method: 'DELETE' });
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-    if (!res.ok) {
-        const err: globalThis.Error & { info?: voidError; status?: number } = new globalThis.Error();
-        const data: voidError = body ? JSON.parse(body) : {};
-        err.info = data;
-        err.status = res.status;
-        throw err;
+  const res = await fetch(getDeleteRequirementsIdUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+)
+
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+  if (!res.ok) {
+
+    const err: globalThis.Error & {info?: voidError, status?: number} = new globalThis.Error();
+    const data : voidError = body ? JSON.parse(body) : {}
+    err.info = data;
+    err.status = res.status;
+    throw err;
+  }
+  const data: voidSuccess = body ? JSON.parse(body) : undefined
+  return data
+}
+
+
+
+
+
+export const getDeleteRequirementsIdQueryKey = (id: string,) => {
+    return [
+    'DELETE', `/requirements/${id}`
+    ] as const;
     }
-    const data: voidSuccess = body ? JSON.parse(body) : undefined;
-    return data;
-};
 
-export const getDeleteRequirementsIdQueryKey = (id: string) => {
-    return ['DELETE', `/requirements/${id}`] as const;
-};
 
-export const getDeleteRequirementsIdQueryOptions = <
-    TData = Awaited<ReturnType<typeof deleteRequirementsId>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteRequirementsId>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
+export const getDeleteRequirementsIdQueryOptions = <TData = Awaited<ReturnType<typeof deleteRequirementsId>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteRequirementsId>>, TError, TData>>, fetch?: RequestInit}
 ) => {
-    const { query: queryOptions, fetch: fetchOptions } = options ?? {};
 
-    const queryKey = queryOptions?.queryKey ?? getDeleteRequirementsIdQueryKey(id);
+const {query: queryOptions, fetch: fetchOptions} = options ?? {};
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof deleteRequirementsId>>> = ({ signal }) =>
-        deleteRequirementsId(id, { signal, ...fetchOptions });
+  const queryKey =  queryOptions?.queryKey ?? getDeleteRequirementsIdQueryKey(id);
 
-    return { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions } as UseQueryOptions<
-        Awaited<ReturnType<typeof deleteRequirementsId>>,
-        TError,
-        TData
-    > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
 
-export type DeleteRequirementsIdQueryResult = NonNullable<Awaited<ReturnType<typeof deleteRequirementsId>>>;
-export type DeleteRequirementsIdQueryError = globalThis.Error & {
-    info?: BadRequestResponse | NotFoundResponse | ConflictResponse;
-    status?: number;
-};
 
-export function useDeleteRequirementsId<
-    TData = Awaited<ReturnType<typeof deleteRequirementsId>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    options: {
-        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteRequirementsId>>, TError, TData>>
-            & Pick<
-                DefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof deleteRequirementsId>>,
-                    TError,
-                    Awaited<ReturnType<typeof deleteRequirementsId>>
-                >,
-                'initialData'
-            >;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useDeleteRequirementsId<
-    TData = Awaited<ReturnType<typeof deleteRequirementsId>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteRequirementsId>>, TError, TData>>
-            & Pick<
-                UndefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof deleteRequirementsId>>,
-                    TError,
-                    Awaited<ReturnType<typeof deleteRequirementsId>>
-                >,
-                'initialData'
-            >;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useDeleteRequirementsId<
-    TData = Awaited<ReturnType<typeof deleteRequirementsId>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteRequirementsId>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof deleteRequirementsId>>> = ({ signal }) => deleteRequirementsId(id, { signal, ...fetchOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof deleteRequirementsId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type DeleteRequirementsIdQueryResult = NonNullable<Awaited<ReturnType<typeof deleteRequirementsId>>>
+export type DeleteRequirementsIdQueryError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }
+
+
+export function useDeleteRequirementsId<TData = Awaited<ReturnType<typeof deleteRequirementsId>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteRequirementsId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof deleteRequirementsId>>,
+          TError,
+          Awaited<ReturnType<typeof deleteRequirementsId>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useDeleteRequirementsId<TData = Awaited<ReturnType<typeof deleteRequirementsId>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteRequirementsId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof deleteRequirementsId>>,
+          TError,
+          Awaited<ReturnType<typeof deleteRequirementsId>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useDeleteRequirementsId<TData = Awaited<ReturnType<typeof deleteRequirementsId>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteRequirementsId>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Soft-delete a draft requirement.
  */
 
-export function useDeleteRequirementsId<
-    TData = Awaited<ReturnType<typeof deleteRequirementsId>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteRequirementsId>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-    const queryOptions = getDeleteRequirementsIdQueryOptions(id, options);
+export function useDeleteRequirementsId<TData = Awaited<ReturnType<typeof deleteRequirementsId>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteRequirementsId>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-        queryKey: DataTag<QueryKey, TData, TError>;
-    };
+  const queryOptions = getDeleteRequirementsIdQueryOptions(id,options)
 
-    return { ...query, queryKey: queryOptions.queryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
 }
 
 /**
  * @summary Soft-delete a draft requirement.
  */
-export const prefetchDeleteRequirementsIdQuery = async <
-    TData = Awaited<ReturnType<typeof deleteRequirementsId>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    queryClient: QueryClient,
-    id: string,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteRequirementsId>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-): Promise<QueryClient> => {
-    const queryOptions = getDeleteRequirementsIdQueryOptions(id, options);
+export const prefetchDeleteRequirementsIdQuery = async <TData = Awaited<ReturnType<typeof deleteRequirementsId>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ queryClient: QueryClient, id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteRequirementsId>>, TError, TData>>, fetch?: RequestInit}
 
-    await queryClient.prefetchQuery(queryOptions);
+  ): Promise<QueryClient> => {
 
-    return queryClient;
-};
+  const queryOptions = getDeleteRequirementsIdQueryOptions(id,options)
 
-export const getPatchRequirementsIdRejectUrl = (id: string) => {
-    return `/requirements/${encodeURIComponent(String(id))}/reject`;
-};
+  await queryClient.prefetchQuery(queryOptions);
 
-/**
- * @summary Reject a draft requirement.
- */
-export const patchRequirementsIdReject = async (
-    id: string,
-    rejectRequirementDto: RejectRequirementDto,
-    options?: RequestInit,
-): Promise<RequirementResponseDtoSuccess> => {
-    const res = await fetch(getPatchRequirementsIdRejectUrl(id), {
-        ...options,
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', ...options?.headers },
-        body: JSON.stringify(rejectRequirementDto),
-    });
+  return queryClient;
+}
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-    if (!res.ok) {
-        const err: globalThis.Error & { info?: RequirementResponseDtoError; status?: number } = new globalThis.Error();
-        const data: RequirementResponseDtoError = body ? JSON.parse(body) : {};
-        err.info = data;
-        err.status = res.status;
-        throw err;
-    }
-    const data: RequirementResponseDtoSuccess = body ? JSON.parse(body) : {};
-    return data;
-};
 
-export const getPatchRequirementsIdRejectQueryKey = (id: string, rejectRequirementDto?: RejectRequirementDto) => {
-    return ['PATCH', `/requirements/${id}/reject`, rejectRequirementDto] as const;
-};
 
-export const getPatchRequirementsIdRejectQueryOptions = <
-    TData = Awaited<ReturnType<typeof patchRequirementsIdReject>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    rejectRequirementDto: RejectRequirementDto,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdReject>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-) => {
-    const { query: queryOptions, fetch: fetchOptions } = options ?? {};
 
-    const queryKey = queryOptions?.queryKey ?? getPatchRequirementsIdRejectQueryKey(id, rejectRequirementDto);
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof patchRequirementsIdReject>>> = ({ signal }) =>
-        patchRequirementsIdReject(id, rejectRequirementDto, { signal, ...fetchOptions });
+export const getPatchRequirementsIdRejectUrl = (id: string,) => {
 
-    return { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions } as UseQueryOptions<
-        Awaited<ReturnType<typeof patchRequirementsIdReject>>,
-        TError,
-        TData
-    > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
 
-export type PatchRequirementsIdRejectQueryResult = NonNullable<Awaited<ReturnType<typeof patchRequirementsIdReject>>>;
-export type PatchRequirementsIdRejectQueryError = globalThis.Error & {
-    info?: BadRequestResponse | NotFoundResponse | ConflictResponse;
-    status?: number;
-};
 
-export function usePatchRequirementsIdReject<
-    TData = Awaited<ReturnType<typeof patchRequirementsIdReject>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    rejectRequirementDto: RejectRequirementDto,
-    options: {
-        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdReject>>, TError, TData>>
-            & Pick<
-                DefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof patchRequirementsIdReject>>,
-                    TError,
-                    Awaited<ReturnType<typeof patchRequirementsIdReject>>
-                >,
-                'initialData'
-            >;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function usePatchRequirementsIdReject<
-    TData = Awaited<ReturnType<typeof patchRequirementsIdReject>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    rejectRequirementDto: RejectRequirementDto,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdReject>>, TError, TData>>
-            & Pick<
-                UndefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof patchRequirementsIdReject>>,
-                    TError,
-                    Awaited<ReturnType<typeof patchRequirementsIdReject>>
-                >,
-                'initialData'
-            >;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function usePatchRequirementsIdReject<
-    TData = Awaited<ReturnType<typeof patchRequirementsIdReject>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    rejectRequirementDto: RejectRequirementDto,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdReject>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Reject a draft requirement.
- */
 
-export function usePatchRequirementsIdReject<
-    TData = Awaited<ReturnType<typeof patchRequirementsIdReject>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    rejectRequirementDto: RejectRequirementDto,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdReject>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-    const queryOptions = getPatchRequirementsIdRejectQueryOptions(id, rejectRequirementDto, options);
-
-    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-        queryKey: DataTag<QueryKey, TData, TError>;
-    };
-
-    return { ...query, queryKey: queryOptions.queryKey };
+  return `/requirements/${encodeURIComponent(String(id))}/reject`
 }
 
 /**
  * @summary Reject a draft requirement.
  */
-export const prefetchPatchRequirementsIdRejectQuery = async <
-    TData = Awaited<ReturnType<typeof patchRequirementsIdReject>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    queryClient: QueryClient,
-    id: string,
-    rejectRequirementDto: RejectRequirementDto,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdReject>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-): Promise<QueryClient> => {
-    const queryOptions = getPatchRequirementsIdRejectQueryOptions(id, rejectRequirementDto, options);
+export const patchRequirementsIdReject = async (id: string,
+    rejectRequirementDto: RejectRequirementDto, options?: RequestInit): Promise<RequirementResponseDtoSuccess> => {
 
-    await queryClient.prefetchQuery(queryOptions);
+  const res = await fetch(getPatchRequirementsIdRejectUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(rejectRequirementDto)
+  }
+)
 
-    return queryClient;
-};
 
-export const getPatchRequirementsIdApproveUrl = (id: string) => {
-    return `/requirements/${encodeURIComponent(String(id))}/approve`;
-};
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+  if (!res.ok) {
 
-/**
- * @summary Approve a draft requirement.
- */
-export const patchRequirementsIdApprove = async (
-    id: string,
-    options?: RequestInit,
-): Promise<RequirementResponseDtoSuccess> => {
-    const res = await fetch(getPatchRequirementsIdApproveUrl(id), { ...options, method: 'PATCH' });
+    const err: globalThis.Error & {info?: RequirementResponseDtoError, status?: number} = new globalThis.Error();
+    const data : RequirementResponseDtoError = body ? JSON.parse(body) : {}
+    err.info = data;
+    err.status = res.status;
+    throw err;
+  }
+  const data: RequirementResponseDtoSuccess = body ? JSON.parse(body) : {}
+  return data
+}
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-    if (!res.ok) {
-        const err: globalThis.Error & { info?: RequirementResponseDtoError; status?: number } = new globalThis.Error();
-        const data: RequirementResponseDtoError = body ? JSON.parse(body) : {};
-        err.info = data;
-        err.status = res.status;
-        throw err;
+
+
+
+
+export const getPatchRequirementsIdRejectQueryKey = (id: string,
+    rejectRequirementDto?: RejectRequirementDto,) => {
+    return [
+    'PATCH', `/requirements/${id}/reject`, rejectRequirementDto
+    ] as const;
     }
-    const data: RequirementResponseDtoSuccess = body ? JSON.parse(body) : {};
-    return data;
-};
 
-export const getPatchRequirementsIdApproveQueryKey = (id: string) => {
-    return ['PATCH', `/requirements/${id}/approve`] as const;
-};
 
-export const getPatchRequirementsIdApproveQueryOptions = <
-    TData = Awaited<ReturnType<typeof patchRequirementsIdApprove>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdApprove>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
+export const getPatchRequirementsIdRejectQueryOptions = <TData = Awaited<ReturnType<typeof patchRequirementsIdReject>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(id: string,
+    rejectRequirementDto: RejectRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdReject>>, TError, TData>>, fetch?: RequestInit}
 ) => {
-    const { query: queryOptions, fetch: fetchOptions } = options ?? {};
 
-    const queryKey = queryOptions?.queryKey ?? getPatchRequirementsIdApproveQueryKey(id);
+const {query: queryOptions, fetch: fetchOptions} = options ?? {};
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof patchRequirementsIdApprove>>> = ({ signal }) =>
-        patchRequirementsIdApprove(id, { signal, ...fetchOptions });
+  const queryKey =  queryOptions?.queryKey ?? getPatchRequirementsIdRejectQueryKey(id,rejectRequirementDto);
 
-    return { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions } as UseQueryOptions<
-        Awaited<ReturnType<typeof patchRequirementsIdApprove>>,
-        TError,
-        TData
-    > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
 
-export type PatchRequirementsIdApproveQueryResult = NonNullable<Awaited<ReturnType<typeof patchRequirementsIdApprove>>>;
-export type PatchRequirementsIdApproveQueryError = globalThis.Error & {
-    info?: BadRequestResponse | NotFoundResponse | ConflictResponse;
-    status?: number;
-};
 
-export function usePatchRequirementsIdApprove<
-    TData = Awaited<ReturnType<typeof patchRequirementsIdApprove>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    options: {
-        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdApprove>>, TError, TData>>
-            & Pick<
-                DefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof patchRequirementsIdApprove>>,
-                    TError,
-                    Awaited<ReturnType<typeof patchRequirementsIdApprove>>
-                >,
-                'initialData'
-            >;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function usePatchRequirementsIdApprove<
-    TData = Awaited<ReturnType<typeof patchRequirementsIdApprove>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdApprove>>, TError, TData>>
-            & Pick<
-                UndefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof patchRequirementsIdApprove>>,
-                    TError,
-                    Awaited<ReturnType<typeof patchRequirementsIdApprove>>
-                >,
-                'initialData'
-            >;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function usePatchRequirementsIdApprove<
-    TData = Awaited<ReturnType<typeof patchRequirementsIdApprove>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdApprove>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof patchRequirementsIdReject>>> = ({ signal }) => patchRequirementsIdReject(id,rejectRequirementDto, { signal, ...fetchOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdReject>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type PatchRequirementsIdRejectQueryResult = NonNullable<Awaited<ReturnType<typeof patchRequirementsIdReject>>>
+export type PatchRequirementsIdRejectQueryError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }
+
+
+export function usePatchRequirementsIdReject<TData = Awaited<ReturnType<typeof patchRequirementsIdReject>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string,
+    rejectRequirementDto: RejectRequirementDto, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdReject>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof patchRequirementsIdReject>>,
+          TError,
+          Awaited<ReturnType<typeof patchRequirementsIdReject>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePatchRequirementsIdReject<TData = Awaited<ReturnType<typeof patchRequirementsIdReject>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string,
+    rejectRequirementDto: RejectRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdReject>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof patchRequirementsIdReject>>,
+          TError,
+          Awaited<ReturnType<typeof patchRequirementsIdReject>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePatchRequirementsIdReject<TData = Awaited<ReturnType<typeof patchRequirementsIdReject>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string,
+    rejectRequirementDto: RejectRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdReject>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Approve a draft requirement.
+ * @summary Reject a draft requirement.
  */
 
-export function usePatchRequirementsIdApprove<
-    TData = Awaited<ReturnType<typeof patchRequirementsIdApprove>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdApprove>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-    const queryOptions = getPatchRequirementsIdApproveQueryOptions(id, options);
+export function usePatchRequirementsIdReject<TData = Awaited<ReturnType<typeof patchRequirementsIdReject>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string,
+    rejectRequirementDto: RejectRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdReject>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-        queryKey: DataTag<QueryKey, TData, TError>;
-    };
+  const queryOptions = getPatchRequirementsIdRejectQueryOptions(id,rejectRequirementDto,options)
 
-    return { ...query, queryKey: queryOptions.queryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Reject a draft requirement.
+ */
+export const prefetchPatchRequirementsIdRejectQuery = async <TData = Awaited<ReturnType<typeof patchRequirementsIdReject>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ queryClient: QueryClient, id: string,
+    rejectRequirementDto: RejectRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdReject>>, TError, TData>>, fetch?: RequestInit}
+
+  ): Promise<QueryClient> => {
+
+  const queryOptions = getPatchRequirementsIdRejectQueryOptions(id,rejectRequirementDto,options)
+
+  await queryClient.prefetchQuery(queryOptions);
+
+  return queryClient;
+}
+
+
+
+
+
+export const getPatchRequirementsIdApproveUrl = (id: string,) => {
+
+
+
+
+  return `/requirements/${encodeURIComponent(String(id))}/approve`
 }
 
 /**
  * @summary Approve a draft requirement.
  */
-export const prefetchPatchRequirementsIdApproveQuery = async <
-    TData = Awaited<ReturnType<typeof patchRequirementsIdApprove>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    queryClient: QueryClient,
-    id: string,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdApprove>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-): Promise<QueryClient> => {
-    const queryOptions = getPatchRequirementsIdApproveQueryOptions(id, options);
+export const patchRequirementsIdApprove = async (id: string, options?: RequestInit): Promise<RequirementResponseDtoSuccess> => {
 
-    await queryClient.prefetchQuery(queryOptions);
+  const res = await fetch(getPatchRequirementsIdApproveUrl(id),
+  {
+    ...options,
+    method: 'PATCH'
 
-    return queryClient;
-};
 
-export const getPatchRequirementsIdImplementedUrl = (id: string) => {
-    return `/requirements/${encodeURIComponent(String(id))}/implemented`;
-};
+  }
+)
 
-/**
- * @summary Mark an approved requirement implemented.
- */
-export const patchRequirementsIdImplemented = async (
-    id: string,
-    options?: RequestInit,
-): Promise<RequirementResponseDtoSuccess> => {
-    const res = await fetch(getPatchRequirementsIdImplementedUrl(id), { ...options, method: 'PATCH' });
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-    if (!res.ok) {
-        const err: globalThis.Error & { info?: RequirementResponseDtoError; status?: number } = new globalThis.Error();
-        const data: RequirementResponseDtoError = body ? JSON.parse(body) : {};
-        err.info = data;
-        err.status = res.status;
-        throw err;
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+  if (!res.ok) {
+
+    const err: globalThis.Error & {info?: RequirementResponseDtoError, status?: number} = new globalThis.Error();
+    const data : RequirementResponseDtoError = body ? JSON.parse(body) : {}
+    err.info = data;
+    err.status = res.status;
+    throw err;
+  }
+  const data: RequirementResponseDtoSuccess = body ? JSON.parse(body) : {}
+  return data
+}
+
+
+
+
+
+export const getPatchRequirementsIdApproveQueryKey = (id: string,) => {
+    return [
+    'PATCH', `/requirements/${id}/approve`
+    ] as const;
     }
-    const data: RequirementResponseDtoSuccess = body ? JSON.parse(body) : {};
-    return data;
-};
 
-export const getPatchRequirementsIdImplementedQueryKey = (id: string) => {
-    return ['PATCH', `/requirements/${id}/implemented`] as const;
-};
 
-export const getPatchRequirementsIdImplementedQueryOptions = <
-    TData = Awaited<ReturnType<typeof patchRequirementsIdImplemented>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdImplemented>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
+export const getPatchRequirementsIdApproveQueryOptions = <TData = Awaited<ReturnType<typeof patchRequirementsIdApprove>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdApprove>>, TError, TData>>, fetch?: RequestInit}
 ) => {
-    const { query: queryOptions, fetch: fetchOptions } = options ?? {};
 
-    const queryKey = queryOptions?.queryKey ?? getPatchRequirementsIdImplementedQueryKey(id);
+const {query: queryOptions, fetch: fetchOptions} = options ?? {};
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof patchRequirementsIdImplemented>>> = ({ signal }) =>
-        patchRequirementsIdImplemented(id, { signal, ...fetchOptions });
+  const queryKey =  queryOptions?.queryKey ?? getPatchRequirementsIdApproveQueryKey(id);
 
-    return { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions } as UseQueryOptions<
-        Awaited<ReturnType<typeof patchRequirementsIdImplemented>>,
-        TError,
-        TData
-    > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
 
-export type PatchRequirementsIdImplementedQueryResult = NonNullable<
-    Awaited<ReturnType<typeof patchRequirementsIdImplemented>>
->;
-export type PatchRequirementsIdImplementedQueryError = globalThis.Error & {
-    info?: BadRequestResponse | NotFoundResponse | ConflictResponse;
-    status?: number;
-};
 
-export function usePatchRequirementsIdImplemented<
-    TData = Awaited<ReturnType<typeof patchRequirementsIdImplemented>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    options: {
-        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdImplemented>>, TError, TData>>
-            & Pick<
-                DefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof patchRequirementsIdImplemented>>,
-                    TError,
-                    Awaited<ReturnType<typeof patchRequirementsIdImplemented>>
-                >,
-                'initialData'
-            >;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function usePatchRequirementsIdImplemented<
-    TData = Awaited<ReturnType<typeof patchRequirementsIdImplemented>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdImplemented>>, TError, TData>>
-            & Pick<
-                UndefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof patchRequirementsIdImplemented>>,
-                    TError,
-                    Awaited<ReturnType<typeof patchRequirementsIdImplemented>>
-                >,
-                'initialData'
-            >;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function usePatchRequirementsIdImplemented<
-    TData = Awaited<ReturnType<typeof patchRequirementsIdImplemented>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdImplemented>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof patchRequirementsIdApprove>>> = ({ signal }) => patchRequirementsIdApprove(id, { signal, ...fetchOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdApprove>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type PatchRequirementsIdApproveQueryResult = NonNullable<Awaited<ReturnType<typeof patchRequirementsIdApprove>>>
+export type PatchRequirementsIdApproveQueryError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }
+
+
+export function usePatchRequirementsIdApprove<TData = Awaited<ReturnType<typeof patchRequirementsIdApprove>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdApprove>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof patchRequirementsIdApprove>>,
+          TError,
+          Awaited<ReturnType<typeof patchRequirementsIdApprove>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePatchRequirementsIdApprove<TData = Awaited<ReturnType<typeof patchRequirementsIdApprove>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdApprove>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof patchRequirementsIdApprove>>,
+          TError,
+          Awaited<ReturnType<typeof patchRequirementsIdApprove>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePatchRequirementsIdApprove<TData = Awaited<ReturnType<typeof patchRequirementsIdApprove>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdApprove>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Mark an approved requirement implemented.
+ * @summary Approve a draft requirement.
  */
 
-export function usePatchRequirementsIdImplemented<
-    TData = Awaited<ReturnType<typeof patchRequirementsIdImplemented>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdImplemented>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-    const queryOptions = getPatchRequirementsIdImplementedQueryOptions(id, options);
+export function usePatchRequirementsIdApprove<TData = Awaited<ReturnType<typeof patchRequirementsIdApprove>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdApprove>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-        queryKey: DataTag<QueryKey, TData, TError>;
-    };
+  const queryOptions = getPatchRequirementsIdApproveQueryOptions(id,options)
 
-    return { ...query, queryKey: queryOptions.queryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Approve a draft requirement.
+ */
+export const prefetchPatchRequirementsIdApproveQuery = async <TData = Awaited<ReturnType<typeof patchRequirementsIdApprove>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ queryClient: QueryClient, id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdApprove>>, TError, TData>>, fetch?: RequestInit}
+
+  ): Promise<QueryClient> => {
+
+  const queryOptions = getPatchRequirementsIdApproveQueryOptions(id,options)
+
+  await queryClient.prefetchQuery(queryOptions);
+
+  return queryClient;
+}
+
+
+
+
+
+export const getPatchRequirementsIdImplementedUrl = (id: string,) => {
+
+
+
+
+  return `/requirements/${encodeURIComponent(String(id))}/implemented`
 }
 
 /**
  * @summary Mark an approved requirement implemented.
  */
-export const prefetchPatchRequirementsIdImplementedQuery = async <
-    TData = Awaited<ReturnType<typeof patchRequirementsIdImplemented>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    queryClient: QueryClient,
-    id: string,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdImplemented>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-): Promise<QueryClient> => {
-    const queryOptions = getPatchRequirementsIdImplementedQueryOptions(id, options);
+export const patchRequirementsIdImplemented = async (id: string, options?: RequestInit): Promise<RequirementResponseDtoSuccess> => {
 
-    await queryClient.prefetchQuery(queryOptions);
+  const res = await fetch(getPatchRequirementsIdImplementedUrl(id),
+  {
+    ...options,
+    method: 'PATCH'
 
-    return queryClient;
-};
 
-export const getPatchRequirementsIdObsoleteUrl = (id: string) => {
-    return `/requirements/${encodeURIComponent(String(id))}/obsolete`;
-};
+  }
+)
 
-/**
- * @summary Mark an approved or rejected requirement obsolete.
- */
-export const patchRequirementsIdObsolete = async (
-    id: string,
-    markObsoleteRequirementDto: MarkObsoleteRequirementDto,
-    options?: RequestInit,
-): Promise<RequirementResponseDtoSuccess> => {
-    const res = await fetch(getPatchRequirementsIdObsoleteUrl(id), {
-        ...options,
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', ...options?.headers },
-        body: JSON.stringify(markObsoleteRequirementDto),
-    });
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-    if (!res.ok) {
-        const err: globalThis.Error & { info?: RequirementResponseDtoError; status?: number } = new globalThis.Error();
-        const data: RequirementResponseDtoError = body ? JSON.parse(body) : {};
-        err.info = data;
-        err.status = res.status;
-        throw err;
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+  if (!res.ok) {
+
+    const err: globalThis.Error & {info?: RequirementResponseDtoError, status?: number} = new globalThis.Error();
+    const data : RequirementResponseDtoError = body ? JSON.parse(body) : {}
+    err.info = data;
+    err.status = res.status;
+    throw err;
+  }
+  const data: RequirementResponseDtoSuccess = body ? JSON.parse(body) : {}
+  return data
+}
+
+
+
+
+
+export const getPatchRequirementsIdImplementedQueryKey = (id: string,) => {
+    return [
+    'PATCH', `/requirements/${id}/implemented`
+    ] as const;
     }
-    const data: RequirementResponseDtoSuccess = body ? JSON.parse(body) : {};
-    return data;
-};
 
-export const getPatchRequirementsIdObsoleteQueryKey = (
-    id: string,
-    markObsoleteRequirementDto?: MarkObsoleteRequirementDto,
+
+export const getPatchRequirementsIdImplementedQueryOptions = <TData = Awaited<ReturnType<typeof patchRequirementsIdImplemented>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdImplemented>>, TError, TData>>, fetch?: RequestInit}
 ) => {
-    return ['PATCH', `/requirements/${id}/obsolete`, markObsoleteRequirementDto] as const;
-};
 
-export const getPatchRequirementsIdObsoleteQueryOptions = <
-    TData = Awaited<ReturnType<typeof patchRequirementsIdObsolete>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    markObsoleteRequirementDto: MarkObsoleteRequirementDto,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdObsolete>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-) => {
-    const { query: queryOptions, fetch: fetchOptions } = options ?? {};
+const {query: queryOptions, fetch: fetchOptions} = options ?? {};
 
-    const queryKey = queryOptions?.queryKey ?? getPatchRequirementsIdObsoleteQueryKey(id, markObsoleteRequirementDto);
+  const queryKey =  queryOptions?.queryKey ?? getPatchRequirementsIdImplementedQueryKey(id);
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof patchRequirementsIdObsolete>>> = ({ signal }) =>
-        patchRequirementsIdObsolete(id, markObsoleteRequirementDto, { signal, ...fetchOptions });
 
-    return { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions } as UseQueryOptions<
-        Awaited<ReturnType<typeof patchRequirementsIdObsolete>>,
-        TError,
-        TData
-    > & { queryKey: DataTag<QueryKey, TData, TError> };
-};
 
-export type PatchRequirementsIdObsoleteQueryResult = NonNullable<
-    Awaited<ReturnType<typeof patchRequirementsIdObsolete>>
->;
-export type PatchRequirementsIdObsoleteQueryError = globalThis.Error & {
-    info?: BadRequestResponse | NotFoundResponse | ConflictResponse;
-    status?: number;
-};
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof patchRequirementsIdImplemented>>> = ({ signal }) => patchRequirementsIdImplemented(id, { signal, ...fetchOptions });
 
-export function usePatchRequirementsIdObsolete<
-    TData = Awaited<ReturnType<typeof patchRequirementsIdObsolete>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    markObsoleteRequirementDto: MarkObsoleteRequirementDto,
-    options: {
-        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdObsolete>>, TError, TData>>
-            & Pick<
-                DefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof patchRequirementsIdObsolete>>,
-                    TError,
-                    Awaited<ReturnType<typeof patchRequirementsIdObsolete>>
-                >,
-                'initialData'
-            >;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function usePatchRequirementsIdObsolete<
-    TData = Awaited<ReturnType<typeof patchRequirementsIdObsolete>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    markObsoleteRequirementDto: MarkObsoleteRequirementDto,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdObsolete>>, TError, TData>>
-            & Pick<
-                UndefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof patchRequirementsIdObsolete>>,
-                    TError,
-                    Awaited<ReturnType<typeof patchRequirementsIdObsolete>>
-                >,
-                'initialData'
-            >;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function usePatchRequirementsIdObsolete<
-    TData = Awaited<ReturnType<typeof patchRequirementsIdObsolete>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    markObsoleteRequirementDto: MarkObsoleteRequirementDto,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdObsolete>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdImplemented>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type PatchRequirementsIdImplementedQueryResult = NonNullable<Awaited<ReturnType<typeof patchRequirementsIdImplemented>>>
+export type PatchRequirementsIdImplementedQueryError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }
+
+
+export function usePatchRequirementsIdImplemented<TData = Awaited<ReturnType<typeof patchRequirementsIdImplemented>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdImplemented>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof patchRequirementsIdImplemented>>,
+          TError,
+          Awaited<ReturnType<typeof patchRequirementsIdImplemented>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePatchRequirementsIdImplemented<TData = Awaited<ReturnType<typeof patchRequirementsIdImplemented>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdImplemented>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof patchRequirementsIdImplemented>>,
+          TError,
+          Awaited<ReturnType<typeof patchRequirementsIdImplemented>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePatchRequirementsIdImplemented<TData = Awaited<ReturnType<typeof patchRequirementsIdImplemented>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdImplemented>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Mark an approved or rejected requirement obsolete.
+ * @summary Mark an approved requirement implemented.
  */
 
-export function usePatchRequirementsIdObsolete<
-    TData = Awaited<ReturnType<typeof patchRequirementsIdObsolete>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    id: string,
-    markObsoleteRequirementDto: MarkObsoleteRequirementDto,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdObsolete>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-    const queryOptions = getPatchRequirementsIdObsoleteQueryOptions(id, markObsoleteRequirementDto, options);
+export function usePatchRequirementsIdImplemented<TData = Awaited<ReturnType<typeof patchRequirementsIdImplemented>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdImplemented>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-        queryKey: DataTag<QueryKey, TData, TError>;
-    };
+  const queryOptions = getPatchRequirementsIdImplementedQueryOptions(id,options)
 
-    return { ...query, queryKey: queryOptions.queryKey };
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Mark an approved requirement implemented.
+ */
+export const prefetchPatchRequirementsIdImplementedQuery = async <TData = Awaited<ReturnType<typeof patchRequirementsIdImplemented>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ queryClient: QueryClient, id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdImplemented>>, TError, TData>>, fetch?: RequestInit}
+
+  ): Promise<QueryClient> => {
+
+  const queryOptions = getPatchRequirementsIdImplementedQueryOptions(id,options)
+
+  await queryClient.prefetchQuery(queryOptions);
+
+  return queryClient;
+}
+
+
+
+
+
+export const getPatchRequirementsIdObsoleteUrl = (id: string,) => {
+
+
+
+
+  return `/requirements/${encodeURIComponent(String(id))}/obsolete`
 }
 
 /**
  * @summary Mark an approved or rejected requirement obsolete.
  */
-export const prefetchPatchRequirementsIdObsoleteQuery = async <
-    TData = Awaited<ReturnType<typeof patchRequirementsIdObsolete>>,
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number },
->(
-    queryClient: QueryClient,
-    id: string,
-    markObsoleteRequirementDto: MarkObsoleteRequirementDto,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdObsolete>>, TError, TData>>;
-        fetch?: RequestInit;
-    },
-): Promise<QueryClient> => {
-    const queryOptions = getPatchRequirementsIdObsoleteQueryOptions(id, markObsoleteRequirementDto, options);
+export const patchRequirementsIdObsolete = async (id: string,
+    markObsoleteRequirementDto: MarkObsoleteRequirementDto, options?: RequestInit): Promise<RequirementResponseDtoSuccess> => {
 
-    await queryClient.prefetchQuery(queryOptions);
+  const res = await fetch(getPatchRequirementsIdObsoleteUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(markObsoleteRequirementDto)
+  }
+)
 
-    return queryClient;
-};
 
-export const getGetRequirementsIdRevisionsUrl = (id: string) => {
-    return `/requirements/${encodeURIComponent(String(id))}/revisions`;
-};
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+  if (!res.ok) {
+
+    const err: globalThis.Error & {info?: RequirementResponseDtoError, status?: number} = new globalThis.Error();
+    const data : RequirementResponseDtoError = body ? JSON.parse(body) : {}
+    err.info = data;
+    err.status = res.status;
+    throw err;
+  }
+  const data: RequirementResponseDtoSuccess = body ? JSON.parse(body) : {}
+  return data
+}
+
+
+
+
+
+export const getPatchRequirementsIdObsoleteQueryKey = (id: string,
+    markObsoleteRequirementDto?: MarkObsoleteRequirementDto,) => {
+    return [
+    'PATCH', `/requirements/${id}/obsolete`, markObsoleteRequirementDto
+    ] as const;
+    }
+
+
+export const getPatchRequirementsIdObsoleteQueryOptions = <TData = Awaited<ReturnType<typeof patchRequirementsIdObsolete>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(id: string,
+    markObsoleteRequirementDto: MarkObsoleteRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdObsolete>>, TError, TData>>, fetch?: RequestInit}
+) => {
+
+const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getPatchRequirementsIdObsoleteQueryKey(id,markObsoleteRequirementDto);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof patchRequirementsIdObsolete>>> = ({ signal }) => patchRequirementsIdObsolete(id,markObsoleteRequirementDto, { signal, ...fetchOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdObsolete>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type PatchRequirementsIdObsoleteQueryResult = NonNullable<Awaited<ReturnType<typeof patchRequirementsIdObsolete>>>
+export type PatchRequirementsIdObsoleteQueryError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }
+
+
+export function usePatchRequirementsIdObsolete<TData = Awaited<ReturnType<typeof patchRequirementsIdObsolete>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string,
+    markObsoleteRequirementDto: MarkObsoleteRequirementDto, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdObsolete>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof patchRequirementsIdObsolete>>,
+          TError,
+          Awaited<ReturnType<typeof patchRequirementsIdObsolete>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePatchRequirementsIdObsolete<TData = Awaited<ReturnType<typeof patchRequirementsIdObsolete>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string,
+    markObsoleteRequirementDto: MarkObsoleteRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdObsolete>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof patchRequirementsIdObsolete>>,
+          TError,
+          Awaited<ReturnType<typeof patchRequirementsIdObsolete>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePatchRequirementsIdObsolete<TData = Awaited<ReturnType<typeof patchRequirementsIdObsolete>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string,
+    markObsoleteRequirementDto: MarkObsoleteRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdObsolete>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Mark an approved or rejected requirement obsolete.
+ */
+
+export function usePatchRequirementsIdObsolete<TData = Awaited<ReturnType<typeof patchRequirementsIdObsolete>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ id: string,
+    markObsoleteRequirementDto: MarkObsoleteRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdObsolete>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getPatchRequirementsIdObsoleteQueryOptions(id,markObsoleteRequirementDto,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Mark an approved or rejected requirement obsolete.
+ */
+export const prefetchPatchRequirementsIdObsoleteQuery = async <TData = Awaited<ReturnType<typeof patchRequirementsIdObsolete>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+ queryClient: QueryClient, id: string,
+    markObsoleteRequirementDto: MarkObsoleteRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof patchRequirementsIdObsolete>>, TError, TData>>, fetch?: RequestInit}
+
+  ): Promise<QueryClient> => {
+
+  const queryOptions = getPatchRequirementsIdObsoleteQueryOptions(id,markObsoleteRequirementDto,options)
+
+  await queryClient.prefetchQuery(queryOptions);
+
+  return queryClient;
+}
+
+
+
+
+
+export const getGetRequirementsIdRevisionsUrl = (id: string,) => {
+
+
+
+
+  return `/requirements/${encodeURIComponent(String(id))}/revisions`
+}
 
 /**
  * @summary List immutable revision snapshots for a requirement.
  */
-export const getRequirementsIdRevisions = async (
-    id: string,
-    options?: RequestInit,
-): Promise<RequirementRevisionResponseDtoListSuccess> => {
-    const res = await fetch(getGetRequirementsIdRevisionsUrl(id), { ...options, method: 'GET' });
+export const getRequirementsIdRevisions = async (id: string, options?: RequestInit): Promise<RequirementRevisionResponseDto[]Success> => {
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-    if (!res.ok) {
-        const err: globalThis.Error & { info?: RequirementRevisionResponseDtoListError; status?: number } =
-            new globalThis.Error();
-        const data: RequirementRevisionResponseDtoListError = body ? JSON.parse(body) : {};
-        err.info = data;
-        err.status = res.status;
-        throw err;
-    }
-    const data: RequirementRevisionResponseDtoListSuccess = body ? JSON.parse(body) : {};
-    return data;
-};
+  const res = await fetch(getGetRequirementsIdRevisionsUrl(id),
+  {
+    ...options,
+    method: 'GET'
 
-export const getGetRequirementsIdRevisionsMutationOptions = <
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
-    TContext = unknown,
->(options?: {
-    mutation?: UseMutationOptions<
+
+  }
+)
+
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+  if (!res.ok) {
+
+    const err: globalThis.Error & {info?: RequirementRevisionResponseDto[]Error, status?: number} = new globalThis.Error();
+    const data : RequirementRevisionResponseDto[]Error = body ? JSON.parse(body) : {}
+    err.info = data;
+    err.status = res.status;
+    throw err;
+  }
+  const data: RequirementRevisionResponseDto[]Success = body ? JSON.parse(body) : {}
+  return data
+}
+
+
+
+
+export const getGetRequirementsIdRevisionsMutationOptions = <TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getRequirementsIdRevisions>>, TError,{id: string}, TContext>, fetch?: RequestInit}
+): UseMutationOptions<Awaited<ReturnType<typeof getRequirementsIdRevisions>>, TError,{id: string}, TContext> => {
+
+const mutationKey = ['getRequirementsIdRevisions'];
+const {mutation: mutationOptions, fetch: fetchOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, fetch: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getRequirementsIdRevisions>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  getRequirementsIdRevisions(id,fetchOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GetRequirementsIdRevisionsMutationResult = NonNullable<Awaited<ReturnType<typeof getRequirementsIdRevisions>>>
+
+    export type GetRequirementsIdRevisionsMutationError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number }
+
+    /**
+ * @summary List immutable revision snapshots for a requirement.
+ */
+export const useGetRequirementsIdRevisions = <TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getRequirementsIdRevisions>>, TError,{id: string}, TContext>, fetch?: RequestInit}
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof getRequirementsIdRevisions>>,
         TError,
-        { id: string },
+        {id: string},
         TContext
-    >;
-    fetch?: RequestInit;
-}): UseMutationOptions<Awaited<ReturnType<typeof getRequirementsIdRevisions>>, TError, { id: string }, TContext> => {
-    const mutationKey = ['getRequirementsIdRevisions'];
-    const { mutation: mutationOptions, fetch: fetchOptions } =
-        options ?
-            options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-                options
-            :   { ...options, mutation: { ...options.mutation, mutationKey } }
-        :   { mutation: { mutationKey }, fetch: undefined };
+      > => {
+      return useMutation(getGetRequirementsIdRevisionsMutationOptions(options), queryClient);
+    }
+    export const getGetRequirementsIdRevisionsRevisionNumberUrl = (id: string,
+    revisionNumber: number,) => {
 
-    const mutationFn: MutationFunction<Awaited<ReturnType<typeof getRequirementsIdRevisions>>, { id: string }> = (
-        props,
-    ) => {
-        const { id } = props ?? {};
 
-        return getRequirementsIdRevisions(id, fetchOptions);
-    };
 
-    return { mutationFn, ...mutationOptions };
-};
 
-export type GetRequirementsIdRevisionsMutationResult = NonNullable<
-    Awaited<ReturnType<typeof getRequirementsIdRevisions>>
->;
-
-export type GetRequirementsIdRevisionsMutationError = globalThis.Error & {
-    info?: BadRequestResponse | NotFoundResponse;
-    status?: number;
-};
-
-/**
- * @summary List immutable revision snapshots for a requirement.
- */
-export const useGetRequirementsIdRevisions = <
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
-    TContext = unknown,
->(
-    options?: {
-        mutation?: UseMutationOptions<
-            Awaited<ReturnType<typeof getRequirementsIdRevisions>>,
-            TError,
-            { id: string },
-            TContext
-        >;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseMutationResult<Awaited<ReturnType<typeof getRequirementsIdRevisions>>, TError, { id: string }, TContext> => {
-    return useMutation(getGetRequirementsIdRevisionsMutationOptions(options), queryClient);
-};
-export const getGetRequirementsIdRevisionsRevisionNumberUrl = (id: string, revisionNumber: number) => {
-    return `/requirements/${encodeURIComponent(String(id))}/revisions/${encodeURIComponent(String(revisionNumber))}`;
-};
+  return `/requirements/${encodeURIComponent(String(id))}/revisions/${encodeURIComponent(String(revisionNumber))}`
+}
 
 /**
  * @summary Retrieve one immutable revision snapshot.
  */
-export const getRequirementsIdRevisionsRevisionNumber = async (
-    id: string,
-    revisionNumber: number,
-    options?: RequestInit,
-): Promise<RequirementRevisionResponseDtoSuccess> => {
-    const res = await fetch(getGetRequirementsIdRevisionsRevisionNumberUrl(id, revisionNumber), {
-        ...options,
-        method: 'GET',
-    });
+export const getRequirementsIdRevisionsRevisionNumber = async (id: string,
+    revisionNumber: number, options?: RequestInit): Promise<RequirementRevisionResponseDtoSuccess> => {
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-    if (!res.ok) {
-        const err: globalThis.Error & { info?: RequirementRevisionResponseDtoError; status?: number } =
-            new globalThis.Error();
-        const data: RequirementRevisionResponseDtoError = body ? JSON.parse(body) : {};
-        err.info = data;
-        err.status = res.status;
-        throw err;
-    }
-    const data: RequirementRevisionResponseDtoSuccess = body ? JSON.parse(body) : {};
-    return data;
-};
+  const res = await fetch(getGetRequirementsIdRevisionsRevisionNumberUrl(id,revisionNumber),
+  {
+    ...options,
+    method: 'GET'
 
-export const getGetRequirementsIdRevisionsRevisionNumberMutationOptions = <
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
-    TContext = unknown,
->(options?: {
-    mutation?: UseMutationOptions<
+
+  }
+)
+
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+  if (!res.ok) {
+
+    const err: globalThis.Error & {info?: RequirementRevisionResponseDtoError, status?: number} = new globalThis.Error();
+    const data : RequirementRevisionResponseDtoError = body ? JSON.parse(body) : {}
+    err.info = data;
+    err.status = res.status;
+    throw err;
+  }
+  const data: RequirementRevisionResponseDtoSuccess = body ? JSON.parse(body) : {}
+  return data
+}
+
+
+
+
+export const getGetRequirementsIdRevisionsRevisionNumberMutationOptions = <TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getRequirementsIdRevisionsRevisionNumber>>, TError,{id: string;revisionNumber: number}, TContext>, fetch?: RequestInit}
+): UseMutationOptions<Awaited<ReturnType<typeof getRequirementsIdRevisionsRevisionNumber>>, TError,{id: string;revisionNumber: number}, TContext> => {
+
+const mutationKey = ['getRequirementsIdRevisionsRevisionNumber'];
+const {mutation: mutationOptions, fetch: fetchOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, fetch: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getRequirementsIdRevisionsRevisionNumber>>, {id: string;revisionNumber: number}> = (props) => {
+          const {id,revisionNumber} = props ?? {};
+
+          return  getRequirementsIdRevisionsRevisionNumber(id,revisionNumber,fetchOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GetRequirementsIdRevisionsRevisionNumberMutationResult = NonNullable<Awaited<ReturnType<typeof getRequirementsIdRevisionsRevisionNumber>>>
+
+    export type GetRequirementsIdRevisionsRevisionNumberMutationError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number }
+
+    /**
+ * @summary Retrieve one immutable revision snapshot.
+ */
+export const useGetRequirementsIdRevisionsRevisionNumber = <TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getRequirementsIdRevisionsRevisionNumber>>, TError,{id: string;revisionNumber: number}, TContext>, fetch?: RequestInit}
+ , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof getRequirementsIdRevisionsRevisionNumber>>,
         TError,
-        { id: string; revisionNumber: number },
+        {id: string;revisionNumber: number},
         TContext
-    >;
-    fetch?: RequestInit;
-}): UseMutationOptions<
-    Awaited<ReturnType<typeof getRequirementsIdRevisionsRevisionNumber>>,
-    TError,
-    { id: string; revisionNumber: number },
-    TContext
-> => {
-    const mutationKey = ['getRequirementsIdRevisionsRevisionNumber'];
-    const { mutation: mutationOptions, fetch: fetchOptions } =
-        options ?
-            options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-                options
-            :   { ...options, mutation: { ...options.mutation, mutationKey } }
-        :   { mutation: { mutationKey }, fetch: undefined };
-
-    const mutationFn: MutationFunction<
-        Awaited<ReturnType<typeof getRequirementsIdRevisionsRevisionNumber>>,
-        { id: string; revisionNumber: number }
-    > = (props) => {
-        const { id, revisionNumber } = props ?? {};
-
-        return getRequirementsIdRevisionsRevisionNumber(id, revisionNumber, fetchOptions);
-    };
-
-    return { mutationFn, ...mutationOptions };
-};
-
-export type GetRequirementsIdRevisionsRevisionNumberMutationResult = NonNullable<
-    Awaited<ReturnType<typeof getRequirementsIdRevisionsRevisionNumber>>
->;
-
-export type GetRequirementsIdRevisionsRevisionNumberMutationError = globalThis.Error & {
-    info?: BadRequestResponse | NotFoundResponse;
-    status?: number;
-};
-
-/**
- * @summary Retrieve one immutable revision snapshot.
- */
-export const useGetRequirementsIdRevisionsRevisionNumber = <
-    TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
-    TContext = unknown,
->(
-    options?: {
-        mutation?: UseMutationOptions<
-            Awaited<ReturnType<typeof getRequirementsIdRevisionsRevisionNumber>>,
-            TError,
-            { id: string; revisionNumber: number },
-            TContext
-        >;
-        fetch?: RequestInit;
-    },
-    queryClient?: QueryClient,
-): UseMutationResult<
-    Awaited<ReturnType<typeof getRequirementsIdRevisionsRevisionNumber>>,
-    TError,
-    { id: string; revisionNumber: number },
-    TContext
-> => {
-    return useMutation(getGetRequirementsIdRevisionsRevisionNumberMutationOptions(options), queryClient);
-};
+      > => {
+      return useMutation(getGetRequirementsIdRevisionsRevisionNumberMutationOptions(options), queryClient);
+    }

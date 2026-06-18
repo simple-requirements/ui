@@ -40,38 +40,36 @@ export function ActionBar({
     return (
         <div className='workspace-actionbar actionbar'>
             {!dedicated ?
-                <form
-                    onSubmit={handleLookup}
-                    aria-label='Exact visible-key lookup'>
-                    <InputText
-                        value={visibleKey}
-                        onChange={(event) => setVisibleKey(event.currentTarget.value)}
-                        placeholder='FR-KEY-0001'
-                        aria-label='Visible key'
-                    />
+                <>
+                    <form
+                        onSubmit={handleLookup}
+                        aria-label='Exact visible-key lookup'>
+                        <InputText
+                            value={visibleKey}
+                            onChange={(event) => setVisibleKey(event.currentTarget.value)}
+                            placeholder='FR-KEY-0001'
+                            aria-label='Visible key'
+                        />
+                        <Button
+                            type='submit'
+                            disabled={!activeProjectId || lookupPending}>
+                            Find key
+                        </Button>
+                        <span role='status'>{lookupMessage}</span>
+                    </form>
                     <Button
-                        type='submit'
-                        disabled={!activeProjectId || lookupPending}>
-                        Find key
+                        type='button'
+                        disabled
+                        tooltip='Requirement creation is not implemented in this package.'
+                        aria-describedby='new-requirement-unavailable'>
+                        New requirement
                     </Button>
-                    <span role='status'>{lookupMessage}</span>
-                </form>
-            :   null}
-            {!dedicated ?
-                <Button
-                    type='button'
-                    disabled
-                    tooltip='Requirement creation is not implemented in this package.'
-                    aria-describedby='new-requirement-unavailable'>
-                    New requirement
-                </Button>
-            :   null}
-            {!dedicated ?
-                <span
-                    id='new-requirement-unavailable'
-                    className='sr-only'>
-                    Requirement creation is not implemented in this package.
-                </span>
+                    <span
+                        id='new-requirement-unavailable'
+                        className='sr-only'>
+                        Requirement creation is not implemented in this package.
+                    </span>
+                </>
             :   null}
             {selectedRequirement && !dedicated ?
                 <Button

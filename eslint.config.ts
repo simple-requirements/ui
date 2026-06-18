@@ -19,7 +19,7 @@ const reactHooksRecommendedRules = reactHooks.configs.recommended.rules;
 
 export default defineConfig(
     includeIgnoreFile(gitignorePath),
-    { ignores: ['test/e2e/**', 'src/api/generated/**', 'orval.config.ts'] },
+    { ignores: ['coverage/**', 'test/e2e/**', 'src/api/generated/**', 'orval.config.ts'] },
 
     js.configs.recommended,
 
@@ -29,7 +29,7 @@ export default defineConfig(
     prettier,
 
     {
-        files: ['test/*.spec.ts'],
+        files: ['test/*.spec.{ts,tsx}'],
         rules: {
             '@typescript-eslint/no-unsafe-assignment': 'off',
             '@typescript-eslint/no-unsafe-call': 'off',

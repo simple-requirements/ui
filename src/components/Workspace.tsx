@@ -19,6 +19,7 @@ type WorkspaceProps = Readonly<{
     projectError: string | null;
     projectContentLoading: boolean;
     requirementDetailLoading: boolean;
+    requirementDetailError: string | null;
     selectedRequirement: RequirementView | null;
     requirementsList: ReactNode;
     actionBar: ReactNode;
@@ -51,6 +52,7 @@ export function Workspace({
     projectError,
     projectContentLoading,
     requirementDetailLoading,
+    requirementDetailError,
     selectedRequirement,
     requirementsList,
     actionBar,
@@ -117,6 +119,7 @@ export function Workspace({
                 projectError={projectError}
                 projectContentLoading={projectContentLoading}
                 requirementDetailLoading={requirementDetailLoading}
+                requirementDetailError={requirementDetailError}
                 selectedRequirement={selectedRequirement}
                 selectedRequirementId={selectedRequirementId}
                 splitterPosition={splitterPosition}

@@ -8,7 +8,7 @@ export default defineConfig({
     plugins: [react()],
     resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
     test: {
-        include: ['test/**/*.spec.ts'],
+        include: ['test/**/*.spec.{ts,tsx}'],
         environment: 'jsdom',
         globals: true,
         coverage: {

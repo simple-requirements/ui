@@ -19,7 +19,8 @@ export function useCategoriesQuery() {
         if (query.data) replaceCollectionRows(categoriesCollection, query.data);
     }, [query.data]);
 
-    return { ...query, data: liveCategories.data as Category[] };
+    const data = liveCategories.data as Category[] | undefined;
+    return { ...query, data: data ?? [] };
 }
 
 /** Persists a category, upserts it into the React DB collection, and invalidates the backend list cache. */

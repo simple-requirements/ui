@@ -52,7 +52,7 @@ export default function App() {
             history.replaceState(
                 null,
                 '',
-                `/workspace/projects/${workspaceState.activeProjectId}/${workspaceState.activeModule}`,
+                `/workspace/projects/${workspaceState.activeProjectId}/${workspaceState.activeModule}${location.search}`,
             );
         }
     }, [workspaceState.activeProjectId, workspaceState.activeModule]);
@@ -63,6 +63,12 @@ export default function App() {
             dispatch({ type: 'selectRequirement', requirementId: null });
         }
     }, [requirementsQuery.data, workspaceState.selectedRequirementId]);
+
+    useEffect(() => {
+        if (!workspaceState.activeProjectId || workspaceState.selectedRequirementId) return;
+        if (requirementsQuery.data.length === 0) return;
+        dispatch({ type: 'selectRequirement', requirementId: requirementsQuery.data[0].id });
+    }, [requirementsQuery.data, workspaceState.activeProjectId, workspaceState.selectedRequirementId]);
 
     const projects = projectsQuery.data;
     const activeProjectKnown =
@@ -130,6 +136,7 @@ export default function App() {
             }
             projectContentLoading={requirementsQuery.isFetching || categoriesQuery.isFetching}
             requirementDetailLoading={detailQuery.isFetching}
+            requirementDetailError={detailQuery.isError ? mapApiError(detailQuery.error).message : null}
             selectedRequirement={detailQuery.data ?? null}
             requirementsList={
                 <RequirementsList

@@ -13,7 +13,7 @@
         "format": "prettier --write .",
         "lint": "eslint .",
         "openapi:fetch": "mkdir -p openapi && curl --fail --silent --show-error \"${OPENAPI_URL:-http://localhost:3000/api/docs-json}\" --output openapi/backen-api.json.tmp && mv openapi/backen-api.json.tmp openapi/backend-api.json",
-        "openapbackend-api": "orval --config ./orval.config.ts",
+        "openapi:orval": "orval --config ./orval.config.ts",
         "openapi:update": "pnpm openapi:fetch && pnpm openapi:orval",
         "preview": "vite preview",
         "test:unit": "vitest",

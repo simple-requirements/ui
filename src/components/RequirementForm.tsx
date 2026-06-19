@@ -121,6 +121,7 @@ export function RequirementForm({
                         }
                         required
                         appendTo={document.body}
+                        data-testid='Category-Dropdown'
                     />
                 </div>
             :   null}

@@ -20,7 +20,7 @@ export default defineConfig({
             override: {
                 query: { useQuery: true, useMutation: true, usePrefetch: true },
 
-                fetch: { includeHttpResponseReturnType: false, forceSuccessResponse: true },
+                fetch: { includeHttpResponseReturnType: false },
             },
         },
     },

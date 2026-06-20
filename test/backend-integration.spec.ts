@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { mapApiError } from '@/api/errors/apiError';
 import { categoryKeys, projectKeys, requirementKeys } from '@/api/queryKeys';
 import { mapCategory } from '@/features/categories/api/categoriesApi';
-import { mapRequirement } from '@/features/requirements/api/requirementsApi';
+import { mapRequirement, validateVisibleKey } from '@/features/requirements/api/requirementsApi';
 import { loadWorkspaceState, saveWorkspaceState, WORKSPACE_STATE_KEY } from '@/state/sessionPersistence';
 import { initialWorkspaceState } from '@/state/workspaceReducer';
 
@@ -28,13 +28,14 @@ describe('backend integration helpers', () => {
         ).toEqual({ id: 'cat-1', key: 'PERF', name: 'Performance', type: 'NFR' });
     });
 
-    it('maps requirement responses and keeps absent project identity explicit', () => {
+    it('maps requirement responses and keeps backend project identity explicit', () => {
         expect(
             mapRequirement({
                 id: '11111111-1111-4111-8111-111111111111',
                 visibleKey: 'FR-UX-0001',
                 type: 'FR',
                 categoryId: '22222222-2222-4222-8222-222222222222',
+                projectId: '33333333-3333-4333-8333-333333333333',
                 sequenceNumber: 1,
                 status: 'draft',
                 description: 'Usable',
@@ -53,7 +54,15 @@ describe('backend integration helpers', () => {
                 createdAt: '2026-01-01T00:00:00Z',
                 updatedAt: '2026-01-01T00:00:00Z',
             }).projectId,
-        ).toBeNull();
+        ).toBe('33333333-3333-4333-8333-333333333333');
+    });
+
+    it('validates supported visible-key lookup formats', () => {
+        expect(validateVisibleKey('FR-UI-0001')).toBe(true);
+        expect(validateVisibleKey('NFR-PERF-0002')).toBe(true);
+        expect(validateVisibleKey('fr-ui-0001')).toBe(true);
+        expect(validateVisibleKey('FR-0001')).toBe(false);
+        expect(validateVisibleKey('UI-0001')).toBe(false);
     });
 
     it('distinguishes central API error kinds', () => {
@@ -65,6 +74,9 @@ describe('backend integration helpers', () => {
             message: 'duplicate',
         });
         expect(mapApiError(new TypeError('fetch failed')).kind).toBe('network');
+        expect(mapApiError(new Error('Missing VITE_API_BASE_URL. Configure the backend API base URL.')).message).toBe(
+            'The requested backend data is currently unavailable. Please try again later.',
+        );
     });
 
     it('persists restored requirement tabs by IDs and labels only', () => {
@@ -100,10 +112,13 @@ describe('requirement revision helpers', () => {
         requirementId: '11111111-1111-4111-8111-111111111111',
         visibleKey: 'FR-UX-0001',
         type: 'FR' as const,
+        projectId: '33333333-3333-4333-8333-333333333333',
         categoryId: '22222222-2222-4222-8222-222222222222',
         sequenceNumber: 1,
         status: 'draft' as const,
         description: 'Old description',
+        renderedDescription: 'Old description',
+        metricReferences: [],
         priority: 'P2',
         owner: null,
         rationale: '',

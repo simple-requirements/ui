@@ -46,7 +46,7 @@ export const getPostProjectsUrl = () => {
 /**
  * @summary Create a project.
  */
-export const postProjects = async (createProjectDto: CreateProjectDto, options?: RequestInit): Promise<ProjectResponseDtoSuccess> => {
+export const postProjects = async (createProjectDto: CreateProjectDto, options?: RequestInit): Promise<ProjectResponseDto> => {
 
   const res = await fetch(getPostProjectsUrl(),
   {
@@ -59,15 +59,8 @@ export const postProjects = async (createProjectDto: CreateProjectDto, options?:
 
 
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  if (!res.ok) {
 
-    const err: globalThis.Error & {info?: ProjectResponseDtoError, status?: number} = new globalThis.Error();
-    const data : ProjectResponseDtoError = body ? JSON.parse(body) : {}
-    err.info = data;
-    err.status = res.status;
-    throw err;
-  }
-  const data: ProjectResponseDtoSuccess = body ? JSON.parse(body) : {}
+  const data: ProjectResponseDto = body ? JSON.parse(body) : {}
   return data
 }
 
@@ -82,7 +75,7 @@ export const getPostProjectsQueryKey = (createProjectDto?: CreateProjectDto,) =>
     }
 
 
-export const getPostProjectsQueryOptions = <TData = Awaited<ReturnType<typeof postProjects>>, TError = globalThis.Error & { info?: BadRequestResponse; status?: number }>(createProjectDto: CreateProjectDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof postProjects>>, TError, TData>>, fetch?: RequestInit}
+export const getPostProjectsQueryOptions = <TData = Awaited<ReturnType<typeof postProjects>>, TError = BadRequestResponse>(createProjectDto: CreateProjectDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof postProjects>>, TError, TData>>, fetch?: RequestInit}
 ) => {
 
 const {query: queryOptions, fetch: fetchOptions} = options ?? {};
@@ -101,10 +94,10 @@ const {query: queryOptions, fetch: fetchOptions} = options ?? {};
 }
 
 export type PostProjectsQueryResult = NonNullable<Awaited<ReturnType<typeof postProjects>>>
-export type PostProjectsQueryError = globalThis.Error & { info?: BadRequestResponse; status?: number }
+export type PostProjectsQueryError = BadRequestResponse
 
 
-export function usePostProjects<TData = Awaited<ReturnType<typeof postProjects>>, TError = globalThis.Error & { info?: BadRequestResponse; status?: number }>(
+export function usePostProjects<TData = Awaited<ReturnType<typeof postProjects>>, TError = BadRequestResponse>(
  createProjectDto: CreateProjectDto, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof postProjects>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof postProjects>>,
@@ -114,7 +107,7 @@ export function usePostProjects<TData = Awaited<ReturnType<typeof postProjects>>
       >, fetch?: RequestInit}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function usePostProjects<TData = Awaited<ReturnType<typeof postProjects>>, TError = globalThis.Error & { info?: BadRequestResponse; status?: number }>(
+export function usePostProjects<TData = Awaited<ReturnType<typeof postProjects>>, TError = BadRequestResponse>(
  createProjectDto: CreateProjectDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof postProjects>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof postProjects>>,
@@ -124,7 +117,7 @@ export function usePostProjects<TData = Awaited<ReturnType<typeof postProjects>>
       >, fetch?: RequestInit}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function usePostProjects<TData = Awaited<ReturnType<typeof postProjects>>, TError = globalThis.Error & { info?: BadRequestResponse; status?: number }>(
+export function usePostProjects<TData = Awaited<ReturnType<typeof postProjects>>, TError = BadRequestResponse>(
  createProjectDto: CreateProjectDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof postProjects>>, TError, TData>>, fetch?: RequestInit}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -132,7 +125,7 @@ export function usePostProjects<TData = Awaited<ReturnType<typeof postProjects>>
  * @summary Create a project.
  */
 
-export function usePostProjects<TData = Awaited<ReturnType<typeof postProjects>>, TError = globalThis.Error & { info?: BadRequestResponse; status?: number }>(
+export function usePostProjects<TData = Awaited<ReturnType<typeof postProjects>>, TError = BadRequestResponse>(
  createProjectDto: CreateProjectDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof postProjects>>, TError, TData>>, fetch?: RequestInit}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -147,7 +140,7 @@ export function usePostProjects<TData = Awaited<ReturnType<typeof postProjects>>
 /**
  * @summary Create a project.
  */
-export const prefetchPostProjectsQuery = async <TData = Awaited<ReturnType<typeof postProjects>>, TError = globalThis.Error & { info?: BadRequestResponse; status?: number }>(
+export const prefetchPostProjectsQuery = async <TData = Awaited<ReturnType<typeof postProjects>>, TError = BadRequestResponse>(
  queryClient: QueryClient, createProjectDto: CreateProjectDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof postProjects>>, TError, TData>>, fetch?: RequestInit}
 
   ): Promise<QueryClient> => {
@@ -174,7 +167,7 @@ export const getGetProjectsUrl = () => {
 /**
  * @summary List projects with non-deleted requirement counts.
  */
-export const getProjects = async ( options?: RequestInit): Promise<ProjectResponseDto[]Success> => {
+export const getProjects = async ( options?: RequestInit): Promise<ProjectResponseDto[]> => {
 
   const res = await fetch(getGetProjectsUrl(),
   {
@@ -187,22 +180,15 @@ export const getProjects = async ( options?: RequestInit): Promise<ProjectRespon
 
 
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  if (!res.ok) {
 
-    const err: globalThis.Error & {info?: any, status?: number} = new globalThis.Error();
-    const data  = body ? JSON.parse(body) : {}
-    err.info = data;
-    err.status = res.status;
-    throw err;
-  }
-  const data: ProjectResponseDto[]Success = body ? JSON.parse(body) : {}
+  const data: ProjectResponseDto[] = body ? JSON.parse(body) : {}
   return data
 }
 
 
 
 
-export const getGetProjectsMutationOptions = <TError = globalThis.Error & { info?: unknown; status?: number },
+export const getGetProjectsMutationOptions = <TError = unknown,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getProjects>>, TError,void, TContext>, fetch?: RequestInit}
 ): UseMutationOptions<Awaited<ReturnType<typeof getProjects>>, TError,void, TContext> => {
 
@@ -231,12 +217,12 @@ const {mutation: mutationOptions, fetch: fetchOptions} = options ?
 
     export type GetProjectsMutationResult = NonNullable<Awaited<ReturnType<typeof getProjects>>>
 
-    export type GetProjectsMutationError = globalThis.Error & { info?: unknown; status?: number }
+    export type GetProjectsMutationError = unknown
 
     /**
  * @summary List projects with non-deleted requirement counts.
  */
-export const useGetProjects = <TError = globalThis.Error & { info?: unknown; status?: number },
+export const useGetProjects = <TError = unknown,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getProjects>>, TError,void, TContext>, fetch?: RequestInit}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof getProjects>>,
@@ -257,7 +243,7 @@ export const useGetProjects = <TError = globalThis.Error & { info?: unknown; sta
 /**
  * @summary Retrieve a project by UUID.
  */
-export const getProjectsId = async (id: string, options?: RequestInit): Promise<ProjectResponseDtoSuccess> => {
+export const getProjectsId = async (id: string, options?: RequestInit): Promise<ProjectResponseDto> => {
 
   const res = await fetch(getGetProjectsIdUrl(id),
   {
@@ -270,22 +256,15 @@ export const getProjectsId = async (id: string, options?: RequestInit): Promise<
 
 
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  if (!res.ok) {
 
-    const err: globalThis.Error & {info?: ProjectResponseDtoError, status?: number} = new globalThis.Error();
-    const data : ProjectResponseDtoError = body ? JSON.parse(body) : {}
-    err.info = data;
-    err.status = res.status;
-    throw err;
-  }
-  const data: ProjectResponseDtoSuccess = body ? JSON.parse(body) : {}
+  const data: ProjectResponseDto = body ? JSON.parse(body) : {}
   return data
 }
 
 
 
 
-export const getGetProjectsIdMutationOptions = <TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
+export const getGetProjectsIdMutationOptions = <TError = BadRequestResponse | NotFoundResponse,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getProjectsId>>, TError,{id: string}, TContext>, fetch?: RequestInit}
 ): UseMutationOptions<Awaited<ReturnType<typeof getProjectsId>>, TError,{id: string}, TContext> => {
 
@@ -314,12 +293,12 @@ const {mutation: mutationOptions, fetch: fetchOptions} = options ?
 
     export type GetProjectsIdMutationResult = NonNullable<Awaited<ReturnType<typeof getProjectsId>>>
 
-    export type GetProjectsIdMutationError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number }
+    export type GetProjectsIdMutationError = BadRequestResponse | NotFoundResponse
 
     /**
  * @summary Retrieve a project by UUID.
  */
-export const useGetProjectsId = <TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
+export const useGetProjectsId = <TError = BadRequestResponse | NotFoundResponse,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getProjectsId>>, TError,{id: string}, TContext>, fetch?: RequestInit}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof getProjectsId>>,

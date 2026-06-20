@@ -49,7 +49,7 @@ export const getPostMetricsUrl = () => {
 /**
  * @summary Create a project-scoped metric.
  */
-export const postMetrics = async (createMetricDto: CreateMetricDto, options?: RequestInit): Promise<MetricResponseDtoSuccess> => {
+export const postMetrics = async (createMetricDto: CreateMetricDto, options?: RequestInit): Promise<MetricResponseDto> => {
 
   const res = await fetch(getPostMetricsUrl(),
   {
@@ -62,15 +62,8 @@ export const postMetrics = async (createMetricDto: CreateMetricDto, options?: Re
 
 
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  if (!res.ok) {
 
-    const err: globalThis.Error & {info?: MetricResponseDtoError, status?: number} = new globalThis.Error();
-    const data : MetricResponseDtoError = body ? JSON.parse(body) : {}
-    err.info = data;
-    err.status = res.status;
-    throw err;
-  }
-  const data: MetricResponseDtoSuccess = body ? JSON.parse(body) : {}
+  const data: MetricResponseDto = body ? JSON.parse(body) : {}
   return data
 }
 
@@ -85,7 +78,7 @@ export const getPostMetricsQueryKey = (createMetricDto?: CreateMetricDto,) => {
     }
 
 
-export const getPostMetricsQueryOptions = <TData = Awaited<ReturnType<typeof postMetrics>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(createMetricDto: CreateMetricDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof postMetrics>>, TError, TData>>, fetch?: RequestInit}
+export const getPostMetricsQueryOptions = <TData = Awaited<ReturnType<typeof postMetrics>>, TError = BadRequestResponse | NotFoundResponse | ConflictResponse>(createMetricDto: CreateMetricDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof postMetrics>>, TError, TData>>, fetch?: RequestInit}
 ) => {
 
 const {query: queryOptions, fetch: fetchOptions} = options ?? {};
@@ -104,10 +97,10 @@ const {query: queryOptions, fetch: fetchOptions} = options ?? {};
 }
 
 export type PostMetricsQueryResult = NonNullable<Awaited<ReturnType<typeof postMetrics>>>
-export type PostMetricsQueryError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }
+export type PostMetricsQueryError = BadRequestResponse | NotFoundResponse | ConflictResponse
 
 
-export function usePostMetrics<TData = Awaited<ReturnType<typeof postMetrics>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+export function usePostMetrics<TData = Awaited<ReturnType<typeof postMetrics>>, TError = BadRequestResponse | NotFoundResponse | ConflictResponse>(
  createMetricDto: CreateMetricDto, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof postMetrics>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof postMetrics>>,
@@ -117,7 +110,7 @@ export function usePostMetrics<TData = Awaited<ReturnType<typeof postMetrics>>, 
       >, fetch?: RequestInit}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function usePostMetrics<TData = Awaited<ReturnType<typeof postMetrics>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+export function usePostMetrics<TData = Awaited<ReturnType<typeof postMetrics>>, TError = BadRequestResponse | NotFoundResponse | ConflictResponse>(
  createMetricDto: CreateMetricDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof postMetrics>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof postMetrics>>,
@@ -127,7 +120,7 @@ export function usePostMetrics<TData = Awaited<ReturnType<typeof postMetrics>>, 
       >, fetch?: RequestInit}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function usePostMetrics<TData = Awaited<ReturnType<typeof postMetrics>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+export function usePostMetrics<TData = Awaited<ReturnType<typeof postMetrics>>, TError = BadRequestResponse | NotFoundResponse | ConflictResponse>(
  createMetricDto: CreateMetricDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof postMetrics>>, TError, TData>>, fetch?: RequestInit}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -135,7 +128,7 @@ export function usePostMetrics<TData = Awaited<ReturnType<typeof postMetrics>>, 
  * @summary Create a project-scoped metric.
  */
 
-export function usePostMetrics<TData = Awaited<ReturnType<typeof postMetrics>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+export function usePostMetrics<TData = Awaited<ReturnType<typeof postMetrics>>, TError = BadRequestResponse | NotFoundResponse | ConflictResponse>(
  createMetricDto: CreateMetricDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof postMetrics>>, TError, TData>>, fetch?: RequestInit}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -150,7 +143,7 @@ export function usePostMetrics<TData = Awaited<ReturnType<typeof postMetrics>>, 
 /**
  * @summary Create a project-scoped metric.
  */
-export const prefetchPostMetricsQuery = async <TData = Awaited<ReturnType<typeof postMetrics>>, TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse | ConflictResponse; status?: number }>(
+export const prefetchPostMetricsQuery = async <TData = Awaited<ReturnType<typeof postMetrics>>, TError = BadRequestResponse | NotFoundResponse | ConflictResponse>(
  queryClient: QueryClient, createMetricDto: CreateMetricDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof postMetrics>>, TError, TData>>, fetch?: RequestInit}
 
   ): Promise<QueryClient> => {
@@ -184,7 +177,7 @@ export const getGetMetricsUrl = (params: GetMetricsParams,) => {
 /**
  * @summary List metrics by project.
  */
-export const getMetrics = async (params: GetMetricsParams, options?: RequestInit): Promise<MetricResponseDto[]Success> => {
+export const getMetrics = async (params: GetMetricsParams, options?: RequestInit): Promise<MetricResponseDto[]> => {
 
   const res = await fetch(getGetMetricsUrl(params),
   {
@@ -197,22 +190,15 @@ export const getMetrics = async (params: GetMetricsParams, options?: RequestInit
 
 
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  if (!res.ok) {
 
-    const err: globalThis.Error & {info?: MetricResponseDto[]Error, status?: number} = new globalThis.Error();
-    const data : MetricResponseDto[]Error = body ? JSON.parse(body) : {}
-    err.info = data;
-    err.status = res.status;
-    throw err;
-  }
-  const data: MetricResponseDto[]Success = body ? JSON.parse(body) : {}
+  const data: MetricResponseDto[] = body ? JSON.parse(body) : {}
   return data
 }
 
 
 
 
-export const getGetMetricsMutationOptions = <TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
+export const getGetMetricsMutationOptions = <TError = BadRequestResponse | NotFoundResponse,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getMetrics>>, TError,{params: GetMetricsParams}, TContext>, fetch?: RequestInit}
 ): UseMutationOptions<Awaited<ReturnType<typeof getMetrics>>, TError,{params: GetMetricsParams}, TContext> => {
 
@@ -241,12 +227,12 @@ const {mutation: mutationOptions, fetch: fetchOptions} = options ?
 
     export type GetMetricsMutationResult = NonNullable<Awaited<ReturnType<typeof getMetrics>>>
 
-    export type GetMetricsMutationError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number }
+    export type GetMetricsMutationError = BadRequestResponse | NotFoundResponse
 
     /**
  * @summary List metrics by project.
  */
-export const useGetMetrics = <TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
+export const useGetMetrics = <TError = BadRequestResponse | NotFoundResponse,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getMetrics>>, TError,{params: GetMetricsParams}, TContext>, fetch?: RequestInit}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof getMetrics>>,
@@ -276,7 +262,7 @@ export const useGetMetrics = <TError = globalThis.Error & { info?: BadRequestRes
  * @summary Retrieve a metric by key within a project.
  */
 export const getMetricsKeyKey = async (key: string,
-    params: GetMetricsKeyKeyParams, options?: RequestInit): Promise<MetricResponseDtoSuccess> => {
+    params: GetMetricsKeyKeyParams, options?: RequestInit): Promise<MetricResponseDto> => {
 
   const res = await fetch(getGetMetricsKeyKeyUrl(key,params),
   {
@@ -289,22 +275,15 @@ export const getMetricsKeyKey = async (key: string,
 
 
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  if (!res.ok) {
 
-    const err: globalThis.Error & {info?: MetricResponseDtoError, status?: number} = new globalThis.Error();
-    const data : MetricResponseDtoError = body ? JSON.parse(body) : {}
-    err.info = data;
-    err.status = res.status;
-    throw err;
-  }
-  const data: MetricResponseDtoSuccess = body ? JSON.parse(body) : {}
+  const data: MetricResponseDto = body ? JSON.parse(body) : {}
   return data
 }
 
 
 
 
-export const getGetMetricsKeyKeyMutationOptions = <TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
+export const getGetMetricsKeyKeyMutationOptions = <TError = BadRequestResponse | NotFoundResponse,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getMetricsKeyKey>>, TError,{key: string;params: GetMetricsKeyKeyParams}, TContext>, fetch?: RequestInit}
 ): UseMutationOptions<Awaited<ReturnType<typeof getMetricsKeyKey>>, TError,{key: string;params: GetMetricsKeyKeyParams}, TContext> => {
 
@@ -333,12 +312,12 @@ const {mutation: mutationOptions, fetch: fetchOptions} = options ?
 
     export type GetMetricsKeyKeyMutationResult = NonNullable<Awaited<ReturnType<typeof getMetricsKeyKey>>>
 
-    export type GetMetricsKeyKeyMutationError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number }
+    export type GetMetricsKeyKeyMutationError = BadRequestResponse | NotFoundResponse
 
     /**
  * @summary Retrieve a metric by key within a project.
  */
-export const useGetMetricsKeyKey = <TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
+export const useGetMetricsKeyKey = <TError = BadRequestResponse | NotFoundResponse,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getMetricsKeyKey>>, TError,{key: string;params: GetMetricsKeyKeyParams}, TContext>, fetch?: RequestInit}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof getMetricsKeyKey>>,
@@ -359,7 +338,7 @@ export const useGetMetricsKeyKey = <TError = globalThis.Error & { info?: BadRequ
 /**
  * @summary Retrieve a metric by UUID.
  */
-export const getMetricsId = async (id: string, options?: RequestInit): Promise<MetricResponseDtoSuccess> => {
+export const getMetricsId = async (id: string, options?: RequestInit): Promise<MetricResponseDto> => {
 
   const res = await fetch(getGetMetricsIdUrl(id),
   {
@@ -372,22 +351,15 @@ export const getMetricsId = async (id: string, options?: RequestInit): Promise<M
 
 
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  if (!res.ok) {
 
-    const err: globalThis.Error & {info?: MetricResponseDtoError, status?: number} = new globalThis.Error();
-    const data : MetricResponseDtoError = body ? JSON.parse(body) : {}
-    err.info = data;
-    err.status = res.status;
-    throw err;
-  }
-  const data: MetricResponseDtoSuccess = body ? JSON.parse(body) : {}
+  const data: MetricResponseDto = body ? JSON.parse(body) : {}
   return data
 }
 
 
 
 
-export const getGetMetricsIdMutationOptions = <TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
+export const getGetMetricsIdMutationOptions = <TError = BadRequestResponse | NotFoundResponse,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getMetricsId>>, TError,{id: string}, TContext>, fetch?: RequestInit}
 ): UseMutationOptions<Awaited<ReturnType<typeof getMetricsId>>, TError,{id: string}, TContext> => {
 
@@ -416,12 +388,12 @@ const {mutation: mutationOptions, fetch: fetchOptions} = options ?
 
     export type GetMetricsIdMutationResult = NonNullable<Awaited<ReturnType<typeof getMetricsId>>>
 
-    export type GetMetricsIdMutationError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number }
+    export type GetMetricsIdMutationError = BadRequestResponse | NotFoundResponse
 
     /**
  * @summary Retrieve a metric by UUID.
  */
-export const useGetMetricsId = <TError = globalThis.Error & { info?: BadRequestResponse | NotFoundResponse; status?: number },
+export const useGetMetricsId = <TError = BadRequestResponse | NotFoundResponse,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getMetricsId>>, TError,{id: string}, TContext>, fetch?: RequestInit}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof getMetricsId>>,

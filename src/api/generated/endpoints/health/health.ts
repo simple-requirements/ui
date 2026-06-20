@@ -30,7 +30,7 @@ export const getGetUrl = () => {
 /**
  * @summary Retrieve the application greeting.
  */
-export const get = async ( options?: RequestInit): Promise<voidSuccess> => {
+export const get = async ( options?: RequestInit): Promise<void> => {
 
   const res = await fetch(getGetUrl(),
   {
@@ -43,22 +43,15 @@ export const get = async ( options?: RequestInit): Promise<voidSuccess> => {
 
 
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-  if (!res.ok) {
 
-    const err: globalThis.Error & {info?: any, status?: number} = new globalThis.Error();
-    const data  = body ? JSON.parse(body) : {}
-    err.info = data;
-    err.status = res.status;
-    throw err;
-  }
-  const data: voidSuccess = body ? JSON.parse(body) : undefined
+  const data: void = body ? JSON.parse(body) : undefined
   return data
 }
 
 
 
 
-export const getGetMutationOptions = <TError = globalThis.Error & { info?: unknown; status?: number },
+export const getGetMutationOptions = <TError = unknown,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof get>>, TError,void, TContext>, fetch?: RequestInit}
 ): UseMutationOptions<Awaited<ReturnType<typeof get>>, TError,void, TContext> => {
 
@@ -87,12 +80,12 @@ const {mutation: mutationOptions, fetch: fetchOptions} = options ?
 
     export type GetMutationResult = NonNullable<Awaited<ReturnType<typeof get>>>
 
-    export type GetMutationError = globalThis.Error & { info?: unknown; status?: number }
+    export type GetMutationError = unknown
 
     /**
  * @summary Retrieve the application greeting.
  */
-export const useGet = <TError = globalThis.Error & { info?: unknown; status?: number },
+export const useGet = <TError = unknown,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof get>>, TError,void, TContext>, fetch?: RequestInit}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof get>>,

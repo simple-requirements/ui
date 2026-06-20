@@ -2,7 +2,7 @@ import { useLiveQuery } from '@tanstack/react-db';
 import { useEffect } from 'react';
 import { useMutation, useQuery, type QueryClient } from '@tanstack/react-query';
 import { projectKeys } from '@/api/queryKeys';
-import { listProjects } from '@/features/projects/api/projectsApi';
+import { createProject, listProjects } from '@/features/projects/api/projectsApi';
 import { projectsCollection, replaceCollectionRows } from '@/utils/dbCollections';
 import type { ProjectSummary } from '@/types/domain';
 
@@ -30,12 +30,13 @@ export class ProjectCreationUnavailableError extends Error {
     }
 }
 
-/** Creates a project through the backend when the OpenAPI project contract is available. */
+/** Creates a project through the generated backend client. */
 export function useCreateProjectMutation(queryClient: QueryClient) {
     return useMutation({
-        mutationFn: () => {
-            console.error('Backend contract gap: the OpenAPI contract does not expose POST /projects.');
-            return Promise.reject(new ProjectCreationUnavailableError());
+        mutationFn: (name: string) => {
+            const trimmedName = name.trim();
+            if (!trimmedName) return Promise.reject(new ProjectCreationUnavailableError());
+            return createProject(trimmedName);
         },
         onSuccess: async () => queryClient.invalidateQueries({ queryKey: projectKeys.all }),
     });

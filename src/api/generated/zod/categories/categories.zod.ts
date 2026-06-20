@@ -11,7 +11,7 @@ import * as zod from 'zod';
 /**
  * @summary Create a category.
  */
-export const postCategoriesBodyKeyRegExp = new RegExp('^[A-Z][A-Z0-9_]*$');
+export const postCategoriesBodyKeyRegExp = new RegExp('^[A-Z]{2,4}$');
 
 
 export const PostCategoriesBody = zod.object({

@@ -169,7 +169,7 @@ export const prefetchPostRequirementsQuery = async <TData = Awaited<ReturnType<t
 
 
 
-export const getGetRequirementsUrl = (params?: GetRequirementsParams,) => {
+export const getGetRequirementsUrl = (params: GetRequirementsParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -187,7 +187,7 @@ export const getGetRequirementsUrl = (params?: GetRequirementsParams,) => {
 /**
  * @summary List requirements with optional filters.
  */
-export const getRequirements = async (params?: GetRequirementsParams, options?: RequestInit): Promise<RequirementResponseDto[]Success> => {
+export const getRequirements = async (params: GetRequirementsParams, options?: RequestInit): Promise<RequirementResponseDto[]Success> => {
 
   const res = await fetch(getGetRequirementsUrl(params),
   {
@@ -216,8 +216,8 @@ export const getRequirements = async (params?: GetRequirementsParams, options?: 
 
 
 export const getGetRequirementsMutationOptions = <TError = globalThis.Error & { info?: BadRequestResponse; status?: number },
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getRequirements>>, TError,{params?: GetRequirementsParams}, TContext>, fetch?: RequestInit}
-): UseMutationOptions<Awaited<ReturnType<typeof getRequirements>>, TError,{params?: GetRequirementsParams}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getRequirements>>, TError,{params: GetRequirementsParams}, TContext>, fetch?: RequestInit}
+): UseMutationOptions<Awaited<ReturnType<typeof getRequirements>>, TError,{params: GetRequirementsParams}, TContext> => {
 
 const mutationKey = ['getRequirements'];
 const {mutation: mutationOptions, fetch: fetchOptions} = options ?
@@ -229,7 +229,7 @@ const {mutation: mutationOptions, fetch: fetchOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getRequirements>>, {params?: GetRequirementsParams}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getRequirements>>, {params: GetRequirementsParams}> = (props) => {
           const {params} = props ?? {};
 
           return  getRequirements(params,fetchOptions)
@@ -250,11 +250,11 @@ const {mutation: mutationOptions, fetch: fetchOptions} = options ?
  * @summary List requirements with optional filters.
  */
 export const useGetRequirements = <TError = globalThis.Error & { info?: BadRequestResponse; status?: number },
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getRequirements>>, TError,{params?: GetRequirementsParams}, TContext>, fetch?: RequestInit}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getRequirements>>, TError,{params: GetRequirementsParams}, TContext>, fetch?: RequestInit}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof getRequirements>>,
         TError,
-        {params?: GetRequirementsParams},
+        {params: GetRequirementsParams},
         TContext
       > => {
       return useMutation(getGetRequirementsMutationOptions(options), queryClient);

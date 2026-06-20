@@ -5,6 +5,7 @@
  * HTTP API for the Requirements Management app.
  * OpenAPI spec version: 0.0.1
  */
+import type { MetricReferenceResponseDto } from './metricReferenceResponseDto';
 import type { RequirementStatus } from './requirementStatus';
 import type { RequirementType } from './requirementType';
 
@@ -14,6 +15,7 @@ export interface RequirementResponseDto {
   visibleKey: string;
   /** Derived from the assigned category. */
   readonly type: RequirementType;
+  projectId: string;
   categoryId: string;
   /**
      * @minimum 1
@@ -21,7 +23,11 @@ export interface RequirementResponseDto {
      */
   sequenceNumber: number;
   status: RequirementStatus;
+  /** Canonical code/source text for code mode. */
   description: string;
+  /** Display text with resolved metric references substituted for visual mode. */
+  renderedDescription: string;
+  metricReferences: MetricReferenceResponseDto[];
   priority: string;
   /** @nullable */
   owner: string | null;

@@ -9,6 +9,7 @@ import type { RequirementStatus } from './requirementStatus';
 import type { RequirementType } from './requirementType';
 
 export type GetRequirementsParams = {
+projectId: string;
 includeRejected?: boolean;
 type?: RequirementType;
 categoryId?: string;

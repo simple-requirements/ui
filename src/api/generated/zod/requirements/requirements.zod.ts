@@ -12,8 +12,9 @@ import * as zod from 'zod';
  * @summary Create a draft requirement and allocate its visible key.
  */
 export const PostRequirementsBody = zod.object({
+  "projectId": zod.uuid(),
   "categoryId": zod.uuid(),
-  "description": zod.string(),
+  "description": zod.string().describe('Canonical code\/source text. Metric references use [~MET-0001]; inline definition syntax such as [~MET-0001 := 2000 ms] is unsupported and rejected.'),
   "priority": zod.string(),
   "owner": zod.string().nullish(),
   "rationale": zod.string().nullish(),
@@ -22,16 +23,26 @@ export const PostRequirementsBody = zod.object({
 
 export const postRequirementsResponseSequenceNumberMax = 9999;
 
+export const postRequirementsResponseMetricReferencesItemKeyRegExp = new RegExp('^MET-[0-9]{4}$');
 
 
 export const PostRequirementsResponse = zod.object({
   "id": zod.uuid(),
   "visibleKey": zod.string().describe('Prefix is derived from the assigned category type.'),
   "type": zod.enum(['FR', 'NFR']).describe('Requirement type. For requirements, this is derived from the assigned category.').describe('Derived from the assigned category.'),
+  "projectId": zod.uuid(),
   "categoryId": zod.uuid(),
   "sequenceNumber": zod.number().min(1).max(postRequirementsResponseSequenceNumberMax),
   "status": zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected', 'deleted']).describe('Implemented requirement lifecycle state.'),
-  "description": zod.string(),
+  "description": zod.string().describe('Canonical code\/source text for code mode.'),
+  "renderedDescription": zod.string().describe('Display text with resolved metric references substituted for visual mode.'),
+  "metricReferences": zod.array(zod.object({
+  "id": zod.uuid().nullable(),
+  "key": zod.string().regex(postRequirementsResponseMetricReferencesItemKeyRegExp),
+  "value": zod.string().nullable(),
+  "description": zod.string().nullable(),
+  "resolved": zod.boolean().describe('Whether the reference resolved within the requirement project.')
+})),
   "priority": zod.string(),
   "owner": zod.string().nullable(),
   "rationale": zod.string().nullable(),
@@ -52,6 +63,7 @@ export const PostRequirementsResponse = zod.object({
  * @summary List requirements with optional filters.
  */
 export const GetRequirementsQueryParams = zod.object({
+  "projectId": zod.uuid(),
   "includeRejected": zod.boolean().optional(),
   "type": zod.enum(['FR', 'NFR']).optional(),
   "categoryId": zod.uuid().optional(),
@@ -61,16 +73,26 @@ export const GetRequirementsQueryParams = zod.object({
 
 export const getRequirementsResponseSequenceNumberMax = 9999;
 
+export const getRequirementsResponseMetricReferencesItemKeyRegExp = new RegExp('^MET-[0-9]{4}$');
 
 
 export const GetRequirementsResponseItem = zod.object({
   "id": zod.uuid(),
   "visibleKey": zod.string().describe('Prefix is derived from the assigned category type.'),
   "type": zod.enum(['FR', 'NFR']).describe('Requirement type. For requirements, this is derived from the assigned category.').describe('Derived from the assigned category.'),
+  "projectId": zod.uuid(),
   "categoryId": zod.uuid(),
   "sequenceNumber": zod.number().min(1).max(getRequirementsResponseSequenceNumberMax),
   "status": zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected', 'deleted']).describe('Implemented requirement lifecycle state.'),
-  "description": zod.string(),
+  "description": zod.string().describe('Canonical code\/source text for code mode.'),
+  "renderedDescription": zod.string().describe('Display text with resolved metric references substituted for visual mode.'),
+  "metricReferences": zod.array(zod.object({
+  "id": zod.uuid().nullable(),
+  "key": zod.string().regex(getRequirementsResponseMetricReferencesItemKeyRegExp),
+  "value": zod.string().nullable(),
+  "description": zod.string().nullable(),
+  "resolved": zod.boolean().describe('Whether the reference resolved within the requirement project.')
+})),
   "priority": zod.string(),
   "owner": zod.string().nullable(),
   "rationale": zod.string().nullable(),
@@ -91,7 +113,7 @@ export const GetRequirementsResponse = zod.array(GetRequirementsResponseItem)
 /**
  * @summary Retrieve a requirement by visible key.
  */
-export const getRequirementsKeyVisibleKeyPathVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{3,4}-[0-9]{4}$');
+export const getRequirementsKeyVisibleKeyPathVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-[0-9]{4}$');
 
 
 export const GetRequirementsKeyVisibleKeyParams = zod.object({
@@ -100,16 +122,26 @@ export const GetRequirementsKeyVisibleKeyParams = zod.object({
 
 export const getRequirementsKeyVisibleKeyResponseSequenceNumberMax = 9999;
 
+export const getRequirementsKeyVisibleKeyResponseMetricReferencesItemKeyRegExp = new RegExp('^MET-[0-9]{4}$');
 
 
 export const GetRequirementsKeyVisibleKeyResponse = zod.object({
   "id": zod.uuid(),
   "visibleKey": zod.string().describe('Prefix is derived from the assigned category type.'),
   "type": zod.enum(['FR', 'NFR']).describe('Requirement type. For requirements, this is derived from the assigned category.').describe('Derived from the assigned category.'),
+  "projectId": zod.uuid(),
   "categoryId": zod.uuid(),
   "sequenceNumber": zod.number().min(1).max(getRequirementsKeyVisibleKeyResponseSequenceNumberMax),
   "status": zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected', 'deleted']).describe('Implemented requirement lifecycle state.'),
-  "description": zod.string(),
+  "description": zod.string().describe('Canonical code\/source text for code mode.'),
+  "renderedDescription": zod.string().describe('Display text with resolved metric references substituted for visual mode.'),
+  "metricReferences": zod.array(zod.object({
+  "id": zod.uuid().nullable(),
+  "key": zod.string().regex(getRequirementsKeyVisibleKeyResponseMetricReferencesItemKeyRegExp),
+  "value": zod.string().nullable(),
+  "description": zod.string().nullable(),
+  "resolved": zod.boolean().describe('Whether the reference resolved within the requirement project.')
+})),
   "priority": zod.string(),
   "owner": zod.string().nullable(),
   "rationale": zod.string().nullable(),
@@ -135,16 +167,26 @@ export const GetRequirementsIdParams = zod.object({
 
 export const getRequirementsIdResponseSequenceNumberMax = 9999;
 
+export const getRequirementsIdResponseMetricReferencesItemKeyRegExp = new RegExp('^MET-[0-9]{4}$');
 
 
 export const GetRequirementsIdResponse = zod.object({
   "id": zod.uuid(),
   "visibleKey": zod.string().describe('Prefix is derived from the assigned category type.'),
   "type": zod.enum(['FR', 'NFR']).describe('Requirement type. For requirements, this is derived from the assigned category.').describe('Derived from the assigned category.'),
+  "projectId": zod.uuid(),
   "categoryId": zod.uuid(),
   "sequenceNumber": zod.number().min(1).max(getRequirementsIdResponseSequenceNumberMax),
   "status": zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected', 'deleted']).describe('Implemented requirement lifecycle state.'),
-  "description": zod.string(),
+  "description": zod.string().describe('Canonical code\/source text for code mode.'),
+  "renderedDescription": zod.string().describe('Display text with resolved metric references substituted for visual mode.'),
+  "metricReferences": zod.array(zod.object({
+  "id": zod.uuid().nullable(),
+  "key": zod.string().regex(getRequirementsIdResponseMetricReferencesItemKeyRegExp),
+  "value": zod.string().nullable(),
+  "description": zod.string().nullable(),
+  "resolved": zod.boolean().describe('Whether the reference resolved within the requirement project.')
+})),
   "priority": zod.string(),
   "owner": zod.string().nullable(),
   "rationale": zod.string().nullable(),
@@ -169,7 +211,7 @@ export const PatchRequirementsIdParams = zod.object({
 })
 
 export const PatchRequirementsIdBody = zod.object({
-  "description": zod.string().optional(),
+  "description": zod.string().optional().describe('Canonical code\/source text. Metric references use [~MET-0001]; inline metric definitions are unsupported and are not used to create or update metrics.'),
   "priority": zod.string().optional(),
   "owner": zod.string().nullish(),
   "rationale": zod.string().nullish(),
@@ -178,16 +220,26 @@ export const PatchRequirementsIdBody = zod.object({
 
 export const patchRequirementsIdResponseSequenceNumberMax = 9999;
 
+export const patchRequirementsIdResponseMetricReferencesItemKeyRegExp = new RegExp('^MET-[0-9]{4}$');
 
 
 export const PatchRequirementsIdResponse = zod.object({
   "id": zod.uuid(),
   "visibleKey": zod.string().describe('Prefix is derived from the assigned category type.'),
   "type": zod.enum(['FR', 'NFR']).describe('Requirement type. For requirements, this is derived from the assigned category.').describe('Derived from the assigned category.'),
+  "projectId": zod.uuid(),
   "categoryId": zod.uuid(),
   "sequenceNumber": zod.number().min(1).max(patchRequirementsIdResponseSequenceNumberMax),
   "status": zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected', 'deleted']).describe('Implemented requirement lifecycle state.'),
-  "description": zod.string(),
+  "description": zod.string().describe('Canonical code\/source text for code mode.'),
+  "renderedDescription": zod.string().describe('Display text with resolved metric references substituted for visual mode.'),
+  "metricReferences": zod.array(zod.object({
+  "id": zod.uuid().nullable(),
+  "key": zod.string().regex(patchRequirementsIdResponseMetricReferencesItemKeyRegExp),
+  "value": zod.string().nullable(),
+  "description": zod.string().nullable(),
+  "resolved": zod.boolean().describe('Whether the reference resolved within the requirement project.')
+})),
   "priority": zod.string(),
   "owner": zod.string().nullable(),
   "rationale": zod.string().nullable(),
@@ -227,16 +279,26 @@ export const PatchRequirementsIdRejectBody = zod.object({
 
 export const patchRequirementsIdRejectResponseSequenceNumberMax = 9999;
 
+export const patchRequirementsIdRejectResponseMetricReferencesItemKeyRegExp = new RegExp('^MET-[0-9]{4}$');
 
 
 export const PatchRequirementsIdRejectResponse = zod.object({
   "id": zod.uuid(),
   "visibleKey": zod.string().describe('Prefix is derived from the assigned category type.'),
   "type": zod.enum(['FR', 'NFR']).describe('Requirement type. For requirements, this is derived from the assigned category.').describe('Derived from the assigned category.'),
+  "projectId": zod.uuid(),
   "categoryId": zod.uuid(),
   "sequenceNumber": zod.number().min(1).max(patchRequirementsIdRejectResponseSequenceNumberMax),
   "status": zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected', 'deleted']).describe('Implemented requirement lifecycle state.'),
-  "description": zod.string(),
+  "description": zod.string().describe('Canonical code\/source text for code mode.'),
+  "renderedDescription": zod.string().describe('Display text with resolved metric references substituted for visual mode.'),
+  "metricReferences": zod.array(zod.object({
+  "id": zod.uuid().nullable(),
+  "key": zod.string().regex(patchRequirementsIdRejectResponseMetricReferencesItemKeyRegExp),
+  "value": zod.string().nullable(),
+  "description": zod.string().nullable(),
+  "resolved": zod.boolean().describe('Whether the reference resolved within the requirement project.')
+})),
   "priority": zod.string(),
   "owner": zod.string().nullable(),
   "rationale": zod.string().nullable(),
@@ -262,16 +324,26 @@ export const PatchRequirementsIdApproveParams = zod.object({
 
 export const patchRequirementsIdApproveResponseSequenceNumberMax = 9999;
 
+export const patchRequirementsIdApproveResponseMetricReferencesItemKeyRegExp = new RegExp('^MET-[0-9]{4}$');
 
 
 export const PatchRequirementsIdApproveResponse = zod.object({
   "id": zod.uuid(),
   "visibleKey": zod.string().describe('Prefix is derived from the assigned category type.'),
   "type": zod.enum(['FR', 'NFR']).describe('Requirement type. For requirements, this is derived from the assigned category.').describe('Derived from the assigned category.'),
+  "projectId": zod.uuid(),
   "categoryId": zod.uuid(),
   "sequenceNumber": zod.number().min(1).max(patchRequirementsIdApproveResponseSequenceNumberMax),
   "status": zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected', 'deleted']).describe('Implemented requirement lifecycle state.'),
-  "description": zod.string(),
+  "description": zod.string().describe('Canonical code\/source text for code mode.'),
+  "renderedDescription": zod.string().describe('Display text with resolved metric references substituted for visual mode.'),
+  "metricReferences": zod.array(zod.object({
+  "id": zod.uuid().nullable(),
+  "key": zod.string().regex(patchRequirementsIdApproveResponseMetricReferencesItemKeyRegExp),
+  "value": zod.string().nullable(),
+  "description": zod.string().nullable(),
+  "resolved": zod.boolean().describe('Whether the reference resolved within the requirement project.')
+})),
   "priority": zod.string(),
   "owner": zod.string().nullable(),
   "rationale": zod.string().nullable(),
@@ -297,16 +369,26 @@ export const PatchRequirementsIdImplementedParams = zod.object({
 
 export const patchRequirementsIdImplementedResponseSequenceNumberMax = 9999;
 
+export const patchRequirementsIdImplementedResponseMetricReferencesItemKeyRegExp = new RegExp('^MET-[0-9]{4}$');
 
 
 export const PatchRequirementsIdImplementedResponse = zod.object({
   "id": zod.uuid(),
   "visibleKey": zod.string().describe('Prefix is derived from the assigned category type.'),
   "type": zod.enum(['FR', 'NFR']).describe('Requirement type. For requirements, this is derived from the assigned category.').describe('Derived from the assigned category.'),
+  "projectId": zod.uuid(),
   "categoryId": zod.uuid(),
   "sequenceNumber": zod.number().min(1).max(patchRequirementsIdImplementedResponseSequenceNumberMax),
   "status": zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected', 'deleted']).describe('Implemented requirement lifecycle state.'),
-  "description": zod.string(),
+  "description": zod.string().describe('Canonical code\/source text for code mode.'),
+  "renderedDescription": zod.string().describe('Display text with resolved metric references substituted for visual mode.'),
+  "metricReferences": zod.array(zod.object({
+  "id": zod.uuid().nullable(),
+  "key": zod.string().regex(patchRequirementsIdImplementedResponseMetricReferencesItemKeyRegExp),
+  "value": zod.string().nullable(),
+  "description": zod.string().nullable(),
+  "resolved": zod.boolean().describe('Whether the reference resolved within the requirement project.')
+})),
   "priority": zod.string(),
   "owner": zod.string().nullable(),
   "rationale": zod.string().nullable(),
@@ -336,16 +418,26 @@ export const PatchRequirementsIdObsoleteBody = zod.object({
 
 export const patchRequirementsIdObsoleteResponseSequenceNumberMax = 9999;
 
+export const patchRequirementsIdObsoleteResponseMetricReferencesItemKeyRegExp = new RegExp('^MET-[0-9]{4}$');
 
 
 export const PatchRequirementsIdObsoleteResponse = zod.object({
   "id": zod.uuid(),
   "visibleKey": zod.string().describe('Prefix is derived from the assigned category type.'),
   "type": zod.enum(['FR', 'NFR']).describe('Requirement type. For requirements, this is derived from the assigned category.').describe('Derived from the assigned category.'),
+  "projectId": zod.uuid(),
   "categoryId": zod.uuid(),
   "sequenceNumber": zod.number().min(1).max(patchRequirementsIdObsoleteResponseSequenceNumberMax),
   "status": zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected', 'deleted']).describe('Implemented requirement lifecycle state.'),
-  "description": zod.string(),
+  "description": zod.string().describe('Canonical code\/source text for code mode.'),
+  "renderedDescription": zod.string().describe('Display text with resolved metric references substituted for visual mode.'),
+  "metricReferences": zod.array(zod.object({
+  "id": zod.uuid().nullable(),
+  "key": zod.string().regex(patchRequirementsIdObsoleteResponseMetricReferencesItemKeyRegExp),
+  "value": zod.string().nullable(),
+  "description": zod.string().nullable(),
+  "resolved": zod.boolean().describe('Whether the reference resolved within the requirement project.')
+})),
   "priority": zod.string(),
   "owner": zod.string().nullable(),
   "rationale": zod.string().nullable(),
@@ -371,6 +463,7 @@ export const GetRequirementsIdRevisionsParams = zod.object({
 
 export const getRequirementsIdRevisionsResponseOneSequenceNumberMax = 9999;
 
+export const getRequirementsIdRevisionsResponseOneMetricReferencesItemKeyRegExp = new RegExp('^MET-[0-9]{4}$');
 
 
 
@@ -378,10 +471,19 @@ export const GetRequirementsIdRevisionsResponseItem = zod.object({
   "id": zod.uuid(),
   "visibleKey": zod.string().describe('Prefix is derived from the assigned category type.'),
   "type": zod.enum(['FR', 'NFR']).describe('Requirement type. For requirements, this is derived from the assigned category.').describe('Derived from the assigned category.'),
+  "projectId": zod.uuid(),
   "categoryId": zod.uuid(),
   "sequenceNumber": zod.number().min(1).max(getRequirementsIdRevisionsResponseOneSequenceNumberMax),
   "status": zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected', 'deleted']).describe('Implemented requirement lifecycle state.'),
-  "description": zod.string(),
+  "description": zod.string().describe('Canonical code\/source text for code mode.'),
+  "renderedDescription": zod.string().describe('Display text with resolved metric references substituted for visual mode.'),
+  "metricReferences": zod.array(zod.object({
+  "id": zod.uuid().nullable(),
+  "key": zod.string().regex(getRequirementsIdRevisionsResponseOneMetricReferencesItemKeyRegExp),
+  "value": zod.string().nullable(),
+  "description": zod.string().nullable(),
+  "resolved": zod.boolean().describe('Whether the reference resolved within the requirement project.')
+})),
   "priority": zod.string(),
   "owner": zod.string().nullable(),
   "rationale": zod.string().nullable(),
@@ -417,6 +519,7 @@ export const GetRequirementsIdRevisionsRevisionNumberParams = zod.object({
 
 export const getRequirementsIdRevisionsRevisionNumberResponseOneSequenceNumberMax = 9999;
 
+export const getRequirementsIdRevisionsRevisionNumberResponseOneMetricReferencesItemKeyRegExp = new RegExp('^MET-[0-9]{4}$');
 
 
 
@@ -424,10 +527,19 @@ export const GetRequirementsIdRevisionsRevisionNumberResponse = zod.object({
   "id": zod.uuid(),
   "visibleKey": zod.string().describe('Prefix is derived from the assigned category type.'),
   "type": zod.enum(['FR', 'NFR']).describe('Requirement type. For requirements, this is derived from the assigned category.').describe('Derived from the assigned category.'),
+  "projectId": zod.uuid(),
   "categoryId": zod.uuid(),
   "sequenceNumber": zod.number().min(1).max(getRequirementsIdRevisionsRevisionNumberResponseOneSequenceNumberMax),
   "status": zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected', 'deleted']).describe('Implemented requirement lifecycle state.'),
-  "description": zod.string(),
+  "description": zod.string().describe('Canonical code\/source text for code mode.'),
+  "renderedDescription": zod.string().describe('Display text with resolved metric references substituted for visual mode.'),
+  "metricReferences": zod.array(zod.object({
+  "id": zod.uuid().nullable(),
+  "key": zod.string().regex(getRequirementsIdRevisionsRevisionNumberResponseOneMetricReferencesItemKeyRegExp),
+  "value": zod.string().nullable(),
+  "description": zod.string().nullable(),
+  "resolved": zod.boolean().describe('Whether the reference resolved within the requirement project.')
+})),
   "priority": zod.string(),
   "owner": zod.string().nullable(),
   "rationale": zod.string().nullable(),

@@ -7,7 +7,9 @@
  */
 
 export interface CreateRequirementDto {
+  projectId: string;
   categoryId: string;
+  /** Canonical code/source text. Metric references use [~MET-0001]; inline definition syntax such as [~MET-0001 := 2000 ms] is unsupported and rejected. */
   description: string;
   priority: string;
   /** @nullable */

@@ -7,6 +7,7 @@
  */
 
 export interface UpdateRequirementDto {
+  /** Canonical code/source text. Metric references use [~MET-0001]; inline metric definitions are unsupported and are not used to create or update metrics. */
   description?: string;
   priority?: string;
   /** @nullable */

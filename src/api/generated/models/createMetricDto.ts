@@ -5,11 +5,13 @@
  * HTTP API for the Requirements Management app.
  * OpenAPI spec version: 0.0.1
  */
-import type { RequirementType } from './requirementType';
 
-export interface CreateCategoryDto {
-  name: string;
-  /** @pattern ^[A-Z]{2,4}$ */
+export interface CreateMetricDto {
+  projectId: string;
+  /** @pattern ^MET-[0-9]{4}$ */
   key: string;
-  type: RequirementType;
+  /** @minLength 1 */
+  value: string;
+  /** @nullable */
+  description?: string | null;
 }

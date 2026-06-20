@@ -18,8 +18,8 @@
         "preview": "vite preview",
         "test:unit": "vitest",
         "test:unit:coverage": "vitest run --coverage",
-        "test:e2e": "npm run build && bddgen && playwright test",
-        "test:e2e:ui": "npm run build && bddgen && playwright test --ui"
+        "test:e2e": "pnpm build && bddgen && playwright test",
+        "test:e2e:ui": "pnpm build && bddgen && playwright test --ui"
     },
     "dependencies": {
         "@git-diff-view/react": "^0.1.5",

@@ -25,6 +25,7 @@ import { workspaceReducer } from '@/state/workspaceReducer';
 import { formValue } from '@/utils/formData';
 import { useEditRequirementMutation } from '@/utils/editRequirementMutation';
 import { deriveProjectAvailability } from '@/features/projects/projectAvailability';
+import { validateVisibleKey } from '@/features/requirements/api/requirementsApi';
 
 /** Coordinates backend server state, workspace state, and top-level application layout. */
 export default function App() {
@@ -45,10 +46,15 @@ export default function App() {
     const tabDetailQuery = useRequirementDetailQuery(activeRequirementTab?.requirementId);
 
     useEffect(() => {
-        if (workspaceState.activeProjectId) return;
+        if (projectsQuery.isLoading || projectsQuery.isFetching) return;
         if (projectsQuery.data.length === 0) return;
+        if (
+            workspaceState.activeProjectId
+            && projectsQuery.data.some((project) => project.id === workspaceState.activeProjectId)
+        )
+            return;
         dispatch({ type: 'selectProject', projectId: projectsQuery.data[0].id });
-    }, [projectsQuery.data, workspaceState.activeProjectId]);
+    }, [projectsQuery.data, projectsQuery.isFetching, projectsQuery.isLoading, workspaceState.activeProjectId]);
 
     useEffect(() => {
         if (workspaceState.activeProjectId) {
@@ -171,13 +177,18 @@ export default function App() {
                     lookupPending={lookupMutation.isPending}
                     onLookup={(visibleKey) => {
                         setLookupMessage(null);
-                        lookupMutation.mutate(visibleKey);
+                        const normalizedVisibleKey = visibleKey.trim().toUpperCase();
+                        if (!validateVisibleKey(normalizedVisibleKey)) {
+                            setLookupMessage('Enter a valid requirement key, for example FR-UI-0001.');
+                            return;
+                        }
+                        lookupMutation.mutate(normalizedVisibleKey);
                     }}
                     dispatch={dispatch}
                 />
             }
             dispatch={dispatch}
-            onCreateProject={() => createProjectMutation.mutate()}
+            onCreateProject={(formData) => createProjectMutation.mutate(formValue(formData, 'name'))}
             createProjectError={
                 createProjectMutation.error instanceof ProjectCreationUnavailableError ?
                     createProjectMutation.error.message
@@ -197,7 +208,9 @@ export default function App() {
                 createCategoryMutation.error ? mapApiError(createCategoryMutation.error).message : null
             }
             createCategoryPending={createCategoryMutation.isPending}
-            onCreateRequirement={(values) => createRequirementMutation.mutate(values)}
+            onCreateRequirement={(values) =>
+                createRequirementMutation.mutate({ ...values, projectId: workspaceState.activeProjectId ?? undefined })
+            }
             createRequirementError={
                 createRequirementMutation.error ? mapApiError(createRequirementMutation.error).message : null
             }

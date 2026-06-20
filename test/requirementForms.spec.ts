@@ -15,7 +15,7 @@ import { ProjectCreationUnavailableError } from '@/utils/projectQueries';
 
 const requirement: RequirementView = {
     id: '11111111-1111-4111-8111-111111111111',
-    projectId: null,
+    projectId: '33333333-3333-4333-8333-333333333333',
     visibleKey: 'FR-AUTH-0001',
     categoryId: '22222222-2222-4222-8222-222222222222',
     categoryKey: 'AUTH',
@@ -32,6 +32,7 @@ const requirement: RequirementView = {
 describe('requirement form mapping', () => {
     it('creates API requests without title, type, key, status, or project selector values', () => {
         const request = toCreateRequirementRequest({
+            projectId: '33333333-3333-4333-8333-333333333333',
             categoryId: '22222222-2222-4222-8222-222222222222',
             description: 'The system shall authenticate users.',
             priority: 'P1',
@@ -40,6 +41,7 @@ describe('requirement form mapping', () => {
             source: 'Stakeholder',
         });
         expect(request).toEqual({
+            projectId: '33333333-3333-4333-8333-333333333333',
             categoryId: '22222222-2222-4222-8222-222222222222',
             description: 'The system shall authenticate users.',
             priority: 'P1',
@@ -51,7 +53,6 @@ describe('requirement form mapping', () => {
         expect(request).not.toHaveProperty('type');
         expect(request).not.toHaveProperty('visibleKey');
         expect(request).not.toHaveProperty('status');
-        expect(request).not.toHaveProperty('projectId');
     });
 
     it('updates only draft-editable fields and normalizes optional empty strings', () => {
@@ -102,14 +103,28 @@ describe('requirement domain helpers', () => {
     it('updates detail cache and invalidates project counts only after creation', async () => {
         const queryClient = new QueryClient();
         const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
-        await synchronizeRequirementFromServer({ requirement, projectId: 'project-1', reason: 'created', queryClient });
+        await synchronizeRequirementFromServer({
+            requirement,
+            projectId: '33333333-3333-4333-8333-333333333333',
+            reason: 'created',
+            queryClient,
+        });
         expect(queryClient.getQueryData(['requirements', 'detail', requirement.id])).toEqual(requirement);
-        expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['requirements', 'list', 'project-1'] });
+        expect(invalidateSpy).toHaveBeenCalledWith({
+            queryKey: ['requirements', 'list', '33333333-3333-4333-8333-333333333333'],
+        });
         expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['projects'] });
 
         invalidateSpy.mockClear();
-        await synchronizeRequirementFromServer({ requirement, projectId: 'project-1', reason: 'updated', queryClient });
-        expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['requirements', 'list', 'project-1'] });
+        await synchronizeRequirementFromServer({
+            requirement,
+            projectId: '33333333-3333-4333-8333-333333333333',
+            reason: 'updated',
+            queryClient,
+        });
+        expect(invalidateSpy).toHaveBeenCalledWith({
+            queryKey: ['requirements', 'list', '33333333-3333-4333-8333-333333333333'],
+        });
         expect(invalidateSpy).not.toHaveBeenCalledWith({ queryKey: ['projects'] });
     });
 });

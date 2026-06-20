@@ -13,6 +13,7 @@ import { requirementDetailsCollection, requirementsCollection, upsertCollectionR
 import type { Category, RequirementStatus, RequirementView } from '@/types/domain';
 
 export interface RequirementFormValues {
+    projectId?: string;
     categoryId: string;
     description: string;
     priority: string;
@@ -30,6 +31,7 @@ const normalizeOptionalText = (value: string) => {
 
 export const toCreateRequirementRequest = (values: RequirementFormValues): CreateRequirementDto =>
     PostRequirementsBody.parse({
+        projectId: values.projectId,
         categoryId: values.categoryId,
         description: values.description,
         priority: values.priority,

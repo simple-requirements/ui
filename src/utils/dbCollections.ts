@@ -11,14 +11,9 @@ export const categoriesCollection = createCollection<Category, string>(
     localOnlyCollectionOptions({ id: 'categories', getKey: (category) => category.id }),
 );
 
-/** React DB collection backing the active project's requirement rows. */
+/** Canonical React DB collection for every requirement loaded into the workspace. */
 export const requirementsCollection = createCollection<RequirementView, string>(
     localOnlyCollectionOptions({ id: 'requirements', getKey: (requirement) => requirement.id }),
-);
-
-/** React DB collection backing loaded requirement detail records and dedicated tabs. */
-export const requirementDetailsCollection = createCollection<RequirementView, string>(
-    localOnlyCollectionOptions({ id: 'requirement-details', getKey: (requirement) => requirement.id }),
 );
 
 interface MutableCollection<TItem extends object, TKey extends string | number> {
@@ -46,6 +41,24 @@ export function replaceCollectionRows<TItem extends object, TKey extends string 
         } else {
             collection.insert(row);
         }
+    }
+}
+
+/** Replaces only one project's requirement rows while preserving requirements loaded for other projects or tabs. */
+export function replaceProjectRequirementRows(projectId: string, rows: readonly RequirementView[]) {
+    const nextKeys = new Set(rows.map((requirement) => requirement.id));
+
+    const staleKeys: string[] = [];
+    for (const [key, requirement] of requirementsCollection.entries()) {
+        if (requirement.projectId === projectId && !nextKeys.has(key)) staleKeys.push(key);
+    }
+
+    for (const key of staleKeys) {
+        requirementsCollection.delete(key);
+    }
+
+    for (const requirement of rows) {
+        upsertCollectionRow(requirementsCollection, requirement);
     }
 }
 

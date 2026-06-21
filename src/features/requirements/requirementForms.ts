@@ -4,7 +4,7 @@ import { patchRequirementsId, postRequirements } from '@/api/generated/endpoints
 import type { CreateRequirementDto, UpdateRequirementDto } from '@/api/generated/models';
 import { projectKeys, requirementKeys } from '@/api/queryKeys';
 import { mapRequirement } from '@/features/requirements/api/requirementsApi';
-import { requirementDetailsCollection, requirementsCollection, upsertCollectionRow } from '@/utils/dbCollections';
+import { requirementsCollection, upsertCollectionRow } from '@/utils/dbCollections';
 import type { Category, RequirementStatus, RequirementView } from '@/types/domain';
 
 export interface RequirementFormValues {
@@ -95,7 +95,6 @@ export const synchronizeRequirementFromServer = async ({
         throw new Error('The server returned a requirement for a different project.');
     }
     upsertCollectionRow(requirementsCollection, requirement);
-    upsertCollectionRow(requirementDetailsCollection, requirement);
     queryClient.setQueryData(requirementKeys.detail(requirement.id), requirement);
     queryClient.setQueryData(requirementKeys.byVisibleKey(requirement.visibleKey), requirement);
     if (projectId) await queryClient.invalidateQueries({ queryKey: requirementKeys.list(projectId) });

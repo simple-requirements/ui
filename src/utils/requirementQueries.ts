@@ -7,12 +7,7 @@ import {
     listRequirementsByProject,
     lookupRequirementByVisibleKey,
 } from '@/features/requirements/api/requirementsApi';
-import {
-    requirementDetailsCollection,
-    requirementsCollection,
-    replaceCollectionRows,
-    upsertCollectionRow,
-} from '@/utils/dbCollections';
+import { requirementsCollection, replaceProjectRequirementRows, upsertCollectionRow } from '@/utils/dbCollections';
 import type { RequirementView } from '@/types/domain';
 
 export const requirementDetailFromLiveRows = (
@@ -20,7 +15,7 @@ export const requirementDetailFromLiveRows = (
     queryData: RequirementView | undefined,
 ) => liveRows?.[0] ?? queryData;
 
-/** Loads the active project's requirement list into a React DB collection when the backend exposes a project scope. */
+/** Loads one project's requirement list into the canonical React DB requirement collection. */
 export function useProjectRequirementsQuery(projectId: string | null) {
     const query = useQuery({
         queryKey: projectId ? requirementKeys.list(projectId) : requirementKeys.list('none'),
@@ -28,17 +23,25 @@ export function useProjectRequirementsQuery(projectId: string | null) {
         enabled: Boolean(projectId),
         retry: false,
     });
-    const liveRequirements = useLiveQuery(requirementsCollection);
+    const liveRequirements = useLiveQuery(
+        (q) => {
+            if (!projectId) return undefined;
+            return q
+                .from({ requirement: requirementsCollection })
+                .where(({ requirement }) => eq(requirement.projectId, projectId));
+        },
+        [projectId],
+    );
 
     useEffect(() => {
-        if (query.data) replaceCollectionRows(requirementsCollection, query.data);
-    }, [query.data]);
+        if (projectId && query.data) replaceProjectRequirementRows(projectId, query.data);
+    }, [projectId, query.data]);
 
     const data = liveRequirements.data as RequirementView[] | undefined;
     return { ...query, data: data ?? [] };
 }
 
-/** Loads a requirement detail by immutable backend requirement ID into a React DB collection. */
+/** Loads a requirement detail by immutable backend requirement ID into the canonical React DB requirement collection. */
 export function useRequirementDetailQuery(requirementId: string | null | undefined) {
     const query = useQuery({
         queryKey: requirementId ? requirementKeys.detail(requirementId) : requirementKeys.detail('none'),
@@ -50,14 +53,14 @@ export function useRequirementDetailQuery(requirementId: string | null | undefin
         (q) => {
             if (!requirementId) return undefined;
             return q
-                .from({ requirement: requirementDetailsCollection })
+                .from({ requirement: requirementsCollection })
                 .where(({ requirement }) => eq(requirement.id, requirementId));
         },
         [requirementId],
     );
 
     useEffect(() => {
-        if (query.data) upsertCollectionRow(requirementDetailsCollection, query.data);
+        if (query.data) upsertCollectionRow(requirementsCollection, query.data);
     }, [query.data]);
 
     return { ...query, data: requirementDetailFromLiveRows(liveRequirement.data, query.data) };
@@ -67,6 +70,6 @@ export function useRequirementDetailQuery(requirementId: string | null | undefin
 export function useRequirementLookupMutation() {
     return useMutation({
         mutationFn: (visibleKey: string) => lookupRequirementByVisibleKey(visibleKey.trim()),
-        onSuccess: (requirement) => upsertCollectionRow(requirementDetailsCollection, requirement),
+        onSuccess: (requirement) => upsertCollectionRow(requirementsCollection, requirement),
     });
 }

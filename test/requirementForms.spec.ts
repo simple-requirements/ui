@@ -74,9 +74,8 @@ describe('requirement form mapping', () => {
         expect(request).not.toHaveProperty('id');
     });
 
-    it('uses generated zod request validation', () => {
-        const validCreateValues = {
-            projectId: requirement.projectId ?? undefined,
+    it('requires a selected project before building create requests', () => {
+        const values = {
             categoryId: requirement.categoryId,
             description: requirement.description,
             priority: requirement.priority,
@@ -85,7 +84,7 @@ describe('requirement form mapping', () => {
             source: requirement.source ?? '',
         } satisfies RequirementFormValues;
 
-        expect(() => toCreateRequirementRequest({ ...validCreateValues, categoryId: 'not-a-uuid' })).toThrow();
+        expect(() => toCreateRequirementRequest(values)).toThrow('Select a project before creating a requirement.');
     });
 });
 

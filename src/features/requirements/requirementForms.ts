@@ -1,12 +1,7 @@
 import type { QueryClient } from '@tanstack/react-query';
-import type { CreateRequirementDto, RequirementResponseDto, UpdateRequirementDto } from '@/api/generated/models';
-import {
-    PatchRequirementsIdBody,
-    PatchRequirementsIdResponse,
-    PostRequirementsBody,
-    PostRequirementsResponse,
-} from '@/api/generated/zod/requirements/requirements.zod';
-import { apiFetch } from '@/api/client/config';
+import { runOrvalFetch } from '@/api/client/config';
+import { patchRequirementsId, postRequirements } from '@/api/generated/endpoints/requirements/requirements';
+import type { CreateRequirementDto, UpdateRequirementDto } from '@/api/generated/models';
 import { projectKeys, requirementKeys } from '@/api/queryKeys';
 import { mapRequirement } from '@/features/requirements/api/requirementsApi';
 import { requirementDetailsCollection, requirementsCollection, upsertCollectionRow } from '@/utils/dbCollections';
@@ -29,25 +24,31 @@ const normalizeOptionalText = (value: string) => {
     return trimmed.length > 0 ? trimmed : null;
 };
 
-export const toCreateRequirementRequest = (values: RequirementFormValues): CreateRequirementDto =>
-    PostRequirementsBody.parse({
-        projectId: values.projectId,
-        categoryId: values.categoryId,
-        description: values.description,
-        priority: values.priority,
-        owner: normalizeOptionalText(values.owner),
-        rationale: normalizeOptionalText(values.rationale),
-        source: normalizeOptionalText(values.source),
-    });
+const requireProjectId = (projectId: string | undefined) => {
+    const trimmed = projectId?.trim();
+    if (!trimmed) throw new Error('Select a project before creating a requirement.');
+    return trimmed;
+};
 
-export const toUpdateRequirementRequest = (values: Omit<RequirementFormValues, 'categoryId'>): UpdateRequirementDto =>
-    PatchRequirementsIdBody.parse({
-        description: values.description,
-        priority: values.priority,
-        owner: normalizeOptionalText(values.owner),
-        rationale: normalizeOptionalText(values.rationale),
-        source: normalizeOptionalText(values.source),
-    });
+export const toCreateRequirementRequest = (values: RequirementFormValues): CreateRequirementDto => ({
+    projectId: requireProjectId(values.projectId),
+    categoryId: values.categoryId,
+    description: values.description,
+    priority: values.priority,
+    owner: normalizeOptionalText(values.owner),
+    rationale: normalizeOptionalText(values.rationale),
+    source: normalizeOptionalText(values.source),
+});
+
+export const toUpdateRequirementRequest = (
+    values: Omit<RequirementFormValues, 'categoryId'>,
+): UpdateRequirementDto => ({
+    description: values.description,
+    priority: values.priority,
+    owner: normalizeOptionalText(values.owner),
+    rationale: normalizeOptionalText(values.rationale),
+    source: normalizeOptionalText(values.source),
+});
 
 export const categoryOptionLabel = (category: Category) => `${category.key} — ${category.name} — ${category.type}`;
 export const isRequirementEditable = (status: RequirementStatus | undefined) => status === 'draft';
@@ -67,33 +68,16 @@ export const assertImmutableRequirementFields = (before: RequirementView, after:
         );
 };
 
-export const validateRequirementResponse = (dto: RequirementResponseDto, operation: 'create' | 'update') =>
-    (operation === 'create' ? PostRequirementsResponse : PatchRequirementsIdResponse).parse(
-        dto,
-    ) as RequirementResponseDto;
+export const createRequirement = async (values: RequirementFormValues, init?: RequestInit) =>
+    runOrvalFetch(() => postRequirements(toCreateRequirementRequest(values), init)).then(mapRequirement);
 
-export const createRequirement = async (values: RequirementFormValues) =>
-    mapRequirement(
-        validateRequirementResponse(
-            await apiFetch<RequirementResponseDto>('/requirements', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(toCreateRequirementRequest(values)),
-            }),
-            'create',
-        ),
-    );
-
-export const updateRequirement = async (requirementId: string, values: Omit<RequirementFormValues, 'categoryId'>) =>
-    mapRequirement(
-        validateRequirementResponse(
-            await apiFetch<RequirementResponseDto>(`/requirements/${encodeURIComponent(requirementId)}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(toUpdateRequirementRequest(values)),
-            }),
-            'update',
-        ),
+export const updateRequirement = async (
+    requirementId: string,
+    values: Omit<RequirementFormValues, 'categoryId'>,
+    init?: RequestInit,
+) =>
+    runOrvalFetch(() => patchRequirementsId(requirementId, toUpdateRequirementRequest(values), init)).then(
+        mapRequirement,
     );
 
 export const synchronizeRequirementFromServer = async ({

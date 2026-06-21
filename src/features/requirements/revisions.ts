@@ -1,12 +1,12 @@
 import type { QueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import { requirementRevisionKeys } from '@/api/queryKeys';
-import { apiFetch } from '@/api/client/config';
-import type { RequirementRevisionResponseDto } from '@/api/generated/models';
+import { runOrvalFetch } from '@/api/client/config';
 import {
-    GetRequirementsIdRevisionsResponse,
-    GetRequirementsIdRevisionsRevisionNumberResponse,
-} from '@/api/generated/zod/requirements/requirements.zod';
+    getRequirementsIdRevisions,
+    getRequirementsIdRevisionsRevisionNumber,
+} from '@/api/generated/endpoints/requirements/requirements';
+import type { RequirementRevisionResponseDto } from '@/api/generated/models';
 import { mapRequirement } from '@/features/requirements/api/requirementsApi';
 import type { RequirementView } from '@/types/domain';
 
@@ -65,38 +65,30 @@ export const revisionComparisonFields: readonly (keyof RequirementView)[] = [
     'updatedAt',
 ];
 
-/** Maps and validates one backend immutable revision snapshot into the UI read-only model. */
+/** Maps one backend immutable revision snapshot into the UI read-only model. */
 export function mapRequirementRevision(dto: RequirementRevisionResponseDto): RequirementRevisionView {
-    const parsed = GetRequirementsIdRevisionsRevisionNumberResponse.parse(dto);
     return {
-        ...mapRequirement(parsed),
-        id: parsed.requirementId,
-        requirementId: parsed.requirementId,
-        revisionNumber: parsed.revisionNumber,
-        requirementCreatedAt: parsed.requirementCreatedAt,
-        requirementUpdatedAt: parsed.requirementUpdatedAt,
+        ...mapRequirement(dto),
+        id: dto.requirementId,
+        requirementId: dto.requirementId,
+        revisionNumber: dto.revisionNumber,
+        requirementCreatedAt: dto.requirementCreatedAt,
+        requirementUpdatedAt: dto.requirementUpdatedAt,
         readOnly: true,
     };
 }
 
 /** Loads the backend-defined revision list without fabricating missing revisions. */
 export async function listRequirementRevisions(requirementId: string, init?: RequestInit) {
-    const response = GetRequirementsIdRevisionsResponse.parse(
-        await apiFetch<RequirementRevisionResponseDto[]>(
-            `/requirements/${encodeURIComponent(requirementId)}/revisions`,
-            { ...init, method: 'GET' },
-        ),
+    return runOrvalFetch(() => getRequirementsIdRevisions(requirementId, init)).then((revisions) =>
+        revisions.map(mapRequirementRevision),
     );
-    return response.map(mapRequirementRevision);
 }
 
 /** Loads one immutable historical snapshot on demand for detail or comparison display. */
 export async function getRequirementRevision(requirementId: string, revisionNumber: number, init?: RequestInit) {
-    return mapRequirementRevision(
-        await apiFetch<RequirementRevisionResponseDto>(
-            `/requirements/${encodeURIComponent(requirementId)}/revisions/${encodeURIComponent(String(revisionNumber))}`,
-            { ...init, method: 'GET' },
-        ),
+    return runOrvalFetch(() => getRequirementsIdRevisionsRevisionNumber(requirementId, revisionNumber, init)).then(
+        mapRequirementRevision,
     );
 }
 

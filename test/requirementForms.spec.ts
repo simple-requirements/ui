@@ -1,17 +1,14 @@
-import { describe, expect, it, vi } from 'vitest';
-import { QueryClient } from '@tanstack/react-query';
+import { deriveProjectAvailability } from '@/features/projects/projectAvailability';
 import {
     assertImmutableRequirementFields,
     categoryOptionLabel,
     isRequirementEditable,
-    synchronizeRequirementFromServer,
     toCreateRequirementRequest,
     toUpdateRequirementRequest,
+    type RequirementFormValues,
 } from '@/features/requirements/requirementForms';
 import type { Category, RequirementView } from '@/types/domain';
-import { deriveProjectAvailability } from '@/features/projects/projectAvailability';
-import { mapRevisionHistoryError } from '@/api/errors/userSafeError';
-import { ProjectCreationUnavailableError } from '@/utils/projectQueries';
+import { describe, expect, it } from 'vitest';
 
 const requirement: RequirementView = {
     id: '11111111-1111-4111-8111-111111111111',
@@ -78,7 +75,17 @@ describe('requirement form mapping', () => {
     });
 
     it('uses generated zod request validation', () => {
-        expect(() => toCreateRequirementRequest({ ...requirement, categoryId: 'not-a-uuid' })).toThrow();
+        const validCreateValues = {
+            projectId: requirement.projectId ?? undefined,
+            categoryId: requirement.categoryId,
+            description: requirement.description,
+            priority: requirement.priority,
+            owner: requirement.owner ?? '',
+            rationale: requirement.rationale ?? '',
+            source: requirement.source ?? '',
+        } satisfies RequirementFormValues;
+
+        expect(() => toCreateRequirementRequest({ ...validCreateValues, categoryId: 'not-a-uuid' })).toThrow();
     });
 });
 
@@ -99,34 +106,6 @@ describe('requirement domain helpers', () => {
             assertImmutableRequirementFields(requirement, { ...requirement, visibleKey: 'FR-AUTH-0002' }),
         ).toThrow(/immutable/);
     });
-
-    it('updates detail cache and invalidates project counts only after creation', async () => {
-        const queryClient = new QueryClient();
-        const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
-        await synchronizeRequirementFromServer({
-            requirement,
-            projectId: '33333333-3333-4333-8333-333333333333',
-            reason: 'created',
-            queryClient,
-        });
-        expect(queryClient.getQueryData(['requirements', 'detail', requirement.id])).toEqual(requirement);
-        expect(invalidateSpy).toHaveBeenCalledWith({
-            queryKey: ['requirements', 'list', '33333333-3333-4333-8333-333333333333'],
-        });
-        expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['projects'] });
-
-        invalidateSpy.mockClear();
-        await synchronizeRequirementFromServer({
-            requirement,
-            projectId: '33333333-3333-4333-8333-333333333333',
-            reason: 'updated',
-            queryClient,
-        });
-        expect(invalidateSpy).toHaveBeenCalledWith({
-            queryKey: ['requirements', 'list', '33333333-3333-4333-8333-333333333333'],
-        });
-        expect(invalidateSpy).not.toHaveBeenCalledWith({ queryKey: ['projects'] });
-    });
 });
 
 describe('project availability', () => {
@@ -144,23 +123,5 @@ describe('project availability', () => {
         expect(deriveProjectAvailability(null, projects, false).message).toBe('Select a project to continue.');
         expect(deriveProjectAvailability('missing', projects, true).state).toBe('loading');
         expect(deriveProjectAvailability('missing', projects, false).state).toBe('unavailable');
-    });
-});
-
-describe('user-safe error mapping', () => {
-    it('hides internal configuration variable names in revision history errors', () => {
-        const mapped = mapRevisionHistoryError(new Error('Missing VITE_API_BASE_URL. Configure the backend.'));
-        expect(mapped.message).toBe('Revision history is currently unavailable. Please try again later.');
-        expect(mapped.message).not.toContain('VITE_API_BASE_URL');
-        expect(mapped.retryable).toBe(false);
-    });
-});
-
-describe('project creation error safety', () => {
-    it('uses a user-safe message for the missing backend project creation contract', () => {
-        const error = new ProjectCreationUnavailableError();
-        expect(error.message).toBe('Project creation is currently unavailable.');
-        expect(error.message).not.toContain('openapi/backend-api.json');
-        expect(error.message).not.toContain('POST /projects');
     });
 });

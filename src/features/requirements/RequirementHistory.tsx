@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
 import { mapApiError } from '@/api/errors/apiError';
-import { mapRevisionHistoryError } from '@/api/errors/userSafeError';
 import {
     compareSources,
     makeCurrentSource,
@@ -20,6 +19,10 @@ const display = (value: string | null | undefined) => value ?? nullLabel;
 const formatTime = (value?: string) => (value ? new Date(value).toLocaleString() : nullLabel);
 const fieldLabel = (field: string) =>
     field.replace(/[A-Z]/g, (c) => ` ${c.toLowerCase()}`).replace(/^./, (c) => c.toUpperCase());
+
+const revisionHistoryErrorMessage = 'Revision history is currently unavailable. Please try again later.';
+const revisionDetailErrorMessage = 'Revision detail is currently unavailable. Please try again later.';
+const isRetryableRevisionQueryError = (error: unknown) => mapApiError(error).kind !== 'unexpected';
 
 function RevisionDetail({ revision }: Readonly<{ revision: RequirementRevisionView }>) {
     return (
@@ -79,7 +82,7 @@ export function RequirementHistory({ requirement, onClose }: Props) {
     }, [revisionsQuery.data, selectedRevision, rightKey]);
 
     const detailQuery = useRequirementRevisionDetailQuery(requirement.id, selectedRevision);
-    const revisionListError = revisionsQuery.isError ? mapRevisionHistoryError(revisionsQuery.error) : null;
+    const revisionListRetryable = revisionsQuery.isError ? isRetryableRevisionQueryError(revisionsQuery.error) : false;
     const sources = useMemo(
         () => [
             { key: 'current', label: 'Current requirement', source: makeCurrentSource(requirement) },
@@ -144,12 +147,12 @@ export function RequirementHistory({ requirement, onClose }: Props) {
                     Loading revision history…
                 </div>
             :   null}
-            {revisionListError ?
+            {revisionsQuery.isError ?
                 <div
                     role='alert'
                     className='state'>
-                    {revisionListError.message}
-                    {revisionListError.retryable ?
+                    {revisionHistoryErrorMessage}
+                    {revisionListRetryable ?
                         <Button
                             type='button'
                             label='Retry'
@@ -231,7 +234,7 @@ export function RequirementHistory({ requirement, onClose }: Props) {
                                 <div
                                     role='alert'
                                     className='state'>
-                                    Unable to load revision detail. {mapApiError(detailQuery.error).message}
+                                    {revisionDetailErrorMessage}
                                     <Button
                                         type='button'
                                         label='Retry'

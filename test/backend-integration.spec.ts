@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { getApiBaseUrl } from '@/api/client/config';
 import { mapApiError } from '@/api/errors/apiError';
 import { categoryKeys, projectKeys, requirementKeys } from '@/api/queryKeys';
 import { mapCategory } from '@/features/categories/api/categoriesApi';
@@ -39,6 +40,8 @@ describe('backend integration helpers', () => {
                 sequenceNumber: 1,
                 status: 'draft',
                 description: 'Usable',
+                renderedDescription: 'Usable',
+                metricReferences: [],
                 priority: 'P2',
                 owner: null,
                 rationale: null,
@@ -74,9 +77,10 @@ describe('backend integration helpers', () => {
             message: 'duplicate',
         });
         expect(mapApiError(new TypeError('fetch failed')).kind).toBe('network');
-        expect(mapApiError(new Error('Missing VITE_API_BASE_URL. Configure the backend API base URL.')).message).toBe(
-            'The requested backend data is currently unavailable. Please try again later.',
-        );
+        expect(
+            mapApiError(new Error('The backend connection is not configured. Please contact your administrator.'))
+                .message,
+        ).toBe('The backend connection is not configured. Please contact your administrator.');
     });
 
     it('persists restored requirement tabs by IDs and labels only', () => {
@@ -93,6 +97,30 @@ describe('backend integration helpers', () => {
         ]);
         saveWorkspaceState(state);
         expect(sessionStorage.getItem(WORKSPACE_STATE_KEY)).not.toContain('description');
+    });
+});
+
+describe('backend API configuration errors', () => {
+    afterEach(() => {
+        vi.unstubAllEnvs();
+    });
+
+    it('uses a user-friendly message when the backend base URL is missing', () => {
+        vi.stubEnv('VITE_API_BASE_URL', '');
+
+        expect(() => getApiBaseUrl()).toThrow(
+            'The backend connection is not configured. Please contact your administrator.',
+        );
+        expect(() => getApiBaseUrl()).not.toThrow(/VITE_API_BASE_URL/);
+    });
+
+    it('uses a user-friendly message when the backend base URL is invalid', () => {
+        vi.stubEnv('VITE_API_BASE_URL', 'not a valid URL');
+
+        expect(() => getApiBaseUrl()).toThrow(
+            'The backend connection configuration is invalid. Please contact your administrator.',
+        );
+        expect(() => getApiBaseUrl()).not.toThrow(/VITE_API_BASE_URL/);
     });
 });
 

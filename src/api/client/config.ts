@@ -1,12 +1,11 @@
 /** Returns the configured backend origin used to execute backend API requests. */
 export function getApiBaseUrl() {
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL as string | undefined;
-    if (!apiBaseUrl)
-        throw new Error('Missing VITE_API_BASE_URL. Configure the backend API base URL before starting the UI.');
+    if (!apiBaseUrl) throw new Error('The backend connection is not configured. Please contact your administrator.');
     try {
         return new URL(apiBaseUrl).toString().replace(/\/$/, '');
     } catch {
-        throw new Error('VITE_API_BASE_URL must be a valid absolute URL.');
+        throw new Error('The backend connection configuration is invalid. Please contact your administrator.');
     }
 }
 

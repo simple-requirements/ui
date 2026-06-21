@@ -26,14 +26,22 @@ import { formValue } from '@/utils/formData';
 import { useEditRequirementMutation } from '@/utils/editRequirementMutation';
 import { deriveProjectAvailability } from '@/features/projects/projectAvailability';
 import { validateVisibleKey } from '@/features/requirements/api/requirementsApi';
+import { parseRequirementComparisonPath } from '@/features/requirements/comparisonRefs';
 
 /** Coordinates backend server state, workspace state, and top-level application layout. */
 export default function App() {
     const queryClient = useQueryClient();
     const [workspaceState, dispatch] = useReducer(workspaceReducer, undefined, loadWorkspaceState);
     const [lookupMessage, setLookupMessage] = useState<string | null>(null);
+    const directComparison = parseRequirementComparisonPath(location.pathname);
 
     useEffect(() => saveWorkspaceState(workspaceState), [workspaceState]);
+
+    useEffect(() => {
+        if (!directComparison) return;
+        dispatch({ type: 'selectRequirement', requirementId: directComparison.requirementId });
+        dispatch({ type: 'setMode', mode: 'history' });
+    }, [directComparison?.requirementId]);
 
     const projectsQuery = useProjectsQuery();
     const categoriesQuery = useCategoriesQuery();
@@ -221,6 +229,12 @@ export default function App() {
             }
             editRequirementPending={editRequirementMutation.isPending}
             onRetry={() => void projectsQuery.refetch()}
+            initialComparison={
+                directComparison?.pair.ok ? location.pathname.split('/').at(-1)
+                : directComparison ?
+                    'invalid'
+                :   null
+            }
         />
     );
 
@@ -244,6 +258,12 @@ export default function App() {
                     <RequirementHistory
                         requirement={tabDetailQuery.data}
                         onClose={() => dispatch({ type: 'setMode', mode: 'workspace' })}
+                        initialComparison={
+                            directComparison?.pair.ok ? location.pathname.split('/').at(-1)
+                            : directComparison ?
+                                'invalid'
+                            :   null
+                        }
                     />
                 : tabDetailQuery.data && workspaceState.mode === 'editRequirementTab' ?
                     <RequirementForm

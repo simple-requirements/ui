@@ -29,6 +29,7 @@ type WorkspaceModuleContentProps = Readonly<{
     editPending?: boolean;
     mode?: string;
     onEditRequirement?: Parameters<typeof RequirementForm>[0]['onSubmit'];
+    initialComparison?: string | null;
 }>;
 
 /** Renders right-pane module navigation, loading/error states, categories, and requirement split panes. */
@@ -51,6 +52,7 @@ export function WorkspaceModuleContent({
     editPending = false,
     mode = 'workspace',
     onEditRequirement,
+    initialComparison = null,
 }: WorkspaceModuleContentProps) {
     const renderDetailPane = () => {
         if (requirementDetailLoading)
@@ -67,6 +69,7 @@ export function WorkspaceModuleContent({
                 <RequirementHistory
                     requirement={selectedRequirement}
                     onClose={() => dispatch({ type: 'setMode', mode: 'workspace' })}
+                    initialComparison={initialComparison}
                 />
             );
         if (selectedRequirement && mode === 'editRequirement')

@@ -25,12 +25,26 @@ export interface RequirementRevisionView extends RequirementView {
 
 export interface ComparedField {
     field: string;
+    label: string;
+    kind: 'text' | 'metadata' | 'unavailable';
     left: string | null;
     right: string | null;
     difference: DifferenceKind;
 }
 
+export const textComparisonFields = new Set<keyof RequirementView>([
+    'description',
+    'rationale',
+    'source',
+    'rejectionReason',
+]);
+
+export const fieldLabel = (field: string) =>
+    field.replace(/[A-Z]/g, (c) => ` ${c.toLowerCase()}`).replace(/^./, (c) => c.toUpperCase());
+
 export const revisionComparisonFields: readonly (keyof RequirementView)[] = [
+    'visibleKey',
+    'categoryId',
     'categoryKey',
     'type',
     'description',
@@ -39,6 +53,16 @@ export const revisionComparisonFields: readonly (keyof RequirementView)[] = [
     'rationale',
     'source',
     'status',
+    'rejectionReason',
+    'reviewer',
+    'rejectedAt',
+    'deletedAt',
+    'approvedAt',
+    'implementedAt',
+    'obsolescenceReason',
+    'obsoleteAt',
+    'createdAt',
+    'updatedAt',
 ];
 
 /** Maps and validates one backend immutable revision snapshot into the UI read-only model. */
@@ -128,7 +152,14 @@ export function compareSources(left: ComparisonSource, right: ComparisonSource):
     return revisionComparisonFields.map((field) => {
         const leftValue = sourceRequirement(left)[field] ?? null;
         const rightValue = sourceRequirement(right)[field] ?? null;
-        return { field, left: leftValue, right: rightValue, difference: classifyDifference(leftValue, rightValue) };
+        return {
+            field,
+            label: fieldLabel(field),
+            kind: textComparisonFields.has(field) ? 'text' : 'metadata',
+            left: leftValue,
+            right: rightValue,
+            difference: classifyDifference(leftValue, rightValue),
+        };
     });
 }
 
@@ -144,4 +175,16 @@ export function shouldAcceptRevisionResponse(
     revision: RequirementRevisionView,
 ) {
     return revision.requirementId === activeRequirementId && revision.revisionNumber === selectedRevisionNumber;
+}
+
+export function visibleComparedFields(fields: readonly ComparedField[], showUnchanged: boolean) {
+    return showUnchanged ? fields : fields.filter((field) => field.difference !== 'unchanged');
+}
+
+export function mapComparisonError(error: unknown) {
+    const mapped =
+        error && typeof error === 'object' && 'status' in error && (error as { status?: number }).status === 404 ?
+            'The requested revision was not found.'
+        :   'Unable to load comparison data. Please try again.';
+    return mapped;
 }

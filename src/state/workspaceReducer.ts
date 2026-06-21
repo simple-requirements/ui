@@ -40,7 +40,7 @@ export type Action =
     | { type: 'activateTab'; tabId: string }
     | { type: 'setSplitter'; position: number }
     | { type: 'setMode'; mode: WorkspaceState['mode'] };
-/** Restricts the splitter position to the supported demo range. */
+/** Restricts the splitter position to the supported workspace range. */
 export function clampSplitter(v: number) {
     return Math.min(0.8, Math.max(0.25, v));
 }

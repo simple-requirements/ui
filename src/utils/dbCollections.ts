@@ -53,7 +53,7 @@ export function upsertCollectionRow<TItem extends object, TKey extends string | 
     collection.insert(row);
 }
 
-/** Clears local demo collections between isolated tests or sessions. */
+/** Clears local collections between isolated tests or sessions. */
 export function clearCollection<TItem extends object, TKey extends string | number>(
     collection: ReturnType<typeof createCollection<TItem, TKey>>,
 ) {

@@ -31,7 +31,7 @@ Feature: Workspace UX
     # Note: The exact count of 8 projects is test-fixture coverage for FE-FR-PRJ-0001, not a product requirement.
     Scenario: Startup renders projects and opens a requirement tab
         Given the workspace layout is open
-        And 8 demo projects are visible
+        And 8 projects are visible
         When I "double click" on the 1st requirement
         Then 1 dedicated requirement tab is visible
 

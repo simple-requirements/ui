@@ -1,4 +1,4 @@
-/** Blocks the viewport while the initial demo workspace state is loading. */
+/** Blocks the viewport while the initial workspace state is loading. */
 export function LoadingOverlay() {
     return (
         <div
@@ -6,7 +6,7 @@ export function LoadingOverlay() {
             role='status'
             aria-live='polite'
             aria-label='Loading application'>
-            Loading demo workspace…
+            Loading workspace…
         </div>
     );
 }

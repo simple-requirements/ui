@@ -176,7 +176,7 @@ Then('the first requirement is selected', async ({ page }) => {
 });
 
 Then('the loading overlay is visible', async ({ page }) => {
-    await expect(page.getByText(/Loading demo workspace/i)).toBeVisible();
+    await expect(page.getByText(/Loading workspace/i)).toBeVisible();
 });
 
 Then('the requirements action bar controls are visible and aligned', async ({ page }) => {
@@ -271,6 +271,6 @@ Then('{int} dedicated requirement tab is visible', async ({ page }, tabCount: nu
     await expect(page.locator('.dedicated')).toBeVisible();
 });
 
-Then('{int} demo projects are visible', async ({ page }, projectCount: number) => {
+Then('{int} projects are visible', async ({ page }, projectCount: number) => {
     await expect(page.locator('.project-row')).toHaveCount(projectCount);
 });

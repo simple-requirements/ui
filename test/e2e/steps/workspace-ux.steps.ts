@@ -2,10 +2,10 @@ import { expect, type Page } from '@playwright/test';
 import { createBdd, test } from 'playwright-bdd';
 import { clearBrowserStateBeforeNavigation } from '../lib/clearBrowserStateBeforeNavigation';
 import { expectStableScreenshot } from '../lib/expectStableScreenshot';
-import { expectVisibleAndEnabled } from '../lib/expectVisibleAndEnabled';
 import { formWithHeading } from '../lib/formWithHeading';
 import { normalizeClick, type ClickAction } from '../lib/normalizeClick';
 import { waitForWorkspaceReady } from '../lib/waitForWorkspaceReady';
+import { getCreatedCleanupProjectName, markProjectForCleanup } from '../support/projectCleanup';
 
 const { Given, Then, When } = createBdd(test);
 
@@ -97,6 +97,15 @@ When('I submit the {string} form with {string}', async ({ page }, formHeading: s
     await form.getByRole('button', { name: 'Create' }).click();
 });
 
+When('I submit the {string} form with a unique cleanup project name', async ({ page }, formHeading: string) => {
+    const projectName = `E2E Cleanup Project ${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    const form = formWithHeading(page, formHeading);
+
+    markProjectForCleanup(page, projectName);
+    await form.getByLabel('Project name').fill(projectName);
+    await form.getByRole('button', { name: 'Create' }).click();
+});
+
 When('I {string} on requirement {string}', async ({ page }, action: ClickAction, requirementKey: string) => {
     const clickAction = normalizeClick(action);
     const row = page.getByRole('row').filter({ hasText: requirementKey });
@@ -137,6 +146,13 @@ Then('category options include {string}', async ({ page }, optionName: string) =
     await expect(page.getByRole('option', { name: optionName })).toBeVisible();
 });
 
+Then('the created cleanup project is visible in the sidebar', async ({ page }) => {
+    const projectName = getCreatedCleanupProjectName(page);
+    if (!projectName) throw new Error('No cleanup project was created by this scenario.');
+
+    await expect(page.getByRole('button', { name: projectName })).toBeVisible();
+});
+
 Then('I see a user-safe error message: {string}', async ({ page }, errorMessage: string) => {
     const form = formWithHeading(page, 'New Project');
 
@@ -167,6 +183,10 @@ Then('the derived type is {string} in the {string} form', async ({ page }, type:
 
     await expect(form.getByText(`Derived type: ${type}`)).toBeVisible();
     await expect(page.locator('.p-dropdown-panel')).toBeHidden();
+});
+
+Then('the first project in the list is selected', async ({ page }) => {
+    await expect(page.locator('.project-row').first()).toHaveAttribute('aria-current', 'true');
 });
 
 Then('the first requirement is selected', async ({ page }) => {

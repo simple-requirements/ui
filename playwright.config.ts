@@ -6,7 +6,7 @@ const isCI = Boolean(process.env.CI);
 // 1. Configure BDD to generate tests from features
 const testDir = defineBddConfig({
     paths: ['test/e2e/features/**/*.feature'],
-    import: ['test/e2e/steps/**/*.ts'],
+    import: ['test/e2e/steps/**/*.ts', 'test/e2e/support/**/*.ts'],
     // REMOVED: importTestFrom (unless you have a specific web fixture to extend)
     outputDir: 'test/e2e/.features-gen',
 });

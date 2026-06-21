@@ -37,6 +37,7 @@ type WorkspaceProps = Readonly<{
     createCategoryError: string | null;
     createCategoryPending: boolean;
     onRetry: () => void;
+    initialComparison?: string | null;
 }>;
 
 /** Composes the project sidebar with the active right-pane workspace content. */
@@ -70,6 +71,7 @@ export function Workspace({
     editRequirementError,
     editRequirementPending,
     onRetry,
+    initialComparison = null,
 }: WorkspaceProps) {
     const handleCancelForm = () => dispatch({ type: 'setMode', mode: 'workspace' });
 
@@ -132,6 +134,7 @@ export function Workspace({
                 editPending={editRequirementPending}
                 mode={mode}
                 onEditRequirement={onEditRequirement}
+                initialComparison={initialComparison}
             />
         );
     };

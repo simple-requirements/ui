@@ -7,19 +7,26 @@ import {
     compareSources,
     makeCurrentSource,
     makeRevisionSource,
+    mapComparisonError,
     type RequirementRevisionView,
     validateComparisonSources,
+    visibleComparedFields,
 } from '@/features/requirements/revisions';
+import {
+    buildRequirementComparisonPath,
+    formatComparisonRef,
+    parseComparisonPair,
+    type ComparisonPair,
+} from '@/features/requirements/comparisonRefs';
+import { TextDiffView } from '@/features/revisions/components/TextDiffView';
 import { useRequirementRevisionDetailQuery, useRequirementRevisionsQuery } from '@/utils/revisionQueries';
 import type { RequirementView } from '@/types/domain';
 
-type Props = Readonly<{ requirement: RequirementView; onClose: () => void }>;
+type Props = Readonly<{ requirement: RequirementView; onClose: () => void; initialComparison?: string | null }>;
 
 const nullLabel = 'Null / not specified';
 const display = (value: string | null | undefined) => value ?? nullLabel;
 const formatTime = (value?: string) => (value ? new Date(value).toLocaleString() : nullLabel);
-const fieldLabel = (field: string) =>
-    field.replace(/[A-Z]/g, (c) => ` ${c.toLowerCase()}`).replace(/^./, (c) => c.toUpperCase());
 
 function RevisionDetail({ revision }: Readonly<{ revision: RequirementRevisionView }>) {
     return (
@@ -59,23 +66,28 @@ function RevisionDetail({ revision }: Readonly<{ revision: RequirementRevisionVi
 }
 
 /** Renders server-backed history and comparison within the current workspace or tab context. */
-export function RequirementHistory({ requirement, onClose }: Props) {
+export function RequirementHistory({ requirement, onClose, initialComparison = null }: Props) {
     const revisionsQuery = useRequirementRevisionsQuery(requirement.id);
     const [selectedRevision, setSelectedRevision] = useState<number | null>(null);
-    const [comparing, setComparing] = useState(false);
-    const [leftKey, setLeftKey] = useState('current');
-    const [rightKey, setRightKey] = useState<string | null>(null);
+    const parsedInitialComparison = initialComparison ? parseComparisonPair(initialComparison) : null;
+    const [comparing, setComparing] = useState(Boolean(parsedInitialComparison));
+    const [leftKey, setLeftKey] = useState(() =>
+        parsedInitialComparison?.ok ? formatComparisonRef(parsedInitialComparison.value.left) : 'current',
+    );
+    const [rightKey, setRightKey] = useState<string | null>(() =>
+        parsedInitialComparison?.ok ? formatComparisonRef(parsedInitialComparison.value.right) : null,
+    );
+    const [showUnchanged, setShowUnchanged] = useState(true);
 
     useEffect(() => {
         setSelectedRevision(null);
-        setComparing(false);
-        setLeftKey('current');
-        setRightKey(null);
-    }, [requirement.id]);
+        setComparing(Boolean(parsedInitialComparison));
+        setLeftKey(parsedInitialComparison?.ok ? formatComparisonRef(parsedInitialComparison.value.left) : 'current');
+        setRightKey(parsedInitialComparison?.ok ? formatComparisonRef(parsedInitialComparison.value.right) : null);
+    }, [requirement.id, initialComparison]);
     useEffect(() => {
         if (!selectedRevision && revisionsQuery.data?.[0]) setSelectedRevision(revisionsQuery.data[0].revisionNumber);
-        if (!rightKey && revisionsQuery.data?.[0])
-            setRightKey(`revision:${String(revisionsQuery.data[0].revisionNumber)}`);
+        if (!rightKey && revisionsQuery.data?.[0]) setRightKey(String(revisionsQuery.data[0].revisionNumber));
     }, [revisionsQuery.data, selectedRevision, rightKey]);
 
     const detailQuery = useRequirementRevisionDetailQuery(requirement.id, selectedRevision);
@@ -84,7 +96,7 @@ export function RequirementHistory({ requirement, onClose }: Props) {
         () => [
             { key: 'current', label: 'Current requirement', source: makeCurrentSource(requirement) },
             ...(revisionsQuery.data ?? []).map((revision) => ({
-                key: `revision:${String(revision.revisionNumber)}`,
+                key: String(revision.revisionNumber),
                 label: `Revision ${String(revision.revisionNumber)}`,
                 source: makeRevisionSource(revision),
             })),
@@ -93,8 +105,26 @@ export function RequirementHistory({ requirement, onClose }: Props) {
     );
     const left = sources.find((source) => source.key === leftKey)?.source ?? null;
     const right = sources.find((source) => source.key === rightKey)?.source ?? null;
-    const validation = validateComparisonSources(left, right);
+    const routeValidation =
+        initialComparison && parsedInitialComparison && !parsedInitialComparison.ok ?
+            parsedInitialComparison.message
+        :   null;
+    const validation = routeValidation ?? validateComparisonSources(left, right);
     const compared = left && right && !validation ? compareSources(left, right) : [];
+    const visibleCompared = visibleComparedFields(compared, showUnchanged);
+    const changedCount = compared.filter((field) => field.difference !== 'unchanged').length;
+    const pairForUrl = (nextLeft: string, nextRight: string | null): ComparisonPair | null => {
+        const parsed = parseComparisonPair(`${nextLeft}..${nextRight ?? ''}`);
+        return parsed.ok ? parsed.value : null;
+    };
+    const updateRef = (side: 'left' | 'right', value: string) => {
+        const nextLeft = side === 'left' ? value : leftKey;
+        const nextRight = side === 'right' ? value : rightKey;
+        setLeftKey(nextLeft);
+        setRightKey(nextRight);
+        const pair = pairForUrl(nextLeft, nextRight);
+        if (pair) history.pushState(null, '', buildRequirementComparisonPath(requirement.id, pair));
+    };
     const leftLabel = left?.label ?? 'Left side';
     const rightLabel = right?.label ?? 'Right side';
 
@@ -127,7 +157,6 @@ export function RequirementHistory({ requirement, onClose }: Props) {
                     <Button
                         type='button'
                         label={comparing ? 'Close comparison' : 'Compare revisions'}
-                        disabled={!revisionsQuery.data?.length}
                         onClick={() => setComparing((value) => !value)}
                     />
                     <Button
@@ -165,7 +194,7 @@ export function RequirementHistory({ requirement, onClose }: Props) {
                     No revisions exist for this requirement.
                 </div>
             :   null}
-            {!revisionsQuery.isError && revisionsQuery.data?.length ?
+            {(!revisionsQuery.isError && revisionsQuery.data?.length) || comparing ?
                 comparing ?
                     <div
                         className='revision-comparison'
@@ -175,7 +204,7 @@ export function RequirementHistory({ requirement, onClose }: Props) {
                             <Dropdown
                                 value={leftKey}
                                 options={sources.map(({ key, label }) => ({ value: key, label }))}
-                                onChange={(event) => setLeftKey(event.value as string)}
+                                onChange={(event) => updateRef('left', event.value as string)}
                             />
                         </label>
                         <label>
@@ -183,27 +212,58 @@ export function RequirementHistory({ requirement, onClose }: Props) {
                             <Dropdown
                                 value={rightKey}
                                 options={sources.map(({ key, label }) => ({ value: key, label }))}
-                                onChange={(event) => setRightKey(event.value as string)}
+                                onChange={(event) => updateRef('right', event.value as string)}
                             />
                         </label>
+                        <p
+                            className='sr-only'
+                            aria-live='polite'>
+                            Comparing {leftLabel} with {rightLabel}. {changedCount} changed fields:{' '}
+                            {compared
+                                .filter((field) => field.difference !== 'unchanged')
+                                .map((field) => field.label)
+                                .join(', ') || 'none'}
+                            .
+                        </p>
+                        <Button
+                            type='button'
+                            label={showUnchanged ? 'Collapse unchanged fields' : 'Show unchanged fields'}
+                            onClick={() => setShowUnchanged((value) => !value)}
+                        />
                         {validation ?
                             <p role='alert'>{validation}</p>
-                        :   compared.map((field) => (
+                        : revisionsQuery.isError ?
+                            <p role='alert'>{mapComparisonError(revisionsQuery.error)}</p>
+                        :   visibleCompared.map((field) => (
                                 <section
                                     key={field.field}
                                     className={`revision-comparison__field ${field.difference}`}
-                                    aria-label={`${fieldLabel(field.field)} ${field.difference}`}>
+                                    aria-label={`${field.label} ${field.difference}`}>
                                     <h3>
-                                        {fieldLabel(field.field)} — {field.difference}
+                                        {field.label} — {field.difference}
                                     </h3>
-                                    <div>
-                                        <strong>{leftLabel}</strong>
-                                        <p>{display(field.left)}</p>
-                                    </div>
-                                    <div>
-                                        <strong>{rightLabel}</strong>
-                                        <p>{display(field.right)}</p>
-                                    </div>
+                                    {field.kind === 'text' ?
+                                        <TextDiffView
+                                            oldText={display(field.left)}
+                                            newText={display(field.right)}
+                                            oldLabel={leftLabel}
+                                            newLabel={rightLabel}
+                                            ariaLabel={`${field.label} text diff`}
+                                        />
+                                    :   <div
+                                            className='revision-comparison__metadata'
+                                            role='table'
+                                            aria-label={`${field.label} before and after`}>
+                                            <div role='row'>
+                                                <strong role='cell'>{leftLabel}</strong>
+                                                <p role='cell'>{display(field.left)}</p>
+                                            </div>
+                                            <div role='row'>
+                                                <strong role='cell'>{rightLabel}</strong>
+                                                <p role='cell'>{display(field.right)}</p>
+                                            </div>
+                                        </div>
+                                    }
                                 </section>
                             ))
                         }

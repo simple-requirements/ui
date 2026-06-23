@@ -3,7 +3,8 @@ import { useEffect } from 'react';
 import { useMutation, useQuery, type QueryClient } from '@tanstack/react-query';
 import { categoryKeys } from '@/api/queryKeys';
 import { createCategory, listCategories } from '@/features/categories/api/categoriesApi';
-import { categoriesCollection, replaceCollectionRows, upsertCollectionRow } from '@/utils/dbCollections';
+import { categoriesCollection, replaceCollectionRows, upsertCollectionRow } from '@/state/dbCollections';
+import type { CreateCategoryDto } from '@/api/generated/models';
 import type { Category } from '@/types/domain';
 
 /** Loads global backend categories into a React DB collection independently from the selected project. */
@@ -26,7 +27,7 @@ export function useCategoriesQuery() {
 /** Persists a category, upserts it into the React DB collection, and invalidates the backend list cache. */
 export function useCreateCategoryMutation(queryClient: QueryClient, onCreated: () => void) {
     return useMutation({
-        mutationFn: createCategory,
+        mutationFn: (input: CreateCategoryDto) => createCategory(input),
         onSuccess: async (category) => {
             upsertCollectionRow(categoriesCollection, category);
             await queryClient.invalidateQueries({ queryKey: categoryKeys.all });

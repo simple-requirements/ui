@@ -1,5 +1,5 @@
 import { Button } from 'primereact/button';
-import { ProjectRow } from '@/features/projects/ProjectRow';
+import { ProjectRow } from '@/features/projects/components/ProjectRow';
 import type { ProjectSummary } from '@/types/domain';
 import type { Action } from '@/state/workspaceReducer';
 

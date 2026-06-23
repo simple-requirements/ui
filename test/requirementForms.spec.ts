@@ -24,6 +24,8 @@ const requirement: RequirementView = {
     owner: null,
     rationale: null,
     source: null,
+    renderedDescription: 'The system shall authenticate users.',
+    metricReferences: [],
 };
 
 describe('requirement form mapping', () => {

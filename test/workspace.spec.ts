@@ -41,7 +41,9 @@ describe('workspace reducer', () => {
 
 describe('requirement actions and session persistence', () => {
     it('returns only valid lifecycle actions for each supported status', () => {
-        expect(lifecycleActions('draft')).toEqual(['Edit', 'Approve', 'Reject']);
+        expect(lifecycleActions('draft')).toEqual(['Edit', 'Approve', 'Reject', 'Delete']);
+        expect(lifecycleActions('approved')).toEqual(['Mark implemented', 'Mark obsolete']);
+        expect(lifecycleActions('rejected')).toEqual(['Mark obsolete']);
         expect(lifecycleActions('implemented')).toEqual([]);
         expect(lifecycleActions('obsolete')).toEqual([]);
     });

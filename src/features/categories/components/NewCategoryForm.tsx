@@ -2,7 +2,7 @@ import type { SyntheticEvent } from 'react';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { RadioButton } from 'primereact/radiobutton';
-import type { FormSubmitHandler } from '@/components/NewProjectForm';
+import type { FormSubmitHandler } from '@/shared/forms/formData';
 
 type NewCategoryFormProps = Readonly<{
     error: string | null;

@@ -3,27 +3,35 @@ import 'primereact/resources/primereact.css';
 import 'primeicons/primeicons.css';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useReducer, useState } from 'react';
-import { ActionBar } from '@/components/ActionBar';
-import { AppTabBar } from '@/components/AppTabBar';
-import { RequirementsList } from '@/components/RequirementsList';
-import { Workspace } from '@/components/Workspace';
+import { ActionBar } from '@/features/workspace/components/ActionBar';
+import { AppTabBar } from '@/features/workspace/components/AppTabBar';
+import { RequirementsList } from '@/features/requirements/components/RequirementsList';
+import { Workspace } from '@/features/workspace/components/Workspace';
 import { mapApiError } from '@/api/errors/apiError';
 import { createRequirement, synchronizeRequirementFromServer } from '@/features/requirements/requirementForms';
-import { RequirementDetail } from '@/features/requirements/RequirementDetail';
-import { RequirementHistory } from '@/features/requirements/RequirementHistory';
-import { RequirementForm } from '@/components/RequirementForm';
+import { RequirementDetail } from '@/features/requirements/components/RequirementDetail';
+import { RequirementHistory } from '@/features/requirements/components/RequirementHistory';
+import { RequirementForm } from '@/features/requirements/components/RequirementForm';
 import { LoadingOverlay } from '@/layout/LoadingOverlay';
-import { useCategoriesQuery, useCreateCategoryMutation } from '@/utils/categoryQueries';
-import { ProjectCreationUnavailableError, useCreateProjectMutation, useProjectsQuery } from '@/utils/projectQueries';
+import { useCategoriesQuery, useCreateCategoryMutation } from '@/features/categories/api/categoryQueries';
+import {
+    ProjectCreationUnavailableError,
+    useCreateProjectMutation,
+    useProjectsQuery,
+} from '@/features/projects/api/projectQueries';
 import {
     useProjectRequirementsQuery,
     useRequirementDetailQuery,
     useRequirementLookupMutation,
-} from '@/utils/requirementQueries';
+} from '@/features/requirements/api/requirementQueries';
 import { loadWorkspaceState, saveWorkspaceState } from '@/state/sessionPersistence';
 import { workspaceReducer } from '@/state/workspaceReducer';
-import { formValue } from '@/utils/formData';
-import { useEditRequirementMutation } from '@/utils/editRequirementMutation';
+import { formValue } from '@/shared/forms/formData';
+import { useEditRequirementMutation } from '@/features/requirements/api/editRequirementMutation';
+import {
+    useRequirementLifecycleMutation,
+    type RequirementLifecycleCommand,
+} from '@/features/requirements/api/requirementLifecycleMutation';
 import { deriveProjectAvailability } from '@/features/projects/projectAvailability';
 import { validateVisibleKey } from '@/features/requirements/api/requirementsApi';
 import { parseRequirementComparisonPath } from '@/features/requirements/comparisonRefs';
@@ -101,7 +109,7 @@ export default function App() {
     const lookupMutation = useRequirementLookupMutation();
     const activeProject = projectAvailability.activeProject;
     const createRequirementMutation = useMutation({
-        mutationFn: createRequirement,
+        mutationFn: (values: Parameters<typeof createRequirement>[0]) => createRequirement(values),
         onSuccess: async (requirement) => {
             await synchronizeRequirementFromServer({
                 requirement,
@@ -120,6 +128,51 @@ export default function App() {
             workspaceState.activeAppTabId === 'workspace' ? detailQuery.data : tabDetailQuery.data,
         onEdited: () => dispatch({ type: 'setMode', mode: 'workspace' }),
     });
+    const lifecycleMutation = useRequirementLifecycleMutation({
+        queryClient,
+        onDeleted: (requirementId) => {
+            if (workspaceState.selectedRequirementId === requirementId)
+                dispatch({ type: 'selectRequirement', requirementId: null });
+            const deletedTab = workspaceState.openRequirementTabs.find((tab) => tab.requirementId === requirementId);
+            if (deletedTab) dispatch({ type: 'closeTab', tabId: deletedTab.id });
+            dispatch({ type: 'setMode', mode: 'workspace' });
+        },
+        onUpdated: (requirement) => dispatch({ type: 'selectRequirement', requirementId: requirement.id }),
+    });
+
+    const handleLifecycleAction = (command: RequirementLifecycleCommand, requirement: typeof detailQuery.data) => {
+        if (!requirement) return;
+
+        if (command === 'approve') {
+            if (confirm(`Approve ${requirement.visibleKey}?`)) lifecycleMutation.mutate({ command, requirement });
+            return;
+        }
+
+        if (command === 'reject') {
+            const rejectionReason = prompt(`Why should ${requirement.visibleKey} be rejected?`)?.trim();
+            if (!rejectionReason) return;
+            const reviewer = prompt('Reviewer name')?.trim();
+            if (!reviewer) return;
+            lifecycleMutation.mutate({ command, requirement, rejectionReason, reviewer });
+            return;
+        }
+
+        if (command === 'markImplemented') {
+            if (confirm(`Mark ${requirement.visibleKey} implemented?`))
+                lifecycleMutation.mutate({ command, requirement });
+            return;
+        }
+
+        if (command === 'markObsolete') {
+            const obsolescenceReason = prompt(`Why is ${requirement.visibleKey} obsolete?`)?.trim();
+            if (!obsolescenceReason) return;
+            lifecycleMutation.mutate({ command, requirement, obsolescenceReason });
+            return;
+        }
+
+        if (confirm(`Delete draft requirement ${requirement.visibleKey}?`))
+            lifecycleMutation.mutate({ command, requirement });
+    };
 
     useEffect(() => {
         if (!lookupMutation.isSuccess) return;
@@ -183,6 +236,14 @@ export default function App() {
                     }
                     lookupMessage={lookupMessage}
                     lookupPending={lookupMutation.isPending}
+                    lifecycleMessage={
+                        lifecycleMutation.isError ? mapApiError(lifecycleMutation.error).message
+                        : lifecycleMutation.isSuccess ?
+                            'Requirement lifecycle updated.'
+                        :   null
+                    }
+                    lifecyclePending={lifecycleMutation.isPending}
+                    onLifecycleAction={(command, requirement) => handleLifecycleAction(command, requirement)}
                     onLookup={(visibleKey) => {
                         setLookupMessage(null);
                         const normalizedVisibleKey = visibleKey.trim().toUpperCase();
@@ -246,6 +307,14 @@ export default function App() {
                     activeProjectId={workspaceState.activeProjectId}
                     selectedRequirement={tabDetailQuery.data ?? null}
                     dedicated
+                    lifecycleMessage={
+                        lifecycleMutation.isError ? mapApiError(lifecycleMutation.error).message
+                        : lifecycleMutation.isSuccess ?
+                            'Requirement lifecycle updated.'
+                        :   null
+                    }
+                    lifecyclePending={lifecycleMutation.isPending}
+                    onLifecycleAction={(command, requirement) => handleLifecycleAction(command, requirement)}
                     dispatch={dispatch}
                 />
                 {tabDetailQuery.isError ?
@@ -282,7 +351,12 @@ export default function App() {
                         }}
                     />
                 : tabDetailQuery.data ?
-                    <RequirementDetail requirement={tabDetailQuery.data} />
+                    <RequirementDetail
+                        requirement={tabDetailQuery.data}
+                        onOpenRequirement={(requirementId: string, visibleKey: string) =>
+                            dispatch({ type: 'openRequirementTab', requirementId, visibleKey })
+                        }
+                    />
                 :   null}
             </main>
         );

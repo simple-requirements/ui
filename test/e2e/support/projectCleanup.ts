@@ -5,7 +5,7 @@ type ProjectCleanupRecord = Readonly<{ id: string; name: string }>;
 const cleanupProjectNamesByPage = new WeakMap<Page, Set<string>>();
 const createdCleanupProjectNameByPage = new WeakMap<Page, string>();
 
-const backendApiBaseUrl = () =>
+export const backendApiBaseUrl = () =>
     (process.env.E2E_API_BASE_URL ?? process.env.VITE_API_BASE_URL ?? 'http://localhost:3000').replace(/\/$/, '');
 
 export function markProjectForCleanup(page: Page, projectName: string): void {

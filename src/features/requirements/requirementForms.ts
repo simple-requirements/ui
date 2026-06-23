@@ -4,7 +4,8 @@ import { patchRequirementsId, postRequirements } from '@/api/generated/endpoints
 import type { CreateRequirementDto, UpdateRequirementDto } from '@/api/generated/models';
 import { projectKeys, requirementKeys } from '@/api/queryKeys';
 import { mapRequirement } from '@/features/requirements/api/requirementsApi';
-import { requirementsCollection, upsertCollectionRow } from '@/utils/dbCollections';
+import { requirementsCollection, upsertCollectionRow } from '@/state/dbCollections';
+import { materializeInlineMetricDefinitions } from '@/features/requirements/metrics/metricAuthoring';
 import type { Category, RequirementStatus, RequirementView } from '@/types/domain';
 
 export interface RequirementFormValues {
@@ -68,17 +69,31 @@ export const assertImmutableRequirementFields = (before: RequirementView, after:
         );
 };
 
-export const createRequirement = async (values: RequirementFormValues, init?: RequestInit) =>
-    runOrvalFetch(() => postRequirements(toCreateRequirementRequest(values), init)).then(mapRequirement);
+export const createRequirement = async (values: RequirementFormValues, init?: RequestInit) => {
+    const description = await materializeInlineMetricDefinitions({
+        projectId: values.projectId,
+        description: values.description,
+        init,
+    });
+    return runOrvalFetch(() => postRequirements(toCreateRequirementRequest({ ...values, description }), init)).then(
+        mapRequirement,
+    );
+};
 
 export const updateRequirement = async (
     requirementId: string,
     values: Omit<RequirementFormValues, 'categoryId'>,
     init?: RequestInit,
-) =>
-    runOrvalFetch(() => patchRequirementsId(requirementId, toUpdateRequirementRequest(values), init)).then(
-        mapRequirement,
-    );
+) => {
+    const description = await materializeInlineMetricDefinitions({
+        projectId: values.projectId,
+        description: values.description,
+        init,
+    });
+    return runOrvalFetch(() =>
+        patchRequirementsId(requirementId, toUpdateRequirementRequest({ ...values, description }), init),
+    ).then(mapRequirement);
+};
 
 export const synchronizeRequirementFromServer = async ({
     requirement,

@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { requirementRevisionKeys } from '@/api/queryKeys';
 import { getRequirementRevision, listRequirementRevisions } from '@/features/requirements/revisions';
 
+/** Loads immutable revision snapshots for one requirement. */
 export function useRequirementRevisionsQuery(requirementId: string | null | undefined) {
     return useQuery({
         queryKey: requirementId ? requirementRevisionKeys.list(requirementId) : requirementRevisionKeys.list('none'),
@@ -11,6 +12,7 @@ export function useRequirementRevisionsQuery(requirementId: string | null | unde
     });
 }
 
+/** Loads one immutable revision snapshot for detail and comparison views. */
 export function useRequirementRevisionDetailQuery(
     requirementId: string | null | undefined,
     revisionNumber: number | null | undefined,

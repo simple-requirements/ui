@@ -7,7 +7,7 @@ import {
     listRequirementsByProject,
     lookupRequirementByVisibleKey,
 } from '@/features/requirements/api/requirementsApi';
-import { requirementsCollection, replaceProjectRequirementRows, upsertCollectionRow } from '@/utils/dbCollections';
+import { requirementsCollection, replaceProjectRequirementRows, upsertCollectionRow } from '@/state/dbCollections';
 import type { RequirementView } from '@/types/domain';
 
 export const requirementDetailFromLiveRows = (

@@ -1,3 +1,5 @@
+export type FormSubmitHandler = (formData: FormData) => void;
+
 /**
  * Reads a string form field while keeping FormData boundary parsing in one place.
  * Missing or non-string values are normalized to the empty string because the

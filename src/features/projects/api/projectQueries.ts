@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useMutation, useQuery, type QueryClient } from '@tanstack/react-query';
 import { projectKeys } from '@/api/queryKeys';
 import { createProject, listProjects } from '@/features/projects/api/projectsApi';
-import { projectsCollection, replaceCollectionRows } from '@/utils/dbCollections';
+import { projectsCollection, replaceCollectionRows } from '@/state/dbCollections';
 import type { ProjectSummary } from '@/types/domain';
 
 /** Loads backend projects into a React DB collection for application bootstrap and sidebar rendering. */

@@ -1,8 +1,8 @@
 import type { SyntheticEvent } from 'react';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
+import type { FormSubmitHandler } from '@/shared/forms/formData';
 
-export type FormSubmitHandler = (formData: FormData) => void;
 
 type NewProjectFormProps = Readonly<{
     error: string | null;

@@ -1,6 +1,7 @@
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { useState, type SyntheticEvent } from 'react';
+import type { RequirementLifecycleCommand } from '@/features/requirements/api/requirementLifecycleMutation';
 import type { Action } from '@/state/workspaceReducer';
 import type { RequirementView } from '@/types/domain';
 
@@ -13,6 +14,9 @@ type ActionBarProps = Readonly<{
     dispatch: (action: Action) => void;
     lookupMessage?: string | null;
     lookupPending?: boolean;
+    lifecycleMessage?: string | null;
+    lifecyclePending?: boolean;
+    onLifecycleAction?: (command: RequirementLifecycleCommand, requirement: RequirementView) => void;
     onLookup?: (visibleKey: string) => void;
 }>;
 
@@ -26,6 +30,9 @@ export function ActionBar({
     createUnavailableReason = 'Select a loaded project and load categories before creating a requirement.',
     lookupMessage,
     lookupPending = false,
+    lifecycleMessage,
+    lifecyclePending = false,
+    onLifecycleAction,
     onLookup,
 }: ActionBarProps) {
     const [visibleKey, setVisibleKey] = useState('');
@@ -78,12 +85,60 @@ export function ActionBar({
                     History
                 </Button>
                 {selectedRequirement.status === 'draft' ?
+                    <>
+                        <Button
+                            type='button'
+                            onClick={() =>
+                                dispatch({
+                                    type: 'setMode',
+                                    mode: dedicated ? 'editRequirementTab' : 'editRequirement',
+                                })
+                            }>
+                            Edit
+                        </Button>
+                        <Button
+                            type='button'
+                            disabled={lifecyclePending}
+                            onClick={() => onLifecycleAction?.('approve', selectedRequirement)}>
+                            Approve
+                        </Button>
+                        <Button
+                            type='button'
+                            disabled={lifecyclePending}
+                            onClick={() => onLifecycleAction?.('reject', selectedRequirement)}>
+                            Reject
+                        </Button>
+                        <Button
+                            type='button'
+                            severity='danger'
+                            disabled={lifecyclePending}
+                            onClick={() => onLifecycleAction?.('delete', selectedRequirement)}>
+                            Delete
+                        </Button>
+                    </>
+                :   null}
+                {selectedRequirement.status === 'approved' ?
+                    <>
+                        <Button
+                            type='button'
+                            disabled={lifecyclePending}
+                            onClick={() => onLifecycleAction?.('markImplemented', selectedRequirement)}>
+                            Mark implemented
+                        </Button>
+                        <Button
+                            type='button'
+                            disabled={lifecyclePending}
+                            onClick={() => onLifecycleAction?.('markObsolete', selectedRequirement)}>
+                            Mark obsolete
+                        </Button>
+                    </>
+                :   null}
+                {selectedRequirement.status === 'rejected' ?
                     <Button
                         type='button'
-                        onClick={() =>
-                            dispatch({ type: 'setMode', mode: dedicated ? 'editRequirementTab' : 'editRequirement' })
-                        }>
-                        Edit
+                        disabled={lifecyclePending}
+                        onClick={() => onLifecycleAction?.('markObsolete', selectedRequirement)}>
+                        Mark obsolete
                     </Button>
                 :   null}
                 {!dedicated ?
@@ -102,7 +157,7 @@ export function ActionBar({
                     role='status'
                     aria-live='polite'
                     className='actionbar__feedback'>
-                    {copyMessage}
+                    {copyMessage ?? lifecycleMessage}
                 </span>
             </>
         );

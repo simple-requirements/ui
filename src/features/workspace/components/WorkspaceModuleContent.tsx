@@ -4,10 +4,10 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import type { Action, Module } from '@/state/workspaceReducer';
 import type { Category, ProjectSummary, RequirementView } from '@/types/domain';
-import { ModuleNavigation } from '@/components/ModuleNavigation';
-import { RequirementDetail } from '@/features/requirements/RequirementDetail';
-import { RequirementHistory } from '@/features/requirements/RequirementHistory';
-import { RequirementForm } from '@/components/RequirementForm';
+import { ModuleNavigation } from '@/features/workspace/components/ModuleNavigation';
+import { RequirementDetail } from '@/features/requirements/components/RequirementDetail';
+import { RequirementHistory } from '@/features/requirements/components/RequirementHistory';
+import { RequirementForm } from '@/features/requirements/components/RequirementForm';
 import { VerticalSplitPane } from '@/layout/VerticalSplitPane';
 
 type WorkspaceModuleContentProps = Readonly<{
@@ -88,7 +88,13 @@ export function WorkspaceModuleContent({
                     }}
                 />
             );
-        if (selectedRequirement) return <RequirementDetail requirement={selectedRequirement} />;
+        if (selectedRequirement)
+            return (
+                <RequirementDetail
+                    requirement={selectedRequirement}
+                    onOpenRequirement={(requirementId) => dispatch({ type: 'selectRequirement', requirementId })}
+                />
+            );
         if (selectedRequirementId) return <div className='state'>Unable to display selected requirement.</div>;
         return <div className='state'>No requirement selected.</div>;
     };

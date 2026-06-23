@@ -32,7 +32,29 @@ export interface ComparedField {
     difference: DifferenceKind;
 }
 
-export const textComparisonFields = new Set<keyof RequirementView>([
+export type ComparableRequirementField =
+    | 'visibleKey'
+    | 'categoryId'
+    | 'categoryKey'
+    | 'type'
+    | 'description'
+    | 'priority'
+    | 'owner'
+    | 'rationale'
+    | 'source'
+    | 'status'
+    | 'rejectionReason'
+    | 'reviewer'
+    | 'rejectedAt'
+    | 'deletedAt'
+    | 'approvedAt'
+    | 'implementedAt'
+    | 'obsolescenceReason'
+    | 'obsoleteAt'
+    | 'createdAt'
+    | 'updatedAt';
+
+export const textComparisonFields = new Set<ComparableRequirementField>([
     'description',
     'rationale',
     'source',
@@ -42,7 +64,7 @@ export const textComparisonFields = new Set<keyof RequirementView>([
 export const fieldLabel = (field: string) =>
     field.replace(/[A-Z]/g, (c) => ` ${c.toLowerCase()}`).replace(/^./, (c) => c.toUpperCase());
 
-export const revisionComparisonFields: readonly (keyof RequirementView)[] = [
+export const revisionComparisonFields: readonly ComparableRequirementField[] = [
     'visibleKey',
     'categoryId',
     'categoryKey',

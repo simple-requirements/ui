@@ -7,6 +7,7 @@ import {
     makeCurrentSource,
     makeRevisionSource,
     mapComparisonError,
+    type ComparisonSource,
     type RequirementRevisionView,
     validateComparisonSources,
     visibleComparedFields,
@@ -18,8 +19,9 @@ import {
     type ComparisonPair,
 } from '@/features/requirements/comparisonRefs';
 import { TextDiffView } from '@/features/revisions/components/TextDiffView';
-import { useRequirementRevisionDetailQuery, useRequirementRevisionsQuery } from '@/utils/revisionQueries';
-import type { RequirementView } from '@/types/domain';
+import { useRequirementRevisionDetailQuery, useRequirementRevisionsQuery } from '@/features/requirements/api/revisionQueries';
+import { useRequirementLinkChangesQuery } from '@/features/requirements/api/requirementLinkQueries';
+import type { RequirementLinkChangesView, RequirementLinkView, RequirementView } from '@/types/domain';
 
 type Props = Readonly<{ requirement: RequirementView; onClose: () => void; initialComparison?: string | null }>;
 
@@ -30,6 +32,77 @@ const formatTime = (value?: string) => (value ? new Date(value).toLocaleString()
 const revisionHistoryErrorMessage = 'Revision history is currently unavailable. Please try again later.';
 const revisionDetailErrorMessage = 'Revision detail is currently unavailable. Please try again later.';
 const isRetryableRevisionQueryError = (error: unknown) => mapApiError(error).kind !== 'unexpected';
+
+const linkLabel = (link: RequirementLinkView) => `${link.sourceVisibleKey} → ${link.targetVisibleKey}`;
+const revisionNumberForSource = (source: ComparisonSource | null, latestRevisionNumber: number | null) => {
+    if (!source) return null;
+    return source.kind === 'revision' ? source.revision.revisionNumber : latestRevisionNumber;
+};
+
+function LinkGroup({ title, links, className }: Readonly<{ title: string; links: readonly RequirementLinkView[]; className: string }>) {
+    return (
+        <section className={`revision-comparison__link-group ${className}`}>
+            <h4>{title}</h4>
+            {links.length ?
+                <ul>
+                    {links.map((link) => (
+                        <li key={`${className}-${link.id}`}>{linkLabel(link)}</li>
+                    ))}
+                </ul>
+            :   <p>No links.</p>}
+        </section>
+    );
+}
+
+function LinkChangesComparison({
+    changes,
+    loading,
+    error,
+}: Readonly<{ changes: RequirementLinkChangesView | undefined; loading: boolean; error: unknown }>) {
+    if (loading) return <p role='status'>Loading requirement link changes…</p>;
+    if (error) return <p role='alert'>{mapApiError(error).message}</p>;
+    if (!changes) return null;
+
+    return (
+        <section
+            className='revision-comparison__links'
+            aria-label='Requirement link changes'>
+            <h3>Requirement link changes</h3>
+            <div className='revision-comparison__metadata'>
+                <LinkGroup
+                    title='Added outgoing links'
+                    links={changes.addedOutgoingLinks}
+                    className='added'
+                />
+                <LinkGroup
+                    title='Removed outgoing links'
+                    links={changes.removedOutgoingLinks}
+                    className='removed'
+                />
+                <LinkGroup
+                    title='Unchanged outgoing links'
+                    links={changes.unchangedOutgoingLinks}
+                    className='unchanged'
+                />
+                <LinkGroup
+                    title='Added incoming links'
+                    links={changes.addedIncomingLinks}
+                    className='added'
+                />
+                <LinkGroup
+                    title='Removed incoming links'
+                    links={changes.removedIncomingLinks}
+                    className='removed'
+                />
+                <LinkGroup
+                    title='Unchanged incoming links'
+                    links={changes.unchangedIncomingLinks}
+                    className='unchanged'
+                />
+            </div>
+        </section>
+    );
+}
 
 function RevisionDetail({ revision }: Readonly<{ revision: RequirementRevisionView }>) {
     return (
@@ -116,6 +189,15 @@ export function RequirementHistory({ requirement, onClose, initialComparison = n
     const compared = left && right && !validation ? compareSources(left, right) : [];
     const visibleCompared = visibleComparedFields(compared, showUnchanged);
     const changedCount = compared.filter((field) => field.difference !== 'unchanged').length;
+    const latestRevisionNumber = revisionsQuery.data?.reduce(
+        (latest, revision) => Math.max(latest, revision.revisionNumber),
+        0,
+    ) ?? null;
+    const leftRevisionNumber = revisionNumberForSource(left, latestRevisionNumber);
+    const rightRevisionNumber = revisionNumberForSource(right, latestRevisionNumber);
+    const linkFromRevision = leftRevisionNumber && rightRevisionNumber ? Math.min(leftRevisionNumber, rightRevisionNumber) : null;
+    const linkToRevision = leftRevisionNumber && rightRevisionNumber ? Math.max(leftRevisionNumber, rightRevisionNumber) : null;
+    const linkChangesQuery = useRequirementLinkChangesQuery(requirement.id, linkFromRevision, linkToRevision);
     const pairForUrl = (nextLeft: string, nextRight: string | null): ComparisonPair | null => {
         const parsed = parseComparisonPair(`${nextLeft}..${nextRight ?? ''}`);
         return parsed.ok ? parsed.value : null;
@@ -237,38 +319,45 @@ export function RequirementHistory({ requirement, onClose, initialComparison = n
                             <p role='alert'>{validation}</p>
                         : revisionsQuery.isError ?
                             <p role='alert'>{mapComparisonError(revisionsQuery.error)}</p>
-                        :   visibleCompared.map((field) => (
-                                <section
-                                    key={field.field}
-                                    className={`revision-comparison__field ${field.difference}`}
-                                    aria-label={`${field.label} ${field.difference}`}>
-                                    <h3>
-                                        {field.label} — {field.difference}
-                                    </h3>
-                                    {field.kind === 'text' ?
-                                        <TextDiffView
-                                            oldText={display(field.left)}
-                                            newText={display(field.right)}
-                                            oldLabel={leftLabel}
-                                            newLabel={rightLabel}
-                                            ariaLabel={`${field.label} text diff`}
-                                        />
-                                    :   <div
-                                            className='revision-comparison__metadata'
-                                            role='table'
-                                            aria-label={`${field.label} before and after`}>
-                                            <div role='row'>
-                                                <strong role='cell'>{leftLabel}</strong>
-                                                <p role='cell'>{display(field.left)}</p>
+                        :   <>
+                                {visibleCompared.map((field) => (
+                                    <section
+                                        key={field.field}
+                                        className={`revision-comparison__field ${field.difference}`}
+                                        aria-label={`${field.label} ${field.difference}`}>
+                                        <h3>
+                                            {field.label} — {field.difference}
+                                        </h3>
+                                        {field.kind === 'text' ?
+                                            <TextDiffView
+                                                oldText={display(field.left)}
+                                                newText={display(field.right)}
+                                                oldLabel={leftLabel}
+                                                newLabel={rightLabel}
+                                                ariaLabel={`${field.label} text diff`}
+                                            />
+                                        :   <div
+                                                className='revision-comparison__metadata'
+                                                role='table'
+                                                aria-label={`${field.label} before and after`}>
+                                                <div role='row'>
+                                                    <strong role='cell'>{leftLabel}</strong>
+                                                    <p role='cell'>{display(field.left)}</p>
+                                                </div>
+                                                <div role='row'>
+                                                    <strong role='cell'>{rightLabel}</strong>
+                                                    <p role='cell'>{display(field.right)}</p>
+                                                </div>
                                             </div>
-                                            <div role='row'>
-                                                <strong role='cell'>{rightLabel}</strong>
-                                                <p role='cell'>{display(field.right)}</p>
-                                            </div>
-                                        </div>
-                                    }
-                                </section>
-                            ))
+                                        }
+                                    </section>
+                                ))}
+                                <LinkChangesComparison
+                                    changes={linkChangesQuery.data}
+                                    loading={linkChangesQuery.isFetching}
+                                    error={linkChangesQuery.isError ? linkChangesQuery.error : null}
+                                />
+                            </>
                         }
                     </div>
                 :   <div className='revision-history__content'>

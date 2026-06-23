@@ -62,3 +62,12 @@ export const GetProjectsIdResponse = zod.object({
   "updatedAt": zod.iso.datetime({"offset":true})
 })
 
+/**
+ * @summary Delete an empty project by UUID.
+ */
+export const DeleteProjectsIdParams = zod.object({
+  "id": zod.uuid()
+})
+
+export const DeleteProjectsIdResponse = zod.void()
+

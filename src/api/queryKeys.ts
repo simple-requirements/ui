@@ -18,3 +18,18 @@ export const requirementRevisionKeys = {
     detail: (requirementId: string, revisionNumber: number) =>
         ['requirements', requirementId, 'revisions', revisionNumber] as const,
 };
+
+export const metricKeys = {
+    list: (projectId: string) => ['metrics', 'list', projectId] as const,
+    key: (projectId: string, key: string) => ['metrics', 'key', projectId, key] as const,
+};
+
+export const requirementLinkKeys = {
+    all: (requirementId: string) => ['requirements', requirementId, 'links'] as const,
+    current: (requirementId: string) => ['requirements', requirementId, 'links', 'current'] as const,
+    history: (requirementId: string) => ['requirements', requirementId, 'links', 'history'] as const,
+    revision: (requirementId: string, revisionNumber: number) =>
+        ['requirements', requirementId, 'links', 'revisions', revisionNumber] as const,
+    changes: (requirementId: string, fromRevision: number, toRevision: number) =>
+        ['requirements', requirementId, 'links', 'changes', fromRevision, toRevision] as const,
+};

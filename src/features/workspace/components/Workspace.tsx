@@ -1,11 +1,11 @@
 import type { ReactNode } from 'react';
 import type { Action, Module, WorkspaceState } from '@/state/workspaceReducer';
 import type { Category, ProjectSummary, RequirementView } from '@/types/domain';
-import { NewCategoryForm } from '@/components/NewCategoryForm';
-import { NewProjectForm } from '@/components/NewProjectForm';
-import { RequirementForm } from '@/components/RequirementForm';
-import { ProjectSidebar } from '@/components/ProjectSidebar';
-import { WorkspaceModuleContent } from '@/components/WorkspaceModuleContent';
+import { NewCategoryForm } from '@/features/categories/components/NewCategoryForm';
+import { NewProjectForm } from '@/features/projects/components/NewProjectForm';
+import { RequirementForm } from '@/features/requirements/components/RequirementForm';
+import { ProjectSidebar } from '@/features/projects/components/ProjectSidebar';
+import { WorkspaceModuleContent } from '@/features/workspace/components/WorkspaceModuleContent';
 
 type WorkspaceProps = Readonly<{
     projects: readonly ProjectSummary[];

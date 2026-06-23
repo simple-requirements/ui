@@ -33,7 +33,10 @@ export function useEditRequirementMutation({
             const current = getCurrentRequirement();
             if (!current) throw new Error('Requirement detail must load before editing.');
             if (!isRequirementEditable(current.status)) throw new Error('Only draft requirements can be edited.');
-            const updated = await updateRequirement(current.id, values);
+            const updated = await updateRequirement(current.id, {
+                ...values,
+                projectId: current.projectId ?? projectId ?? undefined,
+            });
             assertImmutableRequirementFields(current, updated);
             return updated;
         },

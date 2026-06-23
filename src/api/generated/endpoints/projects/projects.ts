@@ -26,6 +26,7 @@ import type {
 
 import type {
   BadRequestResponse,
+  ConflictResponse,
   CreateProjectDto,
   NotFoundResponse,
   ProjectResponseDto
@@ -308,3 +309,124 @@ export const useGetProjectsId = <TError = BadRequestResponse | NotFoundResponse,
       > => {
       return useMutation(getGetProjectsIdMutationOptions(options), queryClient);
     }
+    export const getDeleteProjectsIdUrl = (id: string,) => {
+
+
+
+
+  return `/projects/${encodeURIComponent(String(id))}`
+}
+
+/**
+ * @summary Delete an empty project by UUID.
+ */
+export const deleteProjectsId = async (id: string, options?: RequestInit): Promise<void> => {
+
+  const res = await fetch(getDeleteProjectsIdUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+)
+
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+  const data: void = body ? JSON.parse(body) : undefined
+  return data
+}
+
+
+
+
+
+export const getDeleteProjectsIdQueryKey = (id: string,) => {
+    return [
+    'DELETE', `/projects/${id}`
+    ] as const;
+    }
+
+
+export const getDeleteProjectsIdQueryOptions = <TData = Awaited<ReturnType<typeof deleteProjectsId>>, TError = BadRequestResponse | NotFoundResponse | ConflictResponse>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteProjectsId>>, TError, TData>>, fetch?: RequestInit}
+) => {
+
+const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getDeleteProjectsIdQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof deleteProjectsId>>> = ({ signal }) => deleteProjectsId(id, { signal, ...fetchOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof deleteProjectsId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type DeleteProjectsIdQueryResult = NonNullable<Awaited<ReturnType<typeof deleteProjectsId>>>
+export type DeleteProjectsIdQueryError = BadRequestResponse | NotFoundResponse | ConflictResponse
+
+
+export function useDeleteProjectsId<TData = Awaited<ReturnType<typeof deleteProjectsId>>, TError = BadRequestResponse | NotFoundResponse | ConflictResponse>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteProjectsId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof deleteProjectsId>>,
+          TError,
+          Awaited<ReturnType<typeof deleteProjectsId>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useDeleteProjectsId<TData = Awaited<ReturnType<typeof deleteProjectsId>>, TError = BadRequestResponse | NotFoundResponse | ConflictResponse>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteProjectsId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof deleteProjectsId>>,
+          TError,
+          Awaited<ReturnType<typeof deleteProjectsId>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useDeleteProjectsId<TData = Awaited<ReturnType<typeof deleteProjectsId>>, TError = BadRequestResponse | NotFoundResponse | ConflictResponse>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteProjectsId>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Delete an empty project by UUID.
+ */
+
+export function useDeleteProjectsId<TData = Awaited<ReturnType<typeof deleteProjectsId>>, TError = BadRequestResponse | NotFoundResponse | ConflictResponse>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteProjectsId>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getDeleteProjectsIdQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Delete an empty project by UUID.
+ */
+export const prefetchDeleteProjectsIdQuery = async <TData = Awaited<ReturnType<typeof deleteProjectsId>>, TError = BadRequestResponse | NotFoundResponse | ConflictResponse>(
+ queryClient: QueryClient, id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteProjectsId>>, TError, TData>>, fetch?: RequestInit}
+
+  ): Promise<QueryClient> => {
+
+  const queryOptions = getDeleteProjectsIdQueryOptions(id,options)
+
+  await queryClient.prefetchQuery(queryOptions);
+
+  return queryClient;
+}
+
+
+
+
+

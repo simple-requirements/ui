@@ -61,6 +61,8 @@ describe('comparison model helpers', () => {
         owner: 'Alice',
         rationale: null,
         source: '',
+        renderedDescription: 'New description',
+        metricReferences: [],
         rejectionReason: null,
         reviewer: null,
         createdAt: '2026-01-01T00:00:00Z',

@@ -86,3 +86,32 @@
     min-height: 0;
     width: min(100%, 720px);
 }
+
+.form__hint {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.form__error-list {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: #b91c1c;
+}
+
+.requirement-form__description-tabs,
+.requirement-detail__description-tabs {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.requirement-form__visual-preview {
+    display: block;
+    min-height: 8rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem;
+    background: var(--surface-muted);
+    white-space: pre-wrap;
+}

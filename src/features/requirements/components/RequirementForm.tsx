@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type SyntheticEvent } from 'react';
+import { useMemo, useRef, useState, type SyntheticEvent } from 'react';
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
@@ -82,11 +82,12 @@ export function RequirementForm({
     const [descriptionMode, setDescriptionMode] = useState<'code' | 'visual'>('code');
     const descriptionRef = useRef<HTMLTextAreaElement>(null);
     const selectedCategory = categories.find((category) => category.id === values.categoryId);
-    const dirty = JSON.stringify(values) !== JSON.stringify(initialValues);
-
-    useEffect(() => {
-        onDirtyChange?.(dirty);
-    }, [dirty, onDirtyChange]);
+    const initialValuesJson = JSON.stringify(initialValues);
+    const dirty = JSON.stringify(values) !== initialValuesJson;
+    const updateValues = (nextValues: RequirementFormValues) => {
+        setValues(nextValues);
+        onDirtyChange?.(JSON.stringify(nextValues) !== initialValuesJson);
+    };
     const categoryOptions = categories.map((category) => ({
         label: categoryOptionLabel(category),
         value: category.id,
@@ -180,9 +181,7 @@ export function RequirementForm({
                         inputId='requirement-category'
                         value={values.categoryId}
                         options={categoryOptions}
-                        onChange={(event) =>
-                            setValues((current) => ({ ...current, categoryId: event.value as string }))
-                        }
+                        onChange={(event) => updateValues({ ...values, categoryId: event.value as string })}
                         required
                         appendTo={document.body}
                         data-testid='Category-Dropdown'
@@ -229,9 +228,7 @@ export function RequirementForm({
                         ref={descriptionRef}
                         className='p-inputtextarea p-inputtext p-component'
                         value={values.description}
-                        onChange={(event) =>
-                            setValues((current) => ({ ...current, description: event.currentTarget.value }))
-                        }
+                        onChange={(event) => updateValues({ ...values, description: event.currentTarget.value })}
                         required
                         rows={5}
                         aria-describedby='requirement-description-help'
@@ -275,7 +272,7 @@ export function RequirementForm({
                     inputId='requirement-priority'
                     value={values.priority}
                     options={[...priorityOptions]}
-                    onChange={(event) => setValues((current) => ({ ...current, priority: event.value as string }))}
+                    onChange={(event) => updateValues({ ...values, priority: event.value as string })}
                     required
                     appendTo={document.body}
                 />
@@ -285,7 +282,7 @@ export function RequirementForm({
                 <InputText
                     id='requirement-owner'
                     value={values.owner}
-                    onChange={(event) => setValues((current) => ({ ...current, owner: event.currentTarget.value }))}
+                    onChange={(event) => updateValues({ ...values, owner: event.currentTarget.value })}
                 />
             </div>
             <div className='form__field'>
@@ -293,7 +290,7 @@ export function RequirementForm({
                 <InputText
                     id='requirement-rationale'
                     value={values.rationale}
-                    onChange={(event) => setValues((current) => ({ ...current, rationale: event.currentTarget.value }))}
+                    onChange={(event) => updateValues({ ...values, rationale: event.currentTarget.value })}
                 />
             </div>
             <div className='form__field'>
@@ -301,7 +298,7 @@ export function RequirementForm({
                 <InputText
                     id='requirement-source'
                     value={values.source}
-                    onChange={(event) => setValues((current) => ({ ...current, source: event.currentTarget.value }))}
+                    onChange={(event) => updateValues({ ...values, source: event.currentTarget.value })}
                 />
             </div>
             <div className='form__actions'>

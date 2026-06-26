@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useConfirmDialog } from '@/shared/dialogs/ConfirmDialogProvider';
 import type { Action, Module, WorkspaceState } from '@/state/workspaceReducer';
 import type { Category, ProjectSummary, RequirementView } from '@/types/domain';
@@ -79,7 +79,12 @@ export function Workspace({
     initialComparison = null,
 }: WorkspaceProps) {
     const { confirm } = useConfirmDialog();
+    const [newRequirementDirty, setNewRequirementDirty] = useState(false);
     const handleCancelForm = () => dispatch({ type: 'setMode', mode: 'workspace' });
+    useEffect(() => {
+        if (mode !== 'newRequirement') setNewRequirementDirty(false);
+    }, [mode]);
+
     const confirmDiscardRequirementChanges = (onConfirmed: () => void) => {
         void confirm({
             title: 'Discard unsaved changes',
@@ -88,6 +93,17 @@ export function Workspace({
             acceptSeverity: 'danger',
         }).then((confirmed) => {
             if (confirmed) onConfirmed();
+        });
+    };
+
+    const dispatchWithNewRequirementGuard = (action: Action) => {
+        if (mode !== 'newRequirement' || !newRequirementDirty) {
+            dispatch(action);
+            return;
+        }
+        confirmDiscardRequirementChanges(() => {
+            setNewRequirementDirty(false);
+            dispatch(action);
         });
     };
 
@@ -112,6 +128,7 @@ export function Workspace({
                     error={createRequirementError}
                     pending={createRequirementPending}
                     onSubmit={onCreateRequirement}
+                    onDirtyChange={setNewRequirementDirty}
                     onCancel={(dirty) => {
                         if (!dirty) {
                             handleCancelForm();
@@ -164,7 +181,7 @@ export function Workspace({
             <ProjectSidebar
                 projects={projects}
                 activeProjectId={activeProjectId}
-                dispatch={dispatch}
+                dispatch={dispatchWithNewRequirementGuard}
                 onExportProject={onExportProject}
                 onExportAllProjects={onExportAllProjects}
             />

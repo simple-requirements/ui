@@ -125,12 +125,12 @@ Given('a temporary project with linked requirements is open', async ({ page, req
 When('I create a requirement link to the unused temporary target', async ({ page }) => {
     const state = requireState(page);
 
-    await page.getByLabel('Target visible key').fill(state.unusedTarget.visibleKey);
+    await page.getByLabel('Target key').fill(state.unusedTarget.visibleKey);
     await page.getByRole('button', { name: 'Create link' }).click();
 });
 
 When('I try to create a requirement link to {string}', async ({ page }, targetVisibleKey: string) => {
-    await page.getByLabel('Target visible key').fill(targetVisibleKey);
+    await page.getByLabel('Target key').fill(targetVisibleKey);
     await page.getByRole('button', { name: 'Create link' }).click();
 });
 

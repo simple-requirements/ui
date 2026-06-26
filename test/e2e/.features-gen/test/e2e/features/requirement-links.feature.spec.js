@@ -13,7 +13,7 @@ test.describe('Requirement links', () => {
     await And('the incoming links include the existing temporary source', null, { page }); 
   });
 
-  test('Create a requirement link by target visible key', async ({ Given, When, Then, And, page, request }) => { 
+  test('Create a requirement link by target key', async ({ Given, When, Then, And, page, request }) => { 
     await Given('a temporary project with linked requirements is open', null, { page, request }); 
     await When('I create a requirement link to the unused temporary target', null, { page }); 
     await Then('the outgoing links include the unused temporary target', null, { page }); 

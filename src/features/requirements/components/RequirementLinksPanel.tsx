@@ -188,7 +188,7 @@ export function RequirementLinksPanel({ requirement, onOpenRequirement }: Requir
                 aria-label='Create requirement link'
                 onSubmit={handleCreate}>
                 <label>
-                    Target visible key
+                    Target key
                     <input
                         className='p-inputtext p-component'
                         value={targetVisibleKey}

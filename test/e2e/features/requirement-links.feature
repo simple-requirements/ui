@@ -11,7 +11,7 @@ Feature: Requirement links
         And the incoming links include the existing temporary source
 
     # Covers: FE-FR-REF-0001, FE-FR-REF-0002, FE-FR-USAB-0002
-    Scenario: Create a requirement link by target visible key
+    Scenario: Create a requirement link by target key
         Given a temporary project with linked requirements is open
         When I create a requirement link to the unused temporary target
         Then the outgoing links include the unused temporary target

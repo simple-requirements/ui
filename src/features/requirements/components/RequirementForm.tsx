@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type SyntheticEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type SyntheticEvent } from 'react';
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
@@ -20,6 +20,7 @@ type RequirementFormProps = Readonly<{
     pending: boolean;
     onSubmit: (values: RequirementFormValues) => void;
     onCancel: (dirty: boolean) => void;
+    onDirtyChange?: (dirty: boolean) => void;
 }>;
 
 const emptyValues: RequirementFormValues = {
@@ -64,6 +65,7 @@ export function RequirementForm({
     pending,
     onSubmit,
     onCancel,
+    onDirtyChange,
 }: RequirementFormProps) {
     const initialValues = useMemo<RequirementFormValues>(() => {
         if (!initialRequirement) return { ...emptyValues, categoryId: categories[0]?.id ?? '' };
@@ -81,6 +83,10 @@ export function RequirementForm({
     const descriptionRef = useRef<HTMLTextAreaElement>(null);
     const selectedCategory = categories.find((category) => category.id === values.categoryId);
     const dirty = JSON.stringify(values) !== JSON.stringify(initialValues);
+
+    useEffect(() => {
+        onDirtyChange?.(dirty);
+    }, [dirty, onDirtyChange]);
     const categoryOptions = categories.map((category) => ({
         label: categoryOptionLabel(category),
         value: category.id,
@@ -201,7 +207,7 @@ export function RequirementForm({
                     <Button
                         type='button'
                         label='Code'
-                        severity={descriptionMode === 'code' ? undefined : 'secondary'}
+                        severity={descriptionMode === 'code' ? 'info' : 'secondary'}
                         className='requirement-form__mode-button requirement-form__mode-button--code'
                         outlined
                         aria-pressed={descriptionMode === 'code'}
@@ -210,7 +216,7 @@ export function RequirementForm({
                     <Button
                         type='button'
                         label='Visual'
-                        severity={descriptionMode === 'visual' ? undefined : 'secondary'}
+                        severity={descriptionMode === 'visual' ? 'info' : 'secondary'}
                         className='requirement-form__mode-button requirement-form__mode-button--visual'
                         outlined
                         aria-pressed={descriptionMode === 'visual'}

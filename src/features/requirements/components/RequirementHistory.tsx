@@ -245,7 +245,7 @@ export function RequirementHistory({ requirement, onClose, initialComparison = n
             aria-label={`Revision history for ${requirement.visibleKey}`}>
             <header className='revision-history__header'>
                 <div>
-                    <h2>Revision history for {requirement.visibleKey}</h2>
+                    <h3>Revision history</h3>
                     <p>Current requirement and historical revisions are separate read-only comparison sources.</p>
                 </div>
                 <div className='revision-history__actions'>

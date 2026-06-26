@@ -30,11 +30,13 @@ describe('metric authoring helpers', () => {
         expect(result.parseErrors).toEqual([]);
     });
 
-    it('keeps incomplete single-character typing input renderable', () => {
-        const result = renderMetricVisualText({ text: '[' });
+    it('keeps incomplete typing input renderable', () => {
+        for (const text of ['a', '[', '[~', '[~M']) {
+            const result = renderMetricVisualText({ text });
 
-        expect(result.renderedText).toBe('[');
-        expect(result.parseErrors).toEqual([]);
+            expect(result.renderedText).toBe(text);
+            expect(result.parseErrors).toEqual([]);
+        }
     });
 
     it('renders visual text with inline values and resolved existing metric references', () => {

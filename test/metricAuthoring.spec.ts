@@ -30,6 +30,13 @@ describe('metric authoring helpers', () => {
         expect(result.parseErrors).toEqual([]);
     });
 
+    it('keeps incomplete single-character typing input renderable', () => {
+        const result = renderMetricVisualText({ text: '[' });
+
+        expect(result.renderedText).toBe('[');
+        expect(result.parseErrors).toEqual([]);
+    });
+
     it('renders visual text with inline values and resolved existing metric references', () => {
         const result = renderMetricVisualText({
             text: 'Latency [~MET-0001 := 2000 ms] and throughput [~MET-0002]',

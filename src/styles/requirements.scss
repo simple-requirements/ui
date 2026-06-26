@@ -250,7 +250,7 @@
 .requirement-links__create,
 .requirement-links__edit {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.75rem;
     align-items: end;
     flex-wrap: wrap;
 }
@@ -324,6 +324,10 @@
     }
 }
 
+.requirement-detail__status {
+    margin-bottom: 0.35rem;
+}
+
 .requirement-detail__description-text {
     white-space: pre-wrap;
     margin: 0.5rem 0;
@@ -333,7 +337,6 @@
     margin: 0.5rem 0 0;
     padding-left: 1.25rem;
 }
-
 
 .requirements-list .p-datatable-tbody > tr,
 .requirements-list .p-datatable-tbody > tr * {
@@ -348,7 +351,6 @@
 .requirement-form__context-grid .form__field {
     gap: 0.35rem;
 }
-
 
 .requirement-links__create .p-inputtext,
 .requirement-links__edit .p-inputtext {

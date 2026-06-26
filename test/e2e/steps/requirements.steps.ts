@@ -50,6 +50,13 @@ When('I select requirement {string}', async ({ page }, requirementKey: string) =
     await row.click();
 });
 
+When('I open requirement {string} in a dedicated tab', async ({ page }, requirementKey: string) => {
+    const row = page.getByRole('row').filter({ hasText: requirementKey });
+
+    await expect(row).toBeVisible();
+    await row.dblclick();
+});
+
 When('I select the first requirement that is not {string}', async ({ page }, requirementKey: string) => {
     const rows = page.locator('.req-list tbody tr');
     const rowCount = await rows.count();

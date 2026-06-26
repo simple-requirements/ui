@@ -15,6 +15,7 @@ export interface MetricAuthoringParseResult {
 }
 
 const metricTokenPattern = /\[\s*~([^\]]*)\]/g;
+const potentialIncompleteMetricTokenPattern = /\[\s*~?[^\]]*$/;
 
 const normalizeNullableDescription = (value: string | null | undefined) => {
     const trimmed = value?.trim() ?? '';
@@ -56,7 +57,8 @@ export function parseMetricAuthoringText(text: string): MetricAuthoringParseResu
         if (!metricKeyPattern.test(key)) return invalid(token, 'Metric key must match MET-0001.');
 
         const [rawValue, rawDescription, ...extraParts] = rawDefinition.split('|');
-        if (extraParts.length > 0) return invalid(token, 'Metric definitions may contain only one description separator.');
+        if (extraParts.length > 0)
+            return invalid(token, 'Metric definitions may contain only one description separator.');
 
         const value = rawValue.trim();
         if (!value) return invalid(token, 'Metric value is required.');
@@ -97,6 +99,9 @@ export function renderMetricVisualText({
     references?: readonly MetricReferenceView[];
 }) {
     const parsed = parseMetricAuthoringText(text);
+    if (potentialIncompleteMetricTokenPattern.test(text)) {
+        return { ...parsed, renderedText: text };
+    }
     const metricValues = new Map<string, string>();
     for (const metric of metrics) metricValues.set(metric.key, metric.value);
     for (const reference of references) {
@@ -135,7 +140,10 @@ export async function materializeInlineMetricDefinitions({
             const existing = await getMetricByKey(trimmedProjectId, definition.key, init);
             assertMetricMatchesDefinition(existing, definition);
         } catch (error) {
-            const status = typeof error === 'object' && error && 'status' in error ? (error as { status?: number }).status : undefined;
+            const status =
+                typeof error === 'object' && error && 'status' in error ?
+                    (error as { status?: number }).status
+                :   undefined;
             if (status !== 404) throw error;
             await createMetric(
                 {

@@ -75,11 +75,9 @@ Feature: Requirements
         Then the requirement edit form heading is "NFR-USAB-0043"
 
     # Covers: FE-FR-NAV-0002, FE-FR-LAY-0004, FE-NFR-ACC-0001, FE-NFR-RESP-0001
-    # Reworked: This uses the accessible "Open in tab" action path. The double-click tab-opening path is already covered by "Startup renders projects and opens a requirement tab".
     Scenario: Requirement tabs have accessible and visible close controls
         Given the workspace layout is open
-        When I select requirement "FR-INT-0038"
-        And I "click" on the "Open in tab" button
+        When I open requirement "FR-INT-0038" in a dedicated tab
         Then the requirement tab "FR-INT-0038" is visible
         And the "Workspace" tab has no close button
         When I close the requirement tab "FR-INT-0038"

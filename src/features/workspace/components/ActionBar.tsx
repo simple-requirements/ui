@@ -46,14 +46,6 @@ export function ActionBar({
 }: ActionBarProps) {
     const [visibleKey, setVisibleKey] = useState('');
     const [copyMessage, setCopyMessage] = useState<string | null>(null);
-    const handleOpenInTab = () => {
-        if (!selectedRequirement) return;
-        dispatch({
-            type: 'openRequirementTab',
-            requirementId: selectedRequirement.id,
-            visibleKey: selectedRequirement.visibleKey,
-        });
-    };
     const handleCopyVisibleKey = async () => {
         if (!selectedRequirement) return;
         setCopyMessage(null);
@@ -148,15 +140,10 @@ export function ActionBar({
                 {!dedicated ?
                     <ActionBarButton
                         type='button'
-                        onClick={handleOpenInTab}>
-                        Open in tab
+                        onClick={() => void handleCopyVisibleKey()}>
+                        Copy key
                     </ActionBarButton>
                 :   null}
-                <ActionBarButton
-                    type='button'
-                    onClick={() => void handleCopyVisibleKey()}>
-                    Copy key
-                </ActionBarButton>
                 <span
                     role='status'
                     aria-live='polite'

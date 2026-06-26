@@ -39,3 +39,4 @@ Feature: Projects
         When I fill the "Project name" field in the "New Project" form with "Test project"
         And I click "Create" in the "New Project" form
         Then the "Test project" project is visible in the sidebar
+        And the "New Project" form is closed

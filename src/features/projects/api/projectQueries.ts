@@ -31,13 +31,16 @@ export class ProjectCreationUnavailableError extends Error {
 }
 
 /** Creates a project through the generated backend client. */
-export function useCreateProjectMutation(queryClient: QueryClient) {
+export function useCreateProjectMutation(queryClient: QueryClient, onCreated?: (project: ProjectSummary) => void) {
     return useMutation({
         mutationFn: (name: string) => {
             const trimmedName = name.trim();
             if (!trimmedName) return Promise.reject(new ProjectCreationUnavailableError());
             return createProject(trimmedName);
         },
-        onSuccess: async () => queryClient.invalidateQueries({ queryKey: projectKeys.all }),
+        onSuccess: async (project) => {
+            await queryClient.invalidateQueries({ queryKey: projectKeys.all });
+            onCreated?.(project);
+        },
     });
 }

@@ -177,3 +177,45 @@
 .requirement-form__mode-button--visual.p-button {
     --p-button-info-background: var(--p-info-color, #0ea5e9);
 }
+
+.confirm-dialog__heading {
+    margin: 0;
+    font-size: 1.8rem;
+    line-height: 1.3;
+}
+
+.confirm-dialog .p-dialog-header,
+.confirm-dialog .p-dialog-content,
+.confirm-dialog .p-dialog-footer {
+    font-size: 1.6rem;
+}
+
+.confirm-dialog .p-button:focus,
+.confirm-dialog .p-button.p-focus,
+.confirm-dialog .p-button:enabled:focus {
+    box-shadow: none;
+}
+
+.p-contextmenu {
+    min-width: 22rem;
+}
+
+.p-contextmenu .p-menuitem-text {
+    white-space: nowrap;
+}
+
+.requirement-form__mode-button.p-button {
+    box-shadow: none;
+}
+
+.requirement-form__mode-button.p-button:focus,
+.requirement-form__mode-button.p-button.p-focus,
+.requirement-form__mode-button.p-button:enabled:focus {
+    box-shadow: none;
+}
+
+.requirement-form__mode-button.p-button[aria-pressed='true'] {
+    background: var(--p-button-info-background, #0ea5e9);
+    border-color: var(--p-button-info-border-color, #0ea5e9);
+    color: var(--p-button-info-color, #fff);
+}

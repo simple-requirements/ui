@@ -6,7 +6,7 @@ import type { ButtonProps } from 'primereact/button';
 
 export type ConfirmDialogOptions = Readonly<{
     title: string;
-    message: string;
+    message?: string;
     acceptLabel?: string;
     rejectLabel?: string;
     acceptSeverity?: ButtonProps['severity'];
@@ -40,7 +40,7 @@ export function ConfirmDialogProvider({ children }: Readonly<{ children: ReactNo
                 <Button
                     type='button'
                     label={pendingConfirmation.rejectLabel ?? 'Cancel'}
-                    severity='danger'
+                    severity='secondary'
                     onClick={() => close(false)}
                 />
                 <Button
@@ -58,14 +58,16 @@ export function ConfirmDialogProvider({ children }: Readonly<{ children: ReactNo
             {children}
             <Dialog
                 className='confirm-dialog'
-                header={pendingConfirmation?.title ?? 'Confirm action'}
+                header={<h2 className='confirm-dialog__heading'>{pendingConfirmation?.title ?? 'Confirm action'}</h2>}
                 visible={pendingConfirmation !== null}
                 modal
                 closable
                 onHide={() => close(false)}
                 footer={footer}
                 style={{ width: 'min(32rem, calc(100vw - 2rem))' }}>
-                <p>{pendingConfirmation?.message}</p>
+                {pendingConfirmation?.message ?
+                    <p>{pendingConfirmation.message}</p>
+                :   null}
             </Dialog>
         </>
     );

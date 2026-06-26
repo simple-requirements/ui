@@ -86,14 +86,11 @@ export function Workspace({
     }, [mode]);
 
     const confirmDiscardChanges = (onConfirmed: () => void) => {
-        void confirm({
-            title: 'Discard unsaved changes',
-            message: 'Discard unsaved changes?',
-            acceptLabel: 'Discard',
-            acceptSeverity: 'danger',
-        }).then((confirmed) => {
-            if (confirmed) onConfirmed();
-        });
+        void confirm({ title: 'Discard unsaved changes', acceptLabel: 'Discard', acceptSeverity: 'danger' }).then(
+            (confirmed) => {
+                if (confirmed) onConfirmed();
+            },
+        );
     };
 
     const hasDirtyForm = mode === 'newProject' && newProjectDirty;

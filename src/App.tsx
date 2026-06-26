@@ -140,7 +140,9 @@ export default function App() {
         projectsQuery.isLoading || projectsQuery.isFetching,
     );
 
-    const createProjectMutation = useCreateProjectMutation(queryClient);
+    const createProjectMutation = useCreateProjectMutation(queryClient, (project) => {
+        dispatch({ type: 'selectProject', projectId: project.id });
+    });
     const createCategoryMutation = useCreateCategoryMutation(queryClient, () =>
         dispatch({ type: 'setMode', mode: 'workspace' }),
     );

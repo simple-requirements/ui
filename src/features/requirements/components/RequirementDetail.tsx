@@ -1,3 +1,4 @@
+import { RequirementHistory } from '@/features/requirements/components/RequirementHistory';
 import { RequirementLinksPanel } from '@/features/requirements/components/RequirementLinksPanel';
 import type { RequirementView } from '@/types/domain';
 
@@ -55,6 +56,9 @@ export function RequirementDetail({ requirement, onOpenRequirement }: Requiremen
                 requirement={requirement}
                 onOpenRequirement={onOpenRequirement}
             />
+            <section className='requirement-detail__history'>
+                <RequirementHistory requirement={requirement} />
+            </section>
         </article>
     );
 }

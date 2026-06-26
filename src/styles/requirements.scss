@@ -45,7 +45,7 @@
 .req-list {
     width: 100%;
     border-collapse: collapse;
-    font-size: 14px;
+    font-size: inherit;
 
     th,
     td {
@@ -233,6 +233,10 @@
     gap: 0.5rem;
 }
 
+.requirement-detail__history {
+    margin-top: 1.5rem;
+}
+
 .requirement-links {
     margin-top: 1rem;
     border-top: 1px solid var(--border);
@@ -285,7 +289,7 @@
 .requirement-links__meta {
     display: block;
     color: var(--text-muted);
-    font-size: 0.875rem;
+    font-size: 1.4rem;
 }
 
 .state--inline {

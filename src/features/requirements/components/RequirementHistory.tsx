@@ -19,11 +19,14 @@ import {
     type ComparisonPair,
 } from '@/features/requirements/comparisonRefs';
 import { TextDiffView } from '@/features/revisions/components/TextDiffView';
-import { useRequirementRevisionDetailQuery, useRequirementRevisionsQuery } from '@/features/requirements/api/revisionQueries';
+import {
+    useRequirementRevisionDetailQuery,
+    useRequirementRevisionsQuery,
+} from '@/features/requirements/api/revisionQueries';
 import { useRequirementLinkChangesQuery } from '@/features/requirements/api/requirementLinkQueries';
 import type { RequirementLinkChangesView, RequirementLinkView, RequirementView } from '@/types/domain';
 
-type Props = Readonly<{ requirement: RequirementView; onClose: () => void; initialComparison?: string | null }>;
+type Props = Readonly<{ requirement: RequirementView; onClose?: () => void; initialComparison?: string | null }>;
 
 const nullLabel = 'Null / not specified';
 const display = (value: string | null | undefined) => value ?? nullLabel;
@@ -39,7 +42,11 @@ const revisionNumberForSource = (source: ComparisonSource | null, latestRevision
     return source.kind === 'revision' ? source.revision.revisionNumber : latestRevisionNumber;
 };
 
-function LinkGroup({ title, links, className }: Readonly<{ title: string; links: readonly RequirementLinkView[]; className: string }>) {
+function LinkGroup({
+    title,
+    links,
+    className,
+}: Readonly<{ title: string; links: readonly RequirementLinkView[]; className: string }>) {
     return (
         <section className={`revision-comparison__link-group ${className}`}>
             <h4>{title}</h4>
@@ -192,14 +199,14 @@ export function RequirementHistory({ requirement, onClose, initialComparison = n
     const compared = left && right && !validation ? compareSources(left, right) : [];
     const visibleCompared = visibleComparedFields(compared, showUnchanged);
     const changedCount = compared.filter((field) => field.difference !== 'unchanged').length;
-    const latestRevisionNumber = revisionsQuery.data?.reduce(
-        (latest, revision) => Math.max(latest, revision.revisionNumber),
-        0,
-    ) ?? null;
+    const latestRevisionNumber =
+        revisionsQuery.data?.reduce((latest, revision) => Math.max(latest, revision.revisionNumber), 0) ?? null;
     const leftRevisionNumber = revisionNumberForSource(left, latestRevisionNumber);
     const rightRevisionNumber = revisionNumberForSource(right, latestRevisionNumber);
-    const linkFromRevision = leftRevisionNumber && rightRevisionNumber ? Math.min(leftRevisionNumber, rightRevisionNumber) : null;
-    const linkToRevision = leftRevisionNumber && rightRevisionNumber ? Math.max(leftRevisionNumber, rightRevisionNumber) : null;
+    const linkFromRevision =
+        leftRevisionNumber && rightRevisionNumber ? Math.min(leftRevisionNumber, rightRevisionNumber) : null;
+    const linkToRevision =
+        leftRevisionNumber && rightRevisionNumber ? Math.max(leftRevisionNumber, rightRevisionNumber) : null;
     const linkChangesQuery = useRequirementLinkChangesQuery(requirement.id, linkFromRevision, linkToRevision);
     const pairForUrl = (nextLeft: string, nextRight: string | null): ComparisonPair | null => {
         const parsed = parseComparisonPair(`${nextLeft}..${nextRight ?? ''}`);
@@ -247,11 +254,13 @@ export function RequirementHistory({ requirement, onClose, initialComparison = n
                         label={comparing ? 'Close comparison' : 'Compare revisions'}
                         onClick={() => setComparing((value) => !value)}
                     />
-                    <Button
-                        type='button'
-                        label='Close history'
-                        onClick={onClose}
-                    />
+                    {onClose ?
+                        <Button
+                            type='button'
+                            label='Close history'
+                            onClick={onClose}
+                        />
+                    :   null}
                 </div>
             </header>
             {revisionsQuery.isLoading ?

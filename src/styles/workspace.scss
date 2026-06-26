@@ -20,11 +20,12 @@
     gap: 4px;
 
     button {
-        height: 34px;
+        height: 4rem;
+        margin-block: 1rem;
         border: 0;
         border-radius: 0;
         background: transparent;
-        padding: 0 14px;
+        padding: 0 1.4rem;
     }
 
     .active {

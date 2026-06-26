@@ -63,25 +63,10 @@ export function ActionBar({
     };
 
     const renderRequirementActions = () => {
-        if (!selectedRequirement) {
-            return (
-                <ActionBarButton
-                    type='button'
-                    disabled
-                    tooltip='Load a requirement before opening history.'>
-                    History
-                </ActionBarButton>
-            );
-        }
+        if (!selectedRequirement) return null;
 
         return (
             <>
-                <ActionBarButton
-                    type='button'
-                    aria-label={`Open revision history for ${selectedRequirement.visibleKey}`}
-                    onClick={() => dispatch({ type: 'setMode', mode: dedicated ? 'historyTab' : 'history' })}>
-                    History
-                </ActionBarButton>
                 {selectedRequirement.status === 'draft' ?
                     <>
                         {dedicated ?

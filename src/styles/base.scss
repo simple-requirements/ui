@@ -3,7 +3,7 @@
 :root {
     --app-tabbar-height: 40px;
     --sidebar-width: #{$desktop-sidebar-width};
-    --module-nav-height: 44px;
+    --module-nav-height: 6rem;
     --actionbar-height: 48px;
     --splitter-size: 10px;
     --surface: #fff;
@@ -24,6 +24,14 @@ html {
 
 body {
     font-size: 1.6rem;
+}
+
+button,
+input,
+select,
+textarea,
+.p-component {
+    font: inherit;
 }
 
 html,

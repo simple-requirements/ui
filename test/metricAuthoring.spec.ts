@@ -23,6 +23,13 @@ describe('metric authoring helpers', () => {
         expect(result.parseErrors[0]).toContain('defined more than once');
     });
 
+    it('renders ordinary typing text without metric placeholders', () => {
+        const result = renderMetricVisualText({ text: 'The system shall keep rendering while I type.' });
+
+        expect(result.renderedText).toBe('The system shall keep rendering while I type.');
+        expect(result.parseErrors).toEqual([]);
+    });
+
     it('renders visual text with inline values and resolved existing metric references', () => {
         const result = renderMetricVisualText({
             text: 'Latency [~MET-0001 := 2000 ms] and throughput [~MET-0002]',

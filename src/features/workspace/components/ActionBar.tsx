@@ -1,6 +1,6 @@
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
-import { useState, type SyntheticEvent } from 'react';
+import { useState, type ComponentProps, type SyntheticEvent } from 'react';
 import type { RequirementLifecycleCommand } from '@/features/requirements/api/requirementLifecycleMutation';
 import type { Action } from '@/state/workspaceReducer';
 import type { RequirementView } from '@/types/domain';
@@ -12,13 +12,23 @@ type ActionBarProps = Readonly<{
     createUnavailableReason?: string;
     dedicated?: boolean;
     dispatch: (action: Action) => void;
-    lookupMessage?: string | null;
     lookupPending?: boolean;
     lifecycleMessage?: string | null;
     lifecyclePending?: boolean;
     onLifecycleAction?: (command: RequirementLifecycleCommand, requirement: RequirementView) => void;
     onLookup?: (visibleKey: string) => void;
 }>;
+
+type ActionBarButtonProps = Readonly<ComponentProps<typeof Button>>;
+
+function ActionBarButton(props: ActionBarButtonProps) {
+    return (
+        <Button
+            outlined
+            {...props}
+        />
+    );
+}
 
 /** Renders context actions for the selected current requirement without exposing actions for historical snapshots. */
 export function ActionBar({
@@ -28,7 +38,6 @@ export function ActionBar({
     dispatch,
     canCreateRequirement = false,
     createUnavailableReason = 'Select a loaded project and load categories before creating a requirement.',
-    lookupMessage,
     lookupPending = false,
     lifecycleMessage,
     lifecyclePending = false,
@@ -64,95 +73,90 @@ export function ActionBar({
     const renderRequirementActions = () => {
         if (!selectedRequirement) {
             return (
-                <>
-                    <Button
-                        type='button'
-                        disabled
-                        tooltip='Load a requirement before opening history.'>
-                        History
-                    </Button>
-                    <span className='sr-only'>Load a requirement before opening history.</span>
-                </>
+                <ActionBarButton
+                    type='button'
+                    disabled
+                    tooltip='Load a requirement before opening history.'>
+                    History
+                </ActionBarButton>
             );
         }
 
         return (
             <>
-                <Button
+                <ActionBarButton
                     type='button'
                     aria-label={`Open revision history for ${selectedRequirement.visibleKey}`}
                     onClick={() => dispatch({ type: 'setMode', mode: dedicated ? 'historyTab' : 'history' })}>
                     History
-                </Button>
+                </ActionBarButton>
                 {selectedRequirement.status === 'draft' ?
                     <>
-                        <Button
+                        {dedicated ?
+                            <>
+                                <ActionBarButton
+                                    type='button'
+                                    onClick={() => dispatch({ type: 'setMode', mode: 'editRequirementTab' })}>
+                                    Edit
+                                </ActionBarButton>
+                                <ActionBarButton
+                                    type='button'
+                                    disabled={lifecyclePending}
+                                    onClick={() => onLifecycleAction?.('approve', selectedRequirement)}>
+                                    Approve
+                                </ActionBarButton>
+                                <ActionBarButton
+                                    type='button'
+                                    disabled={lifecyclePending}
+                                    onClick={() => onLifecycleAction?.('reject', selectedRequirement)}>
+                                    Reject
+                                </ActionBarButton>
+                            </>
+                        :   null}
+                        <ActionBarButton
                             type='button'
-                            onClick={() =>
-                                dispatch({
-                                    type: 'setMode',
-                                    mode: dedicated ? 'editRequirementTab' : 'editRequirement',
-                                })
-                            }>
-                            Edit
-                        </Button>
-                        <Button
-                            type='button'
-                            disabled={lifecyclePending}
-                            onClick={() => onLifecycleAction?.('approve', selectedRequirement)}>
-                            Approve
-                        </Button>
-                        <Button
-                            type='button'
-                            disabled={lifecyclePending}
-                            onClick={() => onLifecycleAction?.('reject', selectedRequirement)}>
-                            Reject
-                        </Button>
-                        <Button
-                            type='button'
-                            severity='danger'
                             disabled={lifecyclePending}
                             onClick={() => onLifecycleAction?.('delete', selectedRequirement)}>
                             Delete
-                        </Button>
+                        </ActionBarButton>
                     </>
                 :   null}
                 {selectedRequirement.status === 'approved' ?
                     <>
-                        <Button
+                        <ActionBarButton
                             type='button'
                             disabled={lifecyclePending}
                             onClick={() => onLifecycleAction?.('markImplemented', selectedRequirement)}>
                             Mark implemented
-                        </Button>
-                        <Button
+                        </ActionBarButton>
+                        <ActionBarButton
                             type='button'
                             disabled={lifecyclePending}
                             onClick={() => onLifecycleAction?.('markObsolete', selectedRequirement)}>
                             Mark obsolete
-                        </Button>
+                        </ActionBarButton>
                     </>
                 :   null}
                 {selectedRequirement.status === 'rejected' ?
-                    <Button
+                    <ActionBarButton
                         type='button'
                         disabled={lifecyclePending}
                         onClick={() => onLifecycleAction?.('markObsolete', selectedRequirement)}>
                         Mark obsolete
-                    </Button>
+                    </ActionBarButton>
                 :   null}
                 {!dedicated ?
-                    <Button
+                    <ActionBarButton
                         type='button'
                         onClick={handleOpenInTab}>
                         Open in tab
-                    </Button>
+                    </ActionBarButton>
                 :   null}
-                <Button
+                <ActionBarButton
                     type='button'
                     onClick={() => void handleCopyVisibleKey()}>
                     Copy key
-                </Button>
+                </ActionBarButton>
                 <span
                     role='status'
                     aria-live='polite'
@@ -177,26 +181,19 @@ export function ActionBar({
                             placeholder='FR-KEY-0001'
                             aria-label='Requirement key'
                         />
-                        <Button
+                        <ActionBarButton
                             type='submit'
                             disabled={!activeProjectId || lookupPending}>
                             Find key
-                        </Button>
-                        <span role='status'>{lookupMessage}</span>
+                        </ActionBarButton>
                     </form>
-                    <Button
+                    <ActionBarButton
                         type='button'
                         disabled={!canCreateRequirement}
                         tooltip={canCreateRequirement ? undefined : createUnavailableReason}
-                        aria-describedby='new-requirement-unavailable'
                         onClick={() => dispatch({ type: 'setMode', mode: 'newRequirement' })}>
                         New requirement
-                    </Button>
-                    <span
-                        id='new-requirement-unavailable'
-                        className='sr-only'>
-                        {createUnavailableReason}
-                    </span>
+                    </ActionBarButton>
                 </>
             :   null}
             {renderRequirementActions()}

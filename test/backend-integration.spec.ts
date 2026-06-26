@@ -56,8 +56,8 @@ describe('backend integration helpers', () => {
                 obsoleteAt: null,
                 createdAt: '2026-01-01T00:00:00Z',
                 updatedAt: '2026-01-01T00:00:00Z',
-            }).projectId,
-        ).toBe('33333333-3333-4333-8333-333333333333');
+            }),
+        ).toMatchObject({ projectId: '33333333-3333-4333-8333-333333333333', categoryKey: 'UX', categoryName: 'UX' });
     });
 
     it('validates supported visible-key lookup formats', () => {

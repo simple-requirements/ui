@@ -59,47 +59,50 @@ function LinkChangesComparison({
     loading,
     error,
 }: Readonly<{ changes: RequirementLinkChangesView | undefined; loading: boolean; error: unknown }>) {
-    if (loading) return <p role='status'>Loading requirement link changes…</p>;
-    if (error) return <p role='alert'>{mapApiError(error).message}</p>;
-    if (!changes) return null;
-
     return (
         <section
             className='revision-comparison__links'
             aria-label='Requirement link changes'>
             <h3>Requirement link changes</h3>
-            <div className='revision-comparison__metadata'>
-                <LinkGroup
-                    title='Added outgoing links'
-                    links={changes.addedOutgoingLinks}
-                    className='added'
-                />
-                <LinkGroup
-                    title='Removed outgoing links'
-                    links={changes.removedOutgoingLinks}
-                    className='removed'
-                />
-                <LinkGroup
-                    title='Unchanged outgoing links'
-                    links={changes.unchangedOutgoingLinks}
-                    className='unchanged'
-                />
-                <LinkGroup
-                    title='Added incoming links'
-                    links={changes.addedIncomingLinks}
-                    className='added'
-                />
-                <LinkGroup
-                    title='Removed incoming links'
-                    links={changes.removedIncomingLinks}
-                    className='removed'
-                />
-                <LinkGroup
-                    title='Unchanged incoming links'
-                    links={changes.unchangedIncomingLinks}
-                    className='unchanged'
-                />
-            </div>
+            {loading ?
+                <p role='status'>Loading requirement link changes…</p>
+            : error ?
+                <p role='alert'>{mapApiError(error).message}</p>
+            : !changes ?
+                <p className='state state--inline'>No requirement link comparison data is available.</p>
+            :   <div className='revision-comparison__metadata'>
+                    <LinkGroup
+                        title='Added outgoing links'
+                        links={changes.addedOutgoingLinks}
+                        className='added'
+                    />
+                    <LinkGroup
+                        title='Removed outgoing links'
+                        links={changes.removedOutgoingLinks}
+                        className='removed'
+                    />
+                    <LinkGroup
+                        title='Unchanged outgoing links'
+                        links={changes.unchangedOutgoingLinks}
+                        className='unchanged'
+                    />
+                    <LinkGroup
+                        title='Added incoming links'
+                        links={changes.addedIncomingLinks}
+                        className='added'
+                    />
+                    <LinkGroup
+                        title='Removed incoming links'
+                        links={changes.removedIncomingLinks}
+                        className='removed'
+                    />
+                    <LinkGroup
+                        title='Unchanged incoming links'
+                        links={changes.unchangedIncomingLinks}
+                        className='unchanged'
+                    />
+                </div>
+            }
         </section>
     );
 }
@@ -114,7 +117,7 @@ function RevisionDetail({ revision }: Readonly<{ revision: RequirementRevisionVi
                 <strong>Historical read-only snapshot.</strong> Edit and lifecycle actions are unavailable.
             </p>
             <dl className='requirement-detail__definition-list'>
-                <dt>Visible key</dt>
+                <dt>Key</dt>
                 <dd>{revision.visibleKey}</dd>
                 <dt>Category</dt>
                 <dd>{revision.categoryKey}</dd>

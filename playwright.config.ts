@@ -23,10 +23,12 @@ export default defineConfig({
         timeout: 120 * 1000,
     },
 
-    fullyParallel: true,
+    // Database reset is scenario-scoped and uses one shared test database.
+    // Keep E2E scenarios serial unless each worker gets an isolated database.
+    fullyParallel: false,
     forbidOnly: isCI,
     retries: isCI ? 2 : 0,
-    workers: isCI ? 1 : undefined,
+    workers: 1,
 
     reporter: [
         ['list'],

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useConfirmDialog } from '@/shared/dialogs/ConfirmDialogProvider';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
@@ -54,6 +55,18 @@ export function WorkspaceModuleContent({
     onEditRequirement,
     initialComparison = null,
 }: WorkspaceModuleContentProps) {
+    const { confirm } = useConfirmDialog();
+    const confirmDiscardRequirementChanges = (onConfirmed: () => void) => {
+        void confirm({
+            title: 'Discard unsaved changes',
+            message: 'Discard unsaved requirement changes?',
+            acceptLabel: 'Discard',
+            acceptSeverity: 'danger',
+        }).then((confirmed) => {
+            if (confirmed) onConfirmed();
+        });
+    };
+
     const renderDetailPane = () => {
         if (requirementDetailLoading)
             return (
@@ -83,8 +96,11 @@ export function WorkspaceModuleContent({
                     pending={editPending}
                     onSubmit={(values) => onEditRequirement?.(values)}
                     onCancel={(dirty) => {
-                        if (!dirty || confirm('Discard unsaved requirement changes?'))
+                        if (!dirty) {
                             dispatch({ type: 'setMode', mode: 'workspace' });
+                            return;
+                        }
+                        confirmDiscardRequirementChanges(() => dispatch({ type: 'setMode', mode: 'workspace' }));
                     }}
                 />
             );

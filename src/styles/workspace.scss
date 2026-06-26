@@ -14,23 +14,23 @@
 
 .module-nav {
     height: var(--module-nav-height);
-    border-bottom: 1px solid var(--border);
     display: flex;
-    align-items: end;
+    align-items: center;
     padding-left: 12px;
     gap: 4px;
 
     button {
         height: 34px;
         border: 0;
+        border-radius: 0;
         background: transparent;
         padding: 0 14px;
     }
 
     .active {
-        border-bottom: 3px solid var(--accent);
+        background: #eff6ff;
+        outline: 2px solid #bfdbfe;
         font-weight: 700;
-        color: var(--accent);
     }
 }
 
@@ -41,13 +41,19 @@
     gap: 8px;
     flex-wrap: wrap;
     padding: 8px 12px;
-    border-bottom: 1px solid var(--border);
     background: #fbfcfe;
 
-    button {
+    button:not(.p-button) {
         @include control-surface;
 
+        border-radius: 0;
         padding: 6px 10px;
+    }
+
+    .active,
+    [aria-pressed='true'] {
+        background: #eff6ff;
+        outline: 2px solid #bfdbfe;
     }
 }
 
@@ -81,7 +87,15 @@
 
 .actionbar .p-button,
 .actionbar .p-inputtext {
-    min-height: 2.5rem;
+    box-sizing: border-box;
+    height: 4rem;
+    min-height: 4rem;
+    border-radius: 0;
+}
+
+.actionbar .p-inputtext {
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
 }
 
 .actionbar__feedback {

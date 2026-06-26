@@ -24,13 +24,15 @@ function categoryKeyFromVisibleKey(visibleKey: string) {
 
 /** Maps generated requirement DTOs into the read-only UI requirement view model. */
 export function mapRequirement(dto: RequirementResponseDto): RequirementView {
+    const categoryKey = categoryKeyFromVisibleKey(dto.visibleKey);
+
     return {
         id: dto.id,
         projectId: dto.projectId,
         visibleKey: dto.visibleKey,
         categoryId: dto.categoryId,
-        categoryKey: categoryKeyFromVisibleKey(dto.visibleKey),
-        categoryName: dto.categoryId,
+        categoryKey,
+        categoryName: categoryKey,
         type: dto.type,
         description: dto.description,
         renderedDescription: dto.renderedDescription,

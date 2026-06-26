@@ -3,7 +3,6 @@ import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import type { FormSubmitHandler } from '@/shared/forms/formData';
 
-
 type NewProjectFormProps = Readonly<{
     error: string | null;
     pending: boolean;
@@ -40,17 +39,18 @@ export function NewProjectForm({ error, pending, onSubmit, onCancel }: NewProjec
                     {error}
                 </p>
             :   null}
-            <div className='form__actions'>
+            <div className='form__actions form__actions--right'>
                 <Button
                     type='submit'
                     label='Create'
+                    severity='success'
                     disabled={pending}
                     loading={pending}
                 />
                 <Button
                     type='button'
                     label='Cancel'
-                    outlined
+                    severity='danger'
                     onClick={onCancel}
                     disabled={pending}
                 />

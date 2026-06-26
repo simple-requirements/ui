@@ -1,4 +1,4 @@
-/* Modern browser reset for the SPA. */
+/* Modern browser reset for the SPA. This normalizes the browser defaults used by the app; it is intentionally not an `all: unset` reset. */
 *,
 *::before,
 *::after {
@@ -53,9 +53,12 @@ button,
 }
 
 button {
+    cursor: pointer;
+}
+
+button:not(.p-button) {
     border: 0;
     background: none;
-    cursor: pointer;
 }
 
 textarea {

@@ -2,7 +2,6 @@ import { useMemo, useRef, useState, type SyntheticEvent } from 'react';
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
-import { InputTextarea } from 'primereact/inputtextarea';
 import { useProjectMetricsQuery } from '@/features/metrics/api/metricQueries';
 import { renderMetricVisualText } from '@/features/requirements/metrics/metricAuthoring';
 import type { Category, ProjectSummary, RequirementView } from '@/types/domain';
@@ -30,6 +29,29 @@ const emptyValues: RequirementFormValues = {
     owner: '',
     rationale: '',
     source: '',
+};
+
+const emptyMetricPreview = {
+    normalizedText: '',
+    definitions: [],
+    invalidTokens: [],
+    parseErrors: [],
+    renderedText: '',
+};
+
+type MetricVisualInput = Parameters<typeof renderMetricVisualText>[0];
+
+const renderSafeMetricPreview = (
+    text: string,
+    metrics: MetricVisualInput['metrics'],
+    references: MetricVisualInput['references'],
+) => {
+    try {
+        return renderMetricVisualText({ text, metrics, references });
+    } catch (error) {
+        const message = error instanceof Error ? error.message : 'Unable to render metric preview.';
+        return { ...emptyMetricPreview, normalizedText: text, parseErrors: [message], renderedText: text };
+    }
 };
 
 /** Collects requirement fields while keeping project, type, key, and status immutable UI context only. */
@@ -64,11 +86,12 @@ export function RequirementForm({
         value: category.id,
     }));
     const metricsQuery = useProjectMetricsQuery(project?.id ?? initialRequirement?.projectId ?? null);
-    const metricPreview = renderMetricVisualText({
-        text: values.description,
-        metrics: metricsQuery.data ?? [],
-        references: initialRequirement?.metricReferences ?? [],
-    });
+    const metricPreview = renderSafeMetricPreview(
+        values.description,
+        metricsQuery.data ?? [],
+        initialRequirement?.metricReferences ?? [],
+    );
+    const formTitle = mode === 'create' ? 'New requirement' : (initialRequirement?.visibleKey ?? 'Requirement');
 
     const handleSubmit = (event: SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -83,9 +106,10 @@ export function RequirementForm({
     return (
         <form
             className='form requirement-form'
+            aria-label={formTitle}
             onSubmit={handleSubmit}
             aria-busy={pending}>
-            <h2>{mode === 'create' ? 'New requirement' : `Edit ${initialRequirement?.visibleKey ?? 'requirement'}`}</h2>
+            <h2>{formTitle}</h2>
             {error ?
                 <div
                     className='form__error'
@@ -94,26 +118,50 @@ export function RequirementForm({
                 </div>
             :   null}
             <section
-                className='form__context'
+                className='form__context requirement-form__context-grid'
                 aria-label='Immutable requirement context'>
-                <p>
-                    <strong>Project:</strong> {project?.name ?? 'No active project'}
-                </p>
+                <div className='form__field'>
+                    <label htmlFor='requirement-project'>Project</label>
+                    <InputText
+                        id='requirement-project'
+                        value={project?.name ?? 'No active project'}
+                        disabled
+                    />
+                </div>
                 {mode === 'edit' && initialRequirement ?
                     <>
-                        <p>
-                            <strong>Visible key:</strong> {initialRequirement.visibleKey}
-                        </p>
-                        <p>
-                            <strong>Category:</strong> {initialRequirement.categoryName} (
-                            {initialRequirement.categoryKey})
-                        </p>
-                        <p>
-                            <strong>Type:</strong> {initialRequirement.type}
-                        </p>
-                        <p>
-                            <strong>Status:</strong> {initialRequirement.status}
-                        </p>
+                        <div className='form__field'>
+                            <label htmlFor='requirement-visible-key'>Key</label>
+                            <InputText
+                                id='requirement-visible-key'
+                                value={initialRequirement.visibleKey}
+                                disabled
+                            />
+                        </div>
+                        <div className='form__field'>
+                            <label htmlFor='requirement-category-context'>Category</label>
+                            <InputText
+                                id='requirement-category-context'
+                                value={initialRequirement.categoryKey}
+                                disabled
+                            />
+                        </div>
+                        <div className='form__field'>
+                            <label htmlFor='requirement-type-context'>Type</label>
+                            <InputText
+                                id='requirement-type-context'
+                                value={initialRequirement.type}
+                                disabled
+                            />
+                        </div>
+                        <div className='form__field'>
+                            <label htmlFor='requirement-status-context'>Status</label>
+                            <InputText
+                                id='requirement-status-context'
+                                value={initialRequirement.status}
+                                disabled
+                            />
+                        </div>
                     </>
                 :   null}
             </section>
@@ -149,39 +197,41 @@ export function RequirementForm({
                 <div
                     className='requirement-form__description-tabs'
                     role='tablist'
-                    aria-label='Description editor mode'>
+                    aria-label='Editor mode'>
                     <Button
                         type='button'
                         label='Code'
-                        text={descriptionMode !== 'code'}
-                        outlined={descriptionMode !== 'code'}
+                        severity={descriptionMode === 'code' ? undefined : 'secondary'}
+                        className='requirement-form__mode-button requirement-form__mode-button--code'
+                        outlined
                         aria-pressed={descriptionMode === 'code'}
                         onClick={() => setDescriptionMode('code')}
                     />
                     <Button
                         type='button'
                         label='Visual'
-                        text={descriptionMode !== 'visual'}
-                        outlined={descriptionMode !== 'visual'}
+                        severity={descriptionMode === 'visual' ? undefined : 'secondary'}
+                        className='requirement-form__mode-button requirement-form__mode-button--visual'
+                        outlined
                         aria-pressed={descriptionMode === 'visual'}
                         onClick={() => setDescriptionMode('visual')}
                     />
                 </div>
                 {descriptionMode === 'code' ?
-                    <InputTextarea
+                    <textarea
                         id='requirement-description'
                         ref={descriptionRef}
+                        className='p-inputtextarea p-inputtext p-component'
                         value={values.description}
                         onChange={(event) =>
                             setValues((current) => ({ ...current, description: event.currentTarget.value }))
                         }
                         required
-                        autoResize
                         rows={5}
                         aria-describedby='requirement-description-help'
                     />
                 :   <output
-                        id='requirement-description'
+                        id='requirement-description-preview'
                         className='requirement-form__visual-preview'
                         aria-live='polite'>
                         {metricPreview.renderedText || 'Nothing to preview.'}
@@ -190,9 +240,8 @@ export function RequirementForm({
                 <p
                     id='requirement-description-help'
                     className='form__hint'>
-                    Use <code>[~MET-0001]</code> to reference an existing metric. Code mode also accepts frontend-only
-                    metric definitions such as <code>[~MET-0001 := 2000 ms]</code>; they are saved as canonical{' '}
-                    <code>[~MET-0001]</code> references after explicit metric creation.
+                    Use <code>[~MET-0001]</code> to reference an existing metric. Code mode also accepts this syntax{' '}
+                    <code>[~MET-0001 := 2000 ms]</code> to create a new metric.
                 </p>
                 {metricPreview.definitions.length ?
                     <p
@@ -253,13 +302,14 @@ export function RequirementForm({
                 <Button
                     type='submit'
                     label={mode === 'create' ? 'Create requirement' : 'Save changes'}
+                    severity='success'
                     disabled={pending || !project || (mode === 'create' && !values.categoryId)}
                     loading={pending}
                 />
                 <Button
                     type='button'
                     label='Cancel'
-                    outlined
+                    severity='danger'
                     onClick={() => onCancel(dirty)}
                     disabled={pending}
                 />

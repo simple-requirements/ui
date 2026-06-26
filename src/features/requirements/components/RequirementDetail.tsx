@@ -1,5 +1,3 @@
-import { useState } from 'react';
-import { Button } from 'primereact/button';
 import { RequirementLinksPanel } from '@/features/requirements/components/RequirementLinksPanel';
 import type { RequirementView } from '@/types/domain';
 
@@ -10,11 +8,8 @@ type RequirementDetailProps = Readonly<{
 
 const displayOptionalValue = (value: string | null) => value ?? 'Not specified';
 
-/** Presents the complete detail fields for a requirement in split and dedicated views. */
+/** Presents the complete read-only detail fields for a requirement in split and dedicated views. */
 export function RequirementDetail({ requirement, onOpenRequirement }: RequirementDetailProps) {
-    const [descriptionMode, setDescriptionMode] = useState<'code' | 'visual'>('visual');
-    const description = descriptionMode === 'visual' ? requirement.renderedDescription : requirement.description;
-
     return (
         <article className='requirement-detail detail'>
             <h2 className='requirement-detail__heading'>{requirement.visibleKey}</h2>
@@ -23,37 +18,12 @@ export function RequirementDetail({ requirement, onOpenRequirement }: Requiremen
             </p>
             <dl className='requirement-detail__definition-list'>
                 <dt>Category</dt>
-                <dd>
-                    {requirement.categoryName} ({requirement.categoryKey})
-                </dd>
+                <dd>{requirement.categoryKey}</dd>
                 <dt>Type</dt>
                 <dd>{requirement.type}</dd>
                 <dt>Description</dt>
                 <dd>
-                    <div
-                        className='requirement-detail__description-tabs'
-                        role='tablist'
-                        aria-label='Description display mode'>
-                        <Button
-                            type='button'
-                            label='Code'
-                            size='small'
-                            text={descriptionMode !== 'code'}
-                            outlined={descriptionMode !== 'code'}
-                            aria-pressed={descriptionMode === 'code'}
-                            onClick={() => setDescriptionMode('code')}
-                        />
-                        <Button
-                            type='button'
-                            label='Visual'
-                            size='small'
-                            text={descriptionMode !== 'visual'}
-                            outlined={descriptionMode !== 'visual'}
-                            aria-pressed={descriptionMode === 'visual'}
-                            onClick={() => setDescriptionMode('visual')}
-                        />
-                    </div>
-                    <p className='requirement-detail__description-text'>{description}</p>
+                    <p className='requirement-detail__description-text'>{requirement.renderedDescription}</p>
                     {requirement.metricReferences.length ?
                         <ul
                             className='requirement-detail__metric-references'

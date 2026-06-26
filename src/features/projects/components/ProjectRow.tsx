@@ -1,15 +1,22 @@
 import { Button } from 'primereact/button';
+import type { MouseEventHandler } from 'react';
 import type { ProjectSummary } from '@/types/domain';
 
-type ProjectRowProps = Readonly<{ project: ProjectSummary; active: boolean; onSelect: () => void }>;
+type ProjectRowProps = Readonly<{
+    project: ProjectSummary;
+    active: boolean;
+    onSelect: () => void;
+    onContextMenu?: MouseEventHandler<HTMLButtonElement>;
+}>;
 
 /** Renders a compact project row with a static decorative PrimeIcons folder. */
-export function ProjectRow({ project, active, onSelect }: ProjectRowProps) {
+export function ProjectRow({ project, active, onSelect, onContextMenu }: ProjectRowProps) {
     return (
         <Button
             type='button'
             className={`project-sidebar__row project-row ${active ? 'project-sidebar__row--active active' : ''}`}
             onClick={onSelect}
+            onContextMenu={onContextMenu}
             aria-current={active ? 'true' : undefined}>
             <span
                 className='project-sidebar__row-icon pi pi-folder'

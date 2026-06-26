@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useConfirmDialog } from '@/shared/dialogs/ConfirmDialogProvider';
 import type { Action, Module, WorkspaceState } from '@/state/workspaceReducer';
 import type { Category, ProjectSummary, RequirementView } from '@/types/domain';
 import { NewCategoryForm } from '@/features/categories/components/NewCategoryForm';
@@ -37,6 +38,8 @@ type WorkspaceProps = Readonly<{
     createCategoryError: string | null;
     createCategoryPending: boolean;
     onRetry: () => void;
+    onExportProject: (project: ProjectSummary) => void;
+    onExportAllProjects: () => void;
     initialComparison?: string | null;
 }>;
 
@@ -71,9 +74,22 @@ export function Workspace({
     editRequirementError,
     editRequirementPending,
     onRetry,
+    onExportProject,
+    onExportAllProjects,
     initialComparison = null,
 }: WorkspaceProps) {
+    const { confirm } = useConfirmDialog();
     const handleCancelForm = () => dispatch({ type: 'setMode', mode: 'workspace' });
+    const confirmDiscardRequirementChanges = (onConfirmed: () => void) => {
+        void confirm({
+            title: 'Discard unsaved changes',
+            message: 'Discard unsaved requirement changes?',
+            acceptLabel: 'Discard',
+            acceptSeverity: 'danger',
+        }).then((confirmed) => {
+            if (confirmed) onConfirmed();
+        });
+    };
 
     const renderRightPane = () => {
         if (mode === 'newProject') {
@@ -97,7 +113,11 @@ export function Workspace({
                     pending={createRequirementPending}
                     onSubmit={onCreateRequirement}
                     onCancel={(dirty) => {
-                        if (!dirty || confirm('Discard unsaved requirement changes?')) handleCancelForm();
+                        if (!dirty) {
+                            handleCancelForm();
+                            return;
+                        }
+                        confirmDiscardRequirementChanges(handleCancelForm);
                     }}
                 />
             );
@@ -145,6 +165,8 @@ export function Workspace({
                 projects={projects}
                 activeProjectId={activeProjectId}
                 dispatch={dispatch}
+                onExportProject={onExportProject}
+                onExportAllProjects={onExportAllProjects}
             />
             <main className='right-pane'>{renderRightPane()}</main>
         </div>

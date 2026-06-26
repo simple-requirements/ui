@@ -61,3 +61,35 @@
         font-size: 0.85rem;
     }
 }
+
+.app-tabs .p-button.app-tabs__tab {
+    background: transparent;
+    color: var(--text, #334155);
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.app-tabs .p-button.app-tabs__tab[aria-selected='true'] {
+    background: transparent;
+    color: var(--text, #334155);
+    font-weight: 700;
+}
+
+.app-tabs__close.p-button,
+.app-tabs__close.p-button:enabled:hover,
+.app-tabs__close.p-button:enabled:focus,
+.app-tabs__close.p-button:enabled:active {
+    background: transparent;
+    border: 0;
+    color: var(--text-muted, #64748b);
+    box-shadow: none;
+}
+
+.app-tabs__close.p-button .p-button-label {
+    display: none;
+}
+
+.app-tabs__close.p-button {
+    min-height: 28px;
+}

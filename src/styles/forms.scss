@@ -21,8 +21,22 @@
         width: 100%;
     }
 
+    .p-inputtext:not(textarea),
+    .p-dropdown,
+    input:not([type='checkbox']):not([type='radio']),
+    select {
+        height: 4rem;
+        min-height: 4rem;
+        border-radius: 0;
+    }
+
+    .p-dropdown {
+        align-items: center;
+    }
+
     textarea {
-        min-height: 8rem;
+        min-height: 12rem;
+        border-radius: 0;
     }
 }
 
@@ -36,7 +50,7 @@
 .form__derived-value {
     border: 1px solid var(--border);
     background: var(--surface-muted);
-    border-radius: 8px;
+    border-radius: 0;
     padding: 10px 12px;
 }
 
@@ -67,8 +81,9 @@
     margin-top: 4px;
 
     .p-button {
-        min-height: 2.5rem;
-        padding-inline: 1rem;
+        min-height: 4rem;
+        padding-inline: 1.6rem;
+        border-radius: 0;
     }
 }
 
@@ -110,8 +125,55 @@
     display: block;
     min-height: 8rem;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 0;
     padding: 0.75rem;
     background: var(--surface-muted);
     white-space: pre-wrap;
+}
+
+.exports-panel {
+    padding: 1.5rem;
+}
+
+.export-form {
+    max-width: 52rem;
+}
+
+.export-form__format-list {
+    margin: 0;
+    padding-left: 1.25rem;
+}
+
+.form__radio-option small {
+    display: block;
+    color: var(--text-muted);
+}
+
+.export-dialog__form {
+    padding: 0;
+    max-width: none;
+}
+
+.export-dialog__actions {
+    justify-content: flex-end;
+}
+
+.confirm-dialog__actions {
+    justify-content: flex-end;
+}
+
+.form__actions--right {
+    justify-content: flex-end;
+}
+
+.p-contextmenu .p-menuitem-link {
+    gap: 0.5rem;
+}
+
+.p-contextmenu .p-menuitem-icon {
+    margin-right: 0.5rem;
+}
+
+.requirement-form__mode-button--visual.p-button {
+    --p-button-info-background: var(--p-info-color, #0ea5e9);
 }

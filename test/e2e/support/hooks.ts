@@ -1,8 +1,8 @@
 import { createBdd, test } from 'playwright-bdd';
-import { cleanupProjectsForPage } from './projectCleanup';
+import { resetBackendDatabase } from './projectCleanup';
 
-const { AfterScenario } = createBdd(test);
+const { BeforeScenario } = createBdd(test);
 
-AfterScenario(async ({ page, request }) => {
-    await cleanupProjectsForPage(page, request);
+BeforeScenario(async ({ request }) => {
+    await resetBackendDatabase(request);
 });

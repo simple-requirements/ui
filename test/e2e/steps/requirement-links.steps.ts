@@ -2,7 +2,7 @@ import { expect, type APIRequestContext, type Page } from '@playwright/test';
 import { createBdd, test } from 'playwright-bdd';
 import { clearBrowserStateBeforeNavigation } from '../lib/clearBrowserStateBeforeNavigation';
 import { waitForWorkspaceReady } from '../lib/waitForWorkspaceReady';
-import { backendApiBaseUrl, markProjectForCleanup } from '../support/projectCleanup';
+import { backendApiBaseUrl } from '../support/projectCleanup';
 
 type ProjectResponse = Readonly<{ id: string; name: string }>;
 type CategoryResponse = Readonly<{ id: string; key: string; type: 'FR' | 'NFR' }>;
@@ -19,23 +19,24 @@ const { Given, Then, When } = createBdd(test);
 const stateByPage = new WeakMap<Page, LinkScenarioState>();
 const apiBaseUrl = () => backendApiBaseUrl();
 
-const jsonRequest = async <T>(request: APIRequestContext, method: 'get' | 'post' | 'patch', path: string, data?: unknown) => {
+const jsonRequest = async <T>(
+    request: APIRequestContext,
+    method: 'get' | 'post' | 'patch',
+    path: string,
+    data?: unknown,
+) => {
     const response = await request[method](`${apiBaseUrl()}${path}`, data === undefined ? undefined : { data });
-    if (!response.ok()) throw new Error(`${method.toUpperCase()} ${path} failed: ${response.status()} ${await response.text()}`);
+    if (!response.ok())
+        throw new Error(`${method.toUpperCase()} ${path} failed: ${response.status()} ${await response.text()}`);
     return (await response.json()) as T;
 };
 
-const createRequirement = (
-    request: APIRequestContext,
-    projectId: string,
-    categoryId: string,
-    description: string,
-) =>
+const createRequirement = (request: APIRequestContext, projectId: string, categoryId: string, description: string) =>
     jsonRequest<RequirementResponse>(request, 'post', '/requirements', {
         projectId,
         categoryId,
         description,
-        priority: 'P2',
+        priority: 'p2',
         owner: 'E2E',
         rationale: 'Requirement-link E2E setup.',
         source: 'Playwright',
@@ -59,27 +60,54 @@ Given('a temporary project with linked requirements is open', async ({ page, req
     const suffix = `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
     const projectName = `E2E Links ${suffix}`;
     const project = await jsonRequest<ProjectResponse>(request, 'post', '/projects', { name: projectName });
-    markProjectForCleanup(page, projectName);
-
     const categories = await jsonRequest<CategoryResponse[]>(request, 'get', '/categories');
-    const functionalCategory = categories.find((category) => category.key === 'UI') ?? categories.find((category) => category.type === 'FR');
+    const functionalCategory =
+        categories.find((category) => category.key === 'UI') ?? categories.find((category) => category.type === 'FR');
     const nonFunctionalCategory =
-        categories.find((category) => category.key === 'PERF') ?? categories.find((category) => category.type === 'NFR') ?? functionalCategory;
+        categories.find((category) => category.key === 'PERF')
+        ?? categories.find((category) => category.type === 'NFR')
+        ?? functionalCategory;
 
     if (!functionalCategory || !nonFunctionalCategory) {
         throw new Error('Requirement-link E2E setup requires at least one FR and one NFR category.');
     }
 
     const source = await createRequirement(request, project.id, functionalCategory.id, `Temporary source ${suffix}`);
-    const existingTarget = await createRequirement(request, project.id, nonFunctionalCategory.id, `Temporary existing target ${suffix}`);
-    const unusedTarget = await createRequirement(request, project.id, functionalCategory.id, `Temporary unused target ${suffix}`);
-    const incomingSource = await createRequirement(request, project.id, functionalCategory.id, `Temporary incoming source ${suffix}`);
+    const existingTarget = await createRequirement(
+        request,
+        project.id,
+        nonFunctionalCategory.id,
+        `Temporary existing target ${suffix}`,
+    );
+    const unusedTarget = await createRequirement(
+        request,
+        project.id,
+        functionalCategory.id,
+        `Temporary unused target ${suffix}`,
+    );
+    const incomingSource = await createRequirement(
+        request,
+        project.id,
+        functionalCategory.id,
+        `Temporary incoming source ${suffix}`,
+    );
 
-    await jsonRequest(request, 'post', `/requirements/${source.id}/links`, { targetVisibleKey: existingTarget.visibleKey });
-    await jsonRequest(request, 'post', `/requirements/${incomingSource.id}/links`, { targetVisibleKey: source.visibleKey });
+    await jsonRequest(request, 'patch', `/requirements/${source.id}`, {
+        description: `Temporary source ${suffix} before requirement links`,
+        priority: 'p2',
+        owner: 'E2E',
+        rationale: 'Requirement-link E2E baseline before link creation.',
+        source: 'Playwright',
+    });
+    await jsonRequest(request, 'post', `/requirements/${source.id}/links`, {
+        targetVisibleKey: existingTarget.visibleKey,
+    });
+    await jsonRequest(request, 'post', `/requirements/${incomingSource.id}/links`, {
+        targetVisibleKey: source.visibleKey,
+    });
     await jsonRequest(request, 'patch', `/requirements/${source.id}`, {
         description: `Temporary source ${suffix} with revision history`,
-        priority: 'P2',
+        priority: 'p2',
         owner: 'E2E',
         rationale: 'Requirement-link E2E setup after link creation.',
         source: 'Playwright',
@@ -118,8 +146,8 @@ When('I remove the existing outgoing requirement link', async ({ page }) => {
     const state = requireState(page);
     const form = page.getByRole('form', { name: `Correct link target ${state.existingTarget.visibleKey}` });
 
-    page.once('dialog', (dialog) => void dialog.accept());
     await form.getByRole('button', { name: 'Remove' }).click();
+    await page.getByRole('dialog', { name: 'Remove requirement link' }).getByRole('button', { name: 'Remove' }).click();
 });
 
 When('I open the existing outgoing linked requirement', async ({ page }) => {
@@ -168,7 +196,9 @@ Then('the outgoing links include the unused temporary target', async ({ page }) 
 Then('the outgoing links no longer include the existing temporary target', async ({ page }) => {
     const state = requireState(page);
 
-    await expect(page.getByRole('region', { name: 'Outgoing links' })).not.toContainText(state.existingTarget.visibleKey);
+    await expect(page.getByRole('region', { name: 'Outgoing links' })).not.toContainText(
+        state.existingTarget.visibleKey,
+    );
 });
 
 Then('the incoming links include the existing temporary source', async ({ page }) => {

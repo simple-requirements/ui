@@ -1,8 +1,8 @@
 import { useState, type SyntheticEvent } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext';
 import { mapApiError } from '@/api/errors/apiError';
+import { useConfirmDialog } from '@/shared/dialogs/ConfirmDialogProvider';
 import { normalizeRequirementLinkTargetKey } from '@/features/requirements/api/requirementLinksApi';
 import { validateVisibleKey } from '@/features/requirements/api/requirementsApi';
 import {
@@ -49,8 +49,6 @@ function LinkList({
     onOpenRequirement,
     pending,
 }: LinkListProps) {
-    const [editedLinks, setEditedLinks] = useState<Record<string, string>>({});
-
     return (
         <section
             className='requirement-links__group'
@@ -61,65 +59,61 @@ function LinkList({
             :   null}
             {links.length > 0 ?
                 <ul className='requirement-links__list'>
-                    {links.map((link) => {
-                        const currentEditValue = editedLinks[link.id] ?? link.targetVisibleKey;
-                        return (
-                            <li
-                                key={link.id}
-                                className='requirement-links__item'>
-                                <div>
-                                    <strong>
-                                        {direction === 'outgoing' ? link.targetVisibleKey : link.sourceVisibleKey}
-                                    </strong>
-                                    <span className='requirement-links__meta'>
-                                        {link.relationshipType} ·{' '}
-                                        {direction === 'outgoing' ? link.targetStatus : link.sourceStatus}
-                                    </span>
-                                </div>
-                                <Button
-                                    type='button'
-                                    label='Open'
-                                    onClick={() =>
-                                        direction === 'outgoing' ?
-                                            onOpenRequirement?.(link.targetRequirementId, link.targetVisibleKey)
-                                        :   onOpenRequirement?.(link.sourceRequirementId, link.sourceVisibleKey)
-                                    }
-                                />
-                                {direction === 'outgoing' ?
-                                    <form
-                                        className='requirement-links__edit'
-                                        aria-label={`Correct link target ${link.targetVisibleKey}`}
-                                        onSubmit={(event) => {
-                                            event.preventDefault();
-                                            onCorrect(link.id, currentEditValue);
-                                        }}>
-                                        <InputText
-                                            value={currentEditValue}
-                                            onChange={(event) =>
-                                                setEditedLinks((values) => ({
-                                                    ...values,
-                                                    [link.id]: event.currentTarget.value,
-                                                }))
-                                            }
-                                            aria-label={`New target for ${link.targetVisibleKey}`}
-                                        />
-                                        <Button
-                                            type='submit'
-                                            label='Correct'
-                                            disabled={pending}
-                                        />
-                                        <Button
-                                            type='button'
-                                            label='Remove'
-                                            severity='danger'
-                                            disabled={pending}
-                                            onClick={() => onRemove(link.id)}
-                                        />
-                                    </form>
-                                :   null}
-                            </li>
-                        );
-                    })}
+                    {links.map((link) => (
+                        <li
+                            key={link.id}
+                            className='requirement-links__item'>
+                            <div>
+                                <strong>
+                                    {direction === 'outgoing' ? link.targetVisibleKey : link.sourceVisibleKey}
+                                </strong>
+                                <span className='requirement-links__meta'>
+                                    {link.relationshipType} ·{' '}
+                                    {direction === 'outgoing' ? link.targetStatus : link.sourceStatus}
+                                </span>
+                            </div>
+                            <Button
+                                type='button'
+                                label='Open'
+                                onClick={() =>
+                                    direction === 'outgoing' ?
+                                        onOpenRequirement?.(link.targetRequirementId, link.targetVisibleKey)
+                                    :   onOpenRequirement?.(link.sourceRequirementId, link.sourceVisibleKey)
+                                }
+                            />
+                            {direction === 'outgoing' ?
+                                <form
+                                    className='requirement-links__edit'
+                                    aria-label={`Correct link target ${link.targetVisibleKey}`}
+                                    onSubmit={(event) => {
+                                        event.preventDefault();
+                                        const value = new FormData(event.currentTarget).get('targetVisibleKey');
+                                        onCorrect(link.id, typeof value === 'string' ? value : '');
+                                    }}>
+                                    <input
+                                        key={`${link.id}:${link.targetVisibleKey}`}
+                                        className='p-inputtext p-component'
+                                        name='targetVisibleKey'
+                                        defaultValue={link.targetVisibleKey}
+                                        aria-label={`New target for ${link.targetVisibleKey}`}
+                                    />
+                                    <Button
+                                        type='submit'
+                                        label='Correct'
+                                        severity='success'
+                                        disabled={pending}
+                                    />
+                                    <Button
+                                        type='button'
+                                        label='Remove'
+                                        severity='danger'
+                                        disabled={pending}
+                                        onClick={() => onRemove(link.id)}
+                                    />
+                                </form>
+                            :   null}
+                        </li>
+                    ))}
                 </ul>
             :   null}
         </section>
@@ -129,6 +123,7 @@ function LinkList({
 /** Shows current incoming/outgoing links and link-history controls for one requirement. */
 export function RequirementLinksPanel({ requirement, onOpenRequirement }: RequirementLinksPanelProps) {
     const queryClient = useQueryClient();
+    const { confirm } = useConfirmDialog();
     const [targetVisibleKey, setTargetVisibleKey] = useState('');
     const [feedback, setFeedback] = useState<string | null>(null);
     const linksQuery = useRequirementLinksQuery(requirement.id);
@@ -170,8 +165,14 @@ export function RequirementLinksPanel({ requirement, onOpenRequirement }: Requir
 
     const handleRemove = (linkId: string) => {
         setFeedback(null);
-        if (!confirm('Remove this requirement link?')) return;
-        deleteMutation.mutate(linkId, { onSuccess: () => setFeedback('Removed requirement link.') });
+        void confirm({
+            title: 'Remove requirement link',
+            message: 'Remove this requirement link?',
+            acceptLabel: 'Remove',
+            acceptSeverity: 'danger',
+        }).then((confirmed) => {
+            if (confirmed) deleteMutation.mutate(linkId, { onSuccess: () => setFeedback('Removed requirement link.') });
+        });
     };
 
     return (
@@ -188,7 +189,8 @@ export function RequirementLinksPanel({ requirement, onOpenRequirement }: Requir
                 onSubmit={handleCreate}>
                 <label>
                     Target visible key
-                    <InputText
+                    <input
+                        className='p-inputtext p-component'
                         value={targetVisibleKey}
                         onChange={(event) => setTargetVisibleKey(event.currentTarget.value)}
                         placeholder='FR-UI-0001'
@@ -197,6 +199,7 @@ export function RequirementLinksPanel({ requirement, onOpenRequirement }: Requir
                 <Button
                     type='submit'
                     label='Create link'
+                    severity='success'
                     disabled={mutationPending}
                 />
             </form>

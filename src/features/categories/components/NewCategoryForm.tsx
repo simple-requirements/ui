@@ -73,13 +73,14 @@ export function NewCategoryForm({ error, pending, onSubmit, onCancel }: NewCateg
                 <Button
                     type='submit'
                     label='Create'
+                    severity='success'
                     disabled={pending}
                     loading={pending}
                 />
                 <Button
                     type='button'
                     label='Cancel'
-                    outlined
+                    severity='danger'
                     onClick={onCancel}
                     disabled={pending}
                 />

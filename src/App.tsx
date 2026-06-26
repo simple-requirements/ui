@@ -25,7 +25,7 @@ import {
     useRequirementLookupMutation,
 } from '@/features/requirements/api/requirementQueries';
 import { loadWorkspaceState, saveWorkspaceState } from '@/state/sessionPersistence';
-import { workspaceReducer } from '@/state/workspaceReducer';
+import { WORKSPACE_TAB_ID, workspaceReducer } from '@/state/workspaceReducer';
 import { formValue } from '@/shared/forms/formData';
 import { useEditRequirementMutation } from '@/features/requirements/api/editRequirementMutation';
 import {
@@ -35,21 +35,34 @@ import {
 import { deriveProjectAvailability } from '@/features/projects/projectAvailability';
 import { validateVisibleKey } from '@/features/requirements/api/requirementsApi';
 import { parseRequirementComparisonPath } from '@/features/requirements/comparisonRefs';
+import { ExportControls, type ExportDialogRequest } from '@/features/exports/components/ExportControls';
+import { useConfirmDialog } from '@/shared/dialogs/ConfirmDialogProvider';
+import { useToastMessages } from '@/shared/feedback/ToastProvider';
+import type { ProjectSummary, RequirementView } from '@/types/domain';
 
 /** Coordinates backend server state, workspace state, and top-level application layout. */
 export default function App() {
     const queryClient = useQueryClient();
     const [workspaceState, dispatch] = useReducer(workspaceReducer, undefined, loadWorkspaceState);
-    const [lookupMessage, setLookupMessage] = useState<string | null>(null);
+    const [exportRequest, setExportRequest] = useState<ExportDialogRequest | null>(null);
+    const { confirm } = useConfirmDialog();
+    const { showToast } = useToastMessages();
     const directComparison = parseRequirementComparisonPath(location.pathname);
+    const isDirectComparisonRoute = directComparison !== null;
+    const directComparisonRequirementId = directComparison?.requirementId ?? null;
+    const initialComparison =
+        directComparison?.pair.ok ? location.pathname.split('/').at(-1)
+        : directComparison ? 'invalid'
+        : null;
 
     useEffect(() => saveWorkspaceState(workspaceState), [workspaceState]);
 
     useEffect(() => {
-        if (!directComparison) return;
-        dispatch({ type: 'selectRequirement', requirementId: directComparison.requirementId });
+        if (!directComparisonRequirementId) return;
+        dispatch({ type: 'activateTab', tabId: WORKSPACE_TAB_ID });
+        dispatch({ type: 'selectRequirement', requirementId: directComparisonRequirementId });
         dispatch({ type: 'setMode', mode: 'history' });
-    }, [directComparison?.requirementId]);
+    }, [directComparisonRequirementId]);
 
     const projectsQuery = useProjectsQuery();
     const categoriesQuery = useCategoriesQuery();
@@ -62,6 +75,7 @@ export default function App() {
     const tabDetailQuery = useRequirementDetailQuery(activeRequirementTab?.requirementId);
 
     useEffect(() => {
+        if (isDirectComparisonRoute) return;
         if (projectsQuery.isLoading || projectsQuery.isFetching) return;
         if (projectsQuery.data.length === 0) return;
         if (
@@ -70,9 +84,16 @@ export default function App() {
         )
             return;
         dispatch({ type: 'selectProject', projectId: projectsQuery.data[0].id });
-    }, [projectsQuery.data, projectsQuery.isFetching, projectsQuery.isLoading, workspaceState.activeProjectId]);
+    }, [
+        isDirectComparisonRoute,
+        projectsQuery.data,
+        projectsQuery.isFetching,
+        projectsQuery.isLoading,
+        workspaceState.activeProjectId,
+    ]);
 
     useEffect(() => {
+        if (isDirectComparisonRoute) return;
         if (workspaceState.activeProjectId) {
             history.replaceState(
                 null,
@@ -80,20 +101,37 @@ export default function App() {
                 `/workspace/projects/${workspaceState.activeProjectId}/${workspaceState.activeModule}${location.search}`,
             );
         }
-    }, [workspaceState.activeProjectId, workspaceState.activeModule]);
+    }, [isDirectComparisonRoute, workspaceState.activeProjectId, workspaceState.activeModule]);
 
     useEffect(() => {
+        if (isDirectComparisonRoute) return;
+        if (requirementsQuery.isLoading || requirementsQuery.isFetching) return;
         if (!workspaceState.selectedRequirementId) return;
         if (!requirementsQuery.data.some((requirement) => requirement.id === workspaceState.selectedRequirementId)) {
             dispatch({ type: 'selectRequirement', requirementId: null });
         }
-    }, [requirementsQuery.data, workspaceState.selectedRequirementId]);
+    }, [
+        isDirectComparisonRoute,
+        requirementsQuery.data,
+        requirementsQuery.isFetching,
+        requirementsQuery.isLoading,
+        workspaceState.selectedRequirementId,
+    ]);
 
     useEffect(() => {
+        if (isDirectComparisonRoute) return;
+        if (requirementsQuery.isLoading || requirementsQuery.isFetching) return;
         if (!workspaceState.activeProjectId || workspaceState.selectedRequirementId) return;
         if (requirementsQuery.data.length === 0) return;
         dispatch({ type: 'selectRequirement', requirementId: requirementsQuery.data[0].id });
-    }, [requirementsQuery.data, workspaceState.activeProjectId, workspaceState.selectedRequirementId]);
+    }, [
+        isDirectComparisonRoute,
+        requirementsQuery.data,
+        requirementsQuery.isFetching,
+        requirementsQuery.isLoading,
+        workspaceState.activeProjectId,
+        workspaceState.selectedRequirementId,
+    ]);
 
     const projects = projectsQuery.data;
     const projectAvailability = deriveProjectAvailability(
@@ -140,11 +178,19 @@ export default function App() {
         onUpdated: (requirement) => dispatch({ type: 'selectRequirement', requirementId: requirement.id }),
     });
 
-    const handleLifecycleAction = (command: RequirementLifecycleCommand, requirement: typeof detailQuery.data) => {
+    const handleLifecycleAction = async (
+        command: RequirementLifecycleCommand,
+        requirement: typeof detailQuery.data,
+    ) => {
         if (!requirement) return;
 
         if (command === 'approve') {
-            if (confirm(`Approve ${requirement.visibleKey}?`)) lifecycleMutation.mutate({ command, requirement });
+            const confirmed = await confirm({
+                title: 'Approve requirement',
+                message: `Approve ${requirement.visibleKey}?`,
+                acceptLabel: 'Approve',
+            });
+            if (confirmed) lifecycleMutation.mutate({ command, requirement });
             return;
         }
 
@@ -158,8 +204,12 @@ export default function App() {
         }
 
         if (command === 'markImplemented') {
-            if (confirm(`Mark ${requirement.visibleKey} implemented?`))
-                lifecycleMutation.mutate({ command, requirement });
+            const confirmed = await confirm({
+                title: 'Mark requirement implemented',
+                message: `Mark ${requirement.visibleKey} implemented?`,
+                acceptLabel: 'Mark implemented',
+            });
+            if (confirmed) lifecycleMutation.mutate({ command, requirement });
             return;
         }
 
@@ -170,26 +220,79 @@ export default function App() {
             return;
         }
 
-        if (confirm(`Delete draft requirement ${requirement.visibleKey}?`))
-            lifecycleMutation.mutate({ command, requirement });
+        const confirmed = await confirm({
+            title: 'Delete draft requirement',
+            message: `Delete draft requirement ${requirement.visibleKey}?`,
+            acceptLabel: 'Delete',
+            acceptSeverity: 'danger',
+        });
+        if (confirmed) lifecycleMutation.mutate({ command, requirement });
+    };
+
+    const openProjectExport = (project: ProjectSummary) => {
+        setExportRequest({
+            scope: 'project',
+            title: `Export project ${project.name}`,
+            description: `Export the project ${project.name} using one of the backend-supported formats.`,
+            projectId: project.id,
+        });
+    };
+
+    const openAllProjectsExport = () => {
+        setExportRequest({
+            scope: 'allProjects',
+            title: 'Export all projects',
+            description: 'Export all projects that the backend includes in the all-projects export scope.',
+        });
+    };
+
+    const openRequirementsExport = (requirements: readonly RequirementView[]) => {
+        if (requirements.length === 0) return;
+        const visibleKeys = requirements.map((requirement) => requirement.visibleKey).join(', ');
+        setExportRequest({
+            scope: 'requirements',
+            title:
+                requirements.length === 1 ?
+                    `Export ${visibleKeys}`
+                :   `Export ${String(requirements.length)} requirements`,
+            description: `Export the selected requirement${requirements.length === 1 ? '' : 's'}: ${visibleKeys}.`,
+            requirementIds: requirements.map((requirement) => requirement.id),
+        });
+    };
+
+    const openAllRequirementsExport = (requirements: readonly RequirementView[]) => {
+        if (requirements.length === 0) return;
+        setExportRequest({
+            scope: 'requirements',
+            title: 'Export all requirements',
+            description: `Export all ${String(requirements.length)} requirements in the current list.`,
+            requirementIds: requirements.map((requirement) => requirement.id),
+        });
     };
 
     useEffect(() => {
         if (!lookupMutation.isSuccess) return;
         const requirement = lookupMutation.data;
         if (requirement.projectId && requirement.projectId !== workspaceState.activeProjectId) {
-            setLookupMessage(
-                `Requirement ${requirement.visibleKey} belongs to project ${requirement.projectId}. Switch projects explicitly before opening it.`,
-            );
+            showToast({
+                severity: 'warn',
+                summary: 'Requirement is in another project',
+                detail: `Requirement ${requirement.visibleKey} belongs to project ${requirement.projectId}. Switch projects explicitly before opening it.`,
+            });
             return;
         }
         dispatch({ type: 'selectRequirement', requirementId: requirement.id });
-        setLookupMessage(`Selected ${requirement.visibleKey}.`);
-    }, [lookupMutation.isSuccess, lookupMutation.data, workspaceState.activeProjectId]);
+        showToast({
+            severity: 'success',
+            summary: 'Requirement selected',
+            detail: `Selected ${requirement.visibleKey}.`,
+        });
+    }, [lookupMutation.isSuccess, lookupMutation.data, workspaceState.activeProjectId, showToast]);
 
     useEffect(() => {
-        if (lookupMutation.isError) setLookupMessage(mapApiError(lookupMutation.error).message);
-    }, [lookupMutation.isError, lookupMutation.error]);
+        if (!lookupMutation.isError) return;
+        showToast({ severity: 'error', summary: 'Lookup failed', detail: mapApiError(lookupMutation.error).message });
+    }, [lookupMutation.isError, lookupMutation.error, showToast]);
 
     const workspace = (
         <Workspace
@@ -216,6 +319,10 @@ export default function App() {
                     requirements={requirementsQuery.data}
                     selectedRequirementId={workspaceState.selectedRequirementId}
                     dispatch={dispatch}
+                    lifecyclePending={lifecycleMutation.isPending}
+                    onExportRequirements={openRequirementsExport}
+                    onExportAllRequirements={openAllRequirementsExport}
+                    onLifecycleAction={(command, requirement) => void handleLifecycleAction(command, requirement)}
                 />
             }
             actionBar={
@@ -234,7 +341,6 @@ export default function App() {
                         : categoriesQuery.data.length === 0 ? 'Create a category before creating a requirement.'
                         : 'Select a project to continue.')
                     }
-                    lookupMessage={lookupMessage}
                     lookupPending={lookupMutation.isPending}
                     lifecycleMessage={
                         lifecycleMutation.isError ? mapApiError(lifecycleMutation.error).message
@@ -243,12 +349,15 @@ export default function App() {
                         :   null
                     }
                     lifecyclePending={lifecycleMutation.isPending}
-                    onLifecycleAction={(command, requirement) => handleLifecycleAction(command, requirement)}
+                    onLifecycleAction={(command, requirement) => void handleLifecycleAction(command, requirement)}
                     onLookup={(visibleKey) => {
-                        setLookupMessage(null);
                         const normalizedVisibleKey = visibleKey.trim().toUpperCase();
                         if (!validateVisibleKey(normalizedVisibleKey)) {
-                            setLookupMessage('Enter a valid requirement key, for example FR-UI-0001.');
+                            showToast({
+                                severity: 'warn',
+                                summary: 'Invalid requirement key',
+                                detail: 'Enter a valid requirement key, for example FR-UI-0001.',
+                            });
                             return;
                         }
                         lookupMutation.mutate(normalizedVisibleKey);
@@ -290,12 +399,9 @@ export default function App() {
             }
             editRequirementPending={editRequirementMutation.isPending}
             onRetry={() => void projectsQuery.refetch()}
-            initialComparison={
-                directComparison?.pair.ok ? location.pathname.split('/').at(-1)
-                : directComparison ?
-                    'invalid'
-                :   null
-            }
+            onExportProject={openProjectExport}
+            onExportAllProjects={openAllProjectsExport}
+            initialComparison={initialComparison}
         />
     );
 
@@ -314,7 +420,7 @@ export default function App() {
                         :   null
                     }
                     lifecyclePending={lifecycleMutation.isPending}
-                    onLifecycleAction={(command, requirement) => handleLifecycleAction(command, requirement)}
+                    onLifecycleAction={(command, requirement) => void handleLifecycleAction(command, requirement)}
                     dispatch={dispatch}
                 />
                 {tabDetailQuery.isError ?
@@ -327,12 +433,7 @@ export default function App() {
                     <RequirementHistory
                         requirement={tabDetailQuery.data}
                         onClose={() => dispatch({ type: 'setMode', mode: 'workspace' })}
-                        initialComparison={
-                            directComparison?.pair.ok ? location.pathname.split('/').at(-1)
-                            : directComparison ?
-                                'invalid'
-                            :   null
-                        }
+                        initialComparison={initialComparison}
                     />
                 : tabDetailQuery.data && workspaceState.mode === 'editRequirementTab' ?
                     <RequirementForm
@@ -346,8 +447,18 @@ export default function App() {
                         pending={editRequirementMutation.isPending}
                         onSubmit={(values) => editRequirementMutation.mutate(values)}
                         onCancel={(dirty) => {
-                            if (!dirty || confirm('Discard unsaved requirement changes?'))
+                            if (!dirty) {
                                 dispatch({ type: 'setMode', mode: 'workspace' });
+                                return;
+                            }
+                            void confirm({
+                                title: 'Discard unsaved changes',
+                                message: 'Discard unsaved requirement changes?',
+                                acceptLabel: 'Discard',
+                                acceptSeverity: 'danger',
+                            }).then((confirmed) => {
+                                if (confirmed) dispatch({ type: 'setMode', mode: 'workspace' });
+                            });
                         }}
                     />
                 : tabDetailQuery.data ?
@@ -374,6 +485,11 @@ export default function App() {
                 role='tabpanel'>
                 {renderActivePanel()}
             </section>
+            <ExportControls
+                visible={exportRequest !== null}
+                request={exportRequest}
+                onHide={() => setExportRequest(null)}
+            />
             {projectsQuery.isLoading ?
                 <LoadingOverlay />
             :   null}

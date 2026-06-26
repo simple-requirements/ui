@@ -1,4 +1,4 @@
-import type { SyntheticEvent } from 'react';
+import { useEffect, useState, type SyntheticEvent } from 'react';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import type { FormSubmitHandler } from '@/shared/forms/formData';
@@ -7,11 +7,18 @@ type NewProjectFormProps = Readonly<{
     error: string | null;
     pending: boolean;
     onSubmit: FormSubmitHandler;
-    onCancel: () => void;
+    onCancel: (dirty?: boolean) => void;
+    onDirtyChange?: (dirty: boolean) => void;
 }>;
 
 /** Renders the backend-backed project creation form and keeps validation errors in the right pane. */
-export function NewProjectForm({ error, pending, onSubmit, onCancel }: NewProjectFormProps) {
+export function NewProjectForm({ error, pending, onSubmit, onCancel, onDirtyChange }: NewProjectFormProps) {
+    const [name, setName] = useState('');
+    const dirty = name.trim().length > 0;
+
+    useEffect(() => {
+        onDirtyChange?.(dirty);
+    }, [dirty, onDirtyChange]);
     const handleSubmit = (event: SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
         onSubmit(new FormData(event.currentTarget));
@@ -28,6 +35,8 @@ export function NewProjectForm({ error, pending, onSubmit, onCancel }: NewProjec
                 <InputText
                     id='project-name'
                     name='name'
+                    value={name}
+                    onChange={(event) => setName(event.currentTarget.value)}
                     required
                 />
             </div>
@@ -51,7 +60,7 @@ export function NewProjectForm({ error, pending, onSubmit, onCancel }: NewProjec
                     type='button'
                     label='Cancel'
                     severity='danger'
-                    onClick={onCancel}
+                    onClick={() => onCancel(dirty)}
                     disabled={pending}
                 />
             </div>

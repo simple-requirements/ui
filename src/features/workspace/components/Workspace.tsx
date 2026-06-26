@@ -80,15 +80,17 @@ export function Workspace({
 }: WorkspaceProps) {
     const { confirm } = useConfirmDialog();
     const [newRequirementDirty, setNewRequirementDirty] = useState(false);
+    const [newProjectDirty, setNewProjectDirty] = useState(false);
     const handleCancelForm = () => dispatch({ type: 'setMode', mode: 'workspace' });
     useEffect(() => {
         if (mode !== 'newRequirement') setNewRequirementDirty(false);
+        if (mode !== 'newProject') setNewProjectDirty(false);
     }, [mode]);
 
-    const confirmDiscardRequirementChanges = (onConfirmed: () => void) => {
+    const confirmDiscardChanges = (onConfirmed: () => void) => {
         void confirm({
             title: 'Discard unsaved changes',
-            message: 'Discard unsaved requirement changes?',
+            message: 'Discard unsaved changes?',
             acceptLabel: 'Discard',
             acceptSeverity: 'danger',
         }).then((confirmed) => {
@@ -96,13 +98,17 @@ export function Workspace({
         });
     };
 
-    const dispatchWithNewRequirementGuard = (action: Action) => {
-        if (mode !== 'newRequirement' || !newRequirementDirty) {
+    const hasDirtyForm =
+        (mode === 'newRequirement' && newRequirementDirty) || (mode === 'newProject' && newProjectDirty);
+
+    const dispatchWithDirtyFormGuard = (action: Action) => {
+        if (!hasDirtyForm) {
             dispatch(action);
             return;
         }
-        confirmDiscardRequirementChanges(() => {
+        confirmDiscardChanges(() => {
             setNewRequirementDirty(false);
+            setNewProjectDirty(false);
             dispatch(action);
         });
     };
@@ -114,7 +120,14 @@ export function Workspace({
                     error={createProjectError}
                     pending={createProjectPending}
                     onSubmit={onCreateProject}
-                    onCancel={handleCancelForm}
+                    onDirtyChange={setNewProjectDirty}
+                    onCancel={(dirty) => {
+                        if (!dirty) {
+                            handleCancelForm();
+                            return;
+                        }
+                        confirmDiscardChanges(handleCancelForm);
+                    }}
                 />
             );
         }
@@ -134,7 +147,7 @@ export function Workspace({
                             handleCancelForm();
                             return;
                         }
-                        confirmDiscardRequirementChanges(handleCancelForm);
+                        confirmDiscardChanges(handleCancelForm);
                     }}
                 />
             );
@@ -181,7 +194,7 @@ export function Workspace({
             <ProjectSidebar
                 projects={projects}
                 activeProjectId={activeProjectId}
-                dispatch={dispatchWithNewRequirementGuard}
+                dispatch={dispatchWithDirtyFormGuard}
                 onExportProject={onExportProject}
                 onExportAllProjects={onExportAllProjects}
             />

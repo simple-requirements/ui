@@ -55,6 +55,14 @@
     [aria-pressed='true'] {
         background: #eff6ff;
         outline: 2px solid #bfdbfe;
+        box-shadow: none;
+    }
+
+    .p-button:focus,
+    .p-button.p-focus,
+    .p-button:enabled:focus,
+    button:focus {
+        box-shadow: none;
     }
 }
 

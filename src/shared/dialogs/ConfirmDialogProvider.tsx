@@ -1,4 +1,5 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, type ReactNode } from 'react';
+import { Store, useStore } from '@tanstack/react-store';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import type { ButtonProps } from 'primereact/button';
@@ -13,32 +14,25 @@ export type ConfirmDialogOptions = Readonly<{
 
 type PendingConfirmation = ConfirmDialogOptions & Readonly<{ resolve: (confirmed: boolean) => void }>;
 
-type ConfirmDialogContextValue = Readonly<{ confirm: (options: ConfirmDialogOptions) => Promise<boolean> }>;
+type ConfirmDialogState = Readonly<{ pendingConfirmation: PendingConfirmation | null }>;
 
-const ConfirmDialogContext = createContext<ConfirmDialogContextValue | null>(null);
+const confirmDialogStore = new Store<ConfirmDialogState>({ pendingConfirmation: null });
+
+const setPendingConfirmation = (pendingConfirmation: PendingConfirmation | null) => {
+    confirmDialogStore.setState(() => ({ pendingConfirmation }));
+};
 
 export function ConfirmDialogProvider({ children }: Readonly<{ children: ReactNode }>) {
-    const [pendingConfirmation, setPendingConfirmation] = useState<PendingConfirmation | null>(null);
+    const pendingConfirmation = useStore(confirmDialogStore, (state) => state.pendingConfirmation);
 
     const close = useCallback(
         (confirmed: boolean) => {
-            const current = pendingConfirmation;
-            if (!current) return;
-            current.resolve(confirmed);
+            if (!pendingConfirmation) return;
+            pendingConfirmation.resolve(confirmed);
             setPendingConfirmation(null);
         },
         [pendingConfirmation],
     );
-
-    const confirm = useCallback(
-        (options: ConfirmDialogOptions) =>
-            new Promise<boolean>((resolve) => {
-                setPendingConfirmation({ ...options, resolve });
-            }),
-        [],
-    );
-
-    const value = useMemo(() => ({ confirm }), [confirm]);
 
     const footer =
         pendingConfirmation ?
@@ -60,7 +54,7 @@ export function ConfirmDialogProvider({ children }: Readonly<{ children: ReactNo
         :   null;
 
     return (
-        <ConfirmDialogContext.Provider value={value}>
+        <>
             {children}
             <Dialog
                 className='confirm-dialog'
@@ -73,12 +67,18 @@ export function ConfirmDialogProvider({ children }: Readonly<{ children: ReactNo
                 style={{ width: 'min(32rem, calc(100vw - 2rem))' }}>
                 <p>{pendingConfirmation?.message}</p>
             </Dialog>
-        </ConfirmDialogContext.Provider>
+        </>
     );
 }
 
 export function useConfirmDialog() {
-    const value = useContext(ConfirmDialogContext);
-    if (!value) throw new Error('useConfirmDialog must be used inside ConfirmDialogProvider.');
-    return value;
+    const confirm = useCallback(
+        (options: ConfirmDialogOptions) =>
+            new Promise<boolean>((resolve) => {
+                setPendingConfirmation({ ...options, resolve });
+            }),
+        [],
+    );
+
+    return { confirm };
 }

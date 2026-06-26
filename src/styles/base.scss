@@ -30,8 +30,17 @@ button,
 input,
 select,
 textarea,
-.p-component {
-    font: inherit;
+.p-component,
+.p-inputtext,
+.p-dropdown,
+.p-dropdown-label,
+.p-dropdown-item,
+.p-dropdown-panel,
+.p-dropdown-trigger,
+.p-button {
+    font-family: inherit;
+    font-size: 1.6rem;
+    line-height: 1.5;
 }
 
 html,

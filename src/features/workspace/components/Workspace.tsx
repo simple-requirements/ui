@@ -79,11 +79,9 @@ export function Workspace({
     initialComparison = null,
 }: WorkspaceProps) {
     const { confirm } = useConfirmDialog();
-    const [newRequirementDirty, setNewRequirementDirty] = useState(false);
     const [newProjectDirty, setNewProjectDirty] = useState(false);
     const handleCancelForm = () => dispatch({ type: 'setMode', mode: 'workspace' });
     useEffect(() => {
-        if (mode !== 'newRequirement') setNewRequirementDirty(false);
         if (mode !== 'newProject') setNewProjectDirty(false);
     }, [mode]);
 
@@ -98,8 +96,7 @@ export function Workspace({
         });
     };
 
-    const hasDirtyForm =
-        (mode === 'newRequirement' && newRequirementDirty) || (mode === 'newProject' && newProjectDirty);
+    const hasDirtyForm = mode === 'newProject' && newProjectDirty;
 
     const dispatchWithDirtyFormGuard = (action: Action) => {
         if (!hasDirtyForm) {
@@ -107,7 +104,6 @@ export function Workspace({
             return;
         }
         confirmDiscardChanges(() => {
-            setNewRequirementDirty(false);
             setNewProjectDirty(false);
             dispatch(action);
         });
@@ -141,7 +137,6 @@ export function Workspace({
                     error={createRequirementError}
                     pending={createRequirementPending}
                     onSubmit={onCreateRequirement}
-                    onDirtyChange={setNewRequirementDirty}
                     onCancel={(dirty) => {
                         if (!dirty) {
                             handleCancelForm();

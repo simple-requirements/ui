@@ -20,7 +20,6 @@ type RequirementFormProps = Readonly<{
     pending: boolean;
     onSubmit: (values: RequirementFormValues) => void;
     onCancel: (dirty: boolean) => void;
-    onDirtyChange?: (dirty: boolean) => void;
 }>;
 
 const emptyValues: RequirementFormValues = {
@@ -65,7 +64,6 @@ export function RequirementForm({
     pending,
     onSubmit,
     onCancel,
-    onDirtyChange,
 }: RequirementFormProps) {
     const initialValues = useMemo<RequirementFormValues>(() => {
         if (!initialRequirement) return { ...emptyValues, categoryId: categories[0]?.id ?? '' };
@@ -84,9 +82,11 @@ export function RequirementForm({
     const selectedCategory = categories.find((category) => category.id === values.categoryId);
     const initialValuesJson = JSON.stringify(initialValues);
     const dirty = JSON.stringify(values) !== initialValuesJson;
-    const updateValues = (nextValues: RequirementFormValues) => {
-        setValues(nextValues);
-        onDirtyChange?.(JSON.stringify(nextValues) !== initialValuesJson);
+    const updateField = <Field extends keyof RequirementFormValues>(
+        field: Field,
+        value: RequirementFormValues[Field],
+    ) => {
+        setValues((currentValues) => ({ ...currentValues, [field]: value }));
     };
     const categoryOptions = categories.map((category) => ({
         label: categoryOptionLabel(category),
@@ -181,7 +181,7 @@ export function RequirementForm({
                         inputId='requirement-category'
                         value={values.categoryId}
                         options={categoryOptions}
-                        onChange={(event) => updateValues({ ...values, categoryId: event.value as string })}
+                        onChange={(event) => updateField('categoryId', event.value as string)}
                         required
                         appendTo={document.body}
                         data-testid='Category-Dropdown'
@@ -228,7 +228,7 @@ export function RequirementForm({
                         ref={descriptionRef}
                         className='p-inputtextarea p-inputtext p-component'
                         value={values.description}
-                        onChange={(event) => updateValues({ ...values, description: event.currentTarget.value })}
+                        onChange={(event) => updateField('description', event.currentTarget.value)}
                         required
                         rows={5}
                         aria-describedby='requirement-description-help'
@@ -272,7 +272,7 @@ export function RequirementForm({
                     inputId='requirement-priority'
                     value={values.priority}
                     options={[...priorityOptions]}
-                    onChange={(event) => updateValues({ ...values, priority: event.value as string })}
+                    onChange={(event) => updateField('priority', event.value as RequirementFormValues['priority'])}
                     required
                     appendTo={document.body}
                 />
@@ -282,7 +282,7 @@ export function RequirementForm({
                 <InputText
                     id='requirement-owner'
                     value={values.owner}
-                    onChange={(event) => updateValues({ ...values, owner: event.currentTarget.value })}
+                    onChange={(event) => updateField('owner', event.currentTarget.value)}
                 />
             </div>
             <div className='form__field'>
@@ -290,7 +290,7 @@ export function RequirementForm({
                 <InputText
                     id='requirement-rationale'
                     value={values.rationale}
-                    onChange={(event) => updateValues({ ...values, rationale: event.currentTarget.value })}
+                    onChange={(event) => updateField('rationale', event.currentTarget.value)}
                 />
             </div>
             <div className='form__field'>
@@ -298,7 +298,7 @@ export function RequirementForm({
                 <InputText
                     id='requirement-source'
                     value={values.source}
-                    onChange={(event) => updateValues({ ...values, source: event.currentTarget.value })}
+                    onChange={(event) => updateField('source', event.currentTarget.value)}
                 />
             </div>
             <div className='form__actions'>

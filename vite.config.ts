@@ -13,7 +13,7 @@ export default defineConfig({
     optimizeDeps: { entries: ['index.html'] },
 
     test: {
-        include: ['test/**/*.spec.ts'],
+        include: ['test/**/*.spec.{ts,tsx}'],
         environment: 'jsdom',
         globals: true,
         coverage: {

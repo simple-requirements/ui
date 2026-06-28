@@ -3,18 +3,29 @@
         "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
         "target": "es2023",
         "lib": [
-            "ES2023"
+            "ES2023",
+            "DOM",
+            "DOM.Iterable"
         ],
         "module": "esnext",
         "types": [
-            "node"
+            "node",
+            "vite/client",
+            "vitest/globals"
         ],
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [
+                "./src/*"
+            ]
+        },
         "skipLibCheck": true,
         "moduleResolution": "bundler",
         "allowImportingTsExtensions": true,
         "verbatimModuleSyntax": true,
         "moduleDetection": "force",
         "noEmit": true,
+        "jsx": "react-jsx",
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "erasableSyntaxOnly": true,
@@ -23,6 +34,11 @@
     "include": [
         "vite.config.ts",
         "eslint.config.ts",
-        "orval.config.ts"
+        "orval.config.ts",
+        "test/components/**/*.spec.ts",
+        "test/components/**/*.spec.tsx",
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "src/**/*.d.ts"
     ]
 }

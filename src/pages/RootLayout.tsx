@@ -1,3 +1,5 @@
+import { Outlet } from 'react-router';
+
 import { ActionBar } from '@/components/RootLayout/ActionBar';
 import { Sidebar } from '@/components/RootLayout/Sidebar';
 import { TabBar } from '@/components/RootLayout/TabBar';
@@ -22,12 +24,7 @@ export function RootLayout() {
             <section
                 className='root-layout__content'
                 aria-label='Workspace content'>
-                <div className='root-layout__content-placeholder'>
-                    <h1 className='root-layout__content-title'>Workspace</h1>
-                    <p className='root-layout__content-text'>
-                        Placeholder content area. Project and requirement views will be rendered here later.
-                    </p>
-                </div>
+                <Outlet />
             </section>
         </main>
     );

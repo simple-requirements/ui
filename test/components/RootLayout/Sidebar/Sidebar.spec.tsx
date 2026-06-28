@@ -56,75 +56,93 @@ afterEach(() => {
 });
 
 describe('Sidebar', () => {
-    it('renders the sidebar landmarks.', () => {
-        mockUseLiveQuery({ data: [] });
+    describe('renders', () => {
+        it('the sidebar landmarks.', () => {
+            mockUseLiveQuery({ data: [] });
 
-        renderSidebar();
+            renderSidebar();
 
-        expect(screen.getByRole('complementary', { name: /projects/i })).not.toBeNull();
-        expect(screen.getByRole('group', { name: /project actions/i })).not.toBeNull();
-        expect(screen.getByRole('navigation', { name: /project list/i })).not.toBeNull();
-    });
-
-    it('shows the loading state while projects are loading.', () => {
-        mockUseLiveQuery({ data: [], isLoading: true });
-
-        renderSidebar();
-
-        expect(screen.getByText('Loading projects …')).not.toBeNull();
-    });
-
-    it('shows an error message when projects cannot be loaded.', () => {
-        mockUseLiveQuery({ data: [], isError: true });
-
-        renderSidebar();
-
-        expect(screen.getByText('Projects could not be loaded.')).not.toBeNull();
-    });
-
-    it('shows the empty state when there are no projects.', () => {
-        mockUseLiveQuery({ data: [] });
-
-        renderSidebar();
-
-        expect(screen.getByText('No projects available.')).not.toBeNull();
-    });
-
-    it('renders projects from the collection.', () => {
-        mockUseLiveQuery({
-            data: [
-                createProject({ id: 'project-alpha', name: 'Alpha Project', requirementCount: 4 }),
-                createProject({ id: 'project-beta', name: 'Beta Project', requirementCount: 7 }),
-            ],
+            expect(screen.getByRole('complementary', { name: /projects/i })).not.toBeNull();
+            expect(screen.getByRole('group', { name: /project actions/i })).not.toBeNull();
+            expect(screen.getByRole('navigation', { name: /project list/i })).not.toBeNull();
         });
 
-        renderSidebar();
+        it('the loading state while projects are loading.', () => {
+            mockUseLiveQuery({ data: [], isLoading: true });
 
-        expect(screen.getByRole('button', { name: /alpha project/i })).not.toBeNull();
-        expect(screen.getByRole('button', { name: /beta project/i })).not.toBeNull();
-        expect(screen.getByText('4')).not.toBeNull();
-        expect(screen.getByText('7')).not.toBeNull();
-    });
+            renderSidebar();
 
-    it('renders projects sorted by name.', () => {
-        mockUseLiveQuery({
-            data: [
-                createProject({ id: 'project-zeta', name: 'Zeta Project', requirementCount: 2 }),
-                createProject({ id: 'project-alpha', name: 'Alpha Project', requirementCount: 4 }),
-                createProject({ id: 'project-beta', name: 'Beta Project', requirementCount: 7 }),
-            ],
+            expect(screen.getByText('Loading projects …')).not.toBeNull();
         });
 
-        renderSidebar();
+        it('an error message when projects cannot be loaded.', () => {
+            mockUseLiveQuery({ data: [], isError: true });
 
-        const navigation = screen.getByRole('navigation', { name: /project list/i });
-        const projectButtons = within(navigation).getAllByRole('button');
+            renderSidebar();
 
-        const projectNames = projectButtons.map((button) =>
-            button.querySelector('.sidebar-entry__label')?.textContent?.trim(),
-        );
+            expect(screen.getByText('Projects could not be loaded.')).not.toBeNull();
+        });
 
-        expect(projectNames).toEqual(['Alpha Project', 'Beta Project', 'Zeta Project']);
+        it('the empty state when there are no projects.', () => {
+            mockUseLiveQuery({ data: [] });
+
+            renderSidebar();
+
+            expect(screen.getByText('No projects available.')).not.toBeNull();
+        });
+
+        it('projects from the collection.', () => {
+            mockUseLiveQuery({
+                data: [
+                    createProject({ id: 'project-alpha', name: 'Alpha Project', requirementCount: 4 }),
+                    createProject({ id: 'project-beta', name: 'Beta Project', requirementCount: 7 }),
+                ],
+            });
+
+            renderSidebar();
+
+            expect(screen.getByRole('button', { name: /alpha project/i })).not.toBeNull();
+            expect(screen.getByRole('button', { name: /beta project/i })).not.toBeNull();
+            expect(screen.getByText('4')).not.toBeNull();
+            expect(screen.getByText('7')).not.toBeNull();
+        });
+
+        it('projects sorted by name.', () => {
+            mockUseLiveQuery({
+                data: [
+                    createProject({ id: 'project-zeta', name: 'Zeta Project', requirementCount: 2 }),
+                    createProject({ id: 'project-alpha', name: 'Alpha Project', requirementCount: 4 }),
+                    createProject({ id: 'project-beta', name: 'Beta Project', requirementCount: 7 }),
+                ],
+            });
+
+            renderSidebar();
+
+            const navigation = screen.getByRole('navigation', { name: /project list/i });
+            const projectButtons = within(navigation).getAllByRole('button');
+
+            const projectNames = projectButtons.map((button) =>
+                button.querySelector('.sidebar-entry__label')?.textContent.trim(),
+            );
+
+            expect(projectNames).toEqual(['Alpha Project', 'Beta Project', 'Zeta Project']);
+        });
+
+        it('the New project action.', () => {
+            mockUseLiveQuery({ data: [] });
+
+            renderSidebar();
+
+            expect(screen.getByRole('button', { name: /new project/i })).not.toBeNull();
+        });
+
+        it('the Synchronize projects action.', () => {
+            mockUseLiveQuery({ data: [] });
+
+            renderSidebar();
+
+            expect(screen.getByRole('button', { name: /synchronize projects/i })).not.toBeNull();
+        });
     });
 
     it('marks the first sorted project as selected.', () => {
@@ -147,21 +165,5 @@ describe('Sidebar', () => {
 
         expect(betaButton.getAttribute('aria-current')).toBeNull();
         expect(zetaButton.getAttribute('aria-current')).toBeNull();
-    });
-
-    it('renders the New project action.', () => {
-        mockUseLiveQuery({ data: [] });
-
-        renderSidebar();
-
-        expect(screen.getByRole('button', { name: /new project/i })).not.toBeNull();
-    });
-
-    it('renders the Synchronize projects action.', () => {
-        mockUseLiveQuery({ data: [] });
-
-        renderSidebar();
-
-        expect(screen.getByRole('button', { name: /synchronize projects/i })).not.toBeNull();
     });
 });

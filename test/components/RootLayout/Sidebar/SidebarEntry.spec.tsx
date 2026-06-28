@@ -10,78 +10,90 @@ afterEach(() => {
 });
 
 describe('SidebarEntry', () => {
-    it('renders the project name and requirement count.', () => {
-        render(
-            <SidebarEntry
-                projectName='Reporting and Analytics'
-                requirementCount={60}
-            />,
-        );
+    describe('renders', () => {
+        it('renders the project name and requirement count.', () => {
+            render(
+                <SidebarEntry
+                    projectName='Reporting and Analytics'
+                    requirementCount={60}
+                />,
+            );
 
-        expect(screen.getByRole('button', { name: /reporting and analytics/i })).not.toBeNull();
-        expect(screen.getByText('60')).not.toBeNull();
+            expect(screen.getByRole('button', { name: /reporting and analytics/i })).not.toBeNull();
+            expect(screen.getByText('60')).not.toBeNull();
+        });
+
+        it.for([
+            {
+                testName: 'a closed folder icon for a non-selected project',
+                selected: false,
+                expectedIconClassName: 'pi-folder',
+                unexpectedIconClassName: 'pi-folder-open',
+            },
+            {
+                testName: 'an open folder icon for a selected project',
+                selected: true,
+                expectedIconClassName: 'pi-folder-open',
+                unexpectedIconClassName: 'pi-folder',
+            },
+        ])('renders $testName.', ({ selected, expectedIconClassName, unexpectedIconClassName }) => {
+            render(
+                <SidebarEntry
+                    projectName='Reporting and Analytics'
+                    requirementCount={60}
+                    selected={selected}
+                />,
+            );
+
+            const button = screen.getByRole('button', { name: /reporting and analytics/i });
+            const icon = button.querySelector('.sidebar-entry__icon');
+
+            expect(icon).not.toBeNull();
+            expect(icon?.classList.contains(expectedIconClassName)).toBe(true);
+            expect(icon?.classList.contains(unexpectedIconClassName)).toBe(false);
+        });
+
+        it('renders large requirement counts.', () => {
+            render(
+                <SidebarEntry
+                    projectName='Platform Foundation'
+                    requirementCount={1234}
+                />,
+            );
+
+            expect(screen.getByRole('button', { name: /platform foundation/i })).not.toBeNull();
+            expect(screen.getByText('1234')).not.toBeNull();
+        });
     });
 
-    it('renders a closed folder icon for a non-selected project.', () => {
-        render(
-            <SidebarEntry
-                projectName='Reporting and Analytics'
-                requirementCount={60}
-            />,
-        );
+    describe('marks / does not mark', () => {
+        it.for([
+            {
+                testName: 'marks a selected project with aria-current and the selected class',
+                selected: true,
+                expectedAriaCurrent: 'page',
+                expectedSelectedClass: true,
+            },
+            {
+                testName: 'does not mark a non-selected project with aria-current',
+                selected: false,
+                expectedAriaCurrent: null,
+                expectedSelectedClass: false,
+            },
+        ])('$testName.', ({ selected, expectedAriaCurrent, expectedSelectedClass }) => {
+            render(
+                <SidebarEntry
+                    projectName='Reporting and Analytics'
+                    requirementCount={60}
+                    selected={selected}
+                />,
+            );
 
-        const button = screen.getByRole('button', { name: /reporting and analytics/i });
-        const icon = button.querySelector('.sidebar-entry__icon');
+            const button = screen.getByRole('button', { name: /reporting and analytics/i });
 
-        expect(icon).not.toBeNull();
-        expect(icon?.classList.contains('pi-folder')).toBe(true);
-        expect(icon?.classList.contains('pi-folder-open')).toBe(false);
-    });
-
-    it('renders an open folder icon for a selected project.', () => {
-        render(
-            <SidebarEntry
-                projectName='Reporting and Analytics'
-                requirementCount={60}
-                selected
-            />,
-        );
-
-        const button = screen.getByRole('button', { name: /reporting and analytics/i });
-        const icon = button.querySelector('.sidebar-entry__icon');
-
-        expect(icon).not.toBeNull();
-        expect(icon?.classList.contains('pi-folder-open')).toBe(true);
-        expect(icon?.classList.contains('pi-folder')).toBe(false);
-    });
-
-    it('marks a selected project with aria-current and the selected class.', () => {
-        render(
-            <SidebarEntry
-                projectName='Reporting and Analytics'
-                requirementCount={60}
-                selected
-            />,
-        );
-
-        const button = screen.getByRole('button', { name: /reporting and analytics/i });
-
-        expect(button.getAttribute('aria-current')).toBe('page');
-        expect(button.classList.contains('sidebar-entry--selected')).toBe(true);
-    });
-
-    it('does not mark a non-selected project with aria-current.', () => {
-        render(
-            <SidebarEntry
-                projectName='Reporting and Analytics'
-                requirementCount={60}
-            />,
-        );
-
-        const button = screen.getByRole('button', { name: /reporting and analytics/i });
-
-        expect(button.getAttribute('aria-current')).toBeNull();
-        expect(button.classList.contains('sidebar-entry--selected')).toBe(false);
+            expect(button.getAttribute('aria-current')).toBe(expectedAriaCurrent);
+            expect(button.classList.contains('sidebar-entry--selected')).toBe(expectedSelectedClass);
+        });
     });
 
     it('calls onClick when the entry is clicked.', async () => {
@@ -99,17 +111,5 @@ describe('SidebarEntry', () => {
         await user.click(screen.getByRole('button', { name: /reporting and analytics/i }));
 
         expect(onClick).toHaveBeenCalledTimes(1);
-    });
-
-    it('renders large requirement counts.', () => {
-        render(
-            <SidebarEntry
-                projectName='Platform Foundation'
-                requirementCount={1234}
-            />,
-        );
-
-        expect(screen.getByRole('button', { name: /platform foundation/i })).not.toBeNull();
-        expect(screen.getByText('1234')).not.toBeNull();
     });
 });

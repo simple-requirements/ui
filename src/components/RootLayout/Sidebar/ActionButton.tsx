@@ -1,8 +1,8 @@
 import { Button } from 'primereact/button';
 
-type ActionButtonProps = Readonly<{ onNewProject?: () => void; onSynchronize?: () => void }>;
+type Props = Readonly<{ onNewProject?: () => void; onSynchronize?: () => void }>;
 
-export function ActionButton({ onNewProject, onSynchronize }: ActionButtonProps) {
+export function ActionButton({ onNewProject, onSynchronize }: Props) {
     return (
         <>
             <Button

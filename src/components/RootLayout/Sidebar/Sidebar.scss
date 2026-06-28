@@ -3,7 +3,7 @@
     --sidebar-actions-icon-button-size: 3.6rem;
     --sidebar-actions-icon-size: 2rem;
 
-    inline-size: var(--sidebar-width, 26rem);
+    inline-size: var(--sidebar-width, 30rem);
     block-size: 100%;
     overflow: hidden;
     display: flex;
@@ -103,40 +103,5 @@
         display: flex;
         flex-direction: column;
         gap: 0.4rem;
-    }
-
-    &__project {
-        inline-size: 100%;
-        min-block-size: 3.6rem;
-        justify-content: flex-start;
-        border-color: transparent;
-        border-radius: 0;
-        background: transparent;
-        color: var(--color-app-text);
-        box-shadow: none;
-    }
-
-    &__project:hover {
-        background: var(--color-app-hover-background);
-        border-color: var(--color-app-border);
-        color: var(--color-app-text);
-    }
-
-    &__project:focus-visible {
-        outline: 0.2rem solid var(--color-app-active-border);
-        outline-offset: 0.2rem;
-        box-shadow: none;
-    }
-
-    &__project--selected {
-        background: var(--color-app-active-background);
-        border-color: var(--color-app-active-border);
-        color: var(--color-app-text);
-    }
-
-    &__project-label {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
     }
 }

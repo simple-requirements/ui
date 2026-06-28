@@ -1,4 +1,4 @@
-.root-action-bar {
+.action-bar {
     block-size: 100%;
     display: flex;
     align-items: center;
@@ -18,6 +18,7 @@
     &__input {
         inline-size: 18rem;
         block-size: 3.6rem;
+        padding-inline: 0.8rem;
         border-radius: 0;
         box-shadow: none;
     }

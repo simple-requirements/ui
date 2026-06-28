@@ -1,0 +1,42 @@
+.tab {
+    min-inline-size: 14rem;
+    max-inline-size: 28rem;
+    block-size: var(--tab-bar-tab-height);
+    box-sizing: border-box;
+    padding-block: 0.35rem;
+    padding-inline: 1.2rem;
+    justify-content: flex-start;
+    border: 0;
+    border-radius: 0;
+    background: var(--color-app-surface);
+    color: var(--color-app-text-muted);
+    overflow: hidden;
+    box-shadow: none;
+
+    &:hover {
+        background: var(--color-app-hover-background);
+        color: var(--color-app-text);
+    }
+
+    &:focus-visible {
+        outline: 0.2rem solid var(--color-app-active-border);
+        outline-offset: -0.2rem;
+        box-shadow: none;
+    }
+
+    &--active {
+        background: var(--color-app-active-background);
+        color: var(--color-app-text);
+        box-shadow: inset 0 -0.2rem 0 var(--color-app-active-border);
+    }
+
+    &--fixed {
+        font-weight: 700;
+    }
+
+    &__label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}

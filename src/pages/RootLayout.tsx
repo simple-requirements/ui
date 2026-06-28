@@ -2,7 +2,7 @@ import { Outlet } from 'react-router';
 
 import { ActionBar } from '@/components/RootLayout/ActionBar';
 import { Sidebar } from '@/components/RootLayout/Sidebar/Sidebar';
-import { TabBar } from '@/components/RootLayout/TabBar';
+import { TabBar } from '@/components/RootLayout/TabBar/TabBar';
 
 import '@/pages/RootLayout.scss';
 

@@ -7,10 +7,7 @@ import { actionBarStore, setRequirementKey } from '@/stores/actionBarStore';
 
 import '@/components/RootLayout/ActionBar.scss';
 
-type ActionBarProps = Readonly<{
-    onCopyKey?: () => void;
-    onFindKey?: (requirementKey: string) => void;
-}>;
+type ActionBarProps = Readonly<{ onCopyKey?: () => void; onFindKey?: (requirementKey: string) => void }>;
 
 export function ActionBar({ onCopyKey, onFindKey }: ActionBarProps) {
     const requirementKey = useSelector(actionBarStore, (state) => state.requirementKey);
@@ -24,10 +21,10 @@ export function ActionBar({ onCopyKey, onFindKey }: ActionBarProps) {
 
     return (
         <section
-            className='root-action-bar'
+            className='action-bar'
             aria-label='Requirement actions'>
             <form
-                className='root-action-bar__lookup'
+                className='action-bar__lookup'
                 aria-label='Requirement key lookup'
                 onSubmit={handleSubmit}>
                 <InputText
@@ -36,22 +33,14 @@ export function ActionBar({ onCopyKey, onFindKey }: ActionBarProps) {
                     onChange={(event) => setRequirementKey(event.currentTarget.value)}
                     placeholder='FR-KEY-0001'
                     aria-label='Requirement key'
-                    pt={{
-                        root: {
-                            className: 'root-action-bar__input',
-                        },
-                    }}
+                    pt={{ root: { className: 'action-bar__input' } }}
                 />
 
                 <Button
                     outlined
                     type='submit'
                     label='Find key'
-                    pt={{
-                        root: {
-                            className: 'root-action-bar__button',
-                        },
-                    }}
+                    pt={{ root: { className: 'action-bar__button' } }}
                 />
             </form>
 
@@ -60,11 +49,7 @@ export function ActionBar({ onCopyKey, onFindKey }: ActionBarProps) {
                 type='button'
                 label='Copy key'
                 onClick={onCopyKey}
-                pt={{
-                    root: {
-                        className: 'root-action-bar__button',
-                    },
-                }}
+                pt={{ root: { className: 'action-bar__button' } }}
             />
         </section>
     );

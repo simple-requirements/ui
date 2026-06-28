@@ -1,17 +1,20 @@
+import { useLiveQuery } from '@tanstack/react-db';
+
+import { projectsCollection } from '@/api/collections/projectsCollection';
 import { ActionButton } from '@/components/RootLayout/Sidebar/ActionButton';
 import { SidebarEntry } from '@/components/RootLayout/Sidebar/SidebarEntry';
 
 import '@/components/RootLayout/Sidebar/Sidebar.scss';
 
-type PlaceholderProject = Readonly<{ name: string; requirementCount: number; selected: boolean }>;
-
-const placeholderProjects: readonly PlaceholderProject[] = [
-    { name: 'Reporting and Analytics', requirementCount: 60, selected: true },
-    { name: 'Usability Improvements', requirementCount: 24, selected: false },
-    { name: 'Platform Foundation', requirementCount: 103, selected: false },
-];
-
 export function Sidebar() {
+    const {
+        data: projects,
+        isLoading,
+        isError,
+    } = useLiveQuery((query) => query.from({ projects: projectsCollection }));
+
+    const sortedProjects = [...projects].sort((left, right) => left.name.localeCompare(right.name));
+
     return (
         <aside
             className='sidebar'
@@ -26,17 +29,27 @@ export function Sidebar() {
             <nav
                 className='sidebar__project-navigation'
                 aria-label='Project list'>
-                <ul className='sidebar__project-list'>
-                    {placeholderProjects.map((project) => (
-                        <li key={project.name}>
-                            <SidebarEntry
-                                projectName={project.name}
-                                requirementCount={project.requirementCount}
-                                selected={project.selected}
-                            />
-                        </li>
-                    ))}
-                </ul>
+                {isLoading && <p className='sidebar__status'>Loading projects …</p>}
+
+                {isError && <p className='sidebar__status sidebar__status--error'>Projects could not be loaded.</p>}
+
+                {!isLoading && !isError && sortedProjects.length === 0 && (
+                    <p className='sidebar__status'>No projects available.</p>
+                )}
+
+                {!isLoading && !isError && sortedProjects.length > 0 && (
+                    <ul className='sidebar__project-list'>
+                        {sortedProjects.map((project, index) => (
+                            <li key={project.id}>
+                                <SidebarEntry
+                                    projectName={project.name}
+                                    requirementCount={project.requirementCount}
+                                    selected={index === 0}
+                                />
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </nav>
         </aside>
     );

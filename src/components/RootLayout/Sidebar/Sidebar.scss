@@ -104,4 +104,13 @@
         flex-direction: column;
         gap: 0.4rem;
     }
+
+    &__status {
+        padding: 0.8rem;
+        color: var(--color-app-text-muted);
+    }
+
+    &__status--error {
+        color: var(--color-primary-600);
+    }
 }

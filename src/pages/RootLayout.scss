@@ -1,0 +1,60 @@
+.root-layout {
+    --layout-region-height: 5rem;
+
+    min-block-size: 100vh;
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    grid-template-rows: var(--layout-region-height) var(--layout-region-height) minmax(0, 1fr);
+    grid-template-areas:
+        'tabbar tabbar'
+        'sidebar actionbar'
+        'sidebar content';
+    overflow: hidden;
+    background: var(--color-app-background);
+    color: var(--color-app-text);
+
+    &__tabbar,
+    &__sidebar,
+    &__actionbar,
+    &__content {
+        min-inline-size: 0;
+        min-block-size: 0;
+    }
+
+    &__tabbar {
+        grid-area: tabbar;
+        block-size: 100%;
+    }
+
+    &__sidebar {
+        grid-area: sidebar;
+        block-size: 100%;
+    }
+
+    &__actionbar {
+        grid-area: actionbar;
+        block-size: 100%;
+    }
+
+    &__content {
+        grid-area: content;
+        overflow: auto;
+        background: var(--color-app-background);
+    }
+
+    &__content-placeholder {
+        padding: 3.2rem;
+    }
+
+    &__content-title {
+        margin-block-end: 1.2rem;
+        font-size: 2.8rem;
+        line-height: 1.2;
+        color: var(--color-app-text);
+    }
+
+    &__content-text {
+        max-inline-size: 72rem;
+        color: var(--color-app-text-muted);
+    }
+}

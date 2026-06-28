@@ -1,0 +1,142 @@
+.sidebar {
+    --sidebar-actions-button-height: 3.6rem;
+    --sidebar-actions-icon-button-size: 3.6rem;
+    --sidebar-actions-icon-size: 2rem;
+
+    inline-size: var(--sidebar-width, 26rem);
+    block-size: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-app-surface-muted);
+    border-inline-end: 0.1rem solid var(--color-app-border);
+
+    &__actions {
+        flex: 0 0 var(--layout-region-height, 6rem);
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        min-block-size: 0;
+        padding: 0.6rem 0.8rem;
+        background: var(--color-app-surface);
+    }
+
+    &__actions-button {
+        flex: 1 1 auto;
+        min-inline-size: 0;
+        block-size: var(--sidebar-actions-button-height);
+        padding: 1rem 1.2rem;
+        border: 0;
+        border-radius: 0;
+        background: var(--color-primary-400);
+        color: white;
+        box-shadow: none;
+        white-space: nowrap;
+        transition:
+            background-color 160ms ease,
+            color 160ms ease,
+            transform 120ms ease;
+
+        &:enabled:hover {
+            border: 0;
+            background: var(--color-primary-500);
+            color: white;
+            box-shadow: none;
+        }
+
+        &:enabled:active {
+            background: var(--color-primary-600);
+            color: white;
+            transform: translateY(0.1rem);
+        }
+
+        &:focus {
+            box-shadow: none;
+        }
+
+        &:focus-visible {
+            outline: 0.2rem solid var(--color-app-active-border);
+            outline-offset: 0.2rem;
+            box-shadow: none;
+        }
+    }
+
+    &__actions-button--ghost {
+        inline-size: var(--sidebar-actions-icon-button-size);
+        min-inline-size: var(--sidebar-actions-icon-button-size);
+        flex: 0 0 var(--sidebar-actions-icon-button-size);
+        padding: 0;
+        background: transparent;
+        color: var(--color-primary-400);
+
+        &:enabled:hover {
+            background: var(--color-primary-100);
+            color: var(--color-primary-500);
+        }
+
+        &:enabled:active {
+            background: var(--color-primary-200);
+            color: var(--color-primary-600);
+        }
+    }
+
+    &__actions-button-icon {
+        font-size: var(--sidebar-actions-icon-size);
+        color: inherit;
+    }
+
+    &__actions-button-label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: inherit;
+    }
+
+    &__project-navigation {
+        flex: 1 1 auto;
+        min-block-size: 0;
+        overflow: auto;
+        padding: 0.8rem;
+    }
+
+    &__project-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    &__project {
+        inline-size: 100%;
+        min-block-size: 3.6rem;
+        justify-content: flex-start;
+        border-color: transparent;
+        border-radius: 0;
+        background: transparent;
+        color: var(--color-app-text);
+        box-shadow: none;
+    }
+
+    &__project:hover {
+        background: var(--color-app-hover-background);
+        border-color: var(--color-app-border);
+        color: var(--color-app-text);
+    }
+
+    &__project:focus-visible {
+        outline: 0.2rem solid var(--color-app-active-border);
+        outline-offset: 0.2rem;
+        box-shadow: none;
+    }
+
+    &__project--selected {
+        background: var(--color-app-active-background);
+        border-color: var(--color-app-active-border);
+        color: var(--color-app-text);
+    }
+
+    &__project-label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}

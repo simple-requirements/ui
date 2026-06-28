@@ -25,7 +25,8 @@
         "primeicons": "latest",
         "primereact": "latest",
         "react": "^19.2",
-        "react-dom": "^19.2"
+        "react-dom": "^19.2",
+        "react-router": "^8.0.1"
     },
     "devDependencies": {
         "@eslint/compat": "latest",

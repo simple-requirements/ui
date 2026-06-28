@@ -3,7 +3,7 @@ import { Button } from 'primereact/button';
 
 import '@/components/RootLayout/Sidebar/SidebarEntry.scss';
 
-export type SidebarEntryProps = Readonly<{
+type Props = Readonly<{
     projectName: string;
     requirementCount: number;
     selected?: boolean;
@@ -18,7 +18,7 @@ function getProjectIconClassName(selected: boolean): string {
     return selected ? 'pi pi-folder-open sidebar-entry__icon' : 'pi pi-folder sidebar-entry__icon';
 }
 
-export function SidebarEntry({ projectName, requirementCount, selected = false, onClick }: SidebarEntryProps) {
+export function SidebarEntry({ projectName, requirementCount, selected = false, onClick }: Props) {
     return (
         <Button
             outlined

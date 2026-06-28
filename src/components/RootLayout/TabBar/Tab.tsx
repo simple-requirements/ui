@@ -2,7 +2,7 @@ import { Button } from 'primereact/button';
 
 import '@/components/RootLayout/TabBar/Tab.scss';
 
-type TabProps = Readonly<{ label: string; active?: boolean; fixed?: boolean; onClick?: () => void }>;
+type Props = Readonly<{ label: string; active?: boolean; fixed?: boolean; onClick?: () => void }>;
 
 function getTabClassName(active: boolean, fixed: boolean): string {
     const classNames = ['tab'];
@@ -13,7 +13,7 @@ function getTabClassName(active: boolean, fixed: boolean): string {
     return classNames.join(' ');
 }
 
-export function Tab({ label, active = false, fixed = false, onClick }: TabProps) {
+export function Tab({ label, active = false, fixed = false, onClick }: Props) {
     return (
         <Button
             outlined

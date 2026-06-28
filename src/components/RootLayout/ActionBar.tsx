@@ -7,9 +7,9 @@ import { actionBarStore, setRequirementKey } from '@/stores/actionBarStore';
 
 import '@/components/RootLayout/ActionBar.scss';
 
-type ActionBarProps = Readonly<{ onCopyKey?: () => void; onFindKey?: (requirementKey: string) => void }>;
+type Props = Readonly<{ onCopyKey?: () => void; onFindKey?: (requirementKey: string) => void }>;
 
-export function ActionBar({ onCopyKey, onFindKey }: ActionBarProps) {
+export function ActionBar({ onCopyKey, onFindKey }: Props) {
     const requirementKey = useSelector(actionBarStore, (state) => state.requirementKey);
 
     const handleSubmit: NonNullable<ComponentProps<'form'>['onSubmit']> = (event) => {

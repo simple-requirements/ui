@@ -12,7 +12,7 @@ type ProjectDialogMode = 'create' | 'rename';
 
 export type ProjectDialogSubmitData = z.infer<typeof projectDialogSchema>;
 
-type ProjectDialogProps = Readonly<{
+type Props = Readonly<{
     visible: boolean;
     mode: ProjectDialogMode;
     initialName?: string;
@@ -42,7 +42,7 @@ export function ProjectDialog({
     errorMessage,
     onCancel,
     onSubmit,
-}: ProjectDialogProps) {
+}: Props) {
     const inputId = useId();
     const errorId = useId();
 

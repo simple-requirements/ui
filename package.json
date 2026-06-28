@@ -21,20 +21,21 @@
     "dependencies": {
         "@git-diff-view/react": "^0.1.6",
         "@tanstack/query-db-collection": "^1.0.44",
+        "@tanstack/react-db": "^0.1.86",
+        "@tanstack/react-query": "^5.101.0",
         "@tanstack/react-store": "^0.11.0",
         "primeicons": "latest",
         "primereact": "latest",
         "react": "^19.2",
         "react-dom": "^19.2",
-        "react-router": "^8.0.1"
+        "react-router": "^8.0.1",
+        "zod": "^4.4.3"
     },
     "devDependencies": {
         "@eslint/compat": "latest",
         "@eslint/config-helpers": "^0.6.0",
         "@eslint/js": "latest",
         "@playwright/test": "latest",
-        "@tanstack/react-db": "^0.1.86",
-        "@tanstack/react-query": "^5.101.0",
         "@types/node": "^24.13.1",
         "@types/react": "^19.2",
         "@types/react-dom": "^19.2",
@@ -56,7 +57,6 @@
         "typescript": "latest",
         "typescript-eslint": "latest",
         "vite": "^7.3.5",
-        "vitest": "^4.1.8",
-        "zod": "^4.4.3"
+        "vitest": "^4.1.8"
     }
 }

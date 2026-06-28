@@ -1,5 +1,7 @@
 import { Button } from 'primereact/button';
 
+import '@/components/RootLayout/Sidebar/ActionButton.scss';
+
 type Props = Readonly<{ onNewProject?: () => void; onSynchronize?: () => void }>;
 
 export function ActionButton({ onNewProject, onSynchronize }: Props) {
@@ -11,8 +13,8 @@ export function ActionButton({ onNewProject, onSynchronize }: Props) {
                 aria-label='Synchronize projects'
                 onClick={onSynchronize}
                 pt={{
-                    root: { className: 'sidebar__actions-button sidebar__actions-button--ghost' },
-                    icon: { className: 'sidebar__actions-button-icon' },
+                    root: { className: 'sidebar-action-button sidebar-action-button--ghost' },
+                    icon: { className: 'sidebar-action-button__icon' },
                 }}
             />
 
@@ -21,8 +23,8 @@ export function ActionButton({ onNewProject, onSynchronize }: Props) {
                 label='New project'
                 onClick={onNewProject}
                 pt={{
-                    root: { className: 'sidebar__actions-button' },
-                    label: { className: 'sidebar__actions-button-label' },
+                    root: { className: 'sidebar-action-button' },
+                    label: { className: 'sidebar-action-button__label' },
                 }}
             />
         </>

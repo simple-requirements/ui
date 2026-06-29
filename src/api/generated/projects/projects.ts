@@ -277,31 +277,31 @@ export function useCreateProject<TData = Awaited<ReturnType<typeof createProject
 
 
 
-export type renameProjectResponse200 = {
+export type updateProjectResponse200 = {
   data: ProjectResponseDto
   status: 200
 }
 
-export type renameProjectResponse400 = {
+export type updateProjectResponse400 = {
   data: void
   status: 400
 }
 
-export type renameProjectResponse404 = {
+export type updateProjectResponse404 = {
   data: void
   status: 404
 }
 
-export type renameProjectResponseSuccess = (renameProjectResponse200) & {
+export type updateProjectResponseSuccess = (updateProjectResponse200) & {
   headers: Headers;
 };
-export type renameProjectResponseError = (renameProjectResponse400 | renameProjectResponse404) & {
+export type updateProjectResponseError = (updateProjectResponse400 | updateProjectResponse404) & {
   headers: Headers;
 };
 
-export type renameProjectResponse = (renameProjectResponseSuccess | renameProjectResponseError)
+export type updateProjectResponse = (updateProjectResponseSuccess | updateProjectResponseError)
 
-export const getRenameProjectUrl = (id: string,) => {
+export const getUpdateProjectUrl = (id: string,) => {
 
 
 
@@ -312,10 +312,10 @@ export const getRenameProjectUrl = (id: string,) => {
 /**
  * @summary Rename a project.
  */
-export const renameProject = async (id: string,
-    updateProjectDto: UpdateProjectDto, options?: RequestInit): Promise<renameProjectResponse> => {
+export const updateProject = async (id: string,
+    updateProjectDto: UpdateProjectDto, options?: RequestInit): Promise<updateProjectResponse> => {
 
-  return apiFetch<renameProjectResponse>(getRenameProjectUrl(id),
+  return apiFetch<updateProjectResponse>(getUpdateProjectUrl(id),
   {
     ...options,
     method: 'PATCH',
@@ -328,7 +328,7 @@ export const renameProject = async (id: string,
 
 
 
-export const getRenameProjectQueryKey = (id: string,
+export const getUpdateProjectQueryKey = (id: string,
     updateProjectDto?: UpdateProjectDto,) => {
     return [
     'PATCH', `/projects/${id}`, updateProjectDto
@@ -336,67 +336,67 @@ export const getRenameProjectQueryKey = (id: string,
     }
 
 
-export const getRenameProjectQueryOptions = <TData = Awaited<ReturnType<typeof renameProject>>, TError = void>(id: string,
-    updateProjectDto: UpdateProjectDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof renameProject>>, TError, TData>>, }
+export const getUpdateProjectQueryOptions = <TData = Awaited<ReturnType<typeof updateProject>>, TError = void>(id: string,
+    updateProjectDto: UpdateProjectDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateProject>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getRenameProjectQueryKey(id,updateProjectDto);
+  const queryKey =  queryOptions?.queryKey ?? getUpdateProjectQueryKey(id,updateProjectDto);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof renameProject>>> = ({ signal }) => renameProject(id,updateProjectDto, { signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof updateProject>>> = ({ signal }) => updateProject(id,updateProjectDto, { signal });
 
 
 
 
 
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof renameProject>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof updateProject>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type RenameProjectQueryResult = NonNullable<Awaited<ReturnType<typeof renameProject>>>
-export type RenameProjectQueryError = void
+export type UpdateProjectQueryResult = NonNullable<Awaited<ReturnType<typeof updateProject>>>
+export type UpdateProjectQueryError = void
 
 
-export function useRenameProject<TData = Awaited<ReturnType<typeof renameProject>>, TError = void>(
+export function useUpdateProject<TData = Awaited<ReturnType<typeof updateProject>>, TError = void>(
  id: string,
-    updateProjectDto: UpdateProjectDto, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof renameProject>>, TError, TData>> & Pick<
+    updateProjectDto: UpdateProjectDto, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateProject>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof renameProject>>,
+          Awaited<ReturnType<typeof updateProject>>,
           TError,
-          Awaited<ReturnType<typeof renameProject>>
+          Awaited<ReturnType<typeof updateProject>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useRenameProject<TData = Awaited<ReturnType<typeof renameProject>>, TError = void>(
+export function useUpdateProject<TData = Awaited<ReturnType<typeof updateProject>>, TError = void>(
  id: string,
-    updateProjectDto: UpdateProjectDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof renameProject>>, TError, TData>> & Pick<
+    updateProjectDto: UpdateProjectDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateProject>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof renameProject>>,
+          Awaited<ReturnType<typeof updateProject>>,
           TError,
-          Awaited<ReturnType<typeof renameProject>>
+          Awaited<ReturnType<typeof updateProject>>
         > , 'initialData'
       >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useRenameProject<TData = Awaited<ReturnType<typeof renameProject>>, TError = void>(
+export function useUpdateProject<TData = Awaited<ReturnType<typeof updateProject>>, TError = void>(
  id: string,
-    updateProjectDto: UpdateProjectDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof renameProject>>, TError, TData>>, }
+    updateProjectDto: UpdateProjectDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateProject>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary Rename a project.
  */
 
-export function useRenameProject<TData = Awaited<ReturnType<typeof renameProject>>, TError = void>(
+export function useUpdateProject<TData = Awaited<ReturnType<typeof updateProject>>, TError = void>(
  id: string,
-    updateProjectDto: UpdateProjectDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof renameProject>>, TError, TData>>, }
+    updateProjectDto: UpdateProjectDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateProject>>, TError, TData>>, }
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getRenameProjectQueryOptions(id,updateProjectDto,options)
+  const queryOptions = getUpdateProjectQueryOptions(id,updateProjectDto,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

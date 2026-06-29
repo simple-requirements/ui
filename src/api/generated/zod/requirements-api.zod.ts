@@ -40,15 +40,15 @@ export const CreateProjectResponse = zod.object({
 /**
  * @summary Rename a project.
  */
-export const RenameProjectParams = zod.object({
+export const UpdateProjectParams = zod.object({
   "id": zod.string()
 })
 
-export const RenameProjectBody = zod.object({
+export const UpdateProjectBody = zod.object({
   "name": zod.string().describe('New human-readable project name.')
 })
 
-export const RenameProjectResponse = zod.object({
+export const UpdateProjectResponse = zod.object({
   "id": zod.string().describe('Stable project identifier.'),
   "name": zod.string().describe('Human-readable project name.'),
   "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the project was created.'),

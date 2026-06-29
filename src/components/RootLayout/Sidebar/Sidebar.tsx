@@ -4,8 +4,9 @@ import type { ContextMenu } from 'primereact/contextmenu';
 import type { MouseEvent } from 'react';
 import { useRef, useState } from 'react';
 
-import { projectsCollection } from '@/api/collections/projectsCollection';
-import { createProject, getListProjectsQueryKey } from '@/api/generated/projects/projects';
+import { projectsCollection, type SidebarProject } from '@/api/collections/projectsCollection';
+import { getListProjectsQueryKey } from '@/api/generated/projects/projects';
+import { createProjectRequest, updateProjectRequest } from '@/api/projectsApi';
 import { queryClient } from '@/api/queryClient';
 import { ActionButton } from '@/components/RootLayout/Sidebar/ActionButton';
 import { ProjectDialog, type ProjectDialogSubmitData } from '@/components/RootLayout/Sidebar/ProjectDialog';
@@ -13,6 +14,10 @@ import { SidebarContextMenu } from '@/components/RootLayout/Sidebar/SidebarConte
 import { SidebarEntry } from '@/components/RootLayout/Sidebar/SidebarEntry';
 
 import '@/components/RootLayout/Sidebar/Sidebar.scss';
+
+type ProjectDialogState = Readonly<{ mode: 'create' }> | Readonly<{ mode: 'rename'; project: SidebarProject }>;
+
+type UpdateProjectMutationVariables = Readonly<{ projectId: string; formData: ProjectDialogSubmitData }>;
 
 function getErrorMessage(error: unknown): string {
     if (error instanceof Error) {
@@ -25,42 +30,75 @@ function getErrorMessage(error: unknown): string {
 export function Sidebar() {
     const contextMenuRef = useRef<ContextMenu | null>(null);
 
-    const [projectDialogVisible, setProjectDialogVisible] = useState(false);
+    const [projectDialogState, setProjectDialogState] = useState<ProjectDialogState>();
     const [contextMenuProjectId, setContextMenuProjectId] = useState<string>();
 
     const { data: projects, isLoading } = useLiveQuery((query) => query.from({ projects: projectsCollection }));
 
     const createProjectMutation = useMutation({
-        mutationFn: async (formData: ProjectDialogSubmitData) => createProject({ name: formData.name }),
+        mutationFn: async (formData: ProjectDialogSubmitData): Promise<void> => {
+            await createProjectRequest({ name: formData.name });
+        },
 
         onSuccess: async () => {
             await queryClient.invalidateQueries({ queryKey: getListProjectsQueryKey() });
-            setProjectDialogVisible(false);
+            setProjectDialogState(undefined);
+        },
+    });
+
+    const updateProjectMutation = useMutation({
+        mutationFn: async ({ projectId, formData }: UpdateProjectMutationVariables): Promise<void> => {
+            await updateProjectRequest(projectId, { name: formData.name });
+        },
+
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: getListProjectsQueryKey() });
+            setProjectDialogState(undefined);
         },
     });
 
     const sortedProjects = [...projects].sort((left, right) => left.name.localeCompare(right.name));
 
-    function getContextMenuProject() {
+    const projectDialogVisible = projectDialogState !== undefined;
+    const projectDialogMode = projectDialogState?.mode ?? 'create';
+    const projectDialogInitialName = projectDialogState?.mode === 'rename' ? projectDialogState.project.name : '';
+    const projectDialogPending =
+        projectDialogState?.mode === 'rename' ? updateProjectMutation.isPending : createProjectMutation.isPending;
+    const projectDialogError =
+        projectDialogState?.mode === 'rename' ? updateProjectMutation.error : createProjectMutation.error;
+    const projectDialogErrorMessage = projectDialogError === null ? undefined : getErrorMessage(projectDialogError);
+
+    function getContextMenuProject(): SidebarProject | undefined {
         return sortedProjects.find((project) => project.id === contextMenuProjectId);
     }
 
-    async function handleCreateProject(formData: ProjectDialogSubmitData): Promise<void> {
+    function resetProjectDialogMutations(): void {
+        createProjectMutation.reset();
+        updateProjectMutation.reset();
+    }
+
+    async function handleSubmitProjectDialog(formData: ProjectDialogSubmitData): Promise<void> {
+        if (projectDialogState?.mode === 'rename') {
+            await updateProjectMutation.mutateAsync({ projectId: projectDialogState.project.id, formData });
+
+            return;
+        }
+
         await createProjectMutation.mutateAsync(formData);
     }
 
     function handleOpenProjectDialog(): void {
-        createProjectMutation.reset();
-        setProjectDialogVisible(true);
+        resetProjectDialogMutations();
+        setProjectDialogState({ mode: 'create' });
     }
 
     function handleCancelProjectDialog(): void {
-        if (createProjectMutation.isPending) {
+        if (createProjectMutation.isPending || updateProjectMutation.isPending) {
             return;
         }
 
-        createProjectMutation.reset();
-        setProjectDialogVisible(false);
+        resetProjectDialogMutations();
+        setProjectDialogState(undefined);
     }
 
     function handleSynchronizeProjects(): void {
@@ -81,7 +119,9 @@ export function Sidebar() {
             return;
         }
 
-        // TODO: open rename dialog for contextMenuProject.
+        resetProjectDialogMutations();
+
+        setProjectDialogState({ mode: 'rename', project: contextMenuProject });
     }
 
     function handleDeleteProject(): void {
@@ -155,11 +195,12 @@ export function Sidebar() {
 
             <ProjectDialog
                 visible={projectDialogVisible}
-                mode='create'
-                pending={createProjectMutation.isPending}
-                errorMessage={createProjectMutation.isError ? getErrorMessage(createProjectMutation.error) : undefined}
+                mode={projectDialogMode}
+                initialName={projectDialogInitialName}
+                pending={projectDialogPending}
+                errorMessage={projectDialogErrorMessage}
                 onCancel={handleCancelProjectDialog}
-                onSubmit={handleCreateProject}
+                onSubmit={handleSubmitProjectDialog}
             />
         </aside>
     );

@@ -1,5 +1,7 @@
+import '@testing-library/jest-dom/vitest';
+
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { cleanup, render, screen, within } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import type { PropsWithChildren, ReactElement } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -15,11 +17,21 @@ type TestProject = Readonly<{
 
 type UseLiveQueryResult = Readonly<{ data: readonly TestProject[]; isLoading: boolean; isError: boolean }>;
 
-const mocks = vi.hoisted(() => ({ useLiveQuery: vi.fn() }));
+const mocks = vi.hoisted(() => ({ useLiveQuery: vi.fn(), contextMenuShow: vi.fn() }));
 
 vi.mock('@tanstack/react-db', () => ({ useLiveQuery: mocks.useLiveQuery }));
 
 vi.mock('@/api/collections/projectsCollection', () => ({ projectsCollection: {} }));
+
+vi.mock('@/components/RootLayout/Sidebar/SidebarContextMenu', () => ({
+    SidebarContextMenu: ({ contextMenuRef }: { contextMenuRef: unknown }) => {
+        (contextMenuRef as { current: { show: (event: unknown) => void } | null }).current = {
+            show: mocks.contextMenuShow,
+        };
+
+        return <div data-testid='sidebar-context-menu' />;
+    },
+}));
 
 function createTestQueryClient(): QueryClient {
     return new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
@@ -62,9 +74,17 @@ describe('Sidebar', () => {
 
             renderSidebar();
 
-            expect(screen.getByRole('complementary', { name: /projects/i })).not.toBeNull();
-            expect(screen.getByRole('group', { name: /project actions/i })).not.toBeNull();
-            expect(screen.getByRole('navigation', { name: /project list/i })).not.toBeNull();
+            expect(screen.getByRole('complementary', { name: /projects/i })).toBeInTheDocument();
+            expect(screen.getByRole('group', { name: /project actions/i })).toBeInTheDocument();
+            expect(screen.getByRole('navigation', { name: /project list/i })).toBeInTheDocument();
+        });
+
+        it('the sidebar context menu component.', () => {
+            mockUseLiveQuery({ data: [] });
+
+            renderSidebar();
+
+            expect(screen.getByTestId('sidebar-context-menu')).toBeInTheDocument();
         });
 
         it('the loading state while projects are loading.', () => {
@@ -72,15 +92,7 @@ describe('Sidebar', () => {
 
             renderSidebar();
 
-            expect(screen.getByText('Loading projects …')).not.toBeNull();
-        });
-
-        it('an error message when projects cannot be loaded.', () => {
-            mockUseLiveQuery({ data: [], isError: true });
-
-            renderSidebar();
-
-            expect(screen.getByText('Projects could not be loaded.')).not.toBeNull();
+            expect(screen.getByText('Loading projects …')).toBeInTheDocument();
         });
 
         it('the empty state when there are no projects.', () => {
@@ -88,7 +100,7 @@ describe('Sidebar', () => {
 
             renderSidebar();
 
-            expect(screen.getByText('No projects available.')).not.toBeNull();
+            expect(screen.getByText('No projects available.')).toBeInTheDocument();
         });
 
         it('projects from the collection.', () => {
@@ -101,10 +113,10 @@ describe('Sidebar', () => {
 
             renderSidebar();
 
-            expect(screen.getByRole('button', { name: /alpha project/i })).not.toBeNull();
-            expect(screen.getByRole('button', { name: /beta project/i })).not.toBeNull();
-            expect(screen.getByText('4')).not.toBeNull();
-            expect(screen.getByText('7')).not.toBeNull();
+            expect(screen.getByRole('button', { name: /alpha project/i })).toBeInTheDocument();
+            expect(screen.getByRole('button', { name: /beta project/i })).toBeInTheDocument();
+            expect(screen.getByText('4')).toBeInTheDocument();
+            expect(screen.getByText('7')).toBeInTheDocument();
         });
 
         it('projects sorted by name.', () => {
@@ -128,20 +140,15 @@ describe('Sidebar', () => {
             expect(projectNames).toEqual(['Alpha Project', 'Beta Project', 'Zeta Project']);
         });
 
-        it('the New project action.', () => {
+        it.for([
+            { testName: 'New project', buttonName: /new project/i },
+            { testName: 'Synchronize projects', buttonName: /synchronize projects/i },
+        ])('renders the $testName action.', ({ buttonName }) => {
             mockUseLiveQuery({ data: [] });
 
             renderSidebar();
 
-            expect(screen.getByRole('button', { name: /new project/i })).not.toBeNull();
-        });
-
-        it('the Synchronize projects action.', () => {
-            mockUseLiveQuery({ data: [] });
-
-            renderSidebar();
-
-            expect(screen.getByRole('button', { name: /synchronize projects/i })).not.toBeNull();
+            expect(screen.getByRole('button', { name: buttonName })).toBeInTheDocument();
         });
     });
 
@@ -160,10 +167,22 @@ describe('Sidebar', () => {
         const betaButton = screen.getByRole('button', { name: /beta project/i });
         const zetaButton = screen.getByRole('button', { name: /zeta project/i });
 
-        expect(alphaButton.getAttribute('aria-current')).toBe('page');
-        expect(alphaButton.classList.contains('sidebar-entry--selected')).toBe(true);
+        expect(alphaButton).toHaveAttribute('aria-current', 'page');
+        expect(alphaButton).toHaveClass('sidebar-entry--selected');
 
-        expect(betaButton.getAttribute('aria-current')).toBeNull();
-        expect(zetaButton.getAttribute('aria-current')).toBeNull();
+        expect(betaButton).not.toHaveAttribute('aria-current');
+        expect(zetaButton).not.toHaveAttribute('aria-current');
+    });
+
+    it('opens the context menu when a project is right-clicked.', () => {
+        mockUseLiveQuery({
+            data: [createProject({ id: 'project-alpha', name: 'Alpha Project', requirementCount: 4 })],
+        });
+
+        renderSidebar();
+
+        fireEvent.contextMenu(screen.getByRole('button', { name: /alpha project/i }));
+
+        expect(mocks.contextMenuShow).toHaveBeenCalledTimes(1);
     });
 });

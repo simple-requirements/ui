@@ -1,0 +1,62 @@
+.sidebar-context-menu.p-contextmenu {
+    inline-size: max-content;
+    min-inline-size: max-content;
+    padding-block: 0.4rem;
+    padding-inline: 0;
+    border-radius: 0;
+    background: var(--color-app-surface);
+    border: 0.1rem solid var(--color-app-border);
+    box-shadow: 0 0.8rem 2rem rgb(0 0 0 / 18%);
+}
+
+.sidebar-context-menu.p-contextmenu .p-menuitem {
+    margin: 0;
+}
+
+.sidebar-context-menu.p-contextmenu .p-menuitem-content {
+    border-radius: 0;
+}
+
+.sidebar-context-menu.p-contextmenu .p-menuitem-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding-block: 0.8rem;
+    padding-inline: 1.2rem;
+    color: var(--color-app-text);
+    white-space: nowrap;
+    text-decoration: none;
+    border-radius: 0;
+}
+
+.sidebar-context-menu.p-contextmenu .p-menuitem-text {
+    flex: 0 0 auto;
+    color: inherit;
+}
+
+.sidebar-context-menu.p-contextmenu .p-menuitem-icon {
+    order: 2;
+    margin-inline-start: 1.2rem;
+    margin-inline-end: 0;
+    color: var(--color-primary-500);
+    font-size: 1.4rem;
+}
+
+.sidebar-context-menu.p-contextmenu .p-menuitem:not(.p-disabled) .p-menuitem-content:hover {
+    background: var(--color-app-hover-background);
+}
+
+.sidebar-context-menu.p-contextmenu .p-menuitem:not(.p-disabled) .p-menuitem-content:hover .p-menuitem-link {
+    color: var(--color-app-text);
+}
+
+.sidebar-context-menu.p-contextmenu .p-menuitem:not(.p-disabled) .p-menuitem-content:hover .p-menuitem-icon {
+    color: var(--color-primary-600);
+}
+
+.sidebar-context-menu.p-contextmenu .p-menuitem-separator {
+    margin-block: 0.4rem;
+    margin-inline: 0.8rem;
+    border-block-start: 0.1rem solid var(--color-app-border);
+}

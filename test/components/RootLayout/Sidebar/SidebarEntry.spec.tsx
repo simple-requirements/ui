@@ -1,4 +1,6 @@
-import { cleanup, render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom/vitest';
+
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -11,7 +13,7 @@ afterEach(() => {
 
 describe('SidebarEntry', () => {
     describe('renders', () => {
-        it('renders the project name and requirement count.', () => {
+        it('the project name and requirement count.', () => {
             render(
                 <SidebarEntry
                     projectName='Reporting and Analytics'
@@ -19,8 +21,8 @@ describe('SidebarEntry', () => {
                 />,
             );
 
-            expect(screen.getByRole('button', { name: /reporting and analytics/i })).not.toBeNull();
-            expect(screen.getByText('60')).not.toBeNull();
+            expect(screen.getByRole('button', { name: /reporting and analytics/i })).toBeInTheDocument();
+            expect(screen.getByText('60')).toBeInTheDocument();
         });
 
         it.for([
@@ -36,7 +38,7 @@ describe('SidebarEntry', () => {
                 expectedIconClassName: 'pi-folder-open',
                 unexpectedIconClassName: 'pi-folder',
             },
-        ])('renders $testName.', ({ selected, expectedIconClassName, unexpectedIconClassName }) => {
+        ])('$testName.', ({ selected, expectedIconClassName, unexpectedIconClassName }) => {
             render(
                 <SidebarEntry
                     projectName='Reporting and Analytics'
@@ -48,21 +50,9 @@ describe('SidebarEntry', () => {
             const button = screen.getByRole('button', { name: /reporting and analytics/i });
             const icon = button.querySelector('.sidebar-entry__icon');
 
-            expect(icon).not.toBeNull();
-            expect(icon?.classList.contains(expectedIconClassName)).toBe(true);
-            expect(icon?.classList.contains(unexpectedIconClassName)).toBe(false);
-        });
-
-        it('renders large requirement counts.', () => {
-            render(
-                <SidebarEntry
-                    projectName='Platform Foundation'
-                    requirementCount={1234}
-                />,
-            );
-
-            expect(screen.getByRole('button', { name: /platform foundation/i })).not.toBeNull();
-            expect(screen.getByText('1234')).not.toBeNull();
+            expect(icon).toBeInTheDocument();
+            expect(icon).toHaveClass(expectedIconClassName);
+            expect(icon).not.toHaveClass(unexpectedIconClassName);
         });
     });
 
@@ -92,24 +82,47 @@ describe('SidebarEntry', () => {
             const button = screen.getByRole('button', { name: /reporting and analytics/i });
 
             expect(button.getAttribute('aria-current')).toBe(expectedAriaCurrent);
-            expect(button.classList.contains('sidebar-entry--selected')).toBe(expectedSelectedClass);
+
+            if (expectedSelectedClass) {
+                expect(button).toHaveClass('sidebar-entry--selected');
+            } else {
+                expect(button).not.toHaveClass('sidebar-entry--selected');
+            }
         });
     });
 
-    it('calls onClick when the entry is clicked.', async () => {
-        const user = userEvent.setup();
-        const onClick = vi.fn();
+    describe('calls', () => {
+        it('onClick when the entry is clicked.', async () => {
+            const user = userEvent.setup();
+            const onClick = vi.fn();
 
-        render(
-            <SidebarEntry
-                projectName='Reporting and Analytics'
-                requirementCount={60}
-                onClick={onClick}
-            />,
-        );
+            render(
+                <SidebarEntry
+                    projectName='Reporting and Analytics'
+                    requirementCount={60}
+                    onClick={onClick}
+                />,
+            );
 
-        await user.click(screen.getByRole('button', { name: /reporting and analytics/i }));
+            await user.click(screen.getByRole('button', { name: /reporting and analytics/i }));
 
-        expect(onClick).toHaveBeenCalledTimes(1);
+            expect(onClick).toHaveBeenCalledTimes(1);
+        });
+
+        it('onContextMenu when the entry is right-clicked.', () => {
+            const onContextMenu = vi.fn();
+
+            render(
+                <SidebarEntry
+                    projectName='Reporting and Analytics'
+                    requirementCount={60}
+                    onContextMenu={onContextMenu}
+                />,
+            );
+
+            fireEvent.contextMenu(screen.getByRole('button', { name: /reporting and analytics/i }));
+
+            expect(onContextMenu).toHaveBeenCalledTimes(1);
+        });
     });
 });

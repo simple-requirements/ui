@@ -1,22 +1,18 @@
-.tab {
-    --tab-close-button-size: 2.6rem;
-    --tab-close-button-gap: 1.2rem;
+@use '../../../styles/UiMixins' as ui;
 
+.tab {
     min-inline-size: 14rem;
     max-inline-size: 28rem;
     block-size: var(--tab-bar-tab-height);
-    box-sizing: border-box;
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    gap: var(--tab-close-button-gap);
+    column-gap: 1.2rem;
     padding-block: 0.35rem;
     padding-inline: 1.2rem 0.7rem;
-    border: 0;
-    border-radius: 0;
     background: var(--color-app-surface);
     color: var(--color-app-text-muted);
     overflow: hidden;
-    box-shadow: none;
 
     &:hover {
         background: var(--color-app-hover-background);
@@ -33,77 +29,39 @@
         font-weight: 700;
     }
 
-    &__select-button {
-        flex: 1 1 auto;
+    &__select-button.p-button {
+        @include ui.transparent-button;
+
         min-inline-size: 0;
         block-size: 100%;
         justify-content: flex-start;
         padding: 0;
-        border: 0;
-        border-radius: 0;
-        background: transparent;
-        color: inherit;
-        box-shadow: none;
-        overflow: hidden;
-    }
-
-    &__select-button:enabled:hover,
-    &__select-button:enabled:active,
-    &__select-button:focus {
-        border: 0;
-        background: transparent;
-        color: inherit;
-        box-shadow: none;
-    }
-
-    &__select-button:focus-visible {
-        outline: 0.2rem solid var(--color-app-active-border);
-        outline-offset: 0.2rem;
-        box-shadow: none;
     }
 
     &__label {
-        min-inline-size: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        @include ui.text-ellipsis;
+
         color: inherit;
     }
 
-    &__close-button {
-        flex: 0 0 var(--tab-close-button-size);
-        inline-size: var(--tab-close-button-size);
-        min-inline-size: var(--tab-close-button-size);
-        block-size: var(--tab-close-button-size);
+    &__close-button.p-button {
+        @include ui.transparent-button;
+
+        inline-size: 2.6rem;
+        min-inline-size: 2.6rem;
+        block-size: 2.6rem;
         padding: 0;
-        border: 0;
-        border-radius: 0;
-        background: transparent;
         color: var(--color-app-text-muted);
-        box-shadow: none;
     }
 
-    &__close-button:enabled:hover {
-        border: 0;
+    &__close-button.p-button:enabled:hover {
         background: var(--color-app-hover-background);
         color: var(--color-app-text);
-        box-shadow: none;
     }
 
-    &__close-button:enabled:active {
+    &__close-button.p-button:enabled:active {
         background: var(--color-app-active-background);
         color: var(--color-app-text);
-        box-shadow: none;
-    }
-
-    &__close-button:focus {
-        box-shadow: none;
-    }
-
-    &__close-button:focus-visible {
-        outline: 0.2rem solid var(--color-app-active-border);
-        outline-offset: 0.2rem;
-        box-shadow: none;
     }
 
     &__close-icon {

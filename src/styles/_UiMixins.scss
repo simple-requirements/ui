@@ -1,0 +1,107 @@
+@mixin focus-ring($color: var(--color-app-active-border), $offset: 0.2rem) {
+    outline: 0.2rem solid $color;
+    outline-offset: $offset;
+    box-shadow: none;
+}
+
+@mixin text-ellipsis {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@mixin prime-button-reset {
+    border-radius: 0;
+    box-shadow: none;
+
+    &:focus {
+        box-shadow: none;
+    }
+
+    &:focus-visible {
+        @include focus-ring;
+    }
+}
+
+@mixin primary-button {
+    @include prime-button-reset;
+
+    border: 0;
+    background: var(--color-primary-400);
+    color: white;
+
+    &:enabled:hover {
+        border: 0;
+        background: var(--color-primary-500);
+        color: white;
+        box-shadow: none;
+    }
+
+    &:enabled:active {
+        background: var(--color-primary-600);
+        color: white;
+        transform: translateY(0.1rem);
+        box-shadow: none;
+    }
+}
+
+@mixin outline-button {
+    @include prime-button-reset;
+
+    color: var(--color-primary-500);
+    border-color: var(--color-primary-400);
+    background: transparent;
+
+    &:enabled:hover {
+        background: var(--color-primary-100);
+        border-color: var(--color-primary-500);
+        color: var(--color-primary-600);
+        box-shadow: none;
+    }
+
+    &:enabled:active {
+        background: var(--color-primary-200);
+        border-color: var(--color-primary-600);
+        color: var(--color-primary-600);
+        transform: translateY(0.1rem);
+        box-shadow: none;
+    }
+}
+
+@mixin primary-ghost-button {
+    @include prime-button-reset;
+
+    border: 0;
+    background: transparent;
+    color: var(--color-primary-400);
+
+    &:enabled:hover {
+        border: 0;
+        background: var(--color-primary-100);
+        color: var(--color-primary-500);
+        box-shadow: none;
+    }
+
+    &:enabled:active {
+        background: var(--color-primary-200);
+        color: var(--color-primary-600);
+        box-shadow: none;
+    }
+}
+
+@mixin transparent-button {
+    @include prime-button-reset;
+
+    border: 0;
+    background: transparent;
+    color: inherit;
+
+    &:enabled:hover,
+    &:enabled:active {
+        border: 0;
+        background: transparent;
+        color: inherit;
+        box-shadow: none;
+    }
+}

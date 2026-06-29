@@ -1,62 +1,57 @@
-.sidebar-entry {
+@use '../../../styles/UiMixins' as ui;
+
+.sidebar-entry.p-button {
+    @include ui.prime-button-reset;
+
     inline-size: 100%;
     min-block-size: 3.6rem;
     justify-content: flex-start;
     padding-inline: 1rem;
     border-color: transparent;
-    border-radius: 0;
     background: transparent;
     color: var(--color-app-text);
-    box-shadow: none;
 
-    &:hover {
+    &:enabled:hover {
         background: var(--color-app-hover-background);
         border-color: var(--color-app-border);
         color: var(--color-app-text);
-    }
-
-    &:focus-visible {
-        outline: 0.2rem solid var(--color-app-active-border);
-        outline-offset: 0.2rem;
         box-shadow: none;
     }
 
-    &--selected {
+    &.sidebar-entry--selected {
         background: var(--color-app-active-background);
         border-color: var(--color-app-active-border);
         color: var(--color-app-text);
     }
+}
 
-    &__content {
-        inline-size: 100%;
-        min-inline-size: 0;
-        display: grid;
-        grid-template-columns: auto minmax(0, 1fr) auto;
-        align-items: center;
-        gap: 0.8rem;
-    }
+.sidebar-entry__content {
+    inline-size: 100%;
+    min-inline-size: 0;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.8rem;
+}
 
-    &__icon {
-        font-size: 1.6rem;
-        color: var(--color-primary-500);
-    }
+.sidebar-entry__icon {
+    font-size: 1.6rem;
+    color: var(--color-primary-500);
+}
 
-    &__label {
-        min-inline-size: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        text-align: start;
-    }
+.sidebar-entry__label {
+    @include ui.text-ellipsis;
 
-    &__badge.p-badge {
-        min-inline-size: 4.8rem;
-        block-size: 2.8rem;
-        padding-inline: 0.8rem;
-        justify-self: end;
-        font-size: 1.4rem;
-        line-height: 2.8rem;
-        background: var(--color-primary-400);
-        color: white;
-    }
+    text-align: start;
+}
+
+.sidebar-entry__badge.p-badge {
+    min-inline-size: 4.8rem;
+    block-size: 2.8rem;
+    padding-inline: 0.8rem;
+    justify-self: end;
+    font-size: 1.4rem;
+    line-height: 2.8rem;
+    background: var(--color-primary-400);
+    color: white;
 }

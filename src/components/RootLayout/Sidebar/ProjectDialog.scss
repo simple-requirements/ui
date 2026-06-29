@@ -1,3 +1,5 @@
+@use '../../../styles/UiMixins' as ui;
+
 .project-dialog {
     inline-size: min(56rem, calc(100vw - 3.2rem));
     min-block-size: 30rem;
@@ -37,7 +39,7 @@
         color: var(--color-app-text);
     }
 
-    &__input {
+    &__input.p-inputtext {
         inline-size: 100%;
         block-size: 4.4rem;
         padding-inline: 1rem;
@@ -46,7 +48,7 @@
         box-shadow: none;
     }
 
-    &__input--invalid {
+    &__input--invalid.p-inputtext {
         border-color: var(--color-primary-600);
     }
 
@@ -66,40 +68,18 @@
         gap: 1rem;
     }
 
-    &__button {
+    &__button.p-button {
         block-size: 4rem;
         padding-inline: 1.4rem;
-        border-radius: 0;
         font-size: 1.5rem;
-        box-shadow: none;
         white-space: nowrap;
     }
 
-    &__button--cancel {
-        color: var(--color-primary-500);
-        border-color: var(--color-primary-400);
-        background: transparent;
+    &__button--cancel.p-button {
+        @include ui.outline-button;
     }
 
-    &__button--cancel:enabled:hover {
-        background: var(--color-primary-100);
-        border-color: var(--color-primary-500);
-        color: var(--color-primary-600);
-    }
-
-    &__button--submit {
-        border: 0;
-        background: var(--color-primary-400);
-        color: white;
-    }
-
-    &__button--submit:enabled:hover {
-        background: var(--color-primary-500);
-        color: white;
-    }
-
-    &__button--submit:enabled:active {
-        background: var(--color-primary-600);
-        color: white;
+    &__button--submit.p-button {
+        @include ui.primary-button;
     }
 }

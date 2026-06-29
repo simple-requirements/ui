@@ -1,0 +1,39 @@
+@use '../../styles/UiMixins' as ui;
+
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: grid;
+    place-items: center;
+    padding: 2rem;
+    background: rgb(255 255 255 / 92%);
+    color: var(--color-app-text);
+
+    &__panel {
+        inline-size: min(42rem, calc(100vw - 3.2rem));
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.6rem;
+        padding: 2.4rem;
+        background: var(--color-app-surface);
+        border: 0.1rem solid var(--color-app-border);
+        box-shadow: 0 0.8rem 2rem rgb(0 0 0 / 18%);
+        text-align: center;
+    }
+
+    &__message {
+        margin: 0;
+        font-size: 2rem;
+        line-height: 1.4;
+    }
+
+    &__button.p-button {
+        @include ui.primary-button;
+
+        block-size: 4rem;
+        padding-inline: 1.6rem;
+        font-size: 1.5rem;
+    }
+}

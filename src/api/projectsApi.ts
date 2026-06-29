@@ -1,6 +1,26 @@
-import { createProject, updateProject } from '@/api/generated/projects/projects';
+import { z } from 'zod';
+
+import { createProject, listProjects, updateProject } from '@/api/generated/projects/projects';
+
+export const projectSchema = z.object({
+    id: z.uuid(),
+    name: z.string().min(1),
+    createdAt: z.iso.datetime(),
+    updatedAt: z.iso.datetime(),
+    requirementCount: z.number().int().nonnegative().default(0),
+});
+
+export type Project = z.infer<typeof projectSchema>;
+
+const projectsResponseSchema = z.array(projectSchema);
 
 export type ProjectNameRequest = Readonly<{ name: string }>;
+
+export async function listProjectsRequest(): Promise<Project[]> {
+    const response = await listProjects();
+
+    return projectsResponseSchema.parse(response.data);
+}
 
 export async function createProjectRequest(data: ProjectNameRequest): Promise<void> {
     await createProject(data);

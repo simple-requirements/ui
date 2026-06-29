@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router';
 
 import { ActionBar } from '@/components/RootLayout/ActionBar';
+import { LoadingOverlay } from '@/components/RootLayout/LoadingOverlay';
 import { Sidebar } from '@/components/RootLayout/Sidebar/Sidebar';
 import { TabBar } from '@/components/RootLayout/TabBar/TabBar';
 
@@ -26,6 +27,8 @@ export function RootLayout() {
                 aria-label='Workspace content'>
                 <Outlet />
             </section>
+
+            <LoadingOverlay />
         </main>
     );
 }

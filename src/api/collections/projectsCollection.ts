@@ -1,21 +1,11 @@
 import { createCollection } from '@tanstack/react-db';
 import { queryCollectionOptions } from '@tanstack/query-db-collection';
-import { z } from 'zod';
 
 import { queryClient } from '@/api/queryClient';
-import { getListProjectsQueryKey, listProjects } from '@/api/generated/projects/projects';
+import { getListProjectsQueryKey } from '@/api/generated/projects/projects';
+import { listProjectsRequest, projectSchema, type Project } from '@/api/projectsApi';
 
-const apiProjectSchema = z.object({
-    id: z.uuid(),
-    name: z.string().min(1),
-    createdAt: z.iso.datetime(),
-    updatedAt: z.iso.datetime(),
-    requirementCount: z.number().int().nonnegative().default(0),
-});
-
-export type SidebarProject = z.infer<typeof apiProjectSchema>;
-
-const projectsResponseSchema = z.array(apiProjectSchema);
+export type SidebarProject = Project;
 
 export const projectsCollection = createCollection(
     queryCollectionOptions({
@@ -23,12 +13,7 @@ export const projectsCollection = createCollection(
         queryKey: getListProjectsQueryKey(),
         queryClient,
         getKey: (project) => project.id,
-        schema: apiProjectSchema,
-
-        queryFn: async () => {
-            const response = await listProjects();
-
-            return projectsResponseSchema.parse(response.data);
-        },
+        schema: projectSchema,
+        queryFn: listProjectsRequest,
     }),
 );

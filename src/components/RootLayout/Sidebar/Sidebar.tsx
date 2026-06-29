@@ -33,7 +33,7 @@ export function Sidebar() {
     const [projectDialogState, setProjectDialogState] = useState<ProjectDialogState>();
     const [contextMenuProjectId, setContextMenuProjectId] = useState<string>();
 
-    const { data: projects, isLoading } = useLiveQuery((query) => query.from({ projects: projectsCollection }));
+    const { data: projects } = useLiveQuery((query) => query.from({ projects: projectsCollection }));
 
     const createProjectMutation = useMutation({
         mutationFn: async (formData: ProjectDialogSubmitData): Promise<void> => {
@@ -173,11 +173,9 @@ export function Sidebar() {
             <nav
                 className='sidebar__project-navigation'
                 aria-label='Project list'>
-                {isLoading && <p className='sidebar__status'>Loading projects …</p>}
+                {sortedProjects.length === 0 && <p className='sidebar__status'>No projects available.</p>}
 
-                {!isLoading && sortedProjects.length === 0 && <p className='sidebar__status'>No projects available.</p>}
-
-                {!isLoading && sortedProjects.length > 0 && (
+                {sortedProjects.length > 0 && (
                     <ul className='sidebar__project-list'>
                         {sortedProjects.map((project, index) => (
                             <li key={project.id}>

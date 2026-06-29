@@ -2,6 +2,7 @@ import '@testing-library/jest-dom/vitest';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import type { PropsWithChildren, ReactElement } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -126,7 +127,7 @@ describe('Sidebar', () => {
             const projectButtons = within(navigation).getAllByRole('button');
 
             const projectNames = projectButtons.map(
-                (button) => button.querySelector('.sidebar-entry__label')?.textContent?.trim() ?? '',
+                (button) => button.querySelector('.sidebar-entry__label')?.textContent.trim() ?? '',
             );
 
             expect(projectNames).toEqual(['Alpha Project', 'Beta Project', 'Zeta Project']);
@@ -169,6 +170,32 @@ describe('Sidebar', () => {
     });
 
     describe('opens', () => {
+        it('a project when it is clicked.', async () => {
+            const user = userEvent.setup();
+
+            mockUseLiveQuery({
+                data: [
+                    createProject({ id: 'project-zeta', name: 'Zeta Project', requirementCount: 2 }),
+                    createProject({ id: 'project-alpha', name: 'Alpha Project', requirementCount: 4 }),
+                    createProject({ id: 'project-beta', name: 'Beta Project', requirementCount: 7 }),
+                ],
+            });
+
+            renderSidebar();
+
+            const alphaButton = screen.getByRole('button', { name: /alpha project/i });
+            const betaButton = screen.getByRole('button', { name: /beta project/i });
+            const zetaButton = screen.getByRole('button', { name: /zeta project/i });
+
+            await user.click(betaButton);
+
+            expect(betaButton).toHaveAttribute('aria-current', 'page');
+            expect(betaButton).toHaveClass('sidebar-entry--selected');
+
+            expect(alphaButton).not.toHaveAttribute('aria-current');
+            expect(zetaButton).not.toHaveAttribute('aria-current');
+        });
+
         it('the context menu when a project is right-clicked.', () => {
             mockUseLiveQuery({
                 data: [createProject({ id: 'project-alpha', name: 'Alpha Project', requirementCount: 4 })],

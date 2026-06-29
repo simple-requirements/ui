@@ -9,6 +9,7 @@ import { SidebarEntry } from '@/components/RootLayout/Sidebar/SidebarEntry';
 afterEach(() => {
     cleanup();
     vi.clearAllMocks();
+    vi.useRealTimers();
 });
 
 describe('SidebarEntry', () => {

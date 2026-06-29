@@ -2,9 +2,11 @@ import { Badge } from 'primereact/badge';
 import { Button } from 'primereact/button';
 import type { MouseEventHandler } from 'react';
 
+import { Tooltip } from '@/components/Tooltip';
+
 import '@/components/RootLayout/Sidebar/SidebarEntry.scss';
 
-export type SidebarEntryProps = Readonly<{
+type Props = Readonly<{
     projectName: string;
     requirementCount: number;
     selected?: boolean;
@@ -26,26 +28,31 @@ export function SidebarEntry({
     selected = false,
     onClick,
     onContextMenu,
-}: SidebarEntryProps) {
+}: Props) {
     return (
-        <Button
-            outlined
-            type='button'
-            aria-current={selected ? 'page' : undefined}
-            onClick={onClick}
-            onContextMenu={onContextMenu}
-            pt={{ root: { className: getSidebarEntryClassName(selected) } }}>
-            <span className='sidebar-entry__content'>
-                <i
-                    className={getProjectIconClassName(selected)}
-                    aria-hidden='true'
-                />
-                <span className='sidebar-entry__label'>{projectName}</span>
-                <Badge
-                    value={requirementCount}
-                    className='sidebar-entry__badge'
-                />
-            </span>
-        </Button>
+        <Tooltip content={projectName}>
+            {(tooltipTriggerProps) => (
+                <Button
+                    outlined
+                    type='button'
+                    aria-current={selected ? 'page' : undefined}
+                    onClick={onClick}
+                    onContextMenu={onContextMenu}
+                    pt={{ root: { className: getSidebarEntryClassName(selected) } }}
+                    {...tooltipTriggerProps}>
+                    <span className='sidebar-entry__content'>
+                        <i
+                            className={getProjectIconClassName(selected)}
+                            aria-hidden='true'
+                        />
+                        <span className='sidebar-entry__label'>{projectName}</span>
+                        <Badge
+                            value={requirementCount}
+                            className='sidebar-entry__badge'
+                        />
+                    </span>
+                </Button>
+            )}
+        </Tooltip>
     );
 }

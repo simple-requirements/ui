@@ -32,6 +32,7 @@ export function Sidebar() {
 
     const [projectDialogState, setProjectDialogState] = useState<ProjectDialogState>();
     const [contextMenuProjectId, setContextMenuProjectId] = useState<string>();
+    const [selectedProjectId, setSelectedProjectId] = useState<string>();
 
     const { data: projects } = useLiveQuery((query) => query.from({ projects: projectsCollection }));
 
@@ -58,6 +59,8 @@ export function Sidebar() {
     });
 
     const sortedProjects = [...projects].sort((left, right) => left.name.localeCompare(right.name));
+    const activeProjectId =
+        sortedProjects.some((project) => project.id === selectedProjectId) ? selectedProjectId : sortedProjects[0]?.id;
 
     const projectDialogVisible = projectDialogState !== undefined;
     const projectDialogMode = projectDialogState?.mode ?? 'create';
@@ -103,6 +106,10 @@ export function Sidebar() {
 
     function handleSynchronizeProjects(): void {
         void queryClient.invalidateQueries({ queryKey: getListProjectsQueryKey() });
+    }
+
+    function handleSelectProject(projectId: string): void {
+        setSelectedProjectId(projectId);
     }
 
     function handleProjectContextMenu(projectId: string, event: MouseEvent<HTMLButtonElement>): void {
@@ -177,12 +184,13 @@ export function Sidebar() {
 
                 {sortedProjects.length > 0 && (
                     <ul className='sidebar__project-list'>
-                        {sortedProjects.map((project, index) => (
+                        {sortedProjects.map((project) => (
                             <li key={project.id}>
                                 <SidebarEntry
                                     projectName={project.name}
                                     requirementCount={project.requirementCount}
-                                    selected={index === 0}
+                                    selected={project.id === activeProjectId}
+                                    onClick={() => handleSelectProject(project.id)}
                                     onContextMenu={(event) => handleProjectContextMenu(project.id, event)}
                                 />
                             </li>

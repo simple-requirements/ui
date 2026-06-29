@@ -1,0 +1,24 @@
+@use '../styles/UiMixins' as ui;
+
+.tooltip {
+    position: relative;
+    display: block;
+    inline-size: 100%;
+}
+
+.tooltip__content {
+    @include ui.text-ellipsis;
+
+    position: absolute;
+    inset-block-start: calc(100% + 0.4rem);
+    inset-inline-start: 1rem;
+    z-index: 20;
+    max-inline-size: 24rem;
+    padding: 0.4rem 0.8rem;
+    border: 0.1rem solid var(--color-app-border-strong);
+    border-radius: 0.4rem;
+    background: var(--color-app-text);
+    color: var(--color-app-surface);
+    box-shadow: 0 0.4rem 1rem rgb(0 0 0 / 20%);
+    pointer-events: none;
+}

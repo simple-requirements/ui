@@ -35,3 +35,32 @@ export const CreateProjectResponse = zod.object({
   "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the project was created.'),
   "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the project was last updated.')
 })
+
+
+/**
+ * @summary Rename a project.
+ */
+export const RenameProjectParams = zod.object({
+  "id": zod.string()
+})
+
+export const RenameProjectBody = zod.object({
+  "name": zod.string().describe('New human-readable project name.')
+})
+
+export const RenameProjectResponse = zod.object({
+  "id": zod.string().describe('Stable project identifier.'),
+  "name": zod.string().describe('Human-readable project name.'),
+  "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the project was created.'),
+  "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the project was last updated.')
+})
+
+
+/**
+ * @summary Delete a project.
+ */
+export const DeleteProjectParams = zod.object({
+  "id": zod.string()
+})
+
+export const DeleteProjectResponse = zod.void()

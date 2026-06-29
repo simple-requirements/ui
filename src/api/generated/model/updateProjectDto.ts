@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export * from './createProjectDto';
-export * from './projectResponseDto';
-export * from './updateProjectDto';
+export interface UpdateProjectDto {
+  /** New human-readable project name. */
+  name: string;
+}

@@ -94,7 +94,7 @@ function getProjectLabel(page: Page, projectName: string) {
 }
 
 function getVisibleProjectLabels(page: Page) {
-    return getProjectList(page).locator('.sidebar-entry__label');
+    return getProjectList(page).locator('.expandable-navigation-item__label');
 }
 
 function getProjectButton(page: Page, projectName: string) {

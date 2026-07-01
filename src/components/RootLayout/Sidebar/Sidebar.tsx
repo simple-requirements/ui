@@ -2,22 +2,31 @@ import { useLiveQuery } from '@tanstack/react-db';
 import { useMutation } from '@tanstack/react-query';
 import type { ContextMenu } from 'primereact/contextmenu';
 import type { MouseEvent } from 'react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { matchPath, useLocation, useNavigate } from 'react-router';
 
 import { projectsCollection, type SidebarProject } from '@/api/collections/projectsCollection';
 import { getListProjectsQueryKey } from '@/api/generated/projects/projects';
 import { createProjectRequest, updateProjectRequest } from '@/api/projectsApi';
 import { queryClient } from '@/api/queryClient';
+import { ExpandableNavigationItem } from '@/components/Navigation/ExpandableNavigationItem';
 import { ActionButton } from '@/components/RootLayout/Sidebar/ActionButton';
 import { ProjectDialog, type ProjectDialogSubmitData } from '@/components/RootLayout/Sidebar/ProjectDialog';
 import { SidebarContextMenu } from '@/components/RootLayout/Sidebar/SidebarContextMenu';
-import { SidebarEntry } from '@/components/RootLayout/Sidebar/SidebarEntry';
+import {
+    getProjectCategoriesRoute,
+    getProjectRequirementsRoute,
+    getProjectRoute,
+    type ProjectSubRoute,
+} from '@/router/projectRoutes';
 
 import '@/components/RootLayout/Sidebar/Sidebar.scss';
 
 type ProjectDialogState = Readonly<{ mode: 'create' }> | Readonly<{ mode: 'rename'; project: SidebarProject }>;
 
 type UpdateProjectMutationVariables = Readonly<{ projectId: string; formData: ProjectDialogSubmitData }>;
+
+type ActiveProjectRoute = Readonly<{ projectId?: string; subRoute?: ProjectSubRoute }>;
 
 function getErrorMessage(error: unknown): string {
     if (error instanceof Error) {
@@ -27,12 +36,40 @@ function getErrorMessage(error: unknown): string {
     return 'The project could not be saved.';
 }
 
+function getActiveProjectRoute(pathname: string): ActiveProjectRoute {
+    const requirementsRouteMatch = matchPath('/projects/:projectId/requirements', pathname);
+
+    if (requirementsRouteMatch?.params.projectId !== undefined) {
+        return { projectId: requirementsRouteMatch.params.projectId, subRoute: 'requirements' };
+    }
+
+    const categoriesRouteMatch = matchPath('/projects/:projectId/categories', pathname);
+
+    if (categoriesRouteMatch?.params.projectId !== undefined) {
+        return { projectId: categoriesRouteMatch.params.projectId, subRoute: 'categories' };
+    }
+
+    const projectRouteMatch = matchPath('/projects/:projectId', pathname);
+
+    if (projectRouteMatch?.params.projectId !== undefined) {
+        return { projectId: projectRouteMatch.params.projectId };
+    }
+
+    return {};
+}
+
 export function Sidebar() {
     const contextMenuRef = useRef<ContextMenu | null>(null);
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const activeProjectRoute = getActiveProjectRoute(location.pathname);
 
     const [projectDialogState, setProjectDialogState] = useState<ProjectDialogState>();
     const [contextMenuProjectId, setContextMenuProjectId] = useState<string>();
-    const [selectedProjectId, setSelectedProjectId] = useState<string>();
+    const [expandedProjectId, setExpandedProjectId] = useState<string | undefined>(() =>
+        activeProjectRoute.subRoute === undefined ? undefined : activeProjectRoute.projectId,
+    );
 
     const { data: projects } = useLiveQuery((query) => query.from({ projects: projectsCollection }));
 
@@ -59,8 +96,6 @@ export function Sidebar() {
     });
 
     const sortedProjects = [...projects].sort((left, right) => left.name.localeCompare(right.name));
-    const activeProjectId =
-        sortedProjects.some((project) => project.id === selectedProjectId) ? selectedProjectId : sortedProjects[0]?.id;
 
     const projectDialogVisible = projectDialogState !== undefined;
     const projectDialogMode = projectDialogState?.mode ?? 'create';
@@ -70,6 +105,20 @@ export function Sidebar() {
     const projectDialogError =
         projectDialogState?.mode === 'rename' ? updateProjectMutation.error : createProjectMutation.error;
     const projectDialogErrorMessage = projectDialogError === null ? undefined : getErrorMessage(projectDialogError);
+
+    useEffect(() => {
+        if (activeProjectRoute.projectId === undefined) {
+            return;
+        }
+
+        if (activeProjectRoute.subRoute === undefined) {
+            setExpandedProjectId(undefined);
+
+            return;
+        }
+
+        setExpandedProjectId(activeProjectRoute.projectId);
+    }, [activeProjectRoute.projectId, activeProjectRoute.subRoute]);
 
     function getContextMenuProject(): SidebarProject | undefined {
         return sortedProjects.find((project) => project.id === contextMenuProjectId);
@@ -108,8 +157,20 @@ export function Sidebar() {
         void queryClient.invalidateQueries({ queryKey: getListProjectsQueryKey() });
     }
 
-    function handleSelectProject(projectId: string): void {
-        setSelectedProjectId(projectId);
+    function handleToggleProject(projectId: string): void {
+        if (expandedProjectId === projectId) {
+            setExpandedProjectId(undefined);
+            void navigate(getProjectRoute(projectId));
+
+            return;
+        }
+
+        setExpandedProjectId(projectId);
+        void navigate(getProjectRequirementsRoute(projectId));
+    }
+
+    function handleOpenProjectSubItem(projectId: string): void {
+        setExpandedProjectId(projectId);
     }
 
     function handleProjectContextMenu(projectId: string, event: MouseEvent<HTMLButtonElement>): void {
@@ -185,15 +246,33 @@ export function Sidebar() {
                 {sortedProjects.length > 0 && (
                     <ul className='sidebar__project-list'>
                         {sortedProjects.map((project) => (
-                            <li key={project.id}>
-                                <SidebarEntry
-                                    projectName={project.name}
-                                    requirementCount={project.requirementCount}
-                                    selected={project.id === activeProjectId}
-                                    onClick={() => handleSelectProject(project.id)}
-                                    onContextMenu={(event) => handleProjectContextMenu(project.id, event)}
-                                />
-                            </li>
+                            <ExpandableNavigationItem
+                                key={project.id}
+                                label={project.name}
+                                badgeValue={project.requirementCount}
+                                expanded={project.id === expandedProjectId}
+                                active={
+                                    project.id === activeProjectRoute.projectId
+                                    && activeProjectRoute.subRoute === undefined
+                                }
+                                subItems={[
+                                    {
+                                        id: 'requirements',
+                                        label: 'Requirements',
+                                        to: getProjectRequirementsRoute(project.id),
+                                        iconClassName: 'pi pi-list',
+                                    },
+                                    {
+                                        id: 'categories',
+                                        label: 'Categories',
+                                        to: getProjectCategoriesRoute(project.id),
+                                        iconClassName: 'pi pi-tags',
+                                    },
+                                ]}
+                                onToggle={() => handleToggleProject(project.id)}
+                                onSubItemClick={() => handleOpenProjectSubItem(project.id)}
+                                onContextMenu={(event) => handleProjectContextMenu(project.id, event)}
+                            />
                         ))}
                     </ul>
                 )}

@@ -3,7 +3,7 @@ import '@testing-library/jest-dom/vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import type { PropsWithChildren, ReactElement } from 'react';
+import { MemoryRouter } from 'react-router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { Sidebar } from '@/components/RootLayout/Sidebar/Sidebar';
@@ -38,14 +38,14 @@ function createTestQueryClient(): QueryClient {
     return new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
 }
 
-function TestQueryClientProvider({ children }: PropsWithChildren): ReactElement {
-    const queryClient = createTestQueryClient();
-
-    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
-}
-
-function renderSidebar(): ReturnType<typeof render> {
-    return render(<Sidebar />, { wrapper: TestQueryClientProvider });
+function renderSidebar(initialEntry = '/'): ReturnType<typeof render> {
+    return render(
+        <MemoryRouter initialEntries={[initialEntry]}>
+            <QueryClientProvider client={createTestQueryClient()}>
+                <Sidebar />
+            </QueryClientProvider>
+        </MemoryRouter>,
+    );
 }
 
 function createProject(overrides: Partial<TestProject>): TestProject {
@@ -127,7 +127,7 @@ describe('Sidebar', () => {
             const projectButtons = within(navigation).getAllByRole('button');
 
             const projectNames = projectButtons.map(
-                (button) => button.querySelector('.sidebar-entry__label')?.textContent.trim() ?? '',
+                (button) => button.querySelector('.expandable-navigation-item__label')?.textContent.trim() ?? '',
             );
 
             expect(projectNames).toEqual(['Alpha Project', 'Beta Project', 'Zeta Project']);
@@ -145,37 +145,12 @@ describe('Sidebar', () => {
         });
     });
 
-    describe('marks / does not mark', () => {
-        it('the first sorted project as selected.', () => {
-            mockUseLiveQuery({
-                data: [
-                    createProject({ id: 'project-zeta', name: 'Zeta Project', requirementCount: 2 }),
-                    createProject({ id: 'project-alpha', name: 'Alpha Project', requirementCount: 4 }),
-                    createProject({ id: 'project-beta', name: 'Beta Project', requirementCount: 7 }),
-                ],
-            });
-
-            renderSidebar();
-
-            const alphaButton = screen.getByRole('button', { name: /alpha project/i });
-            const betaButton = screen.getByRole('button', { name: /beta project/i });
-            const zetaButton = screen.getByRole('button', { name: /zeta project/i });
-
-            expect(alphaButton).toHaveAttribute('aria-current', 'page');
-            expect(alphaButton).toHaveClass('sidebar-entry--selected');
-
-            expect(betaButton).not.toHaveAttribute('aria-current');
-            expect(zetaButton).not.toHaveAttribute('aria-current');
-        });
-    });
-
-    describe('opens', () => {
-        it('a project when it is clicked.', async () => {
+    describe('opens / collapses', () => {
+        it('a project and activates the requirements sub item when the project is clicked.', async () => {
             const user = userEvent.setup();
 
             mockUseLiveQuery({
                 data: [
-                    createProject({ id: 'project-zeta', name: 'Zeta Project', requirementCount: 2 }),
                     createProject({ id: 'project-alpha', name: 'Alpha Project', requirementCount: 4 }),
                     createProject({ id: 'project-beta', name: 'Beta Project', requirementCount: 7 }),
                 ],
@@ -184,18 +159,78 @@ describe('Sidebar', () => {
             renderSidebar();
 
             const alphaButton = screen.getByRole('button', { name: /alpha project/i });
-            const betaButton = screen.getByRole('button', { name: /beta project/i });
-            const zetaButton = screen.getByRole('button', { name: /zeta project/i });
 
-            await user.click(betaButton);
+            await user.click(alphaButton);
 
-            expect(betaButton).toHaveAttribute('aria-current', 'page');
-            expect(betaButton).toHaveClass('sidebar-entry--selected');
-
+            expect(alphaButton).toHaveAttribute('aria-expanded', 'true');
             expect(alphaButton).not.toHaveAttribute('aria-current');
-            expect(zetaButton).not.toHaveAttribute('aria-current');
+
+            expect(screen.getByRole('link', { name: /requirements/i })).toHaveClass(
+                'expandable-navigation-item__sub-link--active',
+            );
+            expect(screen.getByRole('link', { name: /categories/i })).not.toHaveClass(
+                'expandable-navigation-item__sub-link--active',
+            );
         });
 
+        it('the categories route when the categories sub item is clicked.', async () => {
+            const user = userEvent.setup();
+
+            mockUseLiveQuery({
+                data: [createProject({ id: 'project-alpha', name: 'Alpha Project', requirementCount: 4 })],
+            });
+
+            renderSidebar();
+
+            await user.click(screen.getByRole('button', { name: /alpha project/i }));
+            await user.click(screen.getByRole('link', { name: /categories/i }));
+
+            expect(screen.getByRole('button', { name: /alpha project/i })).toHaveAttribute('aria-expanded', 'true');
+            expect(screen.getByRole('link', { name: /categories/i })).toHaveClass(
+                'expandable-navigation-item__sub-link--active',
+            );
+            expect(screen.getByRole('link', { name: /requirements/i })).not.toHaveClass(
+                'expandable-navigation-item__sub-link--active',
+            );
+        });
+
+        it('a project and marks the project itself as active when the project is clicked again.', async () => {
+            const user = userEvent.setup();
+
+            mockUseLiveQuery({
+                data: [createProject({ id: 'project-alpha', name: 'Alpha Project', requirementCount: 4 })],
+            });
+
+            renderSidebar();
+
+            const alphaButton = screen.getByRole('button', { name: /alpha project/i });
+
+            await user.click(alphaButton);
+            await user.click(alphaButton);
+
+            expect(alphaButton).toHaveAttribute('aria-expanded', 'false');
+            expect(alphaButton).toHaveAttribute('aria-current', 'page');
+            expect(alphaButton).toHaveClass('expandable-navigation-item__button--active');
+
+            expect(screen.queryByRole('link', { name: /requirements/i })).not.toBeInTheDocument();
+            expect(screen.queryByRole('link', { name: /categories/i })).not.toBeInTheDocument();
+        });
+
+        it('a project automatically when the current route points to a project sub item.', () => {
+            mockUseLiveQuery({
+                data: [createProject({ id: 'project-alpha', name: 'Alpha Project', requirementCount: 4 })],
+            });
+
+            renderSidebar('/projects/project-alpha/categories');
+
+            expect(screen.getByRole('button', { name: /alpha project/i })).toHaveAttribute('aria-expanded', 'true');
+            expect(screen.getByRole('link', { name: /categories/i })).toHaveClass(
+                'expandable-navigation-item__sub-link--active',
+            );
+        });
+    });
+
+    describe('opens', () => {
         it('the context menu when a project is right-clicked.', () => {
             mockUseLiveQuery({
                 data: [createProject({ id: 'project-alpha', name: 'Alpha Project', requirementCount: 4 })],

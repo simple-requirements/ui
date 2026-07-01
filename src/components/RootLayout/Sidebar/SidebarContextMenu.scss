@@ -1,12 +1,13 @@
+@use '../../../styles/UiMixins' as ui;
+
 .sidebar-context-menu.p-contextmenu {
+    @include ui.floating-surface;
+
     inline-size: max-content;
     min-inline-size: max-content;
     padding-block: 0.4rem;
     padding-inline: 0;
     border-radius: 0;
-    background: var(--color-app-surface);
-    border: 0.1rem solid var(--color-app-border);
-    box-shadow: 0 0.8rem 2rem rgb(0 0 0 / 18%);
 }
 
 .sidebar-context-menu.p-contextmenu .p-menuitem {
@@ -18,6 +19,8 @@
 }
 
 .sidebar-context-menu.p-contextmenu .p-menuitem-link {
+    @include ui.small-text;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -40,7 +43,7 @@
     margin-inline-start: 1.2rem;
     margin-inline-end: 0;
     color: var(--color-primary-500);
-    font-size: 1.4rem;
+    font-size: var(--ui-sub-icon-size);
 }
 
 .sidebar-context-menu.p-contextmenu .p-menuitem:not(.p-disabled) .p-menuitem-content:hover {
@@ -58,5 +61,5 @@
 .sidebar-context-menu.p-contextmenu .p-menuitem-separator {
     margin-block: 0.4rem;
     margin-inline: 0.8rem;
-    border-block-start: 0.1rem solid var(--color-app-border);
+    border-block-start: var(--ui-border);
 }

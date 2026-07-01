@@ -1,0 +1,27 @@
+@layer tokens {
+    :root {
+        --ui-border: 0.1rem solid var(--color-app-border);
+        --ui-border-strong: 0.1rem solid var(--color-app-border-strong);
+
+        --ui-border-radius-small: 0.4rem;
+
+        --ui-control-height: 3.6rem;
+        --ui-control-height-large: 4rem;
+        --ui-dialog-control-height: 4.4rem;
+
+        --ui-navigation-row-height: 3.6rem;
+        --ui-navigation-sub-row-height: 3.2rem;
+
+        --ui-icon-size: 1.6rem;
+        --ui-sub-icon-size: 1.4rem;
+
+        --ui-badge-min-width: 4.8rem;
+        --ui-badge-height: 2.8rem;
+
+        --ui-page-padding: 1.6rem;
+        --ui-panel-padding: 1.2rem 1.4rem;
+        --ui-panel-header-padding: 1.2rem 1.4rem;
+        --ui-status-padding: 1.2rem 1.4rem;
+        --ui-table-cell-padding: 0.8rem 1rem;
+    }
+}

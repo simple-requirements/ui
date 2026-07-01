@@ -6,14 +6,6 @@ $primary-colors: (
     600: rgb(19, 117, 235),
 );
 
-$secondary-gold-colors: (
-    100: rgb(255, 239, 182),
-    200: rgb(255, 227, 128),
-    400: rgb(255, 218, 84),
-    500: rgb(255, 209, 43),
-    600: rgb(255, 199, 0),
-);
-
 $app-colors: (
     background: rgb(255, 255, 255),
     surface: rgb(255, 255, 255),
@@ -24,22 +16,23 @@ $app-colors: (
     text: rgb(15, 23, 42),
     text-muted: rgb(71, 85, 105),
     active-background: var(--color-primary-100),
-    active-background-strong: var(--color-primary-200),
     active-border: var(--color-primary-400),
     hover-background: var(--color-primary-100),
-    accent: var(--color-primary-400),
-    accent-strong: var(--color-primary-600),
 );
 
-@mixin css-color-scale($name, $colors) {
-    @each $shade, $value in $colors {
-        --color-#{$name}-#{$shade}: #{$value};
-    }
-}
+$shadows: (
+    floating: 0 0.8rem 2rem rgb(0 0 0 / 18%),
+    tooltip: 0 0.4rem 1rem rgb(0 0 0 / 20%),
+    active-tab: inset 0 -0.2rem 0 var(--color-app-active-border),
+);
 
-@mixin css-color-map($name, $colors) {
-    @each $token, $value in $colors {
-        --color-#{$name}-#{$token}: #{$value};
+$gradients: (
+    loading-overlay: linear-gradient(rgb(255 255 255 / 92%), rgb(255 255 255 / 92%)),
+);
+
+@mixin css-token-map($prefix, $tokens) {
+    @each $token, $value in $tokens {
+        --#{$prefix}-#{$token}: #{$value};
     }
 }
 
@@ -47,10 +40,15 @@ $app-colors: (
     :root {
         --color-primary-source: var(--blue-400, rgb(96, 166, 250));
 
-        @include css-color-scale('primary', $primary-colors);
-        @include css-color-scale('gold', $secondary-gold-colors);
-        @include css-color-map('app', $app-colors);
+        @include css-token-map('color-primary', $primary-colors);
+        @include css-token-map('color-app', $app-colors);
+        @include css-token-map('shadow', $shadows);
+        @include css-token-map('gradient', $gradients);
 
+        /*
+         * PrimeReact compatibility tokens.
+         * Keep these even when they are not referenced directly by our SCSS.
+         */
         --primary-color: var(--color-primary-400);
         --primary-color-text: rgb(255, 255, 255);
 

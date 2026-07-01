@@ -1,6 +1,8 @@
+@use '../../../styles/UiMixins' as ui;
+
 .sidebar {
-    --sidebar-actions-button-height: 3.6rem;
-    --sidebar-actions-icon-button-size: 3.6rem;
+    --sidebar-actions-button-height: var(--ui-control-height);
+    --sidebar-actions-icon-button-size: var(--ui-control-height);
     --sidebar-actions-icon-size: 2rem;
 
     inline-size: var(--sidebar-width, 30rem);
@@ -9,7 +11,7 @@
     display: flex;
     flex-direction: column;
     background: var(--color-app-surface-muted);
-    border-inline-end: 0.1rem solid var(--color-app-border);
+    border-inline-end: var(--ui-border);
 
     &__actions {
         flex: 0 0 var(--layout-region-height, 6rem);
@@ -29,16 +31,14 @@
     }
 
     &__project-list {
+        @include ui.list-reset;
+
         display: flex;
         flex-direction: column;
         gap: 0.4rem;
-        margin: 0;
-        padding: 0;
-        list-style: none;
     }
 
     &__status {
-        padding: 0.8rem;
-        color: var(--color-app-text-muted);
+        @include ui.status-text(0.8rem);
     }
 }

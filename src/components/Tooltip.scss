@@ -8,6 +8,7 @@
 
 .tooltip__content {
     @include ui.text-ellipsis;
+    @include ui.small-text;
 
     position: absolute;
     inset-block-start: calc(100% + 0.4rem);
@@ -15,10 +16,10 @@
     z-index: 20;
     max-inline-size: 24rem;
     padding: 0.4rem 0.8rem;
-    border: 0.1rem solid var(--color-app-border-strong);
-    border-radius: 0.4rem;
+    border: var(--ui-border-strong);
+    border-radius: var(--ui-border-radius-small);
     background: var(--color-app-text);
     color: var(--color-app-surface);
-    box-shadow: 0 0.4rem 1rem rgb(0 0 0 / 20%);
+    box-shadow: var(--shadow-tooltip);
     pointer-events: none;
 }

@@ -1,4 +1,20 @@
 @layer font {
+    :root {
+        --font-size-very-small: 1.2rem;
+        --font-size-small: 1.4rem;
+        --font-size-paragraph: 1.6rem;
+
+        --font-size-h6: 1.6rem;
+        --font-size-h5: 1.8rem;
+        --font-size-h4: 2rem;
+        --font-size-h3: 2.4rem;
+        --font-size-h2: 2.8rem;
+
+        --line-height-small: 1.4;
+        --line-height-paragraph: 1.5;
+        --line-height-heading: 1.2;
+    }
+
     html {
         font-size: 62.5%;
     }
@@ -12,6 +28,7 @@
             BlinkMacSystemFont,
             'Segoe UI',
             sans-serif;
-        font-size: 1.6rem;
+        font-size: var(--font-size-paragraph);
+        line-height: var(--line-height-paragraph);
     }
 }

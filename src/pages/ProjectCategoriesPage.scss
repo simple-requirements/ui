@@ -1,9 +1,11 @@
+@use '../styles/UiMixins' as ui;
+
 .project-categories-page {
     block-size: 100%;
     min-block-size: 0;
-    padding: 1.6rem;
+    padding: var(--ui-page-padding);
     background: var(--color-app-background);
-    font-size: 1.4rem;
+    font-size: var(--font-size-small);
 }
 
 .project-categories-page__splitter.p-splitter {
@@ -17,34 +19,29 @@
     overflow: hidden;
 }
 
-.project-categories-page__list-panel,
+.project-categories-page__list-panel {
+    block-size: 100%;
+
+    @include ui.flex-column-panel;
+}
+
 .project-categories-page__details-panel {
     block-size: 100%;
-    min-block-size: 0;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    border: 0.1rem solid var(--color-app-border);
-    background: var(--color-app-surface);
+    padding: var(--ui-panel-padding);
+
+    @include ui.flex-column-panel(auto);
 }
 
 .project-categories-page__header {
-    flex: 0 0 auto;
-    padding: 1.2rem 1.4rem;
-    border-block-end: 0.1rem solid var(--color-app-border);
+    @include ui.panel-header;
 }
 
 .project-categories-page__title {
-    margin: 0;
-    font-size: 1.8rem;
-    line-height: 1.2;
-    color: var(--color-app-text);
+    @include ui.panel-title;
 }
 
 .project-categories-page__status {
-    padding: 1.2rem 1.4rem;
-    color: var(--color-app-text-muted);
-    font-size: 1.4rem;
+    @include ui.status-text;
 }
 
 .project-categories-page__table-wrapper {
@@ -54,29 +51,7 @@
 }
 
 .project-categories-page__table {
-    inline-size: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-    font-size: 1.4rem;
-
-    th,
-    td {
-        padding: 0.8rem 1rem;
-        border-block-end: 0.1rem solid var(--color-app-border);
-        text-align: start;
-        vertical-align: middle;
-        font-size: 1.4rem;
-        line-height: 1.4;
-    }
-
-    th {
-        position: sticky;
-        inset-block-start: 0;
-        z-index: 1;
-        background: var(--color-app-surface-muted);
-        color: var(--color-app-text);
-        font-weight: 600;
-    }
+    @include ui.compact-table;
 
     th:nth-child(1),
     td:nth-child(1) {
@@ -96,59 +71,45 @@
 }
 
 .project-categories-page__table-row {
-    cursor: pointer;
-
-    &:hover {
-        background: var(--color-app-hover-background);
-    }
-
-    &:focus-visible {
-        outline: 0.2rem solid var(--color-primary-500);
-        outline-offset: -0.2rem;
-    }
+    @include ui.clickable-row;
 
     &--selected {
-        background: var(--color-app-active-background);
+        @include ui.selected-row;
     }
-}
-
-.project-categories-page__details-panel {
-    padding: 1.2rem 1.4rem;
-    overflow: auto;
-    font-size: 1.4rem;
 }
 
 .project-categories-page__details-title {
     flex: 0 0 auto;
     margin: 0 0 1rem;
-    font-size: 1.6rem;
-    line-height: 1.2;
+    font-size: var(--font-size-h6);
+    line-height: var(--line-height-heading);
     color: var(--color-app-text);
 }
 
 .project-categories-page__details-list {
+    @include ui.small-text;
+
     display: grid;
     grid-template-columns: max-content minmax(0, 1fr);
     gap: 0.8rem 1.6rem;
     margin: 0;
-    font-size: 1.4rem;
 }
 
 .project-categories-page__details-row {
     display: contents;
 
     dt {
+        @include ui.small-text;
+
         color: var(--color-app-text-muted);
         font-weight: 600;
-        font-size: 1.4rem;
-        line-height: 1.4;
     }
 
     dd {
+        @include ui.small-text;
+
         min-inline-size: 0;
         margin: 0;
         color: var(--color-app-text);
-        font-size: 1.4rem;
-        line-height: 1.4;
     }
 }

@@ -14,8 +14,8 @@
 
     &__heading {
         margin: 0;
-        font-size: 2.4rem;
-        line-height: 1.2;
+        font-size: var(--font-size-h3);
+        line-height: var(--line-height-heading);
         color: var(--color-app-text);
     }
 
@@ -34,17 +34,17 @@
     }
 
     &__label {
-        font-size: 1.6rem;
+        font-size: var(--font-size-h6);
         font-weight: 600;
         color: var(--color-app-text);
     }
 
     &__input.p-inputtext {
         inline-size: 100%;
-        block-size: 4.4rem;
+        block-size: var(--ui-dialog-control-height);
         padding-inline: 1rem;
         border-radius: 0;
-        font-size: 1.6rem;
+        font-size: var(--font-size-paragraph);
         box-shadow: none;
     }
 
@@ -54,8 +54,8 @@
 
     &__message {
         margin: 0;
-        font-size: 1.5rem;
-        line-height: 1.4;
+        font-size: var(--font-size-small);
+        line-height: var(--line-height-small);
     }
 
     &__message--error {
@@ -69,9 +69,9 @@
     }
 
     &__button.p-button {
-        block-size: 4rem;
+        block-size: var(--ui-control-height-large);
         padding-inline: 1.4rem;
-        font-size: 1.5rem;
+        font-size: var(--font-size-small);
         white-space: nowrap;
     }
 

@@ -6,22 +6,7 @@
 }
 
 .expandable-navigation-item__button.p-button {
-    @include ui.prime-button-reset;
-
-    inline-size: 100%;
-    min-block-size: 3.6rem;
-    justify-content: flex-start;
-    padding-inline: 1rem;
-    border-color: transparent;
-    background: transparent;
-    color: var(--color-app-text);
-
-    &:enabled:hover {
-        background: var(--color-app-hover-background);
-        border-color: var(--color-app-border);
-        color: var(--color-app-text);
-        box-shadow: none;
-    }
+    @include ui.navigation-row-button;
 
     &.expandable-navigation-item__button--active {
         background: var(--color-app-active-background);
@@ -40,7 +25,7 @@
 }
 
 .expandable-navigation-item__icon {
-    font-size: 1.6rem;
+    font-size: var(--ui-icon-size);
     color: var(--color-primary-500);
 }
 
@@ -51,12 +36,12 @@
 }
 
 .expandable-navigation-item__badge.p-badge {
-    min-inline-size: 4.8rem;
-    block-size: 2.8rem;
+    min-inline-size: var(--ui-badge-min-width);
+    block-size: var(--ui-badge-height);
     padding-inline: 0.8rem;
     justify-self: end;
-    font-size: 1.4rem;
-    line-height: 2.8rem;
+    font-size: var(--font-size-small);
+    line-height: var(--ui-badge-height);
     background: var(--color-primary-400);
     color: white;
 }
@@ -78,24 +63,26 @@
 }
 
 .expandable-navigation-item__sub-list {
+    @include ui.list-reset;
+
     min-block-size: 0;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
-    margin: 0;
     padding: 0.3rem 0 0.4rem 2.8rem;
-    list-style: none;
 }
 
 .expandable-navigation-item__sub-link {
+    @include ui.small-text;
+
     display: flex;
     align-items: center;
     gap: 0.8rem;
-    min-block-size: 3.2rem;
+    min-block-size: var(--ui-navigation-sub-row-height);
     padding-inline: 0.8rem;
     border: 0.1rem solid transparent;
-    border-radius: 0.4rem;
+    border-radius: var(--ui-border-radius-small);
     color: var(--color-app-text);
     text-decoration: none;
 
@@ -112,6 +99,6 @@
 }
 
 .expandable-navigation-item__sub-icon {
-    font-size: 1.4rem;
+    font-size: var(--ui-sub-icon-size);
     color: var(--color-primary-500);
 }

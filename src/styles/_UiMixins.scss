@@ -11,6 +11,103 @@
     white-space: nowrap;
 }
 
+@mixin small-text {
+    font-size: var(--font-size-small);
+    line-height: var(--line-height-small);
+}
+
+@mixin list-reset {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+@mixin surface-panel($overflow: hidden) {
+    min-block-size: 0;
+    overflow: $overflow;
+    background: var(--color-app-surface);
+    border: var(--ui-border);
+}
+
+@mixin flex-column-panel($overflow: hidden) {
+    @include surface-panel($overflow);
+
+    display: flex;
+    flex-direction: column;
+}
+
+@mixin floating-surface(
+    $background: var(--color-app-surface),
+    $border: var(--ui-border),
+    $shadow: var(--shadow-floating)
+) {
+    background: $background;
+    border: $border;
+    box-shadow: $shadow;
+}
+
+@mixin panel-header {
+    flex: 0 0 auto;
+    padding: var(--ui-panel-header-padding);
+    border-block-end: var(--ui-border);
+}
+
+@mixin panel-title {
+    margin: 0;
+    font-size: var(--font-size-h5);
+    line-height: var(--line-height-heading);
+    color: var(--color-app-text);
+}
+
+@mixin status-text($padding: var(--ui-status-padding)) {
+    padding: $padding;
+    color: var(--color-app-text-muted);
+    font-size: var(--font-size-small);
+    line-height: var(--line-height-small);
+}
+
+@mixin compact-table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: var(--font-size-small);
+
+    th,
+    td {
+        @include small-text;
+
+        padding: var(--ui-table-cell-padding);
+        border-block-end: var(--ui-border);
+        text-align: start;
+        vertical-align: middle;
+    }
+
+    th {
+        position: sticky;
+        inset-block-start: 0;
+        z-index: 1;
+        background: var(--color-app-surface-muted);
+        color: var(--color-app-text);
+        font-weight: 600;
+    }
+}
+
+@mixin clickable-row {
+    cursor: pointer;
+
+    &:hover {
+        background: var(--color-app-hover-background);
+    }
+
+    &:focus-visible {
+        @include focus-ring(var(--color-primary-500), -0.2rem);
+    }
+}
+
+@mixin selected-row {
+    background: var(--color-app-active-background);
+}
+
 @mixin prime-button-reset {
     border-radius: 0;
     box-shadow: none;
@@ -21,6 +118,25 @@
 
     &:focus-visible {
         @include focus-ring;
+    }
+}
+
+@mixin navigation-row-button {
+    @include prime-button-reset;
+
+    inline-size: 100%;
+    min-block-size: var(--ui-navigation-row-height);
+    justify-content: flex-start;
+    padding-inline: 1rem;
+    border-color: transparent;
+    background: transparent;
+    color: var(--color-app-text);
+
+    &:enabled:hover {
+        background: var(--color-app-hover-background);
+        border-color: var(--color-app-border);
+        color: var(--color-app-text);
+        box-shadow: none;
     }
 }
 

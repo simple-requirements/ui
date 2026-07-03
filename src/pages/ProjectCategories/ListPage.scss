@@ -1,0 +1,105 @@
+@use '../../styles/UiMixins' as ui;
+
+.project-categories-list-page {
+    block-size: 100%;
+    min-block-size: 0;
+    padding: var(--ui-page-padding);
+    background: var(--color-app-background);
+    font-size: var(--font-size-small);
+}
+
+.project-categories-list-page__splitter.p-splitter {
+    block-size: 100%;
+    border: 0;
+    background: transparent;
+}
+
+.project-categories-list-page__splitter-panel.p-splitter-panel {
+    min-block-size: 0;
+    overflow: hidden;
+}
+
+.project-categories-list-page__list-panel {
+    block-size: 100%;
+
+    @include ui.flex-column-panel;
+}
+
+.project-categories-list-page__header {
+    @include ui.panel-header;
+}
+
+.project-categories-list-page__title {
+    @include ui.panel-title;
+}
+
+.project-categories-list-page__data-table.p-datatable {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    font-size: var(--font-size-small);
+}
+
+.project-categories-list-page__data-table.p-datatable .p-datatable-wrapper {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow: auto;
+}
+
+.project-categories-list-page__data-table.p-datatable .p-datatable-table {
+    table-layout: fixed;
+}
+
+.project-categories-list-page__data-table.p-datatable .p-datatable-thead > tr > th,
+.project-categories-list-page__data-table.p-datatable .p-datatable-tbody > tr > td {
+    @include ui.small-text;
+
+    padding: var(--ui-table-cell-padding);
+    border-block-end: var(--ui-border);
+    text-align: start;
+    vertical-align: middle;
+}
+
+.project-categories-list-page__data-table.p-datatable .p-datatable-thead > tr > th {
+    background: var(--color-app-surface-muted);
+    color: var(--color-app-text);
+    font-weight: 600;
+}
+
+.project-categories-list-page__data-table.p-datatable .p-datatable-tbody > tr.project-categories-list-page__table-row {
+    cursor: pointer;
+}
+
+.project-categories-list-page__data-table.p-datatable
+    .p-datatable-tbody
+    > tr.project-categories-list-page__table-row:hover {
+    background: var(--color-app-hover-background);
+}
+
+.project-categories-list-page__data-table.p-datatable
+    .p-datatable-tbody
+    > tr.project-categories-list-page__table-row:focus-visible {
+    @include ui.focus-ring(var(--color-primary-500), -0.2rem);
+}
+
+.project-categories-list-page__data-table.p-datatable
+    .p-datatable-tbody
+    > tr.project-categories-list-page__table-row--selected,
+.project-categories-list-page__data-table.p-datatable .p-datatable-tbody > tr.p-highlight {
+    background: var(--color-app-active-background);
+}
+
+.project-categories-list-page__key-column {
+    inline-size: 10rem;
+}
+
+.project-categories-list-page__type-column {
+    inline-size: 8rem;
+}
+
+.project-categories-list-page__requirements-column {
+    inline-size: 12rem;
+    text-align: end;
+}

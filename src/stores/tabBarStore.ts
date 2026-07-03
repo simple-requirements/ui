@@ -4,13 +4,9 @@ export type TabBarTab = Readonly<{ id: string; label: string; fixed?: boolean; c
 
 export type TabBarState = Readonly<{ openTabs: readonly TabBarTab[]; activeTabId: string | undefined }>;
 
-const initialOpenTabs: readonly TabBarTab[] = [
-    { id: 'workspace', label: 'Workspace', fixed: true, closable: false },
-    { id: 'project-overview', label: 'Project overview', closable: true },
-    { id: 'nfr-usab-0043', label: 'NFR-USAB-0043', closable: true },
-];
+const initialOpenTabs: readonly TabBarTab[] = [{ id: '/', label: 'Workspace', fixed: true, closable: false }];
 
-export const tabBarStore = new Store<TabBarState>({ openTabs: initialOpenTabs, activeTabId: 'workspace' });
+export const tabBarStore = new Store<TabBarState>({ openTabs: initialOpenTabs, activeTabId: '/' });
 
 function getNextActiveTabId(
     openTabsBeforeClose: readonly TabBarTab[],
@@ -19,19 +15,19 @@ function getNextActiveTabId(
 ): string | undefined {
     const closedTabIndex = openTabsBeforeClose.findIndex((tab) => tab.id === closedTabId);
 
-    if (closedTabIndex < remainingTabs.length) {
-        return remainingTabs[closedTabIndex].id;
+    const nextTabAtSamePosition = remainingTabs.at(closedTabIndex);
+
+    if (nextTabAtSamePosition !== undefined) {
+        return nextTabAtSamePosition.id;
     }
 
-    if (closedTabIndex > 0) {
-        return remainingTabs[closedTabIndex - 1].id;
+    const previousTab = closedTabIndex > 0 ? remainingTabs.at(closedTabIndex - 1) : undefined;
+
+    if (previousTab !== undefined) {
+        return previousTab.id;
     }
 
-    if (remainingTabs.length > 0) {
-        return remainingTabs[0].id;
-    }
-
-    return undefined;
+    return remainingTabs.at(0)?.id;
 }
 
 export function activateTab(tabId: string): void {
@@ -46,7 +42,19 @@ export function activateTab(tabId: string): void {
     });
 }
 
-export function closeTab(tabId: string): void {
+export function clearActiveTab(): void {
+    tabBarStore.setState((state) => {
+        if (state.activeTabId === undefined) {
+            return state;
+        }
+
+        return { ...state, activeTabId: undefined };
+    });
+}
+
+export function closeTab(tabId: string): TabBarTab | undefined {
+    let nextActiveTab: TabBarTab | undefined;
+
     tabBarStore.setState((state) => {
         const tabToClose = state.openTabs.find((tab) => tab.id === tabId);
 
@@ -55,16 +63,15 @@ export function closeTab(tabId: string): void {
         }
 
         const remainingTabs = state.openTabs.filter((tab) => tab.id !== tabId);
+        const nextActiveTabId =
+            state.activeTabId === tabId ? getNextActiveTabId(state.openTabs, remainingTabs, tabId) : state.activeTabId;
 
-        return {
-            ...state,
-            openTabs: remainingTabs,
-            activeTabId:
-                state.activeTabId === tabId ?
-                    getNextActiveTabId(state.openTabs, remainingTabs, tabId)
-                :   state.activeTabId,
-        };
+        nextActiveTab = remainingTabs.find((tab) => tab.id === nextActiveTabId);
+
+        return { ...state, openTabs: remainingTabs, activeTabId: nextActiveTabId };
     });
+
+    return nextActiveTab;
 }
 
 export function openTab(tab: TabBarTab): void {

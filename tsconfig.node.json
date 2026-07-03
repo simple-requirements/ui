@@ -13,7 +13,6 @@
             "vite/client",
             "vitest/globals"
         ],
-        "baseUrl": ".",
         "paths": {
             "@/*": [
                 "./src/*"
@@ -37,6 +36,14 @@
         "orval.config.ts",
         "test/components/**/*.spec.ts",
         "test/components/**/*.spec.tsx",
+        "test/api/**/*.spec.ts",
+        "test/api/**/*.spec.tsx",
+        "test/pages/**/*.spec.ts",
+        "test/pages/**/*.spec.tsx",
+        "test/router/**/*.spec.ts",
+        "test/router/**/*.spec.tsx",
+        "test/stores/**/*.spec.ts",
+        "test/stores/**/*.spec.tsx",
         "src/**/*.ts",
         "src/**/*.tsx",
         "src/**/*.d.ts"

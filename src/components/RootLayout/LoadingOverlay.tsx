@@ -1,18 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import { Button } from 'primereact/button';
-import { useEffect, useState } from 'react';
 
 import { getListProjectsQueryKey } from '@/api/generated/projects/projects';
 import { listProjectsRequest } from '@/api/projectsApi';
+import { useLoadingTimeout } from '@/hooks/useLoadingTimeout';
 
 import '@/components/RootLayout/LoadingOverlay.scss';
 
 const LOADING_TIMEOUT_MS = 10_000;
 
 export function LoadingOverlay() {
-    const [loadingTimedOut, setLoadingTimedOut] = useState(false);
-    const [loadingTimeoutResetKey, setLoadingTimeoutResetKey] = useState(0);
-
     const projectsQuery = useQuery({
         queryKey: getListProjectsQueryKey(),
         queryFn: listProjectsRequest,
@@ -21,27 +18,13 @@ export function LoadingOverlay() {
     });
 
     const projectsLoaded = projectsQuery.data !== undefined;
+    const loadingTimeout = useLoadingTimeout({ active: !projectsLoaded, timeoutMs: LOADING_TIMEOUT_MS });
 
-    useEffect(() => {
-        if (projectsLoaded) {
-            setLoadingTimedOut(false);
-
-            return;
-        }
-
-        const loadingTimeoutId = window.setTimeout(() => {
-            setLoadingTimedOut(true);
-        }, LOADING_TIMEOUT_MS);
-
-        return () => window.clearTimeout(loadingTimeoutId);
-    }, [projectsLoaded, loadingTimeoutResetKey]);
-
-    const networkErrorVisible = !projectsLoaded && (projectsQuery.isError || loadingTimedOut);
+    const networkErrorVisible = !projectsLoaded && (projectsQuery.isError || loadingTimeout.timedOut);
     const loadingVisible = !projectsLoaded && !networkErrorVisible;
 
     function handleReload(): void {
-        setLoadingTimedOut(false);
-        setLoadingTimeoutResetKey((currentResetKey) => currentResetKey + 1);
+        loadingTimeout.reset();
 
         void projectsQuery.refetch();
     }

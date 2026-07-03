@@ -1,0 +1,11 @@
+@use '../../styles/UiMixins' as ui;
+
+.inline-status {
+    @include ui.status-text;
+
+    margin: 0;
+}
+
+.inline-status--error {
+    color: var(--color-primary-600);
+}

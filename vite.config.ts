@@ -18,9 +18,9 @@ export default defineConfig({
         globals: true,
         coverage: {
             provider: 'istanbul',
-            reporter: ['text', 'html', 'lcov'],
+            reporter: ['text', 'html', 'clover'],
             include: ['src/**/*.{ts,tsx}'],
-            exclude: ['test/**/*.spec.{ts,tsx}', 'src/main.tsx', 'src/**/*.d.ts'],
+            exclude: ['test/**/*.spec.{ts,tsx}', 'src/main.tsx', 'src/**/*.d.ts', 'src/api/generated/**'],
         },
     },
     server: { host: '127.0.0.1', port: 5173 },

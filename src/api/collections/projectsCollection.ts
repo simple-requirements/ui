@@ -1,9 +1,9 @@
-import { createCollection } from '@tanstack/react-db';
 import { queryCollectionOptions } from '@tanstack/query-db-collection';
+import { createCollection } from '@tanstack/react-db';
 
-import { queryClient } from '@/api/queryClient';
 import { getListProjectsQueryKey } from '@/api/generated/projects/projects';
 import { listProjectsRequest, projectSchema, type Project } from '@/api/projectsApi';
+import { queryClient } from '@/api/queryClient';
 
 export type SidebarProject = Project;
 

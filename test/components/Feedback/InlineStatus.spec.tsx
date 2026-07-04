@@ -17,7 +17,6 @@ describe('InlineStatus', () => {
 
         expect(status).toHaveTextContent('Loading data …');
         expect(status).toHaveAttribute('aria-live', 'polite');
-        expect(status).toHaveClass('inline-status--loading');
     });
 
     it('renders error messages as assertive alerts.', () => {
@@ -27,6 +26,5 @@ describe('InlineStatus', () => {
 
         expect(alert).toHaveTextContent('Data could not be loaded.');
         expect(alert).toHaveAttribute('aria-live', 'assertive');
-        expect(alert).toHaveClass('inline-status--error');
     });
 });

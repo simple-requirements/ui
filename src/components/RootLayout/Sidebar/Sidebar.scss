@@ -5,7 +5,7 @@
     --sidebar-actions-icon-button-size: var(--ui-control-height);
     --sidebar-actions-icon-size: 2rem;
 
-    inline-size: var(--sidebar-width, 30rem);
+    inline-size: var(--layout-sidebar-width);
     block-size: 100%;
     overflow: hidden;
     display: flex;
@@ -14,12 +14,12 @@
     border-inline-end: var(--ui-border);
 
     &__actions {
-        flex: 0 0 var(--layout-region-height, 6rem);
+        flex: 0 0 var(--layout-region-height);
         display: flex;
         align-items: center;
-        gap: 0.8rem;
+        gap: var(--ui-space-sm);
         min-block-size: 0;
-        padding: 0.6rem 0.8rem;
+        padding: 0.6rem var(--ui-space-sm);
         background: var(--color-app-surface);
     }
 
@@ -27,7 +27,7 @@
         flex: 1 1 auto;
         min-block-size: 0;
         overflow: auto;
-        padding: 0.8rem;
+        padding: var(--ui-space-sm);
     }
 
     &__project-list {
@@ -35,10 +35,10 @@
 
         display: flex;
         flex-direction: column;
-        gap: 0.4rem;
+        gap: var(--ui-space-xs);
     }
 
     &__status {
-        @include ui.status-text(0.8rem);
+        @include ui.status-text(var(--ui-space-sm));
     }
 }

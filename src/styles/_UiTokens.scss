@@ -1,5 +1,13 @@
 @layer tokens {
     :root {
+        --ui-space-2xs: 0.2rem;
+        --ui-space-xs: 0.4rem;
+        --ui-space-sm: 0.8rem;
+        --ui-space-md: 1.2rem;
+        --ui-space-lg: 1.6rem;
+        --ui-space-xl: 2.4rem;
+        --ui-space-2xl: 3.2rem;
+
         --ui-border: 0.1rem solid var(--color-app-border);
         --ui-border-strong: 0.1rem solid var(--color-app-border-strong);
 
@@ -18,10 +26,17 @@
         --ui-badge-min-width: 4.8rem;
         --ui-badge-height: 2.8rem;
 
-        --ui-page-padding: 1.6rem;
-        --ui-panel-padding: 1.2rem 1.4rem;
-        --ui-panel-header-padding: 1.2rem 1.4rem;
-        --ui-status-padding: 1.2rem 1.4rem;
-        --ui-table-cell-padding: 0.8rem 1rem;
+        --ui-page-padding: var(--ui-space-lg);
+        --ui-panel-padding: var(--ui-space-md) 1.4rem;
+        --ui-panel-header-padding: var(--ui-space-md) 1.4rem;
+        --ui-status-padding: var(--ui-space-md) 1.4rem;
+        --ui-table-cell-padding: var(--ui-space-sm) 1rem;
+
+        --ui-details-row-gap: var(--ui-space-sm);
+        --ui-details-column-gap: var(--ui-space-lg);
+
+        --layout-region-height: 5rem;
+        --layout-sidebar-width: 30rem;
+        --layout-tab-height: 4.25rem;
     }
 }

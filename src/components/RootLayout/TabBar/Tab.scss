@@ -29,7 +29,7 @@
         font-weight: 700;
     }
 
-    &__select-button.p-button {
+    &__select-button {
         @include ui.transparent-button;
 
         min-inline-size: 0;
@@ -44,7 +44,7 @@
         color: inherit;
     }
 
-    &__close-button.p-button {
+    &__close-button {
         @include ui.transparent-button;
 
         inline-size: 2.6rem;
@@ -54,12 +54,12 @@
         color: var(--color-app-text-muted);
     }
 
-    &__close-button.p-button:enabled:hover {
+    &__close-button:enabled:hover {
         background: var(--color-app-hover-background);
         color: var(--color-app-text);
     }
 
-    &__close-button.p-button:enabled:active {
+    &__close-button:enabled:active {
         background: var(--color-app-active-background);
         color: var(--color-app-text);
     }

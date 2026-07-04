@@ -5,7 +5,7 @@
     flex-direction: column;
 }
 
-.expandable-navigation-item__button.p-button {
+.expandable-navigation-item__button {
     @include ui.navigation-row-button;
 
     &.expandable-navigation-item__button--active {
@@ -35,7 +35,7 @@
     text-align: start;
 }
 
-.expandable-navigation-item__badge.p-badge {
+.expandable-navigation-item__badge {
     min-inline-size: var(--ui-badge-min-width);
     block-size: var(--ui-badge-height);
     padding-inline: 0.8rem;

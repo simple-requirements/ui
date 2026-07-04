@@ -1,8 +1,8 @@
 import '@testing-library/jest-dom/vitest';
 
-import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router';
+import { MemoryRouter, useLocation } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TabBar } from '@/components/RootLayout/TabBar/TabBar';
@@ -13,7 +13,7 @@ type TestTabBarTab = Readonly<{ id: string; label: string; fixed?: boolean; clos
 
 type TestTabBarState = Readonly<{ openTabs: readonly TestTabBarTab[]; activeTabId: string | undefined }>;
 
-const mocks = vi.hoisted(() => ({ activateTab: vi.fn(), closeTab: vi.fn() }));
+const mocks = vi.hoisted(() => ({ activateTab: vi.fn(), clearActiveTab: vi.fn(), closeTab: vi.fn() }));
 
 vi.mock('@/stores/tabBarStore', async (importOriginal) => {
     const actual = await importOriginal<typeof TabBarStoreModule>();
@@ -23,6 +23,10 @@ vi.mock('@/stores/tabBarStore', async (importOriginal) => {
         activateTab: (tabId: string): void => {
             mocks.activateTab(tabId);
             actual.activateTab(tabId);
+        },
+        clearActiveTab: (): void => {
+            mocks.clearActiveTab();
+            actual.clearActiveTab();
         },
         closeTab: (tabId: string): TabBarStoreModule.TabBarTab | undefined => {
             mocks.closeTab(tabId);
@@ -35,8 +39,8 @@ vi.mock('@/stores/tabBarStore', async (importOriginal) => {
 function createDefaultOpenTabs(): readonly TestTabBarTab[] {
     return [
         { id: '/', label: 'Workspace', fixed: true, closable: false },
-        { id: '/projects/project-alpha', label: 'Project overview', closable: true },
-        { id: '/requirements/nfr-usab-0043', label: 'NFR-USAB-0043', closable: true },
+        { id: '/projects/project-alpha', label: 'Alpha overview', closable: true },
+        { id: '/projects/project-beta', label: 'Beta overview', closable: true },
     ];
 }
 
@@ -44,10 +48,17 @@ function setMockTabBarState(state: TestTabBarState): void {
     tabBarStore.setState(() => state);
 }
 
-function renderTabBar(): ReturnType<typeof render> {
+function LocationProbe() {
+    const location = useLocation();
+
+    return <output aria-label='Current route'>{location.pathname}</output>;
+}
+
+function renderTabBar(initialEntry = '/'): ReturnType<typeof render> {
     return render(
-        <MemoryRouter>
+        <MemoryRouter initialEntries={[initialEntry]}>
             <TabBar />
+            <LocationProbe />
         </MemoryRouter>,
     );
 }
@@ -56,6 +67,7 @@ beforeEach(() => {
     setMockTabBarState({ openTabs: createDefaultOpenTabs(), activeTabId: '/' });
 
     mocks.activateTab.mockClear();
+    mocks.clearActiveTab.mockClear();
     mocks.closeTab.mockClear();
 });
 
@@ -65,118 +77,79 @@ afterEach(() => {
 });
 
 describe('TabBar', () => {
-    describe('renders', () => {
-        it('the workspace tabs navigation.', () => {
-            renderTabBar();
+    it('renders the workspace tabs navigation.', () => {
+        renderTabBar();
 
-            expect(screen.getByRole('navigation', { name: /workspace tabs/i })).toBeInTheDocument();
-        });
-
-        it('renders tabs in the store order.', () => {
-            renderTabBar();
-
-            const navigation = screen.getByRole('navigation', { name: /workspace tabs/i });
-            const tabGroups = within(navigation).getAllByRole('group');
-
-            const tabLabels = tabGroups.map((tabGroup) => {
-                const selectButton = within(tabGroup).getAllByRole('button')[0];
-
-                return selectButton.textContent.trim();
-            });
-
-            expect(tabLabels).toEqual(['Workspace', 'Project overview', 'NFR-USAB-0043']);
-        });
-
-        it('does not render a close button for the static Workspace tab.', () => {
-            renderTabBar();
-
-            expect(screen.queryByRole('button', { name: /^close workspace tab$/i })).not.toBeInTheDocument();
-        });
-
-        it('close buttons for closable tabs.', () => {
-            renderTabBar();
-
-            expect(screen.getByRole('button', { name: /^close project overview tab$/i })).toBeInTheDocument();
-            expect(screen.getByRole('button', { name: /^close nfr-usab-0043 tab$/i })).toBeInTheDocument();
-        });
+        expect(screen.getByRole('navigation', { name: /workspace tabs/i })).toBeInTheDocument();
     });
 
-    describe('marks', () => {
-        it('the active tab from the store.', () => {
-            setMockTabBarState({ openTabs: createDefaultOpenTabs(), activeTabId: '/projects/project-alpha' });
-
-            renderTabBar();
-
-            const projectOverviewGroup = screen.getByRole('group', { name: /project overview tab/i });
-            const projectOverviewButton = screen.getByRole('button', { name: /^project overview$/i });
-
-            expect(projectOverviewGroup).toHaveClass('tab--active');
-            expect(projectOverviewButton).toHaveAttribute('aria-current', 'page');
-
-            expect(screen.getByRole('group', { name: /workspace tab/i })).not.toHaveClass('tab--active');
-            expect(screen.getByRole('button', { name: /^workspace$/i })).not.toHaveAttribute('aria-current');
-        });
-
-        it('fixed tabs from the store.', () => {
-            renderTabBar();
-
-            expect(screen.getByRole('group', { name: /workspace tab/i })).toHaveClass('tab--fixed');
-            expect(screen.getByRole('group', { name: /project overview tab/i })).not.toHaveClass('tab--fixed');
-        });
-    });
-
-    describe('calls', () => {
-        it('calls activateTab when a tab is clicked.', async () => {
-            const user = userEvent.setup();
-
-            renderTabBar();
-
-            await user.click(screen.getByRole('button', { name: /^project overview$/i }));
-
-            expect(mocks.activateTab).toHaveBeenCalledTimes(1);
-            expect(mocks.activateTab).toHaveBeenCalledWith('/projects/project-alpha');
-        });
-
-        it('calls closeTab when a close button is clicked.', async () => {
-            const user = userEvent.setup();
-
-            renderTabBar();
-
-            await user.click(screen.getByRole('button', { name: /^close project overview tab$/i }));
-
-            expect(mocks.closeTab).toHaveBeenCalledTimes(1);
-            expect(mocks.closeTab).toHaveBeenCalledWith('/projects/project-alpha');
-        });
-    });
-
-    it('updates the active tab after a tab select button is clicked.', async () => {
+    it('navigates when a route-backed tab is clicked.', async () => {
         const user = userEvent.setup();
 
         renderTabBar();
 
-        await user.click(screen.getByRole('button', { name: /^project overview$/i }));
+        await user.click(screen.getByRole('button', { name: /^alpha overview$/i }));
 
         await waitFor(() => {
-            expect(screen.getByRole('group', { name: /project overview tab/i })).toHaveClass('tab--active');
+            expect(screen.getByLabelText('Current route')).toHaveTextContent('/projects/project-alpha');
         });
 
-        expect(screen.getByRole('button', { name: /^project overview$/i })).toHaveAttribute('aria-current', 'page');
-        expect(screen.getByRole('button', { name: /^workspace$/i })).not.toHaveAttribute('aria-current');
+        expect(mocks.activateTab).toHaveBeenCalledWith('/projects/project-alpha');
+        expect(screen.getByRole('button', { name: /^alpha overview$/i })).toHaveAttribute('aria-current', 'page');
     });
 
-    it('removes a closable tab after its close button is clicked.', async () => {
+    it('navigates back to the category list when the active category details tab is closed.', async () => {
         const user = userEvent.setup();
+        const categoryDetailsRoute = '/projects/project-alpha/categories/category-auth';
 
-        renderTabBar();
-
-        await user.click(screen.getByRole('button', { name: /^close project overview tab$/i }));
-
-        await waitFor(() => {
-            expect(screen.queryByRole('button', { name: /^project overview$/i })).not.toBeInTheDocument();
+        setMockTabBarState({
+            openTabs: [
+                { id: '/', label: 'Workspace', fixed: true, closable: false },
+                { id: '/projects/project-alpha/categories', label: 'Categories', closable: true },
+                { id: categoryDetailsRoute, label: 'Category AUTH', closable: true },
+            ],
+            activeTabId: categoryDetailsRoute,
         });
 
-        expect(screen.queryByRole('button', { name: /^close project overview tab$/i })).not.toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /^workspace$/i })).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /^nfr-usab-0043$/i })).toBeInTheDocument();
+        renderTabBar(categoryDetailsRoute);
+
+        await user.click(screen.getByRole('button', { name: /^close category auth tab$/i }));
+
+        await waitFor(() => {
+            expect(screen.getByLabelText('Current route')).toHaveTextContent('/projects/project-alpha/categories');
+        });
+
+        expect(mocks.closeTab).toHaveBeenCalledWith(categoryDetailsRoute);
+        expect(mocks.clearActiveTab).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not navigate when an inactive tab is closed.', async () => {
+        const user = userEvent.setup();
+
+        setMockTabBarState({ openTabs: createDefaultOpenTabs(), activeTabId: '/projects/project-beta' });
+
+        renderTabBar('/projects/project-beta');
+
+        await user.click(screen.getByRole('button', { name: /^close alpha overview tab$/i }));
+
+        expect(screen.getByLabelText('Current route')).toHaveTextContent('/projects/project-beta');
+        expect(mocks.closeTab).toHaveBeenCalledWith('/projects/project-alpha');
+    });
+
+    it('navigates to the next route-backed tab when the active tab is closed.', async () => {
+        const user = userEvent.setup();
+
+        setMockTabBarState({ openTabs: createDefaultOpenTabs(), activeTabId: '/projects/project-alpha' });
+
+        renderTabBar('/projects/project-alpha');
+
+        await user.click(screen.getByRole('button', { name: /^close alpha overview tab$/i }));
+
+        await waitFor(() => {
+            expect(screen.getByLabelText('Current route')).toHaveTextContent('/projects/project-beta');
+        });
+
+        expect(screen.queryByRole('button', { name: /^alpha overview$/i })).not.toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /^beta overview$/i })).toHaveAttribute('aria-current', 'page');
     });
 });

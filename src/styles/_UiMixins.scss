@@ -22,6 +22,14 @@
     list-style: none;
 }
 
+@mixin page-shell($font-size: var(--font-size-small)) {
+    block-size: 100%;
+    min-block-size: 0;
+    padding: var(--ui-page-padding);
+    background: var(--color-app-background);
+    font-size: $font-size;
+}
+
 @mixin surface-panel($overflow: hidden) {
     min-block-size: 0;
     overflow: $overflow;
@@ -66,33 +74,69 @@
     line-height: var(--line-height-small);
 }
 
-@mixin compact-table {
-    inline-size: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-    font-size: var(--font-size-small);
+@mixin details-list {
+    @include small-text;
 
-    th,
-    td {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: var(--ui-details-row-gap) var(--ui-details-column-gap);
+    margin: 0;
+}
+
+@mixin details-row {
+    display: contents;
+
+    dt {
         @include small-text;
 
-        padding: var(--ui-table-cell-padding);
-        border-block-end: var(--ui-border);
-        text-align: start;
-        vertical-align: middle;
+        color: var(--color-app-text-muted);
+        font-weight: 600;
     }
 
-    th {
-        position: sticky;
-        inset-block-start: 0;
-        z-index: 1;
-        background: var(--color-app-surface-muted);
+    dd {
+        @include small-text;
+
+        min-inline-size: 0;
+        margin: 0;
         color: var(--color-app-text);
-        font-weight: 600;
     }
 }
 
-@mixin clickable-row {
+@mixin prime-data-table {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    font-size: var(--font-size-small);
+}
+
+@mixin prime-data-table-wrapper {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow: auto;
+}
+
+@mixin prime-data-table-table {
+    table-layout: fixed;
+}
+
+@mixin prime-data-table-cell {
+    @include small-text;
+
+    padding: var(--ui-table-cell-padding);
+    border-block-end: var(--ui-border);
+    text-align: start;
+    vertical-align: middle;
+}
+
+@mixin prime-data-table-header-cell {
+    background: var(--color-app-surface-muted);
+    color: var(--color-app-text);
+    font-weight: 600;
+}
+
+@mixin prime-data-table-selectable-row {
     cursor: pointer;
 
     &:hover {
@@ -104,7 +148,7 @@
     }
 }
 
-@mixin selected-row {
+@mixin prime-data-table-selected-row {
     background: var(--color-app-active-background);
 }
 

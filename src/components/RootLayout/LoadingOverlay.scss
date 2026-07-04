@@ -28,7 +28,7 @@
         line-height: var(--line-height-small);
     }
 
-    &__button.p-button {
+    &__button {
         @include ui.primary-button;
 
         block-size: var(--ui-control-height-large);

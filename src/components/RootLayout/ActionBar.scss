@@ -17,7 +17,7 @@
         gap: 0.8rem;
     }
 
-    &__input.p-inputtext {
+    &__input {
         inline-size: 18rem;
         block-size: var(--ui-control-height);
         padding-inline: 0.8rem;
@@ -25,7 +25,7 @@
         box-shadow: none;
     }
 
-    &__button.p-button {
+    &__button {
         @include ui.outline-button;
 
         block-size: var(--ui-control-height);

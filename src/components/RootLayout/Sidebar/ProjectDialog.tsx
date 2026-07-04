@@ -34,6 +34,10 @@ function getSubmitLabel(mode: ProjectDialogMode, pending: boolean): string {
     return mode === 'create' ? 'Create' : 'Rename';
 }
 
+function getInputClassName(invalid: boolean): string {
+    return invalid ? 'project-dialog__input project-dialog__input--invalid' : 'project-dialog__input';
+}
+
 export function ProjectDialog({
     visible,
     mode,
@@ -93,7 +97,11 @@ export function ProjectDialog({
             draggable={false}
             resizable={false}
             header={<h2 className='project-dialog__heading'>{getDialogHeading(mode)}</h2>}
-            className='project-dialog'
+            pt={{
+                root: { className: 'project-dialog' },
+                header: { className: 'project-dialog__header' },
+                content: { className: 'project-dialog__content' },
+            }}
             onHide={handleCancel}>
             <form
                 className='project-dialog__form'
@@ -114,11 +122,7 @@ export function ProjectDialog({
                         autoFocus
                         aria-invalid={inputInvalid}
                         aria-describedby={inputInvalid ? errorId : undefined}
-                        className={
-                            inputInvalid ?
-                                'project-dialog__input project-dialog__input--invalid'
-                            :   'project-dialog__input'
-                        }
+                        pt={{ root: { className: getInputClassName(inputInvalid) } }}
                         onChange={(event) => {
                             setProjectName(event.currentTarget.value);
                             setValidationError(undefined);
@@ -140,7 +144,7 @@ export function ProjectDialog({
                         type='button'
                         label='Cancel'
                         disabled={pending}
-                        className='project-dialog__button project-dialog__button--cancel'
+                        pt={{ root: { className: 'project-dialog__button project-dialog__button--cancel' } }}
                         onClick={handleCancel}
                     />
 
@@ -148,7 +152,7 @@ export function ProjectDialog({
                         type='submit'
                         label={getSubmitLabel(mode, pending)}
                         disabled={pending}
-                        className='project-dialog__button project-dialog__button--submit'
+                        pt={{ root: { className: 'project-dialog__button project-dialog__button--submit' } }}
                     />
                 </div>
             </form>

@@ -1,6 +1,4 @@
 .root-layout {
-    --layout-region-height: 5rem;
-
     min-block-size: 100vh;
     display: grid;
     grid-template-columns: max-content minmax(0, 1fr);
@@ -43,11 +41,11 @@
     }
 
     &__content-placeholder {
-        padding: 3.2rem;
+        padding: var(--ui-space-2xl);
     }
 
     &__content-title {
-        margin-block-end: 1.2rem;
+        margin-block-end: var(--ui-space-md);
         font-size: var(--font-size-h2);
         line-height: var(--line-height-heading);
         color: var(--color-app-text);

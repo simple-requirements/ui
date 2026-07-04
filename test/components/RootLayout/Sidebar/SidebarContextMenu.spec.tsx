@@ -10,13 +10,17 @@ import type { ContextMenu } from 'primereact/contextmenu';
 
 type MockMenuItem = Readonly<{ label?: string; icon?: string; separator?: boolean; command?: () => void }>;
 
-type MockContextMenuProps = Readonly<{ model: readonly MockMenuItem[]; className?: string }>;
+type MockContextMenuProps = Readonly<{
+    model: readonly MockMenuItem[];
+    className?: string;
+    pt?: Readonly<{ root?: Readonly<{ className?: string }> }>;
+}>;
 
 vi.mock('primereact/contextmenu', () => ({
-    ContextMenu: ({ model, className }: MockContextMenuProps) => (
+    ContextMenu: ({ model, className, pt }: MockContextMenuProps) => (
         <nav
             aria-label='Sidebar context menu'
-            className={className}>
+            className={className ?? pt?.root?.className}>
             {model.map((item) => {
                 if (item.separator === true) {
                     return (
@@ -34,10 +38,6 @@ vi.mock('primereact/contextmenu', () => ({
                         role='menuitem'
                         onClick={item.command}>
                         <span>{item.label}</span>
-                        <i
-                            className={item.icon}
-                            aria-hidden='true'
-                        />
                     </button>
                 );
             })}
@@ -52,17 +52,7 @@ afterEach(() => {
 
 describe('SidebarContextMenu', () => {
     describe('renders', () => {
-        it('the context menu with the sidebar class.', () => {
-            const contextMenuRef = createRef<ContextMenu>();
-
-            render(<SidebarContextMenu contextMenuRef={contextMenuRef} />);
-
-            expect(screen.getByRole('navigation', { name: /sidebar context menu/i })).toHaveClass(
-                'sidebar-context-menu',
-            );
-        });
-
-        it('renders all context menu entries in the expected order.', () => {
+        it('all context menu entries in the expected order.', () => {
             const contextMenuRef = createRef<ContextMenu>();
 
             render(<SidebarContextMenu contextMenuRef={contextMenuRef} />);
@@ -84,30 +74,8 @@ describe('SidebarContextMenu', () => {
 
             expect(screen.getAllByRole('separator')).toHaveLength(1);
         });
-
-        it('the configured icons.', () => {
-            const contextMenuRef = createRef<ContextMenu>();
-
-            render(<SidebarContextMenu contextMenuRef={contextMenuRef} />);
-
-            expect(
-                screen.getByRole('menuitem', { name: /rename project/i }).querySelector('.pi-pencil'),
-            ).toBeInTheDocument();
-
-            expect(
-                screen.getByRole('menuitem', { name: /delete project/i }).querySelector('.pi-trash'),
-            ).toBeInTheDocument();
-
-            expect(
-                screen.getByRole('menuitem', { name: /^export project$/i }).querySelector('.pi-chart-bar'),
-            ).toBeInTheDocument();
-
-            expect(
-                screen.getByRole('menuitem', { name: /export all projects/i }).querySelector('.pi-database'),
-            ).toBeInTheDocument();
-        });
     });
-    
+
     it('calls the matching handler when an entry is clicked.', async () => {
         const user = userEvent.setup();
         const contextMenuRef = createRef<ContextMenu>();

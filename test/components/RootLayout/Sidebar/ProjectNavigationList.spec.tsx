@@ -118,10 +118,6 @@ describe('ProjectNavigationList', () => {
 
         const navigation = screen.getByRole('navigation', { name: /project list/i });
         const projectButtons = within(navigation).getAllByRole('button');
-        const projectNames = projectButtons.map(
-            (button) => button.querySelector('.expandable-navigation-item__label')?.textContent.trim() ?? '',
-        );
-
-        expect(projectNames).toEqual(['Alpha Project', 'Beta Project']);
+        expect(projectButtons.map((button) => button.textContent.trim())).toEqual(['Alpha Project4', 'Beta Project7']);
     });
 });

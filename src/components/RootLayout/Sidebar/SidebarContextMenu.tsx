@@ -35,7 +35,15 @@ export function SidebarContextMenu({
         <ContextMenu
             ref={contextMenuRef}
             model={menuItems}
-            className='sidebar-context-menu'
+            pt={{
+                root: { className: 'sidebar-context-menu' },
+                menu: { className: 'sidebar-context-menu__menu' },
+                menuitem: { className: 'sidebar-context-menu__item' },
+                action: { className: 'sidebar-context-menu__action' },
+                icon: { className: 'sidebar-context-menu__icon' },
+                label: { className: 'sidebar-context-menu__label' },
+                separator: { className: 'sidebar-context-menu__separator' },
+            }}
         />
     );
 }

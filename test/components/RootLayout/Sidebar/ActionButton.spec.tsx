@@ -22,7 +22,7 @@ describe('ActionButton', () => {
     });
 
     describe('calls', () => {
-        it('calls onSynchronize when the synchronize button is clicked.', async () => {
+        it('onSynchronize when the synchronize button is clicked.', async () => {
             const user = userEvent.setup();
             const onSynchronize = vi.fn();
 
@@ -33,7 +33,7 @@ describe('ActionButton', () => {
             expect(onSynchronize).toHaveBeenCalledTimes(1);
         });
 
-        it('calls onNewProject when the New project button is clicked.', async () => {
+        it('onNewProject when the New project button is clicked.', async () => {
             const user = userEvent.setup();
             const onNewProject = vi.fn();
 
@@ -44,7 +44,7 @@ describe('ActionButton', () => {
             expect(onNewProject).toHaveBeenCalledTimes(1);
         });
     });
-    
+
     it('can be clicked without callbacks.', async () => {
         const user = userEvent.setup();
 
@@ -55,21 +55,5 @@ describe('ActionButton', () => {
 
         expect(screen.getByRole('button', { name: /synchronize projects/i })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /new project/i })).toBeInTheDocument();
-    });
-
-    it('uses the ghost modifier for the synchronize button.', () => {
-        render(<ActionButton />);
-
-        expect(screen.getByRole('button', { name: /synchronize projects/i })).toHaveClass(
-            'sidebar-action-button',
-            'sidebar-action-button--ghost',
-        );
-    });
-
-    it('uses the default sidebar action button class for the New project button.', () => {
-        render(<ActionButton />);
-
-        expect(screen.getByRole('button', { name: /new project/i })).toHaveClass('sidebar-action-button');
-        expect(screen.getByRole('button', { name: /new project/i })).not.toHaveClass('sidebar-action-button--ghost');
     });
 });

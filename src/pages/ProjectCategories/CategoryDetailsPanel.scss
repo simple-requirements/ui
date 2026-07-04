@@ -16,29 +16,9 @@
 }
 
 .category-details-panel__details-list {
-    @include ui.small-text;
-
-    display: grid;
-    grid-template-columns: max-content minmax(0, 1fr);
-    gap: 0.8rem 1.6rem;
-    margin: 0;
+    @include ui.details-list;
 }
 
 .category-details-panel__details-row {
-    display: contents;
-
-    dt {
-        @include ui.small-text;
-
-        color: var(--color-app-text-muted);
-        font-weight: 600;
-    }
-
-    dd {
-        @include ui.small-text;
-
-        min-inline-size: 0;
-        margin: 0;
-        color: var(--color-app-text);
-    }
+    @include ui.details-row;
 }

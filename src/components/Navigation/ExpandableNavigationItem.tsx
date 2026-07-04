@@ -84,7 +84,7 @@ export function ExpandableNavigationItem({
                             {badgeValue !== undefined && (
                                 <Badge
                                     value={badgeValue}
-                                    className='expandable-navigation-item__badge'
+                                    pt={{ root: { className: 'expandable-navigation-item__badge' } }}
                                 />
                             )}
                         </span>

@@ -1,5 +1,5 @@
 import { useLiveQuery } from '@tanstack/react-db';
-import { Column } from 'primereact/column';
+import { Column, type ColumnPassThroughOptions } from 'primereact/column';
 import { DataTable, type DataTableRowClickEvent, type DataTableSelectionSingleChangeEvent } from 'primereact/datatable';
 import { Splitter, SplitterPanel } from 'primereact/splitter';
 import { useEffect, useMemo, useState } from 'react';
@@ -40,6 +40,23 @@ function getRequirementCountForCategory(category: Category): number {
 
 function requirementCountBodyTemplate(category: CategoryTableRow): number {
     return getRequirementCountForCategory(category);
+}
+
+function getColumnPassThrough(columnClassName?: string): ColumnPassThroughOptions {
+    const cellClassNames = [columnClassName];
+
+    return {
+        headerCell: {
+            className: ['project-categories-list-page__table-header-cell', ...cellClassNames]
+                .filter((className) => className !== undefined)
+                .join(' '),
+        },
+        bodyCell: {
+            className: ['project-categories-list-page__table-body-cell', ...cellClassNames]
+                .filter((className) => className !== undefined)
+                .join(' '),
+        },
+    };
 }
 
 export function ListPage() {
@@ -121,11 +138,11 @@ export function ListPage() {
             aria-labelledby='project-categories-list-page-title'>
             <Splitter
                 layout='vertical'
-                className='project-categories-list-page__splitter'>
+                pt={{ root: { className: 'project-categories-list-page__splitter' } }}>
                 <SplitterPanel
                     size={67}
                     minSize={25}
-                    className='project-categories-list-page__splitter-panel'>
+                    pt={{ root: { className: 'project-categories-list-page__splitter-panel' } }}>
                     <div className='project-categories-list-page__list-panel'>
                         <header className='project-categories-list-page__header'>
                             <h1
@@ -151,33 +168,35 @@ export function ListPage() {
                                 onSelectionChange={handleCategorySelectionChange}
                                 onRowDoubleClick={handleCategoryRowDoubleClick}
                                 rowClassName={(category) => getCategoryRowClassName(category, selectedCategoryId)}
-                                className='project-categories-list-page__data-table'
+                                pt={{
+                                    root: { className: 'project-categories-list-page__data-table' },
+                                    wrapper: { className: 'project-categories-list-page__data-table-wrapper' },
+                                    table: { className: 'project-categories-list-page__table' },
+                                }}
                                 scrollable
                                 scrollHeight='flex'>
                                 <Column
                                     field='key'
                                     header='Key'
-                                    headerClassName='project-categories-list-page__key-column'
-                                    className='project-categories-list-page__key-column'
+                                    pt={getColumnPassThrough('project-categories-list-page__key-column')}
                                 />
 
                                 <Column
                                     field='type'
                                     header='Type'
-                                    headerClassName='project-categories-list-page__type-column'
-                                    className='project-categories-list-page__type-column'
+                                    pt={getColumnPassThrough('project-categories-list-page__type-column')}
                                 />
 
                                 <Column
                                     field='name'
                                     header='Name'
+                                    pt={getColumnPassThrough()}
                                 />
 
                                 <Column
                                     header='Requirements'
                                     body={requirementCountBodyTemplate}
-                                    headerClassName='project-categories-list-page__requirements-column'
-                                    className='project-categories-list-page__requirements-column'
+                                    pt={getColumnPassThrough('project-categories-list-page__requirements-column')}
                                 />
                             </DataTable>
                         </LoadableContent>
@@ -187,7 +206,7 @@ export function ListPage() {
                 <SplitterPanel
                     size={33}
                     minSize={20}
-                    className='project-categories-list-page__splitter-panel'>
+                    pt={{ root: { className: 'project-categories-list-page__splitter-panel' } }}>
                     <CategoryDetailsPanel
                         category={selectedCategory}
                         title='Category details'

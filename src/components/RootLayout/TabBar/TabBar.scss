@@ -1,5 +1,5 @@
 .tab-bar {
-    --tab-bar-tab-height: 4.25rem;
+    --tab-bar-tab-height: var(--layout-tab-height);
 
     block-size: 100%;
     display: flex;
@@ -7,7 +7,7 @@
     gap: 0.6rem;
     overflow: hidden;
     padding-block: 0.2rem 0.1rem;
-    padding-inline: 0.4rem;
+    padding-inline: var(--ui-space-xs);
     background: var(--color-app-surface-subtle);
     border-block-end: var(--ui-border);
 }

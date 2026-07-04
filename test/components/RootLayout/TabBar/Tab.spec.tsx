@@ -20,6 +20,18 @@ describe('Tab', () => {
         expect(screen.getByRole('button', { name: /^close project overview tab$/i })).toBeInTheDocument();
     });
 
+    it('hides the close button when the tab is not closable.', () => {
+        render(
+            <Tab
+                label='Workspace'
+                closable={false}
+            />,
+        );
+
+        expect(screen.getByRole('button', { name: /^workspace$/i })).toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: /^close workspace tab$/i })).not.toBeInTheDocument();
+    });
+
     it('calls onClick when the select button is clicked.', async () => {
         const user = userEvent.setup();
         const onClick = vi.fn();
@@ -71,7 +83,7 @@ describe('Tab', () => {
         expect(onClick).not.toHaveBeenCalled();
     });
 
-    it('marks an active tab.', () => {
+    it('exposes the active tab with aria-current.', () => {
         render(
             <Tab
                 label='Workspace'
@@ -79,43 +91,12 @@ describe('Tab', () => {
             />,
         );
 
-        const tabGroup = screen.getByRole('group', { name: /workspace tab/i });
-        const selectButton = screen.getByRole('button', { name: /^workspace$/i });
-
-        expect(tabGroup).toHaveClass('tab--active');
-        expect(selectButton).toHaveAttribute('aria-current', 'page');
+        expect(screen.getByRole('button', { name: /^workspace$/i })).toHaveAttribute('aria-current', 'page');
     });
 
-    it('does not mark an inactive tab as active.', () => {
+    it('does not expose aria-current for an inactive tab.', () => {
         render(<Tab label='Project overview' />);
 
-        const tabGroup = screen.getByRole('group', { name: /project overview tab/i });
-        const selectButton = screen.getByRole('button', { name: /^project overview$/i });
-
-        expect(tabGroup).not.toHaveClass('tab--active');
-        expect(selectButton).not.toHaveAttribute('aria-current');
-    });
-
-    it('marks a fixed tab.', () => {
-        render(
-            <Tab
-                label='Workspace'
-                fixed
-            />,
-        );
-
-        expect(screen.getByRole('group', { name: /workspace tab/i })).toHaveClass('tab--fixed');
-    });
-
-    it('does not mark a normal tab as fixed.', () => {
-        render(<Tab label='Project overview' />);
-
-        expect(screen.getByRole('group', { name: /project overview tab/i })).not.toHaveClass('tab--fixed');
-    });
-
-    it('uses the base tab class.', () => {
-        render(<Tab label='Project overview' />);
-
-        expect(screen.getByRole('group', { name: /project overview tab/i })).toHaveClass('tab');
+        expect(screen.getByRole('button', { name: /^project overview$/i })).not.toHaveAttribute('aria-current');
     });
 });

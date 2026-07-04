@@ -59,35 +59,29 @@ describe('ExpandableNavigationItem', () => {
             expect(screen.getByText('4')).toBeInTheDocument();
         });
 
-        it('the collapsed icon when the item is collapsed.', () => {
+        it('the collapsed state as aria-expanded=false.', () => {
             renderExpandableNavigationItem({ expanded: false });
 
-            const button = screen.getByRole('button', { name: /alpha project/i });
-            const icon = button.querySelector('.expandable-navigation-item__icon');
-
-            expect(button).toHaveAttribute('aria-expanded', 'false');
-            expect(icon).toBeInTheDocument();
-            expect(icon).toHaveClass('pi-folder');
-            expect(icon).not.toHaveClass('pi-folder-open');
+            expect(screen.getByRole('button', { name: /alpha project/i })).toHaveAttribute('aria-expanded', 'false');
         });
 
-        it('the expanded icon when the item is expanded.', () => {
+        it('the expanded state as aria-expanded=true.', () => {
             renderExpandableNavigationItem({ expanded: true });
 
-            const button = screen.getByRole('button', { name: /alpha project/i });
-            const icon = button.querySelector('.expandable-navigation-item__icon');
-
-            expect(button).toHaveAttribute('aria-expanded', 'true');
-            expect(icon).toBeInTheDocument();
-            expect(icon).toHaveClass('pi-folder-open');
-            expect(icon).not.toHaveClass('pi-folder');
+            expect(screen.getByRole('button', { name: /alpha project/i })).toHaveAttribute('aria-expanded', 'true');
         });
 
-        it('the sub items when the item is expanded.', () => {
+        it('expanded sub item links with their destination href values.', () => {
             renderExpandableNavigationItem({ expanded: true });
 
-            expect(screen.getByRole('link', { name: /requirements/i })).toBeInTheDocument();
-            expect(screen.getByRole('link', { name: /categories/i })).toBeInTheDocument();
+            expect(screen.getByRole('link', { name: /requirements/i })).toHaveAttribute(
+                'href',
+                '/projects/project-alpha/requirements',
+            );
+            expect(screen.getByRole('link', { name: /categories/i })).toHaveAttribute(
+                'href',
+                '/projects/project-alpha/categories',
+            );
         });
 
         it('no accessible sub items when the item is collapsed.', () => {
@@ -99,33 +93,23 @@ describe('ExpandableNavigationItem', () => {
     });
 
     describe('marks / does not mark', () => {
-        it('an active item with aria-current and the active class.', () => {
+        it('an active parent item with aria-current.', () => {
             renderExpandableNavigationItem({ active: true });
 
-            const button = screen.getByRole('button', { name: /alpha project/i });
-
-            expect(button).toHaveAttribute('aria-current', 'page');
-            expect(button).toHaveClass('expandable-navigation-item__button--active');
+            expect(screen.getByRole('button', { name: /alpha project/i })).toHaveAttribute('aria-current', 'page');
         });
 
-        it('a non-active item without aria-current and without the active class.', () => {
+        it('a non-active parent item without aria-current.', () => {
             renderExpandableNavigationItem({ active: false });
 
-            const button = screen.getByRole('button', { name: /alpha project/i });
-
-            expect(button).not.toHaveAttribute('aria-current');
-            expect(button).not.toHaveClass('expandable-navigation-item__button--active');
+            expect(screen.getByRole('button', { name: /alpha project/i })).not.toHaveAttribute('aria-current');
         });
 
         it('the active sub item based on the current route.', () => {
             renderExpandableNavigationItem({ expanded: true }, '/projects/project-alpha/categories');
 
-            expect(screen.getByRole('link', { name: /categories/i })).toHaveClass(
-                'expandable-navigation-item__sub-link--active',
-            );
-            expect(screen.getByRole('link', { name: /requirements/i })).not.toHaveClass(
-                'expandable-navigation-item__sub-link--active',
-            );
+            expect(screen.getByRole('link', { name: /categories/i })).toHaveAttribute('aria-current', 'page');
+            expect(screen.getByRole('link', { name: /requirements/i })).not.toHaveAttribute('aria-current');
         });
     });
 

@@ -1,6 +1,6 @@
 @use '../../../styles/UiMixins' as ui;
 
-.sidebar-action-button.p-button {
+.sidebar-action-button {
     @include ui.primary-button;
 
     flex: 1 1 auto;

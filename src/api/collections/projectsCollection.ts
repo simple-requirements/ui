@@ -5,7 +5,7 @@ import { getListProjectsQueryKey } from '@/api/generated/projects/projects';
 import { listProjectsRequest, projectSchema, type Project } from '@/api/projectsApi';
 import { queryClient } from '@/api/queryClient';
 
-export type SidebarProject = Project;
+export type SidebarProject = Project & Readonly<{ requirementCount: number }>;
 
 export const projectsCollection = createCollection(
     queryCollectionOptions({

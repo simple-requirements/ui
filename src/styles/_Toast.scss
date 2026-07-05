@@ -1,0 +1,22 @@
+@layer components {
+    .p-toast {
+        inline-size: min(42rem, calc(100vw - 4rem));
+        min-inline-size: min(34rem, calc(100vw - 4rem));
+    }
+
+    .p-toast .p-toast-message-content {
+        gap: var(--ui-space-sm);
+        padding: var(--ui-space-md);
+    }
+
+    .p-toast .p-toast-summary {
+        font-size: var(--font-size-small);
+        line-height: var(--line-height-small);
+    }
+
+    .p-toast .p-toast-detail {
+        margin-block-start: var(--ui-space-2xs);
+        font-size: var(--font-size-small);
+        line-height: var(--line-height-small);
+    }
+}

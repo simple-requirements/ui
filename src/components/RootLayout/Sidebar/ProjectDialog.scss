@@ -1,4 +1,4 @@
-@use '../../../styles/UiMixins' as ui;
+@use 'styles/UiMixins' as ui;
 
 .project-dialog {
     inline-size: min(56rem, calc(100vw - 3.2rem));

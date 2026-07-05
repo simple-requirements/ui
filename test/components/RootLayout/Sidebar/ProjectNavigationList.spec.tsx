@@ -63,17 +63,18 @@ describe('ProjectNavigationList', () => {
         expect(screen.getByText('No projects available.')).toBeInTheDocument();
     });
 
-    it('renders projects and badges.', () => {
+    it('renders projects.', () => {
         renderProjectNavigationList();
 
         expect(screen.getByRole('button', { name: /alpha project/i })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /beta project/i })).toBeInTheDocument();
-        expect(screen.getByText('4')).toBeInTheDocument();
-        expect(screen.getByText('7')).toBeInTheDocument();
     });
 
-    it('renders sub items for the expanded project.', () => {
+    it('renders sub items and the requirements counter behind the project name.', () => {
         renderProjectNavigationList({ expandedProjectId: 'project-alpha' });
+
+        const alphaButton = screen.getByRole('button', { name: /alpha project/i });
+        expect(within(alphaButton).getByText('4')).toBeInTheDocument();
 
         expect(screen.getByRole('link', { name: /requirements/i })).toHaveAttribute(
             'href',

@@ -1,12 +1,5 @@
-import { useParams } from 'react-router';
+import { ListPage } from '@/pages/ProjectRequirements/ListPage';
 
 export function ProjectRequirementsPage() {
-    const { projectId } = useParams();
-
-    return (
-        <section>
-            <h1>Requirements</h1>
-            <p>Dummy requirements list for project {projectId}.</p>
-        </section>
-    );
+    return <ListPage />;
 }

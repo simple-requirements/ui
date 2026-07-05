@@ -11,7 +11,7 @@ export default defineConfig({
     resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
 
     optimizeDeps: { entries: ['index.html'] },
-
+    css: { preprocessorOptions: { scss: { loadPaths: ['src'] } } },
     test: {
         include: ['test/**/*.spec.{ts,tsx}'],
         environment: 'jsdom',

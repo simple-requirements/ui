@@ -1,9 +1,9 @@
 import '@testing-library/jest-dom/vitest';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import * as ReactQuery from '@tanstack/react-query';
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router';
+import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { Sidebar } from '@/components/RootLayout/Sidebar/Sidebar';
@@ -18,9 +18,15 @@ type TestProject = Readonly<{
 
 type UseLiveQueryResult = Readonly<{ data: readonly TestProject[] }>;
 
-const mocks = vi.hoisted(() => ({ useLiveQuery: vi.fn(), contextMenuShow: vi.fn() }));
+const mocks = vi.hoisted(() => ({ useLiveQuery: vi.fn(), useQueries: vi.fn(), contextMenuShow: vi.fn() }));
 
 vi.mock('@tanstack/react-db', () => ({ useLiveQuery: mocks.useLiveQuery }));
+
+vi.mock('@tanstack/react-query', async (importOriginal) => {
+    const actual = await importOriginal<typeof ReactQuery>();
+
+    return { ...actual, useQueries: mocks.useQueries };
+});
 
 vi.mock('@/api/collections/projectsCollection', () => ({ projectsCollection: {} }));
 
@@ -69,18 +75,49 @@ vi.mock('@/components/RootLayout/Sidebar/SidebarContextMenu', () => ({
     },
 }));
 
-function createTestQueryClient(): QueryClient {
-    return new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
+function createTestQueryClient(): ReactQuery.QueryClient {
+    return new ReactQuery.QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
 }
 
 function renderSidebar(initialEntry = '/'): ReturnType<typeof render> {
-    return render(
-        <MemoryRouter initialEntries={[initialEntry]}>
-            <QueryClientProvider client={createTestQueryClient()}>
-                <Sidebar />
-            </QueryClientProvider>
-        </MemoryRouter>,
+    if (mocks.useQueries.getMockImplementation() === undefined) {
+        mockRequirementCountQueries();
+    }
+
+    const router = createMemoryRouter(
+        [
+            {
+                path: '/',
+                element: (
+                    <ReactQuery.QueryClientProvider client={createTestQueryClient()}>
+                        <Sidebar />
+                    </ReactQuery.QueryClientProvider>
+                ),
+                handle: { actionBar: 'requirements' },
+            },
+            {
+                path: '/projects/:projectId/categories/new',
+                element: (
+                    <ReactQuery.QueryClientProvider client={createTestQueryClient()}>
+                        <Sidebar />
+                    </ReactQuery.QueryClientProvider>
+                ),
+                handle: { actionBar: 'categoryForm', disableChromeActions: true },
+            },
+            {
+                path: '/projects/:projectId/*',
+                element: (
+                    <ReactQuery.QueryClientProvider client={createTestQueryClient()}>
+                        <Sidebar />
+                    </ReactQuery.QueryClientProvider>
+                ),
+                handle: { actionBar: 'requirements' },
+            },
+        ],
+        { initialEntries: [initialEntry] },
     );
+
+    return render(<RouterProvider router={router} />);
 }
 
 function createProject(overrides: Partial<TestProject>): TestProject {
@@ -98,9 +135,27 @@ function mockUseLiveQuery(result: Partial<UseLiveQueryResult>): void {
     mocks.useLiveQuery.mockReturnValue({ data: [], ...result });
 }
 
+function mockRequirementCountQueries(countsByProjectId: Readonly<Record<string, number>> = {}): void {
+    mocks.useQueries.mockImplementation(({ queries }: { queries: readonly { queryKey: readonly unknown[] }[] }) =>
+        queries.map((query) => {
+            const queryKey = String(query.queryKey[0]);
+            const projectId = queryKey.replace('/projects/', '').replace('/requirements', '');
+            const count = countsByProjectId[projectId] ?? 0;
+
+            return {
+                data: Array.from({ length: count }, (_, index) => ({
+                    id: `${projectId}-requirement-${String(index)}`,
+                })),
+            };
+        }),
+    );
+}
+
 afterEach(() => {
     cleanup();
-    vi.clearAllMocks();
+    mocks.useLiveQuery.mockReset();
+    mocks.useQueries.mockReset();
+    mocks.contextMenuShow.mockReset();
 });
 
 describe('Sidebar', () => {
@@ -118,11 +173,12 @@ describe('Sidebar', () => {
     it('sorts projects by name before rendering the navigation list.', () => {
         mockUseLiveQuery({
             data: [
-                createProject({ id: 'project-zeta', name: 'Zeta Project', requirementCount: 2 }),
-                createProject({ id: 'project-alpha', name: 'Alpha Project', requirementCount: 4 }),
-                createProject({ id: 'project-beta', name: 'Beta Project', requirementCount: 7 }),
+                createProject({ id: 'project-zeta', name: 'Zeta Project', requirementCount: 0 }),
+                createProject({ id: 'project-alpha', name: 'Alpha Project', requirementCount: 0 }),
+                createProject({ id: 'project-beta', name: 'Beta Project', requirementCount: 0 }),
             ],
         });
+        mockRequirementCountQueries({ 'project-alpha': 4, 'project-beta': 7, 'project-zeta': 2 });
 
         renderSidebar();
 
@@ -134,6 +190,17 @@ describe('Sidebar', () => {
             'Beta Project7',
             'Zeta Project2',
         ]);
+    });
+
+    it('uses the loaded requirements count behind each project name.', () => {
+        mockUseLiveQuery({
+            data: [createProject({ id: 'project-alpha', name: 'Alpha Project', requirementCount: 0 })],
+        });
+        mockRequirementCountQueries({ 'project-alpha': 4 });
+
+        renderSidebar();
+
+        expect(screen.getByRole('button', { name: /alpha project/i })).toHaveTextContent('Alpha Project4');
     });
 
     it('opens a project and updates the route-driven active sub item.', async () => {
@@ -176,6 +243,15 @@ describe('Sidebar', () => {
         expect(mocks.contextMenuShow).toHaveBeenCalledTimes(1);
         expect(screen.getByRole('heading', { name: /rename project/i })).toBeInTheDocument();
         expect(screen.getByLabelText(/project name/i)).toHaveValue('Alpha Project');
+    });
+
+    it('disables project action buttons on category form routes.', () => {
+        mockUseLiveQuery({ data: [] });
+
+        renderSidebar('/projects/project-alpha/categories/new');
+
+        expect(screen.getByRole('button', { name: /synchronize projects/i })).toBeDisabled();
+        expect(screen.getByRole('button', { name: /new project/i })).toBeDisabled();
     });
 
     it('opens the create dialog from the New project action.', async () => {

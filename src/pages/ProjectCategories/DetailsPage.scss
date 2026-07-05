@@ -1,4 +1,4 @@
-@use '../../styles/UiMixins' as ui;
+@use 'styles/UiMixins' as ui;
 
 .project-categories-details-page {
     @include ui.page-shell;

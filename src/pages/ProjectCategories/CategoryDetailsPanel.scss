@@ -1,4 +1,4 @@
-@use '../../styles/UiMixins' as ui;
+@use 'styles/UiMixins' as ui;
 
 .category-details-panel {
     block-size: 100%;
@@ -7,12 +7,28 @@
     @include ui.flex-column-panel(auto);
 }
 
-.category-details-panel__title {
+.category-details-panel__header {
     flex: 0 0 auto;
-    margin: 0 0 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ui-space-md);
+    margin-block-end: 1rem;
+}
+
+.category-details-panel__title {
+    min-inline-size: 0;
+    margin: 0;
     font-size: var(--font-size-h5);
     line-height: var(--line-height-heading);
     color: var(--color-app-text);
+}
+
+.category-details-panel__edit-button {
+    @include ui.outline-button;
+
+    block-size: var(--ui-control-height);
+    padding-inline: var(--ui-space-md);
 }
 
 .category-details-panel__details-list {

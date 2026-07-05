@@ -8,7 +8,13 @@ import { Tooltip } from '@/components/Tooltip';
 
 import '@/components/Navigation/ExpandableNavigationItem.scss';
 
-export type ExpandableNavigationSubItem = Readonly<{ id: string; label: string; to: string; iconClassName?: string }>;
+export type ExpandableNavigationSubItem = Readonly<{
+    id: string;
+    label: string;
+    to: string;
+    iconClassName?: string;
+    badgeValue?: number | string;
+}>;
 
 export type ExpandableNavigationItemProps = Readonly<{
     label: string;
@@ -112,6 +118,13 @@ export function ExpandableNavigationItem({
                                 )}
 
                                 <span>{subItem.label}</span>
+
+                                {subItem.badgeValue !== undefined && (
+                                    <Badge
+                                        value={subItem.badgeValue}
+                                        pt={{ root: { className: 'expandable-navigation-item__sub-badge' } }}
+                                    />
+                                )}
                             </NavLink>
                         </li>
                     ))}

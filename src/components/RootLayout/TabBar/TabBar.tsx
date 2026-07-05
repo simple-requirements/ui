@@ -2,7 +2,7 @@ import { useSelector } from '@tanstack/react-store';
 import { useNavigate } from 'react-router';
 
 import { Tab } from '@/components/RootLayout/TabBar/Tab';
-import { getProjectCategoryDetailsCloseRoute } from '@/router/projectRoutes';
+import { getProjectDetailsCloseRoute } from '@/router/projectRoutes';
 import { activateTab, clearActiveTab, closeTab, tabBarStore, type TabBarTab } from '@/stores/tabBarStore';
 
 import '@/components/RootLayout/TabBar/TabBar.scss';
@@ -27,7 +27,7 @@ export function TabBar() {
 
     function handleCloseTab(tab: TabBarTab): void {
         const tabWasActive = tab.id === activeTabId;
-        const closeRoute = getProjectCategoryDetailsCloseRoute(tab.id);
+        const closeRoute = getProjectDetailsCloseRoute(tab.id);
         const nextActiveTab = closeTab(tab.id);
 
         if (!tabWasActive) {

@@ -36,7 +36,7 @@ vi.mock('@tanstack/react-db', () => ({ createCollection: mocks.createCollection 
 vi.mock('@tanstack/query-db-collection', () => ({ queryCollectionOptions: mocks.queryCollectionOptions }));
 vi.mock('@/api/categoriesApi', () => ({
     categorySchema: {},
-    getListProjectCategoriesQueryKey: (projectId: string) => ['/projects', projectId, 'categories'] as const,
+    getListProjectCategoriesQueryKey: (projectId: string) => [`/projects/${projectId}/categories`] as const,
     listProjectCategoriesRequest: mocks.listProjectCategoriesRequest,
 }));
 
@@ -65,7 +65,7 @@ describe('projectCategoriesCollection', () => {
         expect(mocks.queryCollectionOptions).toHaveBeenCalledWith(
             expect.objectContaining({
                 id: 'project-categories:project-config',
-                queryKey: ['/projects', 'project-config', 'categories'],
+                queryKey: ['/projects/project-config/categories'],
                 queryClient,
                 retry: false,
             }),

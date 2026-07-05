@@ -1,9 +1,11 @@
 import { useLiveQuery } from '@tanstack/react-db';
+import { useQueries } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { projectsCollection } from '@/api/collections/projectsCollection';
+import { projectsCollection, type SidebarProject } from '@/api/collections/projectsCollection';
 import { getListProjectsQueryKey } from '@/api/generated/projects/projects';
 import { queryClient } from '@/api/queryClient';
+import { getListProjectRequirementsQueryKey, listProjectRequirementsRequest } from '@/api/requirementsApi';
 import { ActionButton } from '@/components/RootLayout/Sidebar/ActionButton';
 import { ProjectDialog } from '@/components/RootLayout/Sidebar/ProjectDialog';
 import { ProjectNavigationList } from '@/components/RootLayout/Sidebar/ProjectNavigationList';
@@ -12,6 +14,7 @@ import { useActiveProjectRoute } from '@/components/RootLayout/Sidebar/useActive
 import { useProjectContextMenu } from '@/components/RootLayout/Sidebar/useProjectContextMenu';
 import { useProjectDialogController } from '@/components/RootLayout/Sidebar/useProjectDialogController';
 import { useProjectNavigation } from '@/components/RootLayout/Sidebar/useProjectNavigation';
+import { useRouteUiMetadata } from '@/router/routeUiMetadata';
 
 import '@/components/RootLayout/Sidebar/Sidebar.scss';
 
@@ -19,6 +22,7 @@ export function Sidebar() {
     const activeProjectRoute = useActiveProjectRoute();
     const projectDialog = useProjectDialogController();
     const projectNavigation = useProjectNavigation(activeProjectRoute);
+    const routeUiMetadata = useRouteUiMetadata();
 
     const { data: projects } = useLiveQuery((query) => query.from({ projects: projectsCollection }));
 
@@ -27,7 +31,26 @@ export function Sidebar() {
         [projects],
     );
 
-    const projectContextMenu = useProjectContextMenu(sortedProjects);
+    const requirementCountQueries = useQueries({
+        queries: sortedProjects.map((project) => ({
+            queryKey: getListProjectRequirementsQueryKey(project.id),
+            queryFn: () => listProjectRequirementsRequest(project.id),
+            retry: false,
+            refetchOnWindowFocus: false,
+        })),
+    });
+
+    const projectsWithRequirementCounts = useMemo(
+        () =>
+            sortedProjects.map((project, index): SidebarProject => {
+                const requirements = requirementCountQueries[index]?.data;
+
+                return { ...project, requirementCount: requirements?.length ?? project.requirementCount ?? 0 };
+            }),
+        [sortedProjects, requirementCountQueries],
+    );
+
+    const projectContextMenu = useProjectContextMenu(projectsWithRequirementCounts);
 
     function handleSynchronizeProjects(): void {
         void queryClient.invalidateQueries({ queryKey: getListProjectsQueryKey() });
@@ -78,13 +101,14 @@ export function Sidebar() {
                 role='group'
                 aria-label='Project actions'>
                 <ActionButton
+                    disabled={routeUiMetadata.disableChromeActions}
                     onNewProject={projectDialog.openCreateProjectDialog}
                     onSynchronize={handleSynchronizeProjects}
                 />
             </div>
 
             <ProjectNavigationList
-                projects={sortedProjects}
+                projects={projectsWithRequirementCounts}
                 activeProjectRoute={activeProjectRoute}
                 expandedProjectId={projectNavigation.expandedProjectId}
                 onToggleProject={projectNavigation.toggleProject}

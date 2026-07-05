@@ -1,0 +1,113 @@
+@use 'styles/UiMixins' as ui;
+
+.project-requirements-list-page {
+    @include ui.page-shell;
+}
+
+.project-requirements-list-page__splitter {
+    block-size: 100%;
+    border: 0;
+    background: transparent;
+}
+
+.project-requirements-list-page__splitter-panel {
+    min-block-size: 0;
+    overflow: hidden;
+}
+
+.project-requirements-list-page__list-panel {
+    block-size: 100%;
+
+    @include ui.flex-column-panel;
+}
+
+.project-requirements-list-page__header {
+    @include ui.panel-header;
+}
+
+.project-requirements-list-page__title {
+    @include ui.panel-title;
+}
+
+.project-requirements-list-page__data-table {
+    @include ui.prime-data-table;
+}
+
+.project-requirements-list-page__data-table-wrapper {
+    @include ui.prime-data-table-wrapper;
+}
+
+.project-requirements-list-page__table {
+    @include ui.prime-data-table-table;
+}
+
+.project-requirements-list-page__table-header-cell,
+.project-requirements-list-page__table-body-cell {
+    @include ui.prime-data-table-cell;
+}
+
+.project-requirements-list-page__table-header-cell {
+    @include ui.prime-data-table-header-cell;
+}
+
+.project-requirements-list-page__table-row {
+    @include ui.prime-data-table-selectable-row;
+
+    &--selected {
+        @include ui.prime-data-table-selected-row;
+    }
+}
+
+.project-requirements-list-page__key-column {
+    inline-size: 12rem;
+}
+
+.project-requirements-list-page__key-copy-button {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-primary-500);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+
+    &:hover {
+        text-decoration: underline;
+    }
+
+    &:focus-visible {
+        outline: 0.2rem solid var(--color-primary-500);
+        outline-offset: 0.2rem;
+    }
+}
+
+.project-requirements-list-page__description-column {
+    inline-size: 32rem;
+}
+
+.project-requirements-list-page__status-column,
+.project-requirements-list-page__priority-column {
+    inline-size: 8rem;
+}
+
+.project-requirements-list-page__priority-column {
+    text-align: center;
+}
+
+.project-requirements-list-page__table-header-cell.project-requirements-list-page__priority-column {
+    text-align: center;
+}
+
+.project-requirements-list-page__table-header-cell.project-requirements-list-page__priority-column
+    .p-column-header-content {
+    justify-content: center;
+}
+
+.project-requirements-list-page__owner-column,
+.project-requirements-list-page__reviewer-column {
+    inline-size: 12rem;
+}
+
+.project-requirements-list-page__updated-column {
+    inline-size: 14rem;
+}

@@ -1,3 +1,4 @@
+import { Button } from 'primereact/button';
 import type { ElementType } from 'react';
 
 import type { Category } from '@/api/categoriesApi';
@@ -11,6 +12,7 @@ export type CategoryDetailsPanelProps = Readonly<{
     titleElement?: 'h1' | 'h2';
     titleId?: string;
     emptyMessage?: string;
+    onEditCategory?: (category: Category) => void;
 }>;
 
 function formatDateTime(value: string): string {
@@ -18,7 +20,7 @@ function formatDateTime(value: string): string {
 }
 
 function getRequirementCountForCategory(category: Category): number {
-    return category.requirementCount;
+    return category.requirementCount ?? 0;
 }
 
 export function CategoryDetailsPanel({
@@ -27,6 +29,7 @@ export function CategoryDetailsPanel({
     titleElement = 'h2',
     titleId,
     emptyMessage = 'Select a category to show its details.',
+    onEditCategory,
 }: CategoryDetailsPanelProps) {
     const TitleElement: ElementType = titleElement;
 
@@ -34,11 +37,22 @@ export function CategoryDetailsPanel({
         <div
             className='category-details-panel'
             aria-live='polite'>
-            <TitleElement
-                id={titleId}
-                className='category-details-panel__title'>
-                {title}
-            </TitleElement>
+            <div className='category-details-panel__header'>
+                <TitleElement
+                    id={titleId}
+                    className='category-details-panel__title'>
+                    {title}
+                </TitleElement>
+
+                {category !== undefined && onEditCategory !== undefined && (
+                    <Button
+                        type='button'
+                        label='Edit'
+                        onClick={() => onEditCategory(category)}
+                        pt={{ root: { className: 'category-details-panel__edit-button' } }}
+                    />
+                )}
+            </div>
 
             {category === undefined ?
                 <InlineStatus kind='empty'>{emptyMessage}</InlineStatus>

@@ -1,11 +1,11 @@
 import { eq, useLiveQuery } from '@tanstack/react-db';
 import { useEffect, useMemo } from 'react';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 
 import { getProjectCategoriesCollection } from '@/api/collections/projectCategoriesCollection';
-import { LoadableContent } from '@/components/Feedback/LoadableContent';
 import { InlineStatus } from '@/components/Feedback/InlineStatus';
-import { getProjectCategoryDetailsRoute } from '@/router/projectRoutes';
+import { LoadableContent } from '@/components/Feedback/LoadableContent';
+import { getProjectCategoryDetailsRoute, getProjectCategoryEditRoute } from '@/router/projectRoutes';
 import { openTab } from '@/stores/tabBarStore';
 
 import { CategoryDetailsPanel } from '@/pages/ProjectCategories/CategoryDetailsPanel';
@@ -14,6 +14,7 @@ import '@/pages/ProjectCategories/DetailsPage.scss';
 
 export function DetailsPage() {
     const { projectId, categoryId } = useParams();
+    const navigate = useNavigate();
 
     const categoryDetailsRoute =
         projectId === undefined || categoryId === undefined ?
@@ -49,6 +50,17 @@ export function DetailsPage() {
         openTab({ id: categoryDetailsRoute, label: `Category ${category.key}`, closable: true });
     }, [category, categoryDetailsRoute]);
 
+    function handleEditCategory(): void {
+        if (projectId === undefined || category === undefined) {
+            return;
+        }
+
+        const categoryEditRoute = getProjectCategoryEditRoute(projectId, category.id);
+
+        openTab({ id: categoryEditRoute, label: `Edit Category ${category.key}`, closable: true });
+        void navigate(categoryEditRoute);
+    }
+
     if (projectId === undefined || categoryId === undefined) {
         return (
             <section className='project-categories-details-page'>
@@ -73,6 +85,7 @@ export function DetailsPage() {
                     title={category === undefined ? 'Category details' : `Category ${category.key}`}
                     titleElement='h1'
                     titleId='project-categories-details-page-title'
+                    onEditCategory={handleEditCategory}
                 />
             </LoadableContent>
         </section>

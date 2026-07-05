@@ -19,6 +19,13 @@ describe('ActionButton', () => {
             expect(screen.getByRole('button', { name: /synchronize projects/i })).toBeInTheDocument();
             expect(screen.getByRole('button', { name: /new project/i })).toBeInTheDocument();
         });
+
+        it('disabled action buttons.', () => {
+            render(<ActionButton disabled />);
+
+            expect(screen.getByRole('button', { name: /synchronize projects/i })).toBeDisabled();
+            expect(screen.getByRole('button', { name: /new project/i })).toBeDisabled();
+        });
     });
 
     describe('calls', () => {

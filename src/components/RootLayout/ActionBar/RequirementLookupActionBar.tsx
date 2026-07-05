@@ -1,15 +1,23 @@
 import { useSelector } from '@tanstack/react-store';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 
 import { actionBarStore, setRequirementKey } from '@/stores/actionBarStore';
 
-import '@/components/RootLayout/ActionBar.scss';
+import '@/components/RootLayout/ActionBar/ActionBar.scss';
 
-type Props = Readonly<{ onCopyKey?: () => void; onFindKey?: (requirementKey: string) => void }>;
+export type RequirementLookupActionBarProps = Readonly<{
+    disabled?: boolean;
+    children?: ReactNode;
+    onFindKey?: (requirementKey: string) => void;
+}>;
 
-export function ActionBar({ onCopyKey, onFindKey }: Props) {
+export function RequirementLookupActionBar({
+    disabled = false,
+    children,
+    onFindKey,
+}: RequirementLookupActionBarProps) {
     const requirementKey = useSelector(actionBarStore, (state) => state.requirementKey);
 
     const handleSubmit: NonNullable<ComponentProps<'form'>['onSubmit']> = (event) => {
@@ -30,6 +38,7 @@ export function ActionBar({ onCopyKey, onFindKey }: Props) {
                 <InputText
                     id='requirement-key'
                     value={requirementKey}
+                    disabled={disabled}
                     onChange={(event) => setRequirementKey(event.currentTarget.value)}
                     placeholder='FR-KEY-0001'
                     aria-label='Requirement key'
@@ -39,18 +48,13 @@ export function ActionBar({ onCopyKey, onFindKey }: Props) {
                 <Button
                     outlined
                     type='submit'
-                    label='Find key'
+                    label='Find requirement'
+                    disabled={disabled}
                     pt={{ root: { className: 'action-bar__button' } }}
                 />
             </form>
 
-            <Button
-                outlined
-                type='button'
-                label='Copy key'
-                onClick={onCopyKey}
-                pt={{ root: { className: 'action-bar__button' } }}
-            />
+            {children}
         </section>
     );
 }

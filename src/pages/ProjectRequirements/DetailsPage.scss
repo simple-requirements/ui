@@ -1,0 +1,5 @@
+@use "../../styles/UiMixins" as ui;
+
+.project-requirements-details-page {
+  @include ui.page-shell;
+}

@@ -16,13 +16,13 @@ const defaultSubItems = [
         label: 'Requirements',
         to: '/projects/project-alpha/requirements',
         iconClassName: 'pi pi-list',
+        badgeValue: 4,
     },
     { id: 'categories', label: 'Categories', to: '/projects/project-alpha/categories', iconClassName: 'pi pi-tags' },
 ] as const;
 
 const defaultProps = {
     label: 'Alpha Project',
-    badgeValue: 4,
     expanded: false,
     active: false,
     subItems: defaultSubItems,
@@ -52,11 +52,16 @@ afterEach(() => {
 
 describe('ExpandableNavigationItem', () => {
     describe('renders', () => {
-        it('the item label and badge value.', () => {
+        it('the item label.', () => {
             renderExpandableNavigationItem();
 
             expect(screen.getByRole('button', { name: /alpha project/i })).toBeInTheDocument();
-            expect(screen.getByText('4')).toBeInTheDocument();
+        });
+
+        it('the optional parent badge value.', () => {
+            renderExpandableNavigationItem({ badgeValue: 8 });
+
+            expect(screen.getByText('8')).toBeInTheDocument();
         });
 
         it('the collapsed state as aria-expanded=false.', () => {
@@ -82,6 +87,12 @@ describe('ExpandableNavigationItem', () => {
                 'href',
                 '/projects/project-alpha/categories',
             );
+        });
+
+        it('a sub item badge value.', () => {
+            renderExpandableNavigationItem({ expanded: true, badgeValue: undefined });
+
+            expect(screen.getByRole('link', { name: /requirements/i })).toHaveTextContent('4');
         });
 
         it('no accessible sub items when the item is collapsed.', () => {

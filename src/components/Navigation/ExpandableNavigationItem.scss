@@ -1,4 +1,4 @@
-@use '../../styles/UiMixins' as ui;
+@use 'styles/UiMixins' as ui;
 
 .expandable-navigation-item {
     display: flex;
@@ -96,6 +96,17 @@
         border-color: var(--color-app-active-border);
         color: var(--color-app-text);
     }
+}
+
+.expandable-navigation-item__sub-badge {
+    min-inline-size: var(--ui-badge-min-width);
+    block-size: var(--ui-badge-height);
+    padding-inline: 0.8rem;
+    margin-inline-start: auto;
+    font-size: var(--font-size-small);
+    line-height: var(--ui-badge-height);
+    background: var(--color-primary-400);
+    color: white;
 }
 
 .expandable-navigation-item__sub-icon {

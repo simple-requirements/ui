@@ -1,4 +1,4 @@
-@use '../../../styles/UiMixins' as ui;
+@use 'styles/UiMixins' as ui;
 
 .sidebar {
     --sidebar-actions-button-height: var(--ui-control-height);

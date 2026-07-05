@@ -18,7 +18,7 @@ const backendCategorySchema = z.object({
     name: z.string().min(1),
     key: z.string().min(1),
     type: z.enum(['FR', 'NFR']),
-    requirementCount: z.number().optional().default(0),
+    requirementCount: z.number().optional(),
 });
 
 type BackendProject = z.infer<typeof backendProjectSchema>;

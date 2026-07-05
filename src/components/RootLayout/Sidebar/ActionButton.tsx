@@ -2,15 +2,16 @@ import { Button } from 'primereact/button';
 
 import '@/components/RootLayout/Sidebar/ActionButton.scss';
 
-type Props = Readonly<{ onNewProject?: () => void; onSynchronize?: () => void }>;
+type Props = Readonly<{ disabled?: boolean; onNewProject?: () => void; onSynchronize?: () => void }>;
 
-export function ActionButton({ onNewProject, onSynchronize }: Props) {
+export function ActionButton({ disabled = false, onNewProject, onSynchronize }: Props) {
     return (
         <>
             <Button
                 type='button'
                 icon='pi pi-cloud-download'
                 aria-label='Synchronize projects'
+                disabled={disabled}
                 onClick={onSynchronize}
                 pt={{
                     root: { className: 'sidebar-action-button sidebar-action-button--ghost' },
@@ -21,6 +22,7 @@ export function ActionButton({ onNewProject, onSynchronize }: Props) {
             <Button
                 type='button'
                 label='New project'
+                disabled={disabled}
                 onClick={onNewProject}
                 pt={{
                     root: { className: 'sidebar-action-button' },

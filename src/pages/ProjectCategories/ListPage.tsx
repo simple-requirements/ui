@@ -9,7 +9,7 @@ import type { Category } from '@/api/categoriesApi';
 import { getProjectCategoriesCollection } from '@/api/collections/projectCategoriesCollection';
 import { InlineStatus } from '@/components/Feedback/InlineStatus';
 import { LoadableContent } from '@/components/Feedback/LoadableContent';
-import { getProjectCategoryDetailsRoute } from '@/router/projectRoutes';
+import { getProjectCategoryDetailsRoute, getProjectCategoryEditRoute } from '@/router/projectRoutes';
 import { openTab } from '@/stores/tabBarStore';
 
 import { CategoryDetailsPanel } from '@/pages/ProjectCategories/CategoryDetailsPanel';
@@ -35,7 +35,7 @@ function getCategoryRowClassName(category: unknown, selectedCategoryId: string |
 }
 
 function getRequirementCountForCategory(category: Category): number {
-    return category.requirementCount;
+    return category.requirementCount ?? 0;
 }
 
 function requirementCountBodyTemplate(category: CategoryTableRow): number {
@@ -108,6 +108,17 @@ export function ListPage() {
 
     function handleCategorySelectionChange(event: DataTableSelectionSingleChangeEvent<CategoryTableRow[]>): void {
         setSelectedCategoryId(event.value.id);
+    }
+
+    function handleEditCategory(category: Category): void {
+        if (projectId === undefined) {
+            return;
+        }
+
+        const categoryEditRoute = getProjectCategoryEditRoute(projectId, category.id);
+
+        openTab({ id: categoryEditRoute, label: `Edit Category ${category.key}`, closable: true });
+        void navigate(categoryEditRoute);
     }
 
     function handleCategoryRowDoubleClick(event: DataTableRowClickEvent): void {
@@ -210,6 +221,7 @@ export function ListPage() {
                     <CategoryDetailsPanel
                         category={selectedCategory}
                         title='Category details'
+                        onEditCategory={handleEditCategory}
                     />
                 </SplitterPanel>
             </Splitter>

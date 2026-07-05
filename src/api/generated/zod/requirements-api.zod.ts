@@ -38,6 +38,21 @@ export const CreateProjectResponse = zod.object({
 
 
 /**
+ * @summary Get one project.
+ */
+export const GetProjectParams = zod.object({
+  "id": zod.string().describe('Project identifier.')
+})
+
+export const GetProjectResponse = zod.object({
+  "id": zod.string().describe('Stable project identifier.'),
+  "name": zod.string().describe('Human-readable project name.'),
+  "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the project was created.'),
+  "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the project was last updated.')
+})
+
+
+/**
  * @summary Rename a project.
  */
 export const UpdateProjectParams = zod.object({
@@ -64,3 +79,407 @@ export const DeleteProjectParams = zod.object({
 })
 
 export const DeleteProjectResponse = zod.void()
+
+
+/**
+ * @summary List all categories of a project.
+ */
+export const ListCategoriesParams = zod.object({
+  "projectId": zod.string().describe('Project identifier.')
+})
+
+export const ListCategoriesResponseItem = zod.object({
+  "id": zod.string().describe('Stable category identifier.'),
+  "projectId": zod.string().describe('Owning project identifier.'),
+  "name": zod.string().describe('Human-readable category name.'),
+  "key": zod.string().describe('Uppercase category key used for visible requirement keys.'),
+  "type": zod.enum(['FR', 'NFR']).describe('Requirement type handled by this category.'),
+  "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the category was created.'),
+  "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the category was last updated.')
+})
+export const ListCategoriesResponse = zod.array(ListCategoriesResponseItem)
+
+
+/**
+ * @summary Create a category for a project.
+ */
+export const CreateCategoryParams = zod.object({
+  "projectId": zod.string().describe('Project identifier.')
+})
+
+export const CreateCategoryBody = zod.object({
+  "name": zod.string().describe('Human-readable category name.'),
+  "key": zod.string().describe('Uppercase category key used for visible requirement keys.'),
+  "type": zod.enum(['FR', 'NFR']).describe('Requirement type handled by this category.')
+})
+
+export const CreateCategoryResponse = zod.object({
+  "id": zod.string().describe('Stable category identifier.'),
+  "projectId": zod.string().describe('Owning project identifier.'),
+  "name": zod.string().describe('Human-readable category name.'),
+  "key": zod.string().describe('Uppercase category key used for visible requirement keys.'),
+  "type": zod.enum(['FR', 'NFR']).describe('Requirement type handled by this category.'),
+  "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the category was created.'),
+  "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the category was last updated.')
+})
+
+
+/**
+ * @summary Update a category.
+ */
+export const UpdateCategoryParams = zod.object({
+  "projectId": zod.string().describe('Project identifier.'),
+  "categoryId": zod.string().describe('Category identifier.')
+})
+
+export const UpdateCategoryBody = zod.object({
+  "name": zod.string().optional().describe('Human-readable category name.'),
+  "key": zod.string().optional().describe('Uppercase category key used for visible requirement keys.'),
+  "type": zod.enum(['FR', 'NFR']).optional().describe('Requirement type handled by this category.')
+})
+
+export const UpdateCategoryResponse = zod.object({
+  "id": zod.string().describe('Stable category identifier.'),
+  "projectId": zod.string().describe('Owning project identifier.'),
+  "name": zod.string().describe('Human-readable category name.'),
+  "key": zod.string().describe('Uppercase category key used for visible requirement keys.'),
+  "type": zod.enum(['FR', 'NFR']).describe('Requirement type handled by this category.'),
+  "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the category was created.'),
+  "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the category was last updated.')
+})
+
+
+/**
+ * @summary Delete a category.
+ */
+export const DeleteCategoryParams = zod.object({
+  "projectId": zod.string().describe('Project identifier.'),
+  "categoryId": zod.string().describe('Category identifier.')
+})
+
+export const DeleteCategoryResponse = zod.void()
+
+
+/**
+ * @summary List all requirements of a project.
+ */
+export const ListRequirementsParams = zod.object({
+  "projectId": zod.string().describe('Project identifier.')
+})
+
+export const ListRequirementsQueryParams = zod.object({
+  "deleted": zod.string().optional().describe('Return requirements from the recycle bin.')
+})
+
+export const listRequirementsResponseVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-[0-9]{4}$');
+
+
+export const ListRequirementsResponseItem = zod.object({
+  "id": zod.string().describe('Stable requirement identifier.'),
+  "projectId": zod.string().describe('Owning project identifier.'),
+  "categoryId": zod.string().describe('Owning category identifier.'),
+  "sequenceNumber": zod.number().describe('Sequential number within the category used to build the visible key.'),
+  "visibleKey": zod.string().regex(listRequirementsResponseVisibleKeyRegExp),
+  "revisionNumber": zod.number().describe('Current revision number of this requirement.'),
+  "status": zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
+  "description": zod.looseObject({
+
+}).nullish(),
+  "priority": zod.enum(['p1', 'p2', 'p3']).nullish(),
+  "owner": zod.looseObject({
+
+}).nullish(),
+  "rationale": zod.looseObject({
+
+}).nullish(),
+  "source": zod.looseObject({
+
+}).nullish(),
+  "rejectionReason": zod.looseObject({
+
+}).nullish(),
+  "reviewer": zod.looseObject({
+
+}).nullish(),
+  "rejectedAt": zod.looseObject({
+
+}).nullish(),
+  "deletedAt": zod.looseObject({
+
+}).nullish(),
+  "approvedAt": zod.looseObject({
+
+}).nullish(),
+  "implementedAt": zod.looseObject({
+
+}).nullish(),
+  "obsolescenceReason": zod.looseObject({
+
+}).nullish(),
+  "obsoleteAt": zod.looseObject({
+
+}).nullish(),
+  "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was created.'),
+  "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was last updated.')
+})
+export const ListRequirementsResponse = zod.array(ListRequirementsResponseItem)
+
+
+/**
+ * @summary Create a draft requirement for a project.
+ */
+export const CreateRequirementParams = zod.object({
+  "projectId": zod.string().describe('Project identifier.')
+})
+
+export const CreateRequirementBody = zod.object({
+  "categoryId": zod.string().describe('Owning category identifier.'),
+  "description": zod.looseObject({
+
+}).nullish(),
+  "priority": zod.enum(['p1', 'p2', 'p3']).nullish(),
+  "owner": zod.looseObject({
+
+}).nullish(),
+  "rationale": zod.looseObject({
+
+}).nullish(),
+  "source": zod.looseObject({
+
+}).nullish()
+})
+
+export const createRequirementResponseVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-[0-9]{4}$');
+
+
+export const CreateRequirementResponse = zod.object({
+  "id": zod.string().describe('Stable requirement identifier.'),
+  "projectId": zod.string().describe('Owning project identifier.'),
+  "categoryId": zod.string().describe('Owning category identifier.'),
+  "sequenceNumber": zod.number().describe('Sequential number within the category used to build the visible key.'),
+  "visibleKey": zod.string().regex(createRequirementResponseVisibleKeyRegExp),
+  "revisionNumber": zod.number().describe('Current revision number of this requirement.'),
+  "status": zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
+  "description": zod.looseObject({
+
+}).nullish(),
+  "priority": zod.enum(['p1', 'p2', 'p3']).nullish(),
+  "owner": zod.looseObject({
+
+}).nullish(),
+  "rationale": zod.looseObject({
+
+}).nullish(),
+  "source": zod.looseObject({
+
+}).nullish(),
+  "rejectionReason": zod.looseObject({
+
+}).nullish(),
+  "reviewer": zod.looseObject({
+
+}).nullish(),
+  "rejectedAt": zod.looseObject({
+
+}).nullish(),
+  "deletedAt": zod.looseObject({
+
+}).nullish(),
+  "approvedAt": zod.looseObject({
+
+}).nullish(),
+  "implementedAt": zod.looseObject({
+
+}).nullish(),
+  "obsolescenceReason": zod.looseObject({
+
+}).nullish(),
+  "obsoleteAt": zod.looseObject({
+
+}).nullish(),
+  "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was created.'),
+  "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was last updated.')
+})
+
+
+/**
+ * @summary Clear the requirement recycle bin.
+ */
+export const ClearDeletedRequirementsParams = zod.object({
+  "projectId": zod.string().describe('Project identifier.')
+})
+
+export const ClearDeletedRequirementsQueryParams = zod.object({
+  "deleted": zod.string().optional().describe('Required to clear the recycle bin.')
+})
+
+export const ClearDeletedRequirementsResponse = zod.void()
+
+
+/**
+ * @summary Get one requirement or one/all stored revisions.
+ */
+export const GetRequirementParams = zod.object({
+  "projectId": zod.string().describe('Project identifier.'),
+  "requirementId": zod.string().describe('Requirement identifier.')
+})
+
+export const GetRequirementQueryParams = zod.object({
+  "allrevisions": zod.unknown().optional().describe('Return all stored historical revisions.'),
+  "revision": zod.number().optional().describe('Return the requirement version with this revision number.')
+})
+
+export const getRequirementResponseVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-[0-9]{4}$');
+
+
+export const GetRequirementResponse = zod.object({
+  "id": zod.string().describe('Stable requirement identifier.'),
+  "projectId": zod.string().describe('Owning project identifier.'),
+  "categoryId": zod.string().describe('Owning category identifier.'),
+  "sequenceNumber": zod.number().describe('Sequential number within the category used to build the visible key.'),
+  "visibleKey": zod.string().regex(getRequirementResponseVisibleKeyRegExp),
+  "revisionNumber": zod.number().describe('Current revision number of this requirement.'),
+  "status": zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
+  "description": zod.looseObject({
+
+}).nullish(),
+  "priority": zod.enum(['p1', 'p2', 'p3']).nullish(),
+  "owner": zod.looseObject({
+
+}).nullish(),
+  "rationale": zod.looseObject({
+
+}).nullish(),
+  "source": zod.looseObject({
+
+}).nullish(),
+  "rejectionReason": zod.looseObject({
+
+}).nullish(),
+  "reviewer": zod.looseObject({
+
+}).nullish(),
+  "rejectedAt": zod.looseObject({
+
+}).nullish(),
+  "deletedAt": zod.looseObject({
+
+}).nullish(),
+  "approvedAt": zod.looseObject({
+
+}).nullish(),
+  "implementedAt": zod.looseObject({
+
+}).nullish(),
+  "obsolescenceReason": zod.looseObject({
+
+}).nullish(),
+  "obsoleteAt": zod.looseObject({
+
+}).nullish(),
+  "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was created.'),
+  "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was last updated.')
+})
+
+
+/**
+ * @summary Update a requirement.
+ */
+export const UpdateRequirementParams = zod.object({
+  "projectId": zod.string().describe('Project identifier.'),
+  "requirementId": zod.string().describe('Requirement identifier.')
+})
+
+export const UpdateRequirementBody = zod.object({
+  "categoryId": zod.string().optional().describe('Owning category identifier.'),
+  "description": zod.looseObject({
+
+}).nullish(),
+  "priority": zod.enum(['p1', 'p2', 'p3']).nullish(),
+  "owner": zod.looseObject({
+
+}).nullish(),
+  "rationale": zod.looseObject({
+
+}).nullish(),
+  "source": zod.looseObject({
+
+}).nullish(),
+  "status": zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']).optional(),
+  "reviewer": zod.looseObject({
+
+}).nullish(),
+  "rejectionReason": zod.looseObject({
+
+}).nullish(),
+  "obsolescenceReason": zod.looseObject({
+
+}).nullish()
+})
+
+export const updateRequirementResponseVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-[0-9]{4}$');
+
+
+export const UpdateRequirementResponse = zod.object({
+  "id": zod.string().describe('Stable requirement identifier.'),
+  "projectId": zod.string().describe('Owning project identifier.'),
+  "categoryId": zod.string().describe('Owning category identifier.'),
+  "sequenceNumber": zod.number().describe('Sequential number within the category used to build the visible key.'),
+  "visibleKey": zod.string().regex(updateRequirementResponseVisibleKeyRegExp),
+  "revisionNumber": zod.number().describe('Current revision number of this requirement.'),
+  "status": zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
+  "description": zod.looseObject({
+
+}).nullish(),
+  "priority": zod.enum(['p1', 'p2', 'p3']).nullish(),
+  "owner": zod.looseObject({
+
+}).nullish(),
+  "rationale": zod.looseObject({
+
+}).nullish(),
+  "source": zod.looseObject({
+
+}).nullish(),
+  "rejectionReason": zod.looseObject({
+
+}).nullish(),
+  "reviewer": zod.looseObject({
+
+}).nullish(),
+  "rejectedAt": zod.looseObject({
+
+}).nullish(),
+  "deletedAt": zod.looseObject({
+
+}).nullish(),
+  "approvedAt": zod.looseObject({
+
+}).nullish(),
+  "implementedAt": zod.looseObject({
+
+}).nullish(),
+  "obsolescenceReason": zod.looseObject({
+
+}).nullish(),
+  "obsoleteAt": zod.looseObject({
+
+}).nullish(),
+  "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was created.'),
+  "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was last updated.')
+})
+
+
+/**
+ * @summary Delete a requirement.
+ */
+export const DeleteRequirementParams = zod.object({
+  "projectId": zod.string().describe('Project identifier.'),
+  "requirementId": zod.string().describe('Requirement identifier.')
+})
+
+export const DeleteRequirementQueryParams = zod.object({
+  "deleted": zod.string().optional().describe('Permanently remove a recycled requirement.')
+})
+
+export const DeleteRequirementResponse = zod.void()

@@ -6,9 +6,11 @@
  * OpenAPI spec version: 0.0.1
  */
 
+export * from './approveRequirementDto';
 export * from './categoryResponseDto';
 export * from './categoryResponseDtoType';
 export * from './clearDeletedRequirementsParams';
+export * from './closeRequirementReviewCommentDto';
 export * from './createCategoryDto';
 export * from './createCategoryDtoType';
 export * from './createProjectDto';
@@ -18,10 +20,12 @@ export * from './createRequirementDtoOwner';
 export * from './createRequirementDtoPriority';
 export * from './createRequirementDtoRationale';
 export * from './createRequirementDtoSource';
+export * from './createRequirementReviewCommentDto';
 export * from './deleteRequirementParams';
 export * from './getRequirementParams';
 export * from './listRequirementsParams';
 export * from './projectResponseDto';
+export * from './rejectRequirementDto';
 export * from './requirementResponseDto';
 export * from './requirementResponseDtoApprovedAt';
 export * from './requirementResponseDtoDeletedAt';
@@ -37,6 +41,12 @@ export * from './requirementResponseDtoRejectionReason';
 export * from './requirementResponseDtoReviewer';
 export * from './requirementResponseDtoSource';
 export * from './requirementResponseDtoStatus';
+export * from './requirementReviewCommentResponseDto';
+export * from './requirementReviewCommentResponseDtoClosedAt';
+export * from './requirementReviewCommentResponseDtoClosedBy';
+export * from './requirementReviewCommentResponseDtoClosedInRevisionNumber';
+export * from './requirementReviewCommentResponseDtoCloseReason';
+export * from './requirementReviewCommentResponseDtoStatus';
 export * from './updateCategoryDto';
 export * from './updateCategoryDtoType';
 export * from './updateProjectDto';

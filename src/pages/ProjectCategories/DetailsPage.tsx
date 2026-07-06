@@ -55,9 +55,10 @@ export function DetailsPage() {
             return;
         }
 
+        const categoryDetailsRoute = getProjectCategoryDetailsRoute(projectId, category.id);
         const categoryEditRoute = getProjectCategoryEditRoute(projectId, category.id);
 
-        openTab({ id: categoryEditRoute, label: `Edit Category ${category.key}`, closable: true });
+        openTab({ id: categoryDetailsRoute, label: `Category ${category.key}`, closable: true });
         void navigate(categoryEditRoute);
     }
 

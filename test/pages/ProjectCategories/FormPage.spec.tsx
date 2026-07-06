@@ -220,6 +220,25 @@ describe('ProjectCategories FormPage', () => {
         expect(screen.getByRole('combobox', { name: 'Type' })).toBeDisabled();
     });
 
+    it('uses the category details tab while editing a category.', async () => {
+        mockQueries({ categories: [category], category });
+
+        renderFormPage('/projects/project-alpha/categories/11111111-1111-4111-8111-111111111111/edit');
+
+        await waitFor(() => {
+            expect(mocks.openTab).toHaveBeenCalledWith({
+                id: '/projects/project-alpha/categories/11111111-1111-4111-8111-111111111111',
+                label: 'Category AUTH',
+                closable: true,
+            });
+        });
+        expect(mocks.openTab).not.toHaveBeenCalledWith({
+            id: '/projects/project-alpha/categories/11111111-1111-4111-8111-111111111111/edit',
+            label: 'Edit Category AUTH',
+            closable: true,
+        });
+    });
+
     it('updates only the category name.', async () => {
         const user = userEvent.setup();
 
@@ -239,6 +258,14 @@ describe('ProjectCategories FormPage', () => {
                 { name: 'Login' },
             );
         });
+        expect(mocks.openTab).toHaveBeenCalledWith({
+            id: '/projects/project-alpha/categories/11111111-1111-4111-8111-111111111111',
+            label: 'Category AUTH',
+            closable: true,
+        });
+        expect(await screen.findByLabelText('Current route')).toHaveTextContent(
+            '/projects/project-alpha/categories/11111111-1111-4111-8111-111111111111',
+        );
     });
 
     it('asks for confirmation before aborting a dirty form.', async () => {

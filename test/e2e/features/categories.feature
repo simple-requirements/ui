@@ -46,3 +46,27 @@ Feature: Project categories
     When I open the category details URL directly for category "AUTH"
     Then the tab bar should contain "Category AUTH"
     And the full category details page should show category "AUTH"
+
+  Scenario: User copies a category key from the table
+    Given the backend contains a category test project named "Category BDD Project" with categories
+      | key  | type | name           |
+      | AUTH | FR   | Authentication |
+    When I open the category list for the category test project
+    And I copy category key "AUTH"
+    Then the category key copied toast should be visible for category "AUTH"
+
+  Scenario: User opens the category context menu
+    Given the backend contains a category test project named "Category BDD Project" with categories
+      | key  | type | name           |
+      | AUTH | FR   | Authentication |
+    When I open the category list for the category test project
+    And I open the context menu for category "AUTH"
+    Then the category context menu should show the category actions
+
+  Scenario: User opens requirement creation from a category
+    Given the backend contains a category test project named "Category BDD Project" with categories
+      | key  | type | name           |
+      | AUTH | FR   | Authentication |
+    When I open the category list for the category test project
+    And I choose Add requirement for category "AUTH"
+    Then the requirement creation placeholder should be visible for category "AUTH"

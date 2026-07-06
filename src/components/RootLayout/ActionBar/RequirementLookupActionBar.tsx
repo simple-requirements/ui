@@ -3,9 +3,8 @@ import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import type { ComponentProps, ReactNode } from 'react';
 
+import { ActionBar } from '@/components/RootLayout/ActionBar/ActionBar';
 import { actionBarStore, setRequirementKey } from '@/stores/actionBarStore';
-
-import '@/components/RootLayout/ActionBar/ActionBar.scss';
 
 export type RequirementLookupActionBarProps = Readonly<{
     disabled?: boolean;
@@ -13,11 +12,7 @@ export type RequirementLookupActionBarProps = Readonly<{
     onFindKey?: (requirementKey: string) => void;
 }>;
 
-export function RequirementLookupActionBar({
-    disabled = false,
-    children,
-    onFindKey,
-}: RequirementLookupActionBarProps) {
+export function RequirementLookupActionBar({ disabled = false, children, onFindKey }: RequirementLookupActionBarProps) {
     const requirementKey = useSelector(actionBarStore, (state) => state.requirementKey);
 
     const handleSubmit: NonNullable<ComponentProps<'form'>['onSubmit']> = (event) => {
@@ -28,9 +23,7 @@ export function RequirementLookupActionBar({
     };
 
     return (
-        <section
-            className='action-bar'
-            aria-label='Requirement actions'>
+        <ActionBar label='Requirement actions'>
             <form
                 className='action-bar__lookup'
                 aria-label='Requirement key lookup'
@@ -55,6 +48,6 @@ export function RequirementLookupActionBar({
             </form>
 
             {children}
-        </section>
+        </ActionBar>
     );
 }

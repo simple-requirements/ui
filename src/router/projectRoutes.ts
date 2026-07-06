@@ -14,6 +14,12 @@ export function getProjectRequirementDetailsRoute(projectId: string, requirement
     return `/projects/${projectId}/requirements/${requirementId}`;
 }
 
+export function getProjectRequirementCreateRoute(projectId: string, categoryId?: string): string {
+    const route = `/projects/${projectId}/requirements/new`;
+
+    return categoryId === undefined ? route : `${route}?categoryId=${encodeURIComponent(categoryId)}`;
+}
+
 export function getProjectCategoriesRoute(projectId: string): string {
     return `/projects/${projectId}/categories`;
 }

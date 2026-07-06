@@ -1,9 +1,9 @@
-import { ContextMenu } from 'primereact/contextmenu';
+import type { ContextMenu } from 'primereact/contextmenu';
 import type { MenuItem } from 'primereact/menuitem';
 import type { RefObject } from 'react';
 import { useMemo } from 'react';
 
-import '@/components/RootLayout/Sidebar/SidebarContextMenu.scss';
+import { AppContextMenu } from '@/components/ContextMenu/AppContextMenu';
 
 type Props = Readonly<{
     contextMenuRef: RefObject<ContextMenu | null>;
@@ -32,18 +32,9 @@ export function SidebarContextMenu({
     );
 
     return (
-        <ContextMenu
+        <AppContextMenu
             ref={contextMenuRef}
             model={menuItems}
-            pt={{
-                root: { className: 'sidebar-context-menu' },
-                menu: { className: 'sidebar-context-menu__menu' },
-                menuitem: { className: 'sidebar-context-menu__item' },
-                action: { className: 'sidebar-context-menu__action' },
-                icon: { className: 'sidebar-context-menu__icon' },
-                label: { className: 'sidebar-context-menu__label' },
-                separator: { className: 'sidebar-context-menu__separator' },
-            }}
         />
     );
 }

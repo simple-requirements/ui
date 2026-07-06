@@ -1,44 +1,22 @@
-import { useActionState, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 
-import {
-    categoryTypeSchema,
-    createCategoryRequestSchema,
-    createProjectCategoryRequest,
-    getListProjectCategoriesQueryKey,
-    updateCategoryRequestSchema,
-    updateProjectCategoryRequest,
-    type Category,
-} from '@/api/categoriesApi';
-import { queryClient } from '@/api/queryClient';
-import {
-    getProjectCategoriesRoute,
-    getProjectCategoryCreateRoute,
-    getProjectCategoryDetailsRoute,
-    getProjectCategoryEditRoute,
-} from '@/router/projectRoutes';
+import { categoryTypeSchema, type Category } from '@/api/categoriesApi';
+import { getProjectCategoryDetailsRoute } from '@/router/projectRoutes';
 import { openTab } from '@/stores/tabBarStore';
 import { showToastMessage } from '@/stores/toastStore';
 
 import {
     createCategoryInitialValues,
-    DISCARD_CATEGORY_FORM_CHANGES_MESSAGE,
-    emptyCategoryFormState,
     type CategoryFormData,
     type CategoryFormFieldName,
     type CategoryFormMode,
     type CategoryFormState,
     type CategoryFormValues,
 } from '@/pages/ProjectCategories/Form/categoryFormTypes';
-import {
-    CategoryFormValidationError,
-    getCategoryFormDataString,
-    getCategoryFormFieldErrors,
-    getDuplicateCategoryKeyError,
-    getDuplicateCategoryNameError,
-    hasCategoryFormChanges,
-} from '@/pages/ProjectCategories/Form/categoryFormValidation';
-import { useUnsavedCategoryFormGuard } from '@/pages/ProjectCategories/Form/useUnsavedCategoryFormGuard';
+import { hasCategoryFormChanges } from '@/pages/ProjectCategories/Form/categoryFormValidation';
+import { useCategoryFormAction } from '@/pages/ProjectCategories/Form/useCategoryFormAction';
+import { useCategoryFormNavigation } from '@/pages/ProjectCategories/Form/useCategoryFormNavigation';
 
 export type CategoryFormController = Readonly<{
     formKey: string;
@@ -61,24 +39,12 @@ function getInitialValues(mode: CategoryFormMode, category: Category | undefined
     return { name: category.name, key: category.key, type: category.type };
 }
 
-async function createCategory(
-    projectId: string,
-    rawValues: Readonly<{ name: string; key: string; type: string }>,
-    categories: readonly Category[],
-): Promise<Category> {
-    const parseResult = createCategoryRequestSchema.safeParse(rawValues);
+function getFormTitle(mode: CategoryFormMode): string {
+    return mode === 'create' ? 'Create category' : 'Update category';
+}
 
-    if (!parseResult.success) {
-        throw new Error('Create category validation failed.');
-    }
-
-    const duplicateKeyError = getDuplicateCategoryKeyError(categories, parseResult.data.key);
-
-    if (duplicateKeyError !== undefined) {
-        throw new CategoryFormValidationError({ key: duplicateKeyError });
-    }
-
-    return createProjectCategoryRequest(projectId, parseResult.data);
+function getFormKey(mode: CategoryFormMode, projectId: string | undefined, category: Category | undefined): string {
+    return `${mode}:${category?.id ?? projectId ?? 'missing-project'}`;
 }
 
 export function useCategoryFormController(
@@ -88,95 +54,50 @@ export function useCategoryFormController(
     data: CategoryFormData,
 ): CategoryFormController {
     const navigate = useNavigate();
-    const allowNavigationRef = useRef(false);
     const initialValues = useMemo(() => getInitialValues(mode, data.category), [data.category, mode]);
-    const formKey = `${mode}:${data.category?.id ?? projectId ?? 'missing-project'}`;
-    const formTitle = mode === 'create' ? 'Create category' : 'Update category';
-    const formRoute =
-        projectId === undefined ?
-            ''
-        : mode === 'create' ?
-            getProjectCategoryCreateRoute(projectId)
-        :   getProjectCategoryEditRoute(projectId, categoryId ?? '');
+    const formKey = getFormKey(mode, projectId, data.category);
+    const formTitle = getFormTitle(mode);
 
     const [formValues, setFormValues] = useState<CategoryFormValues>(initialValues);
+    const isDirty = hasCategoryFormChanges(formValues, initialValues);
 
     useEffect(() => {
         setFormValues(initialValues);
     }, [formKey, initialValues]);
 
-    const isDirty = hasCategoryFormChanges(formValues, initialValues);
-
-    useUnsavedCategoryFormGuard(isDirty, allowNavigationRef);
-
-    const [formState, formAction, pending] = useActionState<CategoryFormState, FormData>(
-        async (_previousState, formData) => {
-            if (projectId === undefined) {
-                return { fieldErrors: {}, formError: 'Project route is missing a project id.' };
-            }
-
-            const rawValues = {
-                name: getCategoryFormDataString(formData, 'name'),
-                key: getCategoryFormDataString(formData, 'key'),
-                type: getCategoryFormDataString(formData, 'type'),
-            };
-
-            const parseResult =
-                mode === 'create' ?
-                    createCategoryRequestSchema.safeParse(rawValues)
-                :   updateCategoryRequestSchema.safeParse({ name: rawValues.name });
-
-            if (!parseResult.success) {
-                return { fieldErrors: getCategoryFormFieldErrors(parseResult.error) };
-            }
-
-            const duplicateNameError = getDuplicateCategoryNameError(data.categories, parseResult.data.name, categoryId);
-
-            if (duplicateNameError !== undefined) {
-                return { fieldErrors: { name: duplicateNameError } };
-            }
-
-            try {
-                const savedCategory =
-                    mode === 'create' ?
-                        await createCategory(projectId, rawValues, data.categories)
-                    :   categoryId === undefined ?
-                        undefined
-                    :   await updateProjectCategoryRequest(projectId, categoryId, parseResult.data);
-
-                if (savedCategory === undefined) {
-                    return { fieldErrors: {}, formError: 'Category route is incomplete.' };
-                }
-
-                await queryClient.invalidateQueries({ queryKey: getListProjectCategoriesQueryKey(projectId) });
-
-                const detailsRoute = getProjectCategoryDetailsRoute(projectId, savedCategory.id);
-
-                showToastMessage({
-                    severity: 'success',
-                    summary: mode === 'create' ? 'Category created' : 'Category updated',
-                    detail: `${savedCategory.key} has been ${mode === 'create' ? 'created' : 'updated'}.`,
-                    life: 3000,
-                });
-
-                allowNavigationRef.current = true;
-                openTab({ id: detailsRoute, label: `Category ${savedCategory.key}`, closable: true });
-                void navigate(detailsRoute);
-
-                return emptyCategoryFormState;
-            } catch (error) {
-                if (error instanceof CategoryFormValidationError) {
-                    return { fieldErrors: error.fieldErrors };
-                }
-
-                return {
-                    fieldErrors: {},
-                    formError: error instanceof Error ? error.message : 'Category could not be saved.',
-                };
-            }
-        },
-        emptyCategoryFormState,
+    const navigation = useCategoryFormNavigation(
+        projectId,
+        categoryId,
+        mode,
+        isDirty,
+        data.category?.id,
+        data.category?.key,
     );
+
+    const [formState, formAction, pending] = useCategoryFormAction({
+        projectId,
+        categoryId,
+        mode,
+        data,
+        onSaved: (savedCategory) => {
+            if (projectId === undefined) {
+                return;
+            }
+
+            const detailsRoute = getProjectCategoryDetailsRoute(projectId, savedCategory.id);
+
+            showToastMessage({
+                severity: 'success',
+                summary: mode === 'create' ? 'Category created' : 'Category updated',
+                detail: `${savedCategory.key} has been ${mode === 'create' ? 'created' : 'updated'}.`,
+                life: 3000,
+            });
+
+            navigation.allowNavigation();
+            openTab({ id: detailsRoute, label: `Category ${savedCategory.key}`, closable: true });
+            void navigate(detailsRoute);
+        },
+    });
 
     function updateFormValue(fieldName: CategoryFormFieldName, value: string): void {
         if (fieldName === 'type') {
@@ -197,29 +118,16 @@ export function useCategoryFormController(
         }));
     }
 
-    function handleAbort(): void {
-        if (isDirty && !window.confirm(DISCARD_CATEGORY_FORM_CHANGES_MESSAGE)) {
-            return;
-        }
-
-        if (projectId === undefined) {
-            return;
-        }
-
-        allowNavigationRef.current = true;
-        void navigate(getProjectCategoriesRoute(projectId));
-    }
-
     return {
         formKey,
-        formRoute,
+        formRoute: navigation.formRoute,
         formTitle,
         formValues,
         formState,
         isDirty,
         pending,
         updateFormValue,
-        handleAbort,
+        handleAbort: navigation.handleAbort,
         formAction,
     };
 }

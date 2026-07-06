@@ -6,7 +6,7 @@ import { MemoryRouter, Route, Routes, useLocation } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { Requirement } from '@/api/requirementsApi';
-import { ListPage } from '@/pages/ProjectRequirements/ListPage';
+import { ListPage } from '@/pages/ProjectRequirements/List/ListPage';
 
 const requirements: readonly Requirement[] = [
     {

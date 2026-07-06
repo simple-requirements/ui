@@ -1,4 +1,4 @@
-import { ListPage } from '@/pages/ProjectRequirements/ListPage';
+import { ListPage } from '@/pages/ProjectRequirements/List/ListPage';
 
 export function ProjectRequirementsPage() {
     return <ListPage />;

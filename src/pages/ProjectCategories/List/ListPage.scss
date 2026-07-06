@@ -70,3 +70,18 @@
     inline-size: 12rem;
     text-align: end;
 }
+
+.project-categories-list-page__key-copy-link {
+    color: var(--color-primary-500);
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+        text-decoration: underline;
+    }
+
+    &:focus-visible {
+        outline: 0.2rem solid var(--color-primary-500);
+        outline-offset: 0.2rem;
+    }
+}

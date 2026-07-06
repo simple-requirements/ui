@@ -1,0 +1,72 @@
+@use 'styles/UiMixins' as ui;
+
+.app-context-menu {
+    @include ui.floating-surface;
+
+    inline-size: max-content;
+    min-inline-size: max-content;
+    padding-block: 0.4rem;
+    padding-inline: 0;
+    border-radius: 0;
+}
+
+.app-context-menu__menu {
+    @include ui.list-reset;
+}
+
+.app-context-menu__item {
+    margin: 0;
+}
+
+.app-context-menu__action {
+    @include ui.small-text;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding-block: 0.8rem;
+    padding-inline: 1.2rem;
+    color: var(--color-app-text);
+    white-space: nowrap;
+    text-decoration: none;
+    border-radius: 0;
+}
+
+.app-context-menu__label {
+    flex: 0 0 auto;
+    color: inherit;
+}
+
+.app-context-menu__icon {
+    order: 2;
+    margin-inline-start: 1.2rem;
+    margin-inline-end: 0;
+    color: var(--color-primary-500);
+    font-size: var(--ui-sub-icon-size);
+}
+
+.app-context-menu__item:not([data-p-disabled='true']) .app-context-menu__action:hover {
+    background: var(--color-app-hover-background);
+    color: var(--color-app-text);
+}
+
+.app-context-menu__item:not([data-p-disabled='true']) .app-context-menu__action:hover .app-context-menu__icon {
+    color: var(--color-primary-600);
+}
+
+.app-context-menu__item[data-p-disabled='true'] .app-context-menu__action {
+    color: var(--color-muted-text);
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+.app-context-menu__item[data-p-disabled='true'] .app-context-menu__icon {
+    color: var(--color-muted-text);
+}
+
+.app-context-menu__separator {
+    margin-block: 0.4rem;
+    margin-inline: 0.8rem;
+    border-block-start: var(--ui-border);
+}

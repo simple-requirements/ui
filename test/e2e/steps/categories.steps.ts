@@ -152,6 +152,20 @@ function getCategoryDetailsRoute(categoryKey: string): string {
     return `/projects/${project.id}/categories/${category.id}`;
 }
 
+function getRequirementCreateRoute(categoryKey: string): string {
+    const { project } = requireCategoryTestContext();
+    const category = requireCategoryByKey(categoryKey);
+
+    return `/projects/${project.id}/requirements/new?categoryId=${encodeURIComponent(category.id)}`;
+}
+
+function getRequirementCreationMetadataValue(page: Page, label: string) {
+    return page
+        .locator('.project-requirements-form-page__metadata-row')
+        .filter({ has: page.locator('dt', { hasText: new RegExp(`^${escapeRegExp(label)}$`, 'u') }) })
+        .locator('dd');
+}
+
 function getCategoryTable(page: Page) {
     return page.locator('.project-categories-list-page__data-table');
 }
@@ -264,3 +278,45 @@ Then('the URL should point to the category list route', async ({ page }) => {
 Then('the categories table should be visible again', async ({ page }) => {
     await expect(getCategoryTable(page)).toBeVisible();
 });
+
+When('I copy category key {string}', async ({ page }, categoryKey: string) => {
+    await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+    await getCategoryTable(page)
+        .getByRole('link', { name: `Copy category key ${categoryKey}` })
+        .click();
+});
+
+When('I open the context menu for category {string}', async ({ page }, categoryKey: string) => {
+    await getCategoryTableRow(page, categoryKey).click({ button: 'right' });
+});
+
+When('I choose Add requirement for category {string}', async ({ page }, categoryKey: string) => {
+    await getCategoryTableRow(page, categoryKey).click({ button: 'right' });
+    await page.getByRole('menuitem', { name: /add requirement/i }).click();
+});
+
+Then('the category key copied toast should be visible for category {string}', async ({ page }, categoryKey: string) => {
+    await expect(page.getByText('Category key copied')).toBeVisible();
+    await expect(page.getByText(`${categoryKey} has been copied to the clipboard.`)).toBeVisible();
+    await expect.poll(async () => page.evaluate(() => navigator.clipboard.readText())).toBe(categoryKey);
+});
+
+Then('the category context menu should show the category actions', async ({ page }) => {
+    await expect(page.getByRole('menuitem', { name: /edit/i })).toBeVisible();
+    await expect(page.getByRole('menuitem', { name: /delete/i })).toBeVisible();
+    await expect(page.getByRole('menuitem', { name: /add requirement/i })).toBeVisible();
+});
+
+Then(
+    'the requirement creation placeholder should be visible for category {string}',
+    async ({ page }, categoryKey: string) => {
+        const category = requireCategoryByKey(categoryKey);
+
+        await expect(page).toHaveURL(new RegExp(`${escapeRegExp(getRequirementCreateRoute(categoryKey))}$`, 'u'));
+        await expect(page.getByRole('heading', { name: /create requirement/i })).toBeVisible();
+        await expect(page.getByText(/requirement creation is not implemented yet/i)).toBeVisible();
+        await expect(getRequirementCreationMetadataValue(page, 'Category')).toHaveText(category.key);
+        await expect(getRequirementCreationMetadataValue(page, 'Category name')).toHaveText(category.name);
+        await expect(getRequirementCreationMetadataValue(page, 'Type')).toHaveText(category.type);
+    },
+);

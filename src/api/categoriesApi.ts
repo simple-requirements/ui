@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import {
     createCategory as createGeneratedCategory,
+    deleteCategory as deleteGeneratedCategory,
     getListCategoriesQueryKey,
     listCategories as listGeneratedCategories,
     updateCategory as updateGeneratedCategory,
@@ -66,4 +67,8 @@ export async function updateProjectCategoryRequest(
     const response = await updateGeneratedCategory(projectId, categoryId, category);
 
     return categorySchema.parse(response.data);
+}
+
+export async function deleteProjectCategoryRequest(projectId: string, categoryId: string): Promise<void> {
+    await deleteGeneratedCategory(projectId, categoryId);
 }

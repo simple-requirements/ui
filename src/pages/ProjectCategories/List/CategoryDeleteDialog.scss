@@ -1,0 +1,49 @@
+@use 'styles/UiMixins' as ui;
+
+.category-delete-dialog {
+    inline-size: min(52rem, calc(100vw - 3.2rem));
+
+    &__header {
+        padding: 2rem 2.4rem 1.2rem;
+    }
+
+    &__content {
+        padding: 0 2.4rem 2.4rem;
+    }
+
+    &__heading {
+        margin: 0;
+        font-size: var(--font-size-h3);
+        line-height: var(--line-height-heading);
+        color: var(--color-app-text);
+    }
+
+    &__message {
+        margin: 0;
+        font-size: var(--font-size-paragraph);
+        line-height: var(--line-height-paragraph);
+        color: var(--color-app-text);
+    }
+
+    &__actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-block-start: 2.4rem;
+    }
+
+    &__button {
+        block-size: var(--ui-control-height-large);
+        padding-inline: 1.4rem;
+        font-size: var(--font-size-small);
+        white-space: nowrap;
+    }
+
+    &__button--abort {
+        @include ui.outline-button;
+    }
+
+    &__button--ok {
+        @include ui.primary-button;
+    }
+}

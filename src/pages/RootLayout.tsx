@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router';
 
 import { AppToast } from '@/components/Feedback/AppToast/AppToast';
-import { ActionBarOutlet } from '@/components/RootLayout/ActionBar/ActionBarOutlet';
+import { ActionBar } from '@/components/RootLayout/ActionBar/ActionBar';
 import { LoadingOverlay } from '@/components/RootLayout/LoadingOverlay';
 import { Sidebar } from '@/components/RootLayout/Sidebar/Sidebar';
 import { TabBar } from '@/components/RootLayout/TabBar/TabBar';
@@ -20,7 +20,7 @@ export function RootLayout() {
             </div>
 
             <div className='root-layout__actionbar'>
-                <ActionBarOutlet />
+                <ActionBar />
             </div>
 
             <section

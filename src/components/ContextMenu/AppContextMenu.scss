@@ -56,13 +56,13 @@
 }
 
 .app-context-menu__item[data-p-disabled='true'] .app-context-menu__action {
-    color: var(--color-muted-text);
+    color: var(--color-app-text-muted);
     cursor: not-allowed;
     opacity: 0.65;
 }
 
 .app-context-menu__item[data-p-disabled='true'] .app-context-menu__icon {
-    color: var(--color-muted-text);
+    color: var(--color-app-text-muted);
 }
 
 .app-context-menu__separator {

@@ -1,16 +1,10 @@
 import { useMatches } from 'react-router';
 
-export type ActionBarKind = 'requirements' | 'categories' | 'categoryForm';
+export type ActionBarKind = 'requirements' | 'categories' | 'categoryForm' | 'requirementForm';
 
-export type RouteUiHandle = Readonly<{
-    actionBar?: ActionBarKind;
-    disableChromeActions?: boolean;
-}>;
+export type RouteUiHandle = Readonly<{ actionBar?: ActionBarKind; disableChromeActions?: boolean }>;
 
-export type RouteUiMetadata = Readonly<{
-    actionBar: ActionBarKind;
-    disableChromeActions: boolean;
-}>;
+export type RouteUiMetadata = Readonly<{ actionBar: ActionBarKind; disableChromeActions: boolean }>;
 
 function isRouteUiHandle(value: unknown): value is RouteUiHandle {
     return typeof value === 'object' && value !== null;

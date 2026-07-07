@@ -1,23 +1,91 @@
+@use 'sass:map';
+
+$palette-colors: (
+    blue: (
+        100: rgb(187, 217, 253),
+        200: rgb(136, 189, 252),
+        400: rgb(96, 166, 250),
+        500: rgb(58, 143, 246),
+        600: rgb(19, 117, 235),
+    ),
+    slate: (
+        50: rgb(248, 250, 252),
+        100: rgb(241, 245, 249),
+        300: rgb(203, 213, 225),
+        400: rgb(148, 163, 184),
+        600: rgb(71, 85, 105),
+        700: rgb(51, 65, 85),
+        900: rgb(15, 23, 42),
+    ),
+    gray: (
+        100: rgb(243, 244, 246),
+        500: rgb(107, 114, 128),
+        700: rgb(55, 65, 81),
+    ),
+    green: (
+        100: rgb(220, 252, 231),
+        500: rgb(34, 197, 94),
+        700: rgb(21, 128, 61),
+    ),
+    amber: (
+        100: rgb(254, 243, 199),
+        500: rgb(245, 158, 11),
+        700: rgb(180, 83, 9),
+    ),
+    red: (
+        100: rgb(254, 226, 226),
+        500: rgb(239, 68, 68),
+        600: rgb(220, 38, 38),
+        700: rgb(185, 28, 28),
+    ),
+    white: (
+        100: rgb(255, 255, 255),
+    ),
+    black: (
+        100: rgb(0, 0, 0),
+    ),
+);
+
+@function palette-color($family, $tone) {
+    @return map.get(map.get($palette-colors, $family), $tone);
+}
+
 $primary-colors: (
-    100: rgb(187, 217, 253),
-    200: rgb(136, 189, 252),
+    100: palette-color(blue, 100),
+    200: palette-color(blue, 200),
     400: var(--color-primary-source),
-    500: rgb(58, 143, 246),
-    600: rgb(19, 117, 235),
+    500: palette-color(blue, 500),
+    600: palette-color(blue, 600),
 );
 
 $app-colors: (
-    background: rgb(255, 255, 255),
-    surface: rgb(255, 255, 255),
-    surface-muted: rgb(248, 250, 252),
-    surface-subtle: rgb(241, 245, 249),
-    border: rgb(203, 213, 225),
-    border-strong: rgb(148, 163, 184),
-    text: rgb(15, 23, 42),
-    text-muted: rgb(71, 85, 105),
+    background: palette-color(white, 100),
+    surface: palette-color(white, 100),
+    surface-muted: palette-color(slate, 50),
+    surface-subtle: palette-color(slate, 100),
+    border: palette-color(slate, 300),
+    border-strong: palette-color(slate, 400),
+    text: palette-color(slate, 900),
+    text-muted: palette-color(slate, 600),
+    text-inverse: palette-color(white, 100),
     active-background: var(--color-primary-100),
     active-border: var(--color-primary-400),
     hover-background: var(--color-primary-100),
+);
+
+$feedback-colors: (
+    info-background: palette-color(blue, 100),
+    info-border: palette-color(blue, 500),
+    info-text: palette-color(blue, 600),
+    success-background: palette-color(green, 100),
+    success-border: palette-color(green, 500),
+    success-text: palette-color(green, 700),
+    warning-background: palette-color(amber, 100),
+    warning-border: palette-color(amber, 500),
+    warning-text: palette-color(amber, 700),
+    error-background: palette-color(red, 100),
+    error-border: palette-color(red, 500),
+    error-text: palette-color(red, 600),
 );
 
 $shadows: (
@@ -30,27 +98,63 @@ $gradients: (
     loading-overlay: linear-gradient(rgb(255 255 255 / 92%), rgb(255 255 255 / 92%)),
 );
 
+$requirement-status-colors: (
+    draft: (
+        background: palette-color(slate, 100),
+        border: palette-color(slate, 400),
+        text: palette-color(slate, 700),
+    ),
+    approved: (
+        background: palette-color(green, 100),
+        border: palette-color(green, 500),
+        text: palette-color(green, 700),
+    ),
+    implemented: (
+        background: palette-color(blue, 100),
+        border: palette-color(blue, 500),
+        text: palette-color(blue, 600),
+    ),
+    obsolete: (
+        background: palette-color(gray, 100),
+        border: palette-color(gray, 500),
+        text: palette-color(gray, 700),
+    ),
+    rejected: (
+        background: palette-color(red, 100),
+        border: palette-color(red, 500),
+        text: palette-color(red, 700),
+    ),
+);
+
 @mixin css-token-map($prefix, $tokens) {
     @each $token, $value in $tokens {
         --#{$prefix}-#{$token}: #{$value};
     }
 }
 
+@mixin css-token-nested-map($prefix, $groups) {
+    @each $group, $tokens in $groups {
+        @include css-token-map('#{$prefix}-#{$group}', $tokens);
+    }
+}
+
 @layer colors {
     :root {
-        --color-primary-source: var(--blue-400, rgb(96, 166, 250));
+        --color-primary-source: var(--blue-400, #{palette-color(blue, 400)});
 
         @include css-token-map('color-primary', $primary-colors);
         @include css-token-map('color-app', $app-colors);
+        @include css-token-map('color-feedback', $feedback-colors);
         @include css-token-map('shadow', $shadows);
         @include css-token-map('gradient', $gradients);
+        @include css-token-nested-map('color-requirement-status', $requirement-status-colors);
 
         /*
          * PrimeReact compatibility tokens.
          * Keep these even when they are not referenced directly by our SCSS.
          */
         --primary-color: var(--color-primary-400);
-        --primary-color-text: rgb(255, 255, 255);
+        --primary-color-text: var(--color-app-text-inverse);
 
         --primary-100: var(--color-primary-100);
         --primary-200: var(--color-primary-200);

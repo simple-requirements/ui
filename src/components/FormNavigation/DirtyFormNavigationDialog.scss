@@ -1,6 +1,6 @@
 @use 'styles/UiMixins' as ui;
 
-.category-delete-dialog {
+.dirty-form-navigation-dialog {
     @include ui.dialog-shell(52rem);
 
     &__header {
@@ -27,11 +27,11 @@
         @include ui.dialog-button;
     }
 
-    &__button--abort {
+    &__button--stay {
         @include ui.outline-button;
     }
 
-    &__button--ok {
+    &__button--discard {
         @include ui.primary-button;
     }
 }

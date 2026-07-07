@@ -63,22 +63,13 @@
 }
 
 .project-requirements-list-page__key-copy-button {
+    @include ui.interactive-link;
+
     padding: 0;
     border: 0;
     background: transparent;
-    color: var(--color-primary-500);
     font: inherit;
     text-align: start;
-    cursor: pointer;
-
-    &:hover {
-        text-decoration: underline;
-    }
-
-    &:focus-visible {
-        outline: 0.2rem solid var(--color-primary-500);
-        outline-offset: 0.2rem;
-    }
 }
 
 .project-requirements-list-page__description-column {

@@ -2,13 +2,14 @@ import { Column } from 'primereact/column';
 import { DataTable, type DataTableRowClickEvent, type DataTableSelectionSingleChangeEvent } from 'primereact/datatable';
 import type { MouseEvent, ReactNode } from 'react';
 
-import { formatNullableValue, formatStatus } from '@/pages/ProjectRequirements/List/requirementFormatters';
+import { formatNullableValue } from '@/pages/ProjectRequirements/List/requirementFormatters';
 import {
     getRequirementColumnPassThrough,
     getRequirementRowClassName,
 } from '@/pages/ProjectRequirements/List/requirementListTableUtils';
 import type { RequirementTableRow } from '@/pages/ProjectRequirements/List/requirementListTypes';
 import { isRequirementTableRow } from '@/pages/ProjectRequirements/List/requirementListTypes';
+import { RequirementStatusBadge } from '@/pages/ProjectRequirements/RequirementStatusBadge';
 
 export type RequirementTableProps = Readonly<{
     requirements: readonly RequirementTableRow[];
@@ -35,8 +36,8 @@ function reviewerBodyTemplate(requirement: RequirementTableRow): string {
     return formatNullableValue(requirement.reviewer);
 }
 
-function statusBodyTemplate(requirement: RequirementTableRow): string {
-    return formatStatus(requirement.status);
+function statusBodyTemplate(requirement: RequirementTableRow): ReactNode {
+    return <RequirementStatusBadge status={requirement.status} />;
 }
 
 function updatedAtBodyTemplate(requirement: RequirementTableRow): string {

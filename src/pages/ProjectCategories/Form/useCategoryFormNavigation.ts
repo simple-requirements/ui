@@ -7,17 +7,17 @@ import {
     getProjectCategoryDetailsRoute,
     getProjectCategoryEditRoute,
 } from '@/router/projectRoutes';
+import { useDirtyFormNavigationGuard } from '@/components/FormNavigation/useDirtyFormNavigationGuard';
 import { openTab } from '@/stores/tabBarStore';
 
-import {
-    DISCARD_CATEGORY_FORM_CHANGES_MESSAGE,
-    type CategoryFormMode,
-} from '@/pages/ProjectCategories/Form/categoryFormTypes';
-import { useUnsavedCategoryFormGuard } from '@/pages/ProjectCategories/Form/useUnsavedCategoryFormGuard';
+import type { CategoryFormMode } from '@/pages/ProjectCategories/Form/categoryFormTypes';
 
 export type CategoryFormNavigation = Readonly<{
     formRoute: string;
     allowNavigation: () => void;
+    dirtyNavigationDialogVisible: boolean;
+    stayOnPage: () => void;
+    discardChanges: () => void;
     handleAbort: () => void;
 }>;
 
@@ -32,7 +32,7 @@ export function useCategoryFormNavigation(
     const navigate = useNavigate();
     const allowNavigationRef = useRef(false);
 
-    useUnsavedCategoryFormGuard(isDirty, allowNavigationRef);
+    const dirtyFormNavigation = useDirtyFormNavigationGuard(isDirty, allowNavigationRef);
 
     useEffect(() => {
         if (
@@ -61,10 +61,6 @@ export function useCategoryFormNavigation(
     }
 
     function handleAbort(): void {
-        if (isDirty && !window.confirm(DISCARD_CATEGORY_FORM_CHANGES_MESSAGE)) {
-            return;
-        }
-
         if (projectId === undefined) {
             return;
         }
@@ -74,9 +70,17 @@ export function useCategoryFormNavigation(
                 getProjectCategoryDetailsRoute(projectId, categoryId)
             :   getProjectCategoriesRoute(projectId);
 
-        allowNavigation();
-        void navigate(abortRoute);
+        dirtyFormNavigation.requestNavigation(() => {
+            void navigate(abortRoute);
+        });
     }
 
-    return { formRoute, allowNavigation, handleAbort };
+    return {
+        formRoute,
+        allowNavigation,
+        dirtyNavigationDialogVisible: dirtyFormNavigation.dialogVisible,
+        stayOnPage: dirtyFormNavigation.stayOnPage,
+        discardChanges: dirtyFormNavigation.discardChanges,
+        handleAbort,
+    };
 }

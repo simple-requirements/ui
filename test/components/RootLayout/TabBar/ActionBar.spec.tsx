@@ -5,8 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider, useLocation } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { ActionBarOutlet } from '@/components/RootLayout/ActionBar/ActionBarOutlet';
-import { RequirementLookupActionBar } from '@/components/RootLayout/ActionBar/RequirementLookupActionBar';
+import { ActionBar, RequirementKeyLookup } from '@/components/RootLayout/ActionBar/ActionBar';
 import type * as ActionBarStoreModule from '@/stores/actionBarStore';
 import { actionBarStore } from '@/stores/actionBarStore';
 
@@ -34,16 +33,22 @@ function LocationProbe() {
     return <output aria-label='Current route'>{location.pathname}</output>;
 }
 
-function renderActionBarOutlet(initialRoute = '/'): ReturnType<typeof render> {
+function renderActionBar(initialRoute = '/'): ReturnType<typeof render> {
     const element = (
         <>
-            <ActionBarOutlet />
+            <ActionBar />
             <LocationProbe />
         </>
     );
     const router = createMemoryRouter(
         [
             { path: '/', element, handle: { actionBar: 'requirements' } },
+            { path: '/projects/:projectId/requirements', element, handle: { actionBar: 'requirements' } },
+            {
+                path: '/projects/:projectId/requirements/new',
+                element,
+                handle: { actionBar: 'requirementForm', disableChromeActions: true },
+            },
             { path: '/projects/:projectId/categories', element, handle: { actionBar: 'categories' } },
             {
                 path: '/projects/:projectId/categories/new',
@@ -68,10 +73,10 @@ afterEach(() => {
     vi.clearAllMocks();
 });
 
-describe('ActionBarOutlet', () => {
+describe('ActionBar', () => {
     describe('renders', () => {
         it('renders the requirement key input and Find requirement button.', () => {
-            renderActionBarOutlet();
+            renderActionBar();
 
             expect(screen.getByRole('textbox', { name: /requirement key/i })).toBeInTheDocument();
             expect(screen.getByRole('button', { name: /find requirement/i })).toBeInTheDocument();
@@ -80,19 +85,33 @@ describe('ActionBarOutlet', () => {
         it('renders the requirement key from the store.', () => {
             setMockRequirementKey('NFR-USAB-0043');
 
-            renderActionBarOutlet();
+            renderActionBar();
 
             expect(screen.getByRole('textbox', { name: /requirement key/i })).toHaveValue('NFR-USAB-0043');
         });
 
-        it('renders a Create button on category routes.', () => {
-            renderActionBarOutlet('/projects/project-alpha/categories');
+        it('renders a Create button on requirement routes.', () => {
+            renderActionBar('/projects/project-alpha/requirements');
 
             expect(screen.getByRole('button', { name: 'Create' })).toBeInTheDocument();
         });
 
+        it('renders a Create button on category routes.', () => {
+            renderActionBar('/projects/project-alpha/categories');
+
+            expect(screen.getByRole('button', { name: 'Create' })).toBeInTheDocument();
+        });
+
+        it('disables action buttons on requirement form routes.', () => {
+            renderActionBar('/projects/project-alpha/requirements/new');
+
+            expect(screen.getByRole('textbox', { name: /requirement key/i })).toBeDisabled();
+            expect(screen.getByRole('button', { name: /find requirement/i })).toBeDisabled();
+            expect(screen.getByRole('button', { name: 'Create' })).toBeDisabled();
+        });
+
         it('disables action buttons on category form routes.', () => {
-            renderActionBarOutlet('/projects/project-alpha/categories/new');
+            renderActionBar('/projects/project-alpha/categories/new');
 
             expect(screen.getByRole('textbox', { name: /requirement key/i })).toBeDisabled();
             expect(screen.getByRole('button', { name: /find requirement/i })).toBeDisabled();
@@ -100,10 +119,20 @@ describe('ActionBarOutlet', () => {
         });
     });
 
+    it('navigates to the requirement create route when Create is clicked on requirement routes.', async () => {
+        const user = userEvent.setup();
+
+        renderActionBar('/projects/project-alpha/requirements');
+
+        await user.click(screen.getByRole('button', { name: 'Create' }));
+
+        expect(screen.getByLabelText('Current route')).toHaveTextContent('/projects/project-alpha/requirements/new');
+    });
+
     it('navigates to the category create route when Create is clicked.', async () => {
         const user = userEvent.setup();
 
-        renderActionBarOutlet('/projects/project-alpha/categories');
+        renderActionBar('/projects/project-alpha/categories');
 
         await user.click(screen.getByRole('button', { name: 'Create' }));
 
@@ -111,14 +140,14 @@ describe('ActionBarOutlet', () => {
     });
 });
 
-describe('RequirementLookupActionBar', () => {
+describe('RequirementKeyLookup', () => {
     it('calls onFindKey with the trimmed requirement key when Find requirement is clicked.', async () => {
         const user = userEvent.setup();
         const onFindKey = vi.fn();
 
         setMockRequirementKey('  NFR-USAB-0043  ');
 
-        render(<RequirementLookupActionBar onFindKey={onFindKey} />);
+        render(<RequirementKeyLookup onFindKey={onFindKey} />);
 
         await user.click(screen.getByRole('button', { name: /find requirement/i }));
 
@@ -132,7 +161,7 @@ describe('RequirementLookupActionBar', () => {
 
         setMockRequirementKey('  FR-KEY-0001  ');
 
-        render(<RequirementLookupActionBar onFindKey={onFindKey} />);
+        render(<RequirementKeyLookup onFindKey={onFindKey} />);
 
         await user.click(screen.getByRole('textbox', { name: /requirement key/i }));
         await user.keyboard('{Enter}');
@@ -145,7 +174,7 @@ describe('RequirementLookupActionBar', () => {
         const user = userEvent.setup();
         const onFindKey = vi.fn();
 
-        render(<RequirementLookupActionBar onFindKey={onFindKey} />);
+        render(<RequirementKeyLookup onFindKey={onFindKey} />);
 
         await user.click(screen.getByRole('button', { name: /find requirement/i }));
 
@@ -158,7 +187,7 @@ describe('RequirementLookupActionBar', () => {
 
         setMockRequirementKey('   ');
 
-        render(<RequirementLookupActionBar onFindKey={onFindKey} />);
+        render(<RequirementKeyLookup onFindKey={onFindKey} />);
 
         await user.click(screen.getByRole('button', { name: /find requirement/i }));
 
@@ -166,7 +195,7 @@ describe('RequirementLookupActionBar', () => {
     });
 
     it('passes changed input values to the action bar store.', () => {
-        render(<RequirementLookupActionBar />);
+        render(<RequirementKeyLookup />);
 
         fireEvent.change(screen.getByRole('textbox', { name: /requirement key/i }), {
             target: { value: 'NFR-USAB-0043' },
@@ -182,7 +211,7 @@ describe('RequirementLookupActionBar', () => {
 
         setMockRequirementKey('NFR-USAB-0043');
 
-        render(<RequirementLookupActionBar />);
+        render(<RequirementKeyLookup />);
 
         await user.click(screen.getByRole('button', { name: /find requirement/i }));
 

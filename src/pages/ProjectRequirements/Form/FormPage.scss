@@ -1,0 +1,62 @@
+@use 'styles/UiMixins' as ui;
+
+.project-requirements-form-page {
+    @include ui.page-shell;
+}
+
+.project-requirements-form-page__panel {
+    block-size: 100%;
+
+    @include ui.flex-column-panel(auto);
+}
+
+.project-requirements-form-page__header {
+    @include ui.panel-header;
+}
+
+.project-requirements-form-page__title {
+    @include ui.panel-title;
+}
+
+.project-requirements-form-page__form {
+    @include ui.form-layout(72rem);
+}
+
+.project-requirements-form-page__field {
+    @include ui.form-field;
+}
+
+.project-requirements-form-page__label {
+    @include ui.form-label;
+}
+
+.project-requirements-form-page__input,
+.project-requirements-form-page__select {
+    @include ui.form-line-control;
+}
+
+.project-requirements-form-page__textarea {
+    @include ui.form-textarea;
+}
+
+.project-requirements-form-page__hint {
+    @include ui.form-message;
+}
+
+.project-requirements-form-page__error {
+    @include ui.form-message(var(--color-feedback-error-text));
+}
+
+.project-requirements-form-page__actions {
+    @include ui.form-actions;
+}
+
+.project-requirements-form-page__primary-button {
+    @include ui.primary-button;
+    @include ui.form-button;
+}
+
+.project-requirements-form-page__secondary-button {
+    @include ui.outline-button;
+    @include ui.form-button;
+}

@@ -1,7 +1,5 @@
 import type { Category, CategoryType } from '@/api/categoriesApi';
 
-export const DISCARD_CATEGORY_FORM_CHANGES_MESSAGE = 'Your input will be lost. Do you want to continue?';
-
 export type CategoryFormMode = 'create' | 'update';
 export type CategoryFormFieldName = 'name' | 'key' | 'type';
 export type CategoryFormValues = Readonly<{ name: string; key: string; type: CategoryType }>;

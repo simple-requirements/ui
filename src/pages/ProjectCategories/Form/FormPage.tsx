@@ -1,4 +1,5 @@
 import { InlineStatus } from '@/components/Feedback/InlineStatus';
+import { DirtyFormNavigationDialog } from '@/components/FormNavigation/DirtyFormNavigationDialog';
 import { LoadableContent } from '@/components/Feedback/LoadableContent';
 
 import { CategoryForm } from '@/pages/ProjectCategories/Form/CategoryForm';
@@ -47,6 +48,13 @@ export function FormPage() {
                         controller={formController}
                     />
                 </LoadableContent>
+
+                <DirtyFormNavigationDialog
+                    visible={formController.dirtyNavigationDialog.visible}
+                    message='Your input will be lost. Do you want to continue?'
+                    onStay={formController.dirtyNavigationDialog.onStay}
+                    onDiscard={formController.dirtyNavigationDialog.onDiscard}
+                />
             </div>
         </section>
     );

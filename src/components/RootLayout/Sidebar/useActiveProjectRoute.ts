@@ -6,7 +6,7 @@ import type { ProjectSubRoute } from '@/router/projectRoutes';
 export type ActiveProjectRoute = Readonly<{ projectId?: string; subRoute?: ProjectSubRoute }>;
 
 export function getActiveProjectRoute(pathname: string): ActiveProjectRoute {
-    const requirementsRouteMatch = matchPath('/projects/:projectId/requirements', pathname);
+    const requirementsRouteMatch = matchPath('/projects/:projectId/requirements/*', pathname);
 
     if (requirementsRouteMatch?.params.projectId !== undefined) {
         return { projectId: requirementsRouteMatch.params.projectId, subRoute: 'requirements' };

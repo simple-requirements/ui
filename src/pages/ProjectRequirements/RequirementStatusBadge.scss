@@ -1,0 +1,44 @@
+.requirement-status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-inline-size: calc(11ch + var(--ui-space-lg));
+    min-block-size: var(--ui-badge-height);
+    padding: 0.35rem var(--ui-space-md);
+    border: 0.1rem solid transparent;
+    border-radius: 999rem;
+    font-size: var(--font-size-small);
+    line-height: var(--line-height-small);
+    font-weight: 600;
+    white-space: nowrap;
+
+    &--draft {
+        border-color: var(--color-requirement-status-draft-border);
+        background: var(--color-requirement-status-draft-background);
+        color: var(--color-requirement-status-draft-text);
+    }
+
+    &--approved {
+        border-color: var(--color-requirement-status-approved-border);
+        background: var(--color-requirement-status-approved-background);
+        color: var(--color-requirement-status-approved-text);
+    }
+
+    &--implemented {
+        border-color: var(--color-requirement-status-implemented-border);
+        background: var(--color-requirement-status-implemented-background);
+        color: var(--color-requirement-status-implemented-text);
+    }
+
+    &--obsolete {
+        border-color: var(--color-requirement-status-obsolete-border);
+        background: var(--color-requirement-status-obsolete-background);
+        color: var(--color-requirement-status-obsolete-text);
+    }
+
+    &--rejected {
+        border-color: var(--color-requirement-status-rejected-border);
+        background: var(--color-requirement-status-rejected-background);
+        color: var(--color-requirement-status-rejected-text);
+    }
+}

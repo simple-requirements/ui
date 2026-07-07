@@ -43,7 +43,7 @@
     font-size: var(--font-size-small);
     line-height: var(--ui-badge-height);
     background: var(--color-primary-400);
-    color: white;
+    color: var(--color-app-text-inverse);
 }
 
 .expandable-navigation-item__sub-list-wrapper {
@@ -106,7 +106,7 @@
     font-size: var(--font-size-small);
     line-height: var(--ui-badge-height);
     background: var(--color-primary-400);
-    color: white;
+    color: var(--color-app-text-inverse);
 }
 
 .expandable-navigation-item__sub-icon {

@@ -29,6 +29,7 @@ export type CategoryFormController = Readonly<{
     updateFormValue: (fieldName: CategoryFormFieldName, value: string) => void;
     handleAbort: () => void;
     formAction: (payload: FormData) => void;
+    dirtyNavigationDialog: Readonly<{ visible: boolean; onStay: () => void; onDiscard: () => void }>;
 }>;
 
 function getInitialValues(mode: CategoryFormMode, category: Category | undefined): CategoryFormValues {
@@ -129,5 +130,10 @@ export function useCategoryFormController(
         updateFormValue,
         handleAbort: navigation.handleAbort,
         formAction,
+        dirtyNavigationDialog: {
+            visible: navigation.dirtyNavigationDialogVisible,
+            onStay: navigation.stayOnPage,
+            onDiscard: navigation.discardChanges,
+        },
     };
 }

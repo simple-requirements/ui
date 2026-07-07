@@ -102,6 +102,119 @@
     }
 }
 
+@mixin form-layout($max-inline-size) {
+    display: grid;
+    max-inline-size: $max-inline-size;
+    gap: var(--ui-space-lg);
+    padding: var(--ui-panel-padding);
+}
+
+@mixin form-field {
+    display: grid;
+    gap: var(--ui-space-xs);
+}
+
+@mixin form-label {
+    @include small-text;
+
+    font-weight: 600;
+    color: var(--color-app-text);
+}
+
+@mixin form-control($max-inline-size: 44rem) {
+    inline-size: min(100%, $max-inline-size);
+    padding-inline: var(--ui-space-sm);
+    border: var(--ui-border);
+    border-radius: 0;
+    background: var(--color-app-surface);
+    color: var(--color-app-text);
+    box-shadow: none;
+
+    &:focus-visible {
+        @include focus-ring;
+    }
+
+    &:disabled,
+    &[readonly] {
+        background: var(--color-app-surface-muted);
+        color: var(--color-app-text-muted);
+        cursor: not-allowed;
+    }
+}
+
+@mixin form-line-control($max-inline-size: 44rem) {
+    @include form-control($max-inline-size);
+
+    block-size: var(--ui-control-height-large);
+}
+
+@mixin form-textarea($max-inline-size: 44rem) {
+    @include form-control($max-inline-size);
+
+    min-block-size: 8rem;
+    padding-block: var(--ui-space-sm);
+    resize: vertical;
+}
+
+@mixin form-message($color: var(--color-app-text-muted)) {
+    @include small-text;
+
+    max-inline-size: 44rem;
+    margin: 0;
+    color: $color;
+}
+
+@mixin form-actions {
+    display: flex;
+    gap: var(--ui-space-sm);
+    align-items: center;
+}
+
+@mixin form-button {
+    block-size: var(--ui-control-height);
+    padding-inline: var(--ui-space-md);
+}
+
+@mixin dialog-shell($max-inline-size) {
+    inline-size: min($max-inline-size, calc(100vw - var(--ui-dialog-inline-margin)));
+}
+
+@mixin dialog-header {
+    padding: var(--ui-dialog-header-padding);
+}
+
+@mixin dialog-content {
+    padding: var(--ui-dialog-content-padding);
+}
+
+@mixin dialog-heading {
+    margin: 0;
+    font-size: var(--font-size-h3);
+    line-height: var(--line-height-heading);
+    color: var(--color-app-text);
+}
+
+@mixin dialog-message {
+    margin: 0;
+    font-size: var(--font-size-paragraph);
+    line-height: var(--line-height-paragraph);
+    color: var(--color-app-text);
+}
+
+@mixin dialog-actions($margin-block-start: var(--ui-dialog-actions-margin)) {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--ui-dialog-actions-gap);
+    margin-block-start: $margin-block-start;
+}
+
+@mixin dialog-button {
+    block-size: var(--ui-control-height-large);
+    padding-inline: 1.4rem;
+    font-size: var(--font-size-small);
+    white-space: nowrap;
+}
+
 @mixin prime-data-table {
     flex: 1 1 auto;
     min-block-size: 0;
@@ -152,6 +265,20 @@
     background: var(--color-app-active-background);
 }
 
+@mixin interactive-link {
+    color: var(--color-primary-500);
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+        text-decoration: underline;
+    }
+
+    &:focus-visible {
+        @include focus-ring(var(--color-primary-500));
+    }
+}
+
 @mixin prime-button-reset {
     border-radius: 0;
     box-shadow: none;
@@ -189,18 +316,18 @@
 
     border: 0;
     background: var(--color-primary-400);
-    color: white;
+    color: var(--color-app-text-inverse);
 
     &:enabled:hover {
         border: 0;
         background: var(--color-primary-500);
-        color: white;
+        color: var(--color-app-text-inverse);
         box-shadow: none;
     }
 
     &:enabled:active {
         background: var(--color-primary-600);
-        color: white;
+        color: var(--color-app-text-inverse);
         transform: translateY(0.1rem);
         box-shadow: none;
     }

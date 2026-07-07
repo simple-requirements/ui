@@ -19,78 +19,40 @@
 }
 
 .project-categories-form-page__form {
-    display: grid;
-    max-inline-size: 64rem;
-    gap: var(--ui-space-lg);
-    padding: var(--ui-panel-padding);
+    @include ui.form-layout(64rem);
 }
 
 .project-categories-form-page__field {
-    display: grid;
-    gap: var(--ui-space-xs);
+    @include ui.form-field;
 }
 
 .project-categories-form-page__label {
-    font-size: var(--font-size-small);
-    line-height: var(--line-height-small);
-    font-weight: 600;
-    color: var(--color-app-text);
+    @include ui.form-label;
 }
 
 .project-categories-form-page__input,
 .project-categories-form-page__select {
-    block-size: var(--ui-control-height-large);
-    inline-size: min(100%, 36rem);
-    padding-inline: var(--ui-space-sm);
-    border: var(--ui-border);
-    border-radius: 0;
-    background: var(--color-app-surface);
-    color: var(--color-app-text);
-    box-shadow: none;
-
-    &:focus-visible {
-        @include ui.focus-ring;
-    }
-
-    &:disabled,
-    &[readonly] {
-        background: var(--color-app-surface-muted);
-        color: var(--color-app-text-muted);
-        cursor: not-allowed;
-    }
-}
-
-.project-categories-form-page__hint,
-.project-categories-form-page__error {
-    max-inline-size: 44rem;
-    font-size: var(--font-size-small);
-    line-height: var(--line-height-small);
+    @include ui.form-line-control(36rem);
 }
 
 .project-categories-form-page__hint {
-    color: var(--color-app-text-muted);
+    @include ui.form-message;
 }
 
 .project-categories-form-page__error {
-    color: var(--red-600, #dc2626);
+    @include ui.form-message(var(--color-feedback-error-text));
 }
 
 .project-categories-form-page__actions {
-    display: flex;
-    gap: var(--ui-space-sm);
-    align-items: center;
+    @include ui.form-actions;
 }
 
 .project-categories-form-page__primary-button {
     @include ui.primary-button;
-
-    block-size: var(--ui-control-height);
-    padding-inline: var(--ui-space-md);
+    @include ui.form-button;
 }
 
 .project-categories-form-page__secondary-button {
     @include ui.outline-button;
-
-    block-size: var(--ui-control-height);
-    padding-inline: var(--ui-space-md);
+    @include ui.form-button;
 }

@@ -1,5 +1,5 @@
-@use "../../styles/UiMixins" as ui;
+@use 'styles/UiMixins' as ui;
 
 .project-requirements-details-page {
-  @include ui.page-shell;
+    @include ui.page-shell;
 }

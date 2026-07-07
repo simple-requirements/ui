@@ -1,22 +1,20 @@
 @use 'styles/UiMixins' as ui;
 
 .project-dialog {
-    inline-size: min(56rem, calc(100vw - 3.2rem));
+    @include ui.dialog-shell(56rem);
+
     min-block-size: 30rem;
 
     &__header {
-        padding: 2rem 2.4rem 1.2rem;
+        @include ui.dialog-header;
     }
 
     &__content {
-        padding: 0 2.4rem 2.4rem;
+        @include ui.dialog-content;
     }
 
     &__heading {
-        margin: 0;
-        font-size: var(--font-size-h3);
-        line-height: var(--line-height-heading);
-        color: var(--color-app-text);
+        @include ui.dialog-heading;
     }
 
     &__form {
@@ -24,13 +22,13 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        gap: 2.4rem;
+        gap: var(--ui-space-xl);
     }
 
     &__field {
         display: flex;
         flex-direction: column;
-        gap: 0.8rem;
+        gap: var(--ui-space-sm);
     }
 
     &__label {
@@ -49,30 +47,23 @@
     }
 
     &__input--invalid {
-        border-color: var(--color-primary-600);
+        border-color: var(--color-feedback-error-border);
     }
 
     &__message {
-        margin: 0;
-        font-size: var(--font-size-small);
-        line-height: var(--line-height-small);
+        @include ui.form-message;
     }
 
     &__message--error {
-        color: var(--color-primary-600);
+        color: var(--color-feedback-error-text);
     }
 
     &__actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 1rem;
+        @include ui.dialog-actions(0);
     }
 
     &__button {
-        block-size: var(--ui-control-height-large);
-        padding-inline: 1.4rem;
-        font-size: var(--font-size-small);
-        white-space: nowrap;
+        @include ui.dialog-button;
     }
 
     &__button--cancel {

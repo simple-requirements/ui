@@ -3,7 +3,7 @@ import { FormPage as ProjectCategoriesFormPage } from '@/pages/ProjectCategories
 import { ListPage as ProjectCategoriesListPage } from '@/pages/ProjectCategories/List/ListPage';
 import { ProjectOverviewPage } from '@/pages/ProjectOverviewPage';
 import { DetailsPage as ProjectRequirementsDetailsPage } from '@/pages/ProjectRequirements/DetailsPage';
-import { FormPage as ProjectRequirementsFormPage } from '@/pages/ProjectRequirements/FormPage';
+import { FormPage as ProjectRequirementsFormPage } from '@/pages/ProjectRequirements/Form/FormPage';
 import { ProjectRequirementsPage } from '@/pages/ProjectRequirementsPage';
 import { RootLayout } from '@/pages/RootLayout';
 import { WorkspacePage } from '@/pages/WorkspacePage';
@@ -32,7 +32,16 @@ export const routes: RouteObject[] = [
                         handle: routeHandle({ actionBar: 'requirements' }),
                         children: [
                             { index: true, element: <ProjectRequirementsPage /> },
-                            { path: 'new', element: <ProjectRequirementsFormPage /> },
+                            {
+                                path: 'new',
+                                element: <ProjectRequirementsFormPage />,
+                                handle: routeHandle({ actionBar: 'requirementForm', disableChromeActions: true }),
+                            },
+                            {
+                                path: ':requirementId/edit',
+                                element: <ProjectRequirementsFormPage />,
+                                handle: routeHandle({ actionBar: 'requirementForm', disableChromeActions: true }),
+                            },
                             { path: ':requirementId', element: <ProjectRequirementsDetailsPage /> },
                         ],
                     },

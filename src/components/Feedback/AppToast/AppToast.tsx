@@ -3,6 +3,8 @@ import { useEffect, useRef } from 'react';
 
 import { subscribeToToastMessages } from '@/stores/toastStore';
 
+import '@/components/Feedback/AppToast/AppToast.scss';
+
 export function AppToast() {
     const toastRef = useRef<Toast>(null);
 
@@ -14,5 +16,10 @@ export function AppToast() {
         [],
     );
 
-    return <Toast ref={toastRef} />;
+    return (
+        <Toast
+            ref={toastRef}
+            pt={{ root: { className: 'app-toast' } }}
+        />
+    );
 }

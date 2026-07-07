@@ -1,7 +1,7 @@
 import { defineConfig } from 'orval';
 import process from 'node:process';
 
-const openApiTarget = process.env['OPENAPI_TARGET'] ?? 'http://localhost:3000/api/docs-json';
+const openApiTarget = process.env.OPENAPI_TARGET ?? 'http://localhost:3000/api/docs-json';
 
 export default defineConfig({
     requirementsApi: {

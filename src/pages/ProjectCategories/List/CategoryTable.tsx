@@ -1,13 +1,13 @@
 import { Column } from 'primereact/column';
 import { DataTable, type DataTableRowClickEvent, type DataTableSelectionSingleChangeEvent } from 'primereact/datatable';
-import type { MouseEvent, ReactNode } from 'react';
+import type { ReactNode, SyntheticEvent } from 'react';
 
-import type { CategoryTableRow } from '@/pages/ProjectCategories/List/categoryListTypes';
-import { isCategoryTableRow } from '@/pages/ProjectCategories/List/categoryListTypes';
 import {
     getCategoryColumnPassThrough,
     getCategoryRowClassName,
 } from '@/pages/ProjectCategories/List/categoryListTableUtils';
+import type { CategoryTableRow } from '@/pages/ProjectCategories/List/categoryListTypes';
+import { isCategoryTableRow } from '@/pages/ProjectCategories/List/categoryListTypes';
 
 export type CategoryTableProps = Readonly<{
     categories: readonly CategoryTableRow[];
@@ -16,7 +16,7 @@ export type CategoryTableProps = Readonly<{
     onSelectCategory: (categoryId: string | undefined) => void;
     onCopyCategoryKey: (category: CategoryTableRow) => void;
     onOpenCategory: (category: CategoryTableRow) => void;
-    onOpenContextMenu: (category: CategoryTableRow, event: MouseEvent) => void;
+    onOpenContextMenu: (category: CategoryTableRow, event: SyntheticEvent) => void;
 }>;
 
 function requirementCountBodyTemplate(category: CategoryTableRow): number {

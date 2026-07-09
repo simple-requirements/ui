@@ -159,13 +159,6 @@ function getRequirementCreateRoute(categoryKey: string): string {
     return `/projects/${project.id}/requirements/new?categoryId=${encodeURIComponent(category.id)}`;
 }
 
-function getRequirementCreationMetadataValue(page: Page, label: string) {
-    return page
-        .locator('.project-requirements-form-page__metadata-row')
-        .filter({ has: page.locator('dt', { hasText: new RegExp(`^${escapeRegExp(label)}$`, 'u') }) })
-        .locator('dd');
-}
-
 function getCategoryTable(page: Page) {
     return page.locator('.project-categories-list-page__data-table');
 }
@@ -307,16 +300,14 @@ Then('the category context menu should show the category actions', async ({ page
     await expect(page.getByRole('menuitem', { name: /add requirement/i })).toBeVisible();
 });
 
-Then(
-    'the requirement creation placeholder should be visible for category {string}',
-    async ({ page }, categoryKey: string) => {
-        const category = requireCategoryByKey(categoryKey);
+Then('the requirement creation form should be visible for category {string}', async ({ page }, categoryKey: string) => {
+    const category = requireCategoryByKey(categoryKey);
+    const formRegion = page.getByRole('region', { name: /create requirement/i });
 
-        await expect(page).toHaveURL(new RegExp(`${escapeRegExp(getRequirementCreateRoute(categoryKey))}$`, 'u'));
-        await expect(page.getByRole('heading', { name: /create requirement/i })).toBeVisible();
-        await expect(page.getByText(/requirement creation is not implemented yet/i)).toBeVisible();
-        await expect(getRequirementCreationMetadataValue(page, 'Category')).toHaveText(category.key);
-        await expect(getRequirementCreationMetadataValue(page, 'Category name')).toHaveText(category.name);
-        await expect(getRequirementCreationMetadataValue(page, 'Type')).toHaveText(category.type);
-    },
-);
+    await expect(page).toHaveURL(new RegExp(`${escapeRegExp(getRequirementCreateRoute(categoryKey))}$`, 'u'));
+    await expect(formRegion.getByRole('heading', { name: /create requirement/i })).toBeVisible();
+    await expect(page.getByLabel('Category')).toHaveValue(category.id);
+    await expect(page.getByLabel('Category')).toContainText(`${category.key} — ${category.name} (${category.type})`);
+    await expect(page.getByLabel('Priority')).toHaveValue('p1');
+    await expect(formRegion.getByRole('button', { name: 'Create' })).toBeVisible();
+});

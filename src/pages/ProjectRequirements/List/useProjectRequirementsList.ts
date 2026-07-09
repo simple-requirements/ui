@@ -30,7 +30,7 @@ export function useProjectRequirementsList(projectId: string | undefined) {
     );
 
     const selectedRequirement = useMemo(
-        () => requirements.find((requirement) => requirement.id === selectedRequirementId) ?? requirements[0],
+        () => requirements.find((requirement) => requirement.id === selectedRequirementId) ?? requirements.at(0),
         [requirements, selectedRequirementId],
     );
 

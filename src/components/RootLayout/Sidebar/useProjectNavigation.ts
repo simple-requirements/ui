@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 
-import { getProjectRequirementsRoute, getProjectRoute } from '@/router/projectRoutes';
+import { getProjectRoute } from '@/router/projectRoutes';
 
 import type { ActiveProjectRoute } from '@/components/RootLayout/Sidebar/useActiveProjectRoute';
 
@@ -13,34 +13,17 @@ export type ProjectNavigationController = Readonly<{
 
 export function useProjectNavigation(activeProjectRoute: ActiveProjectRoute): ProjectNavigationController {
     const navigate = useNavigate();
-    const [expandedProjectId, setExpandedProjectId] = useState<string | undefined>(() =>
-        activeProjectRoute.subRoute === undefined ? undefined : activeProjectRoute.projectId,
-    );
+    const [expandedProjectId, setExpandedProjectId] = useState<string | undefined>(() => activeProjectRoute.projectId);
 
     useEffect(() => {
-        if (activeProjectRoute.projectId === undefined) {
-            return;
-        }
-
-        if (activeProjectRoute.subRoute === undefined) {
-            setExpandedProjectId(undefined);
-
-            return;
-        }
-
         setExpandedProjectId(activeProjectRoute.projectId);
-    }, [activeProjectRoute.projectId, activeProjectRoute.subRoute]);
+    }, [activeProjectRoute.projectId]);
 
     function toggleProject(projectId: string): void {
-        if (expandedProjectId === projectId) {
-            setExpandedProjectId(undefined);
-            void navigate(getProjectRoute(projectId));
-
-            return;
-        }
-
-        setExpandedProjectId(projectId);
-        void navigate(getProjectRequirementsRoute(projectId));
+        setExpandedProjectId((currentExpandedProjectId) =>
+            currentExpandedProjectId === projectId ? undefined : projectId,
+        );
+        void navigate(getProjectRoute(projectId));
     }
 
     function openProjectSubItem(projectId: string): void {

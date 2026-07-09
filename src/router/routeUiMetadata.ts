@@ -1,6 +1,13 @@
 import { useMatches } from 'react-router';
 
-export type ActionBarKind = 'requirements' | 'categories' | 'categoryForm' | 'requirementForm';
+export type ActionBarKind =
+    | 'none'
+    | 'project'
+    | 'requirements'
+    | 'requirementDetails'
+    | 'categories'
+    | 'categoryForm'
+    | 'requirementForm';
 
 export type RouteUiHandle = Readonly<{ actionBar?: ActionBarKind; disableChromeActions?: boolean }>;
 
@@ -16,7 +23,7 @@ function mergeRouteUiMetadata(handles: readonly RouteUiHandle[]): RouteUiMetadat
             actionBar: handle.actionBar ?? metadata.actionBar,
             disableChromeActions: handle.disableChromeActions ?? metadata.disableChromeActions,
         }),
-        { actionBar: 'requirements', disableChromeActions: false },
+        { actionBar: 'none', disableChromeActions: false },
     );
 }
 

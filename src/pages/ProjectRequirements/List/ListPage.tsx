@@ -1,11 +1,12 @@
-import { Splitter, SplitterPanel } from 'primereact/splitter';
-import { useNavigate, useParams } from 'react-router';
-
 import { InlineStatus } from '@/components/Feedback/InlineStatus';
 import { LoadableContent } from '@/components/Feedback/LoadableContent';
 import { getProjectRequirementDetailsRoute, getProjectRequirementEditRoute } from '@/router/projectRoutes';
+import { clearReviewActionRequirement, setReviewActionRequirement } from '@/stores/actionBarStore';
 import { openTab } from '@/stores/tabBarStore';
 import { showToastMessage } from '@/stores/toastStore';
+import { Splitter, SplitterPanel } from 'primereact/splitter';
+import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router';
 
 import { RequirementTable } from '@/pages/ProjectRequirements/List/RequirementTable';
 import type { RequirementTableRow } from '@/pages/ProjectRequirements/List/requirementListTypes';
@@ -20,6 +21,23 @@ export function ListPage() {
     const { requirements, requirementsQuery, selectedRequirement, selectedRequirementId, setSelectedRequirementId } =
         useProjectRequirementsList(projectId);
 
+    useEffect(() => {
+        if (projectId === undefined || selectedRequirement === undefined) {
+            clearReviewActionRequirement();
+
+            return clearReviewActionRequirement;
+        }
+
+        setReviewActionRequirement({
+            projectId,
+            requirementId: selectedRequirement.id,
+            visibleKey: selectedRequirement.visibleKey,
+            status: selectedRequirement.status,
+        });
+
+        return clearReviewActionRequirement;
+    }, [projectId, selectedRequirement]);
+
     async function copyRequirementKey(requirement: RequirementTableRow): Promise<void> {
         await navigator.clipboard.writeText(requirement.visibleKey);
 
@@ -28,6 +46,24 @@ export function ListPage() {
             summary: 'Requirement key copied',
             detail: `${requirement.visibleKey} has been copied to the clipboard.`,
             life: 3000,
+        });
+    }
+
+    function handleSelectRequirement(requirementId: string): void {
+        setSelectedRequirementId(requirementId);
+
+        const requirement = requirements.find((currentRequirement) => currentRequirement.id === requirementId);
+        if (projectId === undefined || requirement === undefined) {
+            clearReviewActionRequirement();
+
+            return;
+        }
+
+        setReviewActionRequirement({
+            projectId,
+            requirementId: requirement.id,
+            visibleKey: requirement.visibleKey,
+            status: requirement.status,
         });
     }
 
@@ -94,7 +130,7 @@ export function ListPage() {
                                 requirements={requirements}
                                 selectedRequirement={selectedRequirement}
                                 selectedRequirementId={selectedRequirementId}
-                                onSelectRequirement={setSelectedRequirementId}
+                                onSelectRequirement={handleSelectRequirement}
                                 onCopyRequirementKey={(requirement) => {
                                     void copyRequirementKey(requirement);
                                 }}

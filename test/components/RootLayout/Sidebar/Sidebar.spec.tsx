@@ -220,7 +220,8 @@ describe('Sidebar', () => {
         await user.click(alphaButton);
 
         expect(alphaButton).toHaveAttribute('aria-expanded', 'true');
-        expect(screen.getByRole('link', { name: /requirements/i })).toHaveAttribute('aria-current', 'page');
+        expect(alphaButton).toHaveAttribute('aria-current', 'page');
+        expect(screen.getByRole('link', { name: /requirements/i })).not.toHaveAttribute('aria-current', 'page');
 
         await user.click(screen.getByRole('link', { name: /categories/i }));
 

@@ -270,7 +270,6 @@ describe('ProjectCategories FormPage', () => {
 
     it('asks for confirmation before aborting a dirty form.', async () => {
         const user = userEvent.setup();
-        const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
 
         mockQueries({ categories: [] });
         renderFormPage('/projects/project-alpha/categories/new');
@@ -278,13 +277,16 @@ describe('ProjectCategories FormPage', () => {
         await user.type(screen.getByRole('textbox', { name: 'Name' }), 'Authentication');
         await user.click(screen.getByRole('button', { name: 'Abort' }));
 
-        expect(confirm).toHaveBeenCalledWith('Your input will be lost. Do you want to continue?');
+        expect(screen.getByRole('dialog', { name: /discard unsaved changes/i })).toBeInTheDocument();
+        expect(screen.getByText('Your input will be lost. Do you want to continue?')).toBeInTheDocument();
+
+        await user.click(screen.getByRole('button', { name: 'Stay on page' }));
+
         expect(screen.getByLabelText('Current route')).toHaveTextContent('/projects/project-alpha/categories/new');
     });
 
     it('blocks route changes from a dirty form until the user confirms.', async () => {
         const user = userEvent.setup();
-        const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
 
         mockQueries({ categories: [] });
 
@@ -310,9 +312,11 @@ describe('ProjectCategories FormPage', () => {
         await user.type(screen.getByRole('textbox', { name: 'Name' }), 'Authentication');
         await user.click(screen.getByRole('link', { name: 'Requirements' }));
 
-        await waitFor(() => {
-            expect(confirm).toHaveBeenCalledWith('Your input will be lost. Do you want to continue?');
-        });
+        expect(await screen.findByRole('dialog', { name: /discard unsaved changes/i })).toBeInTheDocument();
+        expect(screen.getByLabelText('Current route')).toHaveTextContent('/projects/project-alpha/categories/new');
+
+        await user.click(screen.getByRole('button', { name: 'Stay on page' }));
+
         expect(screen.getByLabelText('Current route')).toHaveTextContent('/projects/project-alpha/categories/new');
     });
 });

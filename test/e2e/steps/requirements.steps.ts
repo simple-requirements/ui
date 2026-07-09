@@ -209,6 +209,12 @@ function getRequirementListRoute(): string {
     return `/projects/${project.id}/requirements`;
 }
 
+function getProjectDetailsRoute(): string {
+    const { project } = requireRequirementTestContext();
+
+    return `/projects/${project.id}`;
+}
+
 function getRequirementDetailsRoute(requirementKey: string): string {
     const { project } = requireRequirementTestContext();
     const requirement = requireRequirementByKey(requirementKey);
@@ -230,6 +236,18 @@ function getRequirementSelectionCell(page: Page, requirementKey: string) {
 
 function getRequirementDetailsPanel(page: Page) {
     return page.locator('.requirement-details-panel');
+}
+
+function getProjectDetailsPage(page: Page) {
+    return page.locator('.project-details-page');
+}
+
+function getProjectDetailsSummaryCard(page: Page, label: string) {
+    return getProjectDetailsPage(page).locator('.project-details-page__summary-card').filter({ hasText: label });
+}
+
+function getProjectDetailsStatusRow(page: Page, status: string) {
+    return getProjectDetailsPage(page).locator('.project-details-page__status-row').filter({ hasText: status });
 }
 
 function getProjectList(page: Page) {
@@ -338,6 +356,28 @@ Then(
         await expect(getProjectButton(page, projectName)).toContainText(requirementCount.toString());
     },
 );
+
+Then('the requirement test project details should show statistics', async ({ page }, dataTable: DataTable) => {
+    const { project } = requireRequirementTestContext();
+    const expectedStatistics = dataTable.hashes()[0];
+
+    await expect(page).toHaveURL(new RegExp(`${escapeRegExp(getProjectDetailsRoute())}$`, 'u'));
+    await expect(getProjectDetailsPage(page).getByRole('heading', { name: project.name })).toBeVisible();
+    await expect(getProjectDetailsPage(page).getByRole('link', { name: 'Open categories' })).toBeVisible();
+    await expect(getProjectDetailsPage(page).getByRole('link', { name: 'Open requirements' })).toBeVisible();
+    await expect(getProjectDetailsSummaryCard(page, 'Categories')).toContainText(expectedStatistics.categories);
+    await expect(getProjectDetailsSummaryCard(page, 'Requirements')).toContainText(expectedStatistics.requirements);
+
+    for (const status of ['draft', 'approved', 'implemented', 'obsolete', 'rejected'] as const) {
+        const expectedCount = expectedStatistics[status];
+
+        await expect(getProjectDetailsStatusRow(page, formatStatus(status)).locator('dd')).toHaveText(expectedCount);
+    }
+});
+
+Then('the Start review action should be visible', async ({ page }) => {
+    await expect(page.getByRole('button', { name: 'Start review' })).toBeVisible();
+});
 
 Then('the requirement details panel should show requirement {string}', async ({ page }, requirementKey: string) => {
     const requirement = requireRequirementByKey(requirementKey);

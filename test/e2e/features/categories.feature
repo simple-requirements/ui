@@ -69,4 +69,4 @@ Feature: Project categories
       | AUTH | FR   | Authentication |
     When I open the category list for the category test project
     And I choose Add requirement for category "AUTH"
-    Then the requirement creation placeholder should be visible for category "AUTH"
+    Then the requirement creation form should be visible for category "AUTH"

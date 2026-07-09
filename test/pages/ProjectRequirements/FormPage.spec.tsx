@@ -8,7 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Category } from '@/api/categoriesApi';
 import type * as RequirementsApiModule from '@/api/requirementsApi';
 import type { Requirement } from '@/api/requirementsApi';
-import { FormPage } from '@/pages/ProjectRequirements/FormPage';
+import { FormPage } from '@/pages/ProjectRequirements/Form/FormPage';
 
 const category: Category = {
     id: '33333333-3333-4333-8333-333333333333',
@@ -164,7 +164,7 @@ describe('ProjectRequirements FormPage', () => {
             expect(mocks.createProjectRequirementRequest).toHaveBeenCalledWith('project-alpha', {
                 categoryId: category.id,
                 description: 'Users can sign in.',
-                priority: null,
+                priority: 'p1',
                 owner: null,
                 rationale: null,
                 source: null,

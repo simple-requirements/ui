@@ -12,22 +12,78 @@ import { actionBarStore, setRequirementKey } from '@/stores/actionBarStore';
 
 type CreateActionKind = 'category' | 'requirement';
 
-type ActionBarConfiguration = Readonly<{ ariaLabel: string; createActionKind: CreateActionKind; disabled: boolean }>;
+type ActionBarConfiguration = Readonly<{
+    ariaLabel: string;
+    createActionKind?: CreateActionKind;
+    disabled: boolean;
+    showRequirementLookup: boolean;
+    showStartReview: boolean;
+}>;
 
 export type ActionBarProps = Readonly<{ onFindRequirementKey?: (requirementKey: string) => void }>;
 
 export type RequirementKeyLookupProps = Readonly<{ disabled?: boolean; onFindKey?: (requirementKey: string) => void }>;
 
+function isDraftRequirementStatus(status: string | undefined): boolean {
+    return status?.toLowerCase() === 'draft';
+}
+
 function getActionBarConfiguration(actionBarKind: ActionBarKind): ActionBarConfiguration {
     switch (actionBarKind) {
         case 'categories':
-            return { ariaLabel: 'Category actions', createActionKind: 'category', disabled: false };
+            return {
+                ariaLabel: 'Category actions',
+                createActionKind: 'category',
+                disabled: false,
+                showRequirementLookup: false,
+                showStartReview: false,
+            };
         case 'categoryForm':
-            return { ariaLabel: 'Category form actions', createActionKind: 'category', disabled: true };
+            return {
+                ariaLabel: 'Category form actions',
+                createActionKind: 'category',
+                disabled: true,
+                showRequirementLookup: false,
+                showStartReview: false,
+            };
+        case 'requirementDetails':
+            return {
+                ariaLabel: 'Requirement actions',
+                createActionKind: 'requirement',
+                disabled: false,
+                showRequirementLookup: false,
+                showStartReview: false,
+            };
         case 'requirementForm':
-            return { ariaLabel: 'Requirement form actions', createActionKind: 'requirement', disabled: true };
+            return {
+                ariaLabel: 'Requirement form actions',
+                createActionKind: 'requirement',
+                disabled: true,
+                showRequirementLookup: false,
+                showStartReview: false,
+            };
         case 'requirements':
-            return { ariaLabel: 'Requirement actions', createActionKind: 'requirement', disabled: false };
+            return {
+                ariaLabel: 'Requirement actions',
+                createActionKind: 'requirement',
+                disabled: false,
+                showRequirementLookup: true,
+                showStartReview: true,
+            };
+        case 'project':
+            return {
+                ariaLabel: 'Project actions',
+                disabled: false,
+                showRequirementLookup: false,
+                showStartReview: false,
+            };
+        case 'none':
+            return {
+                ariaLabel: 'Workspace actions',
+                disabled: true,
+                showRequirementLookup: false,
+                showStartReview: false,
+            };
     }
 }
 
@@ -80,9 +136,14 @@ export function ActionBar({ onFindRequirementKey }: ActionBarProps) {
     const { projectId } = useParams();
     const { actionBar: actionBarKind } = useRouteUiMetadata();
     const configuration = getActionBarConfiguration(actionBarKind);
+    const reviewActionRequirement = useSelector(actionBarStore, (state) => state.reviewActionRequirement);
+
+    const canCreate =
+        configuration.createActionKind !== undefined && !configuration.disabled && projectId !== undefined;
+    const canStartReview = configuration.showStartReview && isDraftRequirementStatus(reviewActionRequirement?.status);
 
     function handleCreate(): void {
-        if (projectId === undefined) {
+        if (projectId === undefined || configuration.createActionKind === undefined) {
             return;
         }
 
@@ -93,18 +154,30 @@ export function ActionBar({ onFindRequirementKey }: ActionBarProps) {
         <section
             className='action-bar'
             aria-label={configuration.ariaLabel}>
-            <RequirementKeyLookup
-                disabled={configuration.disabled}
-                onFindKey={onFindRequirementKey}
-            />
+            {configuration.showRequirementLookup && (
+                <RequirementKeyLookup
+                    disabled={configuration.disabled}
+                    onFindKey={onFindRequirementKey}
+                />
+            )}
 
-            <Button
-                type='button'
-                label='Create'
-                disabled={configuration.disabled || projectId === undefined}
-                onClick={handleCreate}
-                pt={{ root: { className: 'action-bar__button' } }}
-            />
+            {configuration.createActionKind !== undefined && (
+                <Button
+                    type='button'
+                    label='Create'
+                    disabled={!canCreate}
+                    onClick={handleCreate}
+                    pt={{ root: { className: 'action-bar__button' } }}
+                />
+            )}
+
+            {canStartReview && (
+                <Button
+                    type='button'
+                    label='Start review'
+                    pt={{ root: { className: 'action-bar__button' } }}
+                />
+            )}
         </section>
     );
 }

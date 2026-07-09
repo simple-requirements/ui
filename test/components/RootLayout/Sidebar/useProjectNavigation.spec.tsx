@@ -5,8 +5,8 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { useProjectNavigation } from '@/components/RootLayout/Sidebar/useProjectNavigation';
 import type { ActiveProjectRoute } from '@/components/RootLayout/Sidebar/useActiveProjectRoute';
+import { useProjectNavigation } from '@/components/RootLayout/Sidebar/useProjectNavigation';
 
 type ProbeProps = Readonly<{ activeProjectRoute: ActiveProjectRoute }>;
 
@@ -54,7 +54,7 @@ describe('useProjectNavigation', () => {
         expect(screen.getByLabelText('Expanded project')).toHaveTextContent('project-alpha');
     });
 
-    it('opens a collapsed project and navigates to its requirements route.', async () => {
+    it('opens a collapsed project and navigates to its project details route.', async () => {
         const user = userEvent.setup();
 
         renderProjectNavigationProbe({});
@@ -63,7 +63,7 @@ describe('useProjectNavigation', () => {
 
         expect(screen.getByLabelText('Expanded project')).toHaveTextContent('project-alpha');
         await waitFor(() => {
-            expect(screen.getByLabelText('Current route')).toHaveTextContent('/projects/project-alpha/requirements');
+            expect(screen.getByLabelText('Current route')).toHaveTextContent('/projects/project-alpha');
         });
     });
 

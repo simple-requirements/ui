@@ -27,6 +27,18 @@ function setMockRequirementKey(requirementKey: string): void {
     actionBarStore.setState((state) => ({ ...state, requirementKey }));
 }
 
+function setMockReviewActionRequirement(status: 'draft' | 'approved' = 'draft'): void {
+    actionBarStore.setState((state) => ({
+        ...state,
+        reviewActionRequirement: {
+            projectId: 'project-alpha',
+            requirementId: 'requirement-alpha',
+            visibleKey: 'FR-AUTH-0001',
+            status,
+        },
+    }));
+}
+
 function LocationProbe() {
     const location = useLocation();
 
@@ -63,29 +75,29 @@ function renderActionBar(initialRoute = '/'): ReturnType<typeof render> {
 }
 
 beforeEach(() => {
-    setMockRequirementKey('');
+    actionBarStore.setState({ requirementKey: '' });
     mocks.setRequirementKey.mockClear();
 });
 
 afterEach(() => {
     cleanup();
-    setMockRequirementKey('');
+    actionBarStore.setState({ requirementKey: '' });
     vi.clearAllMocks();
 });
 
 describe('ActionBar', () => {
     describe('renders', () => {
-        it('renders the requirement key input and Find requirement button.', () => {
-            renderActionBar();
+        it('renders the requirement key input and Find requirement button on requirement list routes.', () => {
+            renderActionBar('/projects/project-alpha/requirements');
 
             expect(screen.getByRole('textbox', { name: /requirement key/i })).toBeInTheDocument();
             expect(screen.getByRole('button', { name: /find requirement/i })).toBeInTheDocument();
         });
 
-        it('renders the requirement key from the store.', () => {
+        it('renders the requirement key from the store on requirement list routes.', () => {
             setMockRequirementKey('NFR-USAB-0043');
 
-            renderActionBar();
+            renderActionBar('/projects/project-alpha/requirements');
 
             expect(screen.getByRole('textbox', { name: /requirement key/i })).toHaveValue('NFR-USAB-0043');
         });
@@ -96,25 +108,60 @@ describe('ActionBar', () => {
             expect(screen.getByRole('button', { name: 'Create' })).toBeInTheDocument();
         });
 
+        it('renders Create directly after the requirement lookup actions on requirement list routes.', () => {
+            renderActionBar('/projects/project-alpha/requirements');
+
+            const findButton = screen.getByRole('button', { name: /find requirement/i });
+            const createButton = screen.getByRole('button', { name: 'Create' });
+
+            expect(findButton.compareDocumentPosition(createButton)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+        });
+
+        it('shows a no-op Start review button for a selected draft requirement.', async () => {
+            const user = userEvent.setup();
+            setMockReviewActionRequirement('draft');
+
+            renderActionBar('/projects/project-alpha/requirements');
+
+            await user.click(screen.getByRole('button', { name: 'Start review' }));
+
+            expect(screen.getByLabelText('Current route')).toHaveTextContent('/projects/project-alpha/requirements');
+        });
+
+        it('does not show the Start review button for a selected non-draft requirement.', () => {
+            setMockReviewActionRequirement('approved');
+
+            renderActionBar('/projects/project-alpha/requirements');
+
+            expect(screen.queryByRole('button', { name: 'Start review' })).not.toBeInTheDocument();
+        });
+
         it('renders a Create button on category routes.', () => {
             renderActionBar('/projects/project-alpha/categories');
 
             expect(screen.getByRole('button', { name: 'Create' })).toBeInTheDocument();
         });
 
-        it('disables action buttons on requirement form routes.', () => {
+        it('hides requirement lookup on category routes.', () => {
+            renderActionBar('/projects/project-alpha/categories');
+
+            expect(screen.queryByRole('textbox', { name: /requirement key/i })).not.toBeInTheDocument();
+            expect(screen.queryByRole('button', { name: /find requirement/i })).not.toBeInTheDocument();
+        });
+
+        it('hides requirement lookup and disables Create on requirement form routes.', () => {
             renderActionBar('/projects/project-alpha/requirements/new');
 
-            expect(screen.getByRole('textbox', { name: /requirement key/i })).toBeDisabled();
-            expect(screen.getByRole('button', { name: /find requirement/i })).toBeDisabled();
+            expect(screen.queryByRole('textbox', { name: /requirement key/i })).not.toBeInTheDocument();
+            expect(screen.queryByRole('button', { name: /find requirement/i })).not.toBeInTheDocument();
             expect(screen.getByRole('button', { name: 'Create' })).toBeDisabled();
         });
 
-        it('disables action buttons on category form routes.', () => {
+        it('hides requirement lookup and disables Create on category form routes.', () => {
             renderActionBar('/projects/project-alpha/categories/new');
 
-            expect(screen.getByRole('textbox', { name: /requirement key/i })).toBeDisabled();
-            expect(screen.getByRole('button', { name: /find requirement/i })).toBeDisabled();
+            expect(screen.queryByRole('textbox', { name: /requirement key/i })).not.toBeInTheDocument();
+            expect(screen.queryByRole('button', { name: /find requirement/i })).not.toBeInTheDocument();
             expect(screen.getByRole('button', { name: 'Create' })).toBeDisabled();
         });
     });

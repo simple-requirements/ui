@@ -149,6 +149,11 @@ When('I create a project named {string}', async ({ page }, projectName: string) 
     await expect(getVisibleProjectDialog(page)).toBeHidden();
 });
 
+When('I open project {string} from the sidebar', async ({ page }, projectName: string) => {
+    await getProjectButton(page, projectName).click();
+    await expect(page.getByRole('heading', { name: projectName })).toBeVisible();
+});
+
 When('I open the context menu for project {string}', async ({ page }, projectName: string) => {
     await getProjectButton(page, projectName).click({ button: 'right' });
 });

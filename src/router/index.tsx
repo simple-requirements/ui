@@ -1,10 +1,10 @@
 import { DetailsPage as ProjectCategoriesDetailsPage } from '@/pages/ProjectCategories/DetailsPage';
 import { FormPage as ProjectCategoriesFormPage } from '@/pages/ProjectCategories/Form/FormPage';
 import { ListPage as ProjectCategoriesListPage } from '@/pages/ProjectCategories/List/ListPage';
-import { ProjectOverviewPage } from '@/pages/ProjectOverviewPage';
+import { ProjectDetailsPage } from '@/pages/ProjectDetails/ProjectDetailsPage';
 import { DetailsPage as ProjectRequirementsDetailsPage } from '@/pages/ProjectRequirements/DetailsPage';
 import { FormPage as ProjectRequirementsFormPage } from '@/pages/ProjectRequirements/Form/FormPage';
-import { ProjectRequirementsPage } from '@/pages/ProjectRequirementsPage';
+import { ListPage as ProjectRequirementsListPage } from '@/pages/ProjectRequirements/List/ListPage';
 import { RootLayout } from '@/pages/RootLayout';
 import { WorkspacePage } from '@/pages/WorkspacePage';
 import { createBrowserRouter, type RouteObject } from 'react-router';
@@ -19,19 +19,23 @@ export const routes: RouteObject[] = [
     {
         path: '/',
         element: <RootLayout />,
-        handle: routeHandle({ actionBar: 'requirements' }),
+        handle: routeHandle({ actionBar: 'none' }),
         children: [
             { index: true, element: <WorkspacePage /> },
             {
                 path: 'projects/:projectId',
-                handle: routeHandle({ actionBar: 'requirements' }),
+                handle: routeHandle({ actionBar: 'project' }),
                 children: [
-                    { index: true, element: <ProjectOverviewPage /> },
+                    { index: true, element: <ProjectDetailsPage /> },
                     {
                         path: 'requirements',
-                        handle: routeHandle({ actionBar: 'requirements' }),
+                        handle: routeHandle({ actionBar: 'requirementDetails' }),
                         children: [
-                            { index: true, element: <ProjectRequirementsPage /> },
+                            {
+                                index: true,
+                                element: <ProjectRequirementsListPage />,
+                                handle: routeHandle({ actionBar: 'requirements' }),
+                            },
                             {
                                 path: 'new',
                                 element: <ProjectRequirementsFormPage />,

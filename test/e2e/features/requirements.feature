@@ -19,6 +19,17 @@ Feature: Project requirements
     When I open the application
     Then the sidebar should show requirement count 2 for project "Requirement BDD Project"
 
+  Scenario: User opens project details with statistics
+    Given the backend contains a requirement test project named "Requirement BDD Project" with requirements
+      | categoryKey | categoryType | categoryName   | description                             | priority | owner |
+      | AUTH        | FR           | Authentication | Users can sign in.                     | p1       | Alice |
+      | PERF        | NFR          | Performance    | The dashboard opens within one second. | p2       | Bob   |
+    When I open the application
+    And I open project "Requirement BDD Project" from the sidebar
+    Then the requirement test project details should show statistics
+      | categories | requirements | draft | approved | implemented | obsolete | rejected |
+      | 2          | 2            | 2     | 0        | 0           | 0        | 0        |
+
   Scenario: User selects a requirement
     Given the backend contains a requirement test project named "Requirement BDD Project" with requirements
       | categoryKey | categoryType | categoryName   | description         | priority | owner | source          |
@@ -26,6 +37,14 @@ Feature: Project requirements
     When I open the requirements list for the requirement test project
     And I select requirement "FR-AUTH-0001"
     Then the requirement details panel should show requirement "FR-AUTH-0001"
+
+  Scenario: User sees the start review action for a selected draft requirement
+    Given the backend contains a requirement test project named "Requirement BDD Project" with requirements
+      | categoryKey | categoryType | categoryName   | description         | priority | owner | source          |
+      | AUTH        | FR           | Authentication | Users can sign in. | p1       | Alice | Security policy |
+    When I open the requirements list for the requirement test project
+    And I select requirement "FR-AUTH-0001"
+    Then the Start review action should be visible
 
   Scenario: User copies a requirement key from the table
     Given the backend contains a requirement test project named "Requirement BDD Project" with requirements

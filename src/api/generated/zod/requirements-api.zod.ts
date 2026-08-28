@@ -201,6 +201,9 @@ export const ListRequirementsResponseItem = zod.object({
   "reviewer": zod.looseObject({
 
 }).nullish(),
+  "obsoletedBy": zod.looseObject({
+
+}).nullish(),
   "rejectedAt": zod.looseObject({
 
 }).nullish(),
@@ -277,6 +280,9 @@ export const CreateRequirementResponse = zod.object({
 
 }).nullish(),
   "reviewer": zod.looseObject({
+
+}).nullish(),
+  "obsoletedBy": zod.looseObject({
 
 }).nullish(),
   "rejectedAt": zod.looseObject({
@@ -359,6 +365,9 @@ export const GetRequirementResponse = zod.object({
   "reviewer": zod.looseObject({
 
 }).nullish(),
+  "obsoletedBy": zod.looseObject({
+
+}).nullish(),
   "rejectedAt": zod.looseObject({
 
 }).nullish(),
@@ -409,6 +418,9 @@ export const UpdateRequirementBody = zod.object({
   "reviewer": zod.looseObject({
 
 }).nullish(),
+  "obsoletedBy": zod.looseObject({
+
+}).nullish(),
   "rejectionReason": zod.looseObject({
 
 }).nullish(),
@@ -445,6 +457,9 @@ export const UpdateRequirementResponse = zod.object({
 
 }).nullish(),
   "reviewer": zod.looseObject({
+
+}).nullish(),
+  "obsoletedBy": zod.looseObject({
 
 }).nullish(),
   "rejectedAt": zod.looseObject({
@@ -512,7 +527,14 @@ export const ListRequirementReviewCommentsResponseItem = zod.object({
 
 }).nullish(),
   "createdAt": zod.iso.datetime({"offset":true}),
-  "updatedAt": zod.iso.datetime({"offset":true})
+  "updatedAt": zod.iso.datetime({"offset":true}),
+  "replies": zod.array(zod.object({
+  "id": zod.string(),
+  "commentId": zod.string(),
+  "text": zod.string(),
+  "author": zod.string(),
+  "createdAt": zod.iso.datetime({"offset":true})
+}))
 })
 export const ListRequirementReviewCommentsResponse = zod.array(ListRequirementReviewCommentsResponseItem)
 
@@ -549,7 +571,52 @@ export const CreateRequirementReviewCommentResponse = zod.object({
 
 }).nullish(),
   "createdAt": zod.iso.datetime({"offset":true}),
-  "updatedAt": zod.iso.datetime({"offset":true})
+  "updatedAt": zod.iso.datetime({"offset":true}),
+  "replies": zod.array(zod.object({
+  "id": zod.string(),
+  "commentId": zod.string(),
+  "text": zod.string(),
+  "author": zod.string(),
+  "createdAt": zod.iso.datetime({"offset":true})
+}))
+})
+
+
+/**
+ * @summary Get the derived review state and comment counts.
+ */
+export const GetRequirementReviewSummaryParams = zod.object({
+  "projectId": zod.string(),
+  "requirementId": zod.string()
+})
+
+export const GetRequirementReviewSummaryResponse = zod.object({
+  "commentCount": zod.number(),
+  "openCommentCount": zod.number(),
+  "state": zod.enum(['not_started', 'in_review', 'decision_pending'])
+})
+
+
+/**
+ * @summary Reply to an open review comment.
+ */
+export const CreateRequirementReviewCommentReplyParams = zod.object({
+  "projectId": zod.string(),
+  "requirementId": zod.string(),
+  "commentId": zod.string()
+})
+
+export const CreateRequirementReviewCommentReplyBody = zod.object({
+  "text": zod.string(),
+  "author": zod.string()
+})
+
+export const CreateRequirementReviewCommentReplyResponse = zod.object({
+  "id": zod.string(),
+  "commentId": zod.string(),
+  "text": zod.string(),
+  "author": zod.string(),
+  "createdAt": zod.iso.datetime({"offset":true})
 })
 
 
@@ -585,7 +652,14 @@ export const CloseRequirementReviewCommentResponse = zod.object({
 
 }).nullish(),
   "createdAt": zod.iso.datetime({"offset":true}),
-  "updatedAt": zod.iso.datetime({"offset":true})
+  "updatedAt": zod.iso.datetime({"offset":true}),
+  "replies": zod.array(zod.object({
+  "id": zod.string(),
+  "commentId": zod.string(),
+  "text": zod.string(),
+  "author": zod.string(),
+  "createdAt": zod.iso.datetime({"offset":true})
+}))
 })
 
 
@@ -629,6 +703,9 @@ export const ApproveRequirementReviewResponse = zod.object({
 
 }).nullish(),
   "reviewer": zod.looseObject({
+
+}).nullish(),
+  "obsoletedBy": zod.looseObject({
 
 }).nullish(),
   "rejectedAt": zod.looseObject({
@@ -695,6 +772,9 @@ export const RejectRequirementReviewResponse = zod.object({
 
 }).nullish(),
   "reviewer": zod.looseObject({
+
+}).nullish(),
+  "obsoletedBy": zod.looseObject({
 
 }).nullish(),
   "rejectedAt": zod.looseObject({

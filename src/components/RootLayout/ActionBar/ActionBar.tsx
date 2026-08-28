@@ -1,183 +1,210 @@
-import { useSelector } from '@tanstack/react-store';
-import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext';
-import type { ComponentProps } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useSelector } from "@tanstack/react-store";
+import { Button } from "primereact/button";
+import { useNavigate, useParams } from "react-router";
 
-import '@/components/RootLayout/ActionBar/ActionBar.scss';
+import "@/components/RootLayout/ActionBar/ActionBar.scss";
 
-import { getProjectCategoryCreateRoute, getProjectRequirementCreateRoute } from '@/router/projectRoutes';
-import { type ActionBarKind, useRouteUiMetadata } from '@/router/routeUiMetadata';
-import { actionBarStore, setRequirementKey } from '@/stores/actionBarStore';
+import {
+  getActionBarConfiguration,
+  getCreateRoute,
+} from "@/components/RootLayout/ActionBar/actionBarConfiguration";
+import { RequirementKeyLookup } from "@/components/RootLayout/ActionBar/RequirementKeyLookup";
+import { useObsoleteRequirementAction } from "@/components/RootLayout/ActionBar/useObsoleteRequirementAction";
+import { useImplementRequirementAction } from "@/components/RootLayout/ActionBar/useImplementRequirementAction";
+import { RequirementLifecycleDialog } from "@/pages/ProjectRequirements/RequirementLifecycleDialog";
+import {
+  getProjectRequirementDetailsRoute,
+  getProjectRequirementEditRoute,
+  getProjectRequirementReviewRoute,
+} from "@/router/projectRoutes";
+import { useRouteUiMetadata } from "@/router/routeUiMetadata";
+import { actionBarStore, requestReviewDecision } from "@/stores/actionBarStore";
+import { openTab } from "@/stores/tabBarStore";
 
-type CreateActionKind = 'category' | 'requirement';
-
-type ActionBarConfiguration = Readonly<{
-    ariaLabel: string;
-    createActionKind?: CreateActionKind;
-    disabled: boolean;
-    showRequirementLookup: boolean;
-    showStartReview: boolean;
+export type ActionBarProps = Readonly<{
+  onFindRequirementKey?: (requirementKey: string) => void;
 }>;
 
-export type ActionBarProps = Readonly<{ onFindRequirementKey?: (requirementKey: string) => void }>;
-
-export type RequirementKeyLookupProps = Readonly<{ disabled?: boolean; onFindKey?: (requirementKey: string) => void }>;
-
 function isDraftRequirementStatus(status: string | undefined): boolean {
-    return status?.toLowerCase() === 'draft';
+  return status?.toLowerCase() === "draft";
 }
 
-function getActionBarConfiguration(actionBarKind: ActionBarKind): ActionBarConfiguration {
-    switch (actionBarKind) {
-        case 'categories':
-            return {
-                ariaLabel: 'Category actions',
-                createActionKind: 'category',
-                disabled: false,
-                showRequirementLookup: false,
-                showStartReview: false,
-            };
-        case 'categoryForm':
-            return {
-                ariaLabel: 'Category form actions',
-                createActionKind: 'category',
-                disabled: true,
-                showRequirementLookup: false,
-                showStartReview: false,
-            };
-        case 'requirementDetails':
-            return {
-                ariaLabel: 'Requirement actions',
-                createActionKind: 'requirement',
-                disabled: false,
-                showRequirementLookup: false,
-                showStartReview: false,
-            };
-        case 'requirementForm':
-            return {
-                ariaLabel: 'Requirement form actions',
-                createActionKind: 'requirement',
-                disabled: true,
-                showRequirementLookup: false,
-                showStartReview: false,
-            };
-        case 'requirements':
-            return {
-                ariaLabel: 'Requirement actions',
-                createActionKind: 'requirement',
-                disabled: false,
-                showRequirementLookup: true,
-                showStartReview: true,
-            };
-        case 'project':
-            return {
-                ariaLabel: 'Project actions',
-                disabled: false,
-                showRequirementLookup: false,
-                showStartReview: false,
-            };
-        case 'none':
-            return {
-                ariaLabel: 'Workspace actions',
-                disabled: true,
-                showRequirementLookup: false,
-                showStartReview: false,
-            };
-    }
-}
-
-function getCreateRoute(projectId: string, createActionKind: CreateActionKind): string {
-    return createActionKind === 'category' ?
-            getProjectCategoryCreateRoute(projectId)
-        :   getProjectRequirementCreateRoute(projectId);
-}
-
-export function RequirementKeyLookup({ disabled = false, onFindKey }: RequirementKeyLookupProps) {
-    const requirementKey = useSelector(actionBarStore, (state) => state.requirementKey);
-
-    const handleSubmit: NonNullable<ComponentProps<'form'>['onSubmit']> = (event) => {
-        event.preventDefault();
-
-        const trimmedKey = requirementKey.trim();
-        if (trimmedKey.length > 0) {
-            onFindKey?.(trimmedKey);
-        }
-    };
-
-    return (
-        <form
-            className='action-bar__lookup'
-            aria-label='Requirement key lookup'
-            onSubmit={handleSubmit}>
-            <InputText
-                id='requirement-key'
-                value={requirementKey}
-                disabled={disabled}
-                onChange={(event) => setRequirementKey(event.currentTarget.value)}
-                placeholder='FR-KEY-0001'
-                aria-label='Requirement key'
-                pt={{ root: { className: 'action-bar__input' } }}
-            />
-
-            <Button
-                outlined
-                type='submit'
-                label='Find requirement'
-                disabled={disabled}
-                pt={{ root: { className: 'action-bar__button' } }}
-            />
-        </form>
-    );
+function canBecomeObsolete(status: string | undefined): boolean {
+  return status === "approved" || status === "implemented";
 }
 
 export function ActionBar({ onFindRequirementKey }: ActionBarProps) {
-    const navigate = useNavigate();
-    const { projectId } = useParams();
-    const { actionBar: actionBarKind } = useRouteUiMetadata();
-    const configuration = getActionBarConfiguration(actionBarKind);
-    const reviewActionRequirement = useSelector(actionBarStore, (state) => state.reviewActionRequirement);
+  const navigate = useNavigate();
+  const { projectId } = useParams();
+  const { actionBar: actionBarKind } = useRouteUiMetadata();
+  const configuration = getActionBarConfiguration(actionBarKind);
+  const reviewActionRequirement = useSelector(
+    actionBarStore,
+    (state) => state.reviewActionRequirement,
+  );
+  const obsoleteAction = useObsoleteRequirementAction(reviewActionRequirement);
+  const implementAction = useImplementRequirementAction(reviewActionRequirement);
 
-    const canCreate =
-        configuration.createActionKind !== undefined && !configuration.disabled && projectId !== undefined;
-    const canStartReview = configuration.showStartReview && isDraftRequirementStatus(reviewActionRequirement?.status);
+  const canCreate =
+    configuration.createActionKind !== undefined &&
+    !configuration.disabled &&
+    projectId !== undefined;
+  const isDraftRequirement = isDraftRequirementStatus(
+    reviewActionRequirement?.status,
+  );
+  const canEditRequirement =
+    configuration.showEditRequirement &&
+    reviewActionRequirement !== undefined &&
+    reviewActionRequirement.status !== "rejected";
+  const canMarkObsolete =
+    configuration.showObsoleteRequirement &&
+    canBecomeObsolete(reviewActionRequirement?.status);
+  const canMarkImplemented =
+    configuration.showImplementedRequirement &&
+    reviewActionRequirement?.status === "approved" &&
+    (reviewActionRequirement.implementationTicketCount ?? 0) > 0;
+  const canReview = configuration.showReview && isDraftRequirement;
+  const canDecideReview =
+    configuration.showReviewDecisions && isDraftRequirement;
 
-    function handleCreate(): void {
-        if (projectId === undefined || configuration.createActionKind === undefined) {
-            return;
-        }
-
-        void navigate(getCreateRoute(projectId, configuration.createActionKind));
+  function handleCreate(): void {
+    if (
+      projectId === undefined ||
+      configuration.createActionKind === undefined
+    ) {
+      return;
     }
 
-    return (
-        <section
-            className='action-bar'
-            aria-label={configuration.ariaLabel}>
-            {configuration.showRequirementLookup && (
-                <RequirementKeyLookup
-                    disabled={configuration.disabled}
-                    onFindKey={onFindRequirementKey}
-                />
-            )}
+    void navigate(getCreateRoute(projectId, configuration.createActionKind));
+  }
 
-            {configuration.createActionKind !== undefined && (
-                <Button
-                    type='button'
-                    label='Create'
-                    disabled={!canCreate}
-                    onClick={handleCreate}
-                    pt={{ root: { className: 'action-bar__button' } }}
-                />
-            )}
-
-            {canStartReview && (
-                <Button
-                    type='button'
-                    label='Start review'
-                    pt={{ root: { className: 'action-bar__button' } }}
-                />
-            )}
-        </section>
+  function handleEditRequirement(): void {
+    if (reviewActionRequirement === undefined) {
+      return;
+    }
+    const detailsRoute = getProjectRequirementDetailsRoute(
+      reviewActionRequirement.projectId,
+      reviewActionRequirement.requirementId,
     );
+    const editRoute = getProjectRequirementEditRoute(
+      reviewActionRequirement.projectId,
+      reviewActionRequirement.requirementId,
+    );
+    openTab({
+      id: detailsRoute,
+      label: reviewActionRequirement.visibleKey,
+      closable: true,
+    });
+    void navigate(
+      configuration.showReviewDecisions
+        ? `${editRoute}?returnTo=review`
+        : editRoute,
+    );
+  }
+
+  function handleReview(): void {
+    if (reviewActionRequirement === undefined) {
+      return;
+    }
+    void navigate(
+      getProjectRequirementReviewRoute(
+        reviewActionRequirement.projectId,
+        reviewActionRequirement.requirementId,
+      ),
+    );
+  }
+
+  return (
+    <section className="action-bar" aria-label={configuration.ariaLabel}>
+      {configuration.showRequirementLookup && (
+        <RequirementKeyLookup
+          disabled={configuration.disabled}
+          onFindKey={onFindRequirementKey}
+        />
+      )}
+
+      {configuration.createActionKind !== undefined && (
+        <Button
+          type="button"
+          label="Create"
+          disabled={!canCreate}
+          onClick={handleCreate}
+          pt={{ root: { className: "action-bar__button" } }}
+        />
+      )}
+
+      {canEditRequirement && (
+        <Button
+          type="button"
+          label="Edit"
+          onClick={handleEditRequirement}
+          pt={{ root: { className: "action-bar__button" } }}
+        />
+      )}
+
+      {canReview && (
+        <Button
+          type="button"
+          label="Review"
+          onClick={handleReview}
+          pt={{ root: { className: "action-bar__button" } }}
+        />
+      )}
+
+      {canMarkObsolete && (
+        <Button
+          type="button"
+          label="Obsolete"
+          onClick={obsoleteAction.open}
+          pt={{ root: { className: "action-bar__button" } }}
+        />
+      )}
+
+      {canMarkImplemented && (
+        <Button type="button" label="Implemented" loading={implementAction.pending} onClick={() => void implementAction.implement()} pt={{ root: { className: "action-bar__button" } }} />
+      )}
+
+      {canDecideReview && (
+        <>
+          <Button
+            type="button"
+            label="Approve"
+            pt={{
+              root: {
+                className:
+                  "action-bar__decision-button action-bar__decision-button--approve",
+              },
+            }}
+            onClick={() => requestReviewDecision("approve")}
+          />
+          <Button
+            type="button"
+            label="Reject"
+            severity="danger"
+            pt={{
+              root: {
+                className:
+                  "action-bar__decision-button action-bar__decision-button--reject",
+              },
+            }}
+            onClick={() => requestReviewDecision("reject")}
+          />
+        </>
+      )}
+      <RequirementLifecycleDialog
+        key={
+          obsoleteAction.visible
+            ? reviewActionRequirement?.requirementId
+            : "closed"
+        }
+        visible={obsoleteAction.visible}
+        title="Mark requirement obsolete"
+        nameLabel="Name"
+        reasonRequired
+        pending={obsoleteAction.pending}
+        onAbort={obsoleteAction.abort}
+        onConfirm={obsoleteAction.confirm}
+      />
+    </section>
+  );
 }

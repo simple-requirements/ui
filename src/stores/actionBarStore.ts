@@ -7,9 +7,16 @@ export type ReviewActionRequirement = Readonly<{
     requirementId: string;
     visibleKey: string;
     status: RequirementStatus;
+    implementationTicketCount?: number;
 }>;
 
-export type ActionBarState = Readonly<{ requirementKey: string; reviewActionRequirement?: ReviewActionRequirement }>;
+export type ReviewDecisionRequest = 'approve' | 'reject';
+
+export type ActionBarState = Readonly<{
+    requirementKey: string;
+    reviewActionRequirement?: ReviewActionRequirement;
+    reviewDecisionRequest?: ReviewDecisionRequest;
+}>;
 
 export const actionBarStore = createStore<ActionBarState>({ requirementKey: '' });
 
@@ -27,4 +34,12 @@ export function setReviewActionRequirement(reviewActionRequirement: ReviewAction
 
 export function clearReviewActionRequirement(): void {
     actionBarStore.setState((state) => ({ ...state, reviewActionRequirement: undefined }));
+}
+
+export function requestReviewDecision(reviewDecisionRequest: ReviewDecisionRequest): void {
+    actionBarStore.setState((state) => ({ ...state, reviewDecisionRequest }));
+}
+
+export function clearReviewDecisionRequest(): void {
+    actionBarStore.setState((state) => ({ ...state, reviewDecisionRequest: undefined }));
 }

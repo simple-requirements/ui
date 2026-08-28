@@ -5,6 +5,7 @@ import { ProjectDetailsPage } from '@/pages/ProjectDetails/ProjectDetailsPage';
 import { DetailsPage as ProjectRequirementsDetailsPage } from '@/pages/ProjectRequirements/DetailsPage';
 import { FormPage as ProjectRequirementsFormPage } from '@/pages/ProjectRequirements/Form/FormPage';
 import { ListPage as ProjectRequirementsListPage } from '@/pages/ProjectRequirements/List/ListPage';
+import { ReviewPage as ProjectRequirementReviewPage } from '@/pages/ProjectRequirements/Review/ReviewPage';
 import { RootLayout } from '@/pages/RootLayout';
 import { WorkspacePage } from '@/pages/WorkspacePage';
 import { createBrowserRouter, type RouteObject } from 'react-router';
@@ -45,6 +46,11 @@ export const routes: RouteObject[] = [
                                 path: ':requirementId/edit',
                                 element: <ProjectRequirementsFormPage />,
                                 handle: routeHandle({ actionBar: 'requirementForm', disableChromeActions: true }),
+                            },
+                            {
+                                path: ':requirementId/review',
+                                element: <ProjectRequirementReviewPage />,
+                                handle: routeHandle({ actionBar: 'review' }),
                             },
                             { path: ':requirementId', element: <ProjectRequirementsDetailsPage /> },
                         ],

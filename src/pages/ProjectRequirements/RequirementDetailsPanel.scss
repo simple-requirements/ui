@@ -24,13 +24,6 @@
     color: var(--color-app-text);
 }
 
-.requirement-details-panel__edit-button {
-    @include ui.outline-button;
-
-    block-size: var(--ui-control-height);
-    padding-inline: var(--ui-space-md);
-}
-
 .requirement-details-panel__details-list {
     @include ui.details-list;
 }

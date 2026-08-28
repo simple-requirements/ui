@@ -23,6 +23,7 @@ const requirement: Requirement = {
     deletedAt: null,
     approvedAt: null,
     implementedAt: null,
+    obsoletedBy: null,
     obsolescenceReason: null,
     obsoleteAt: null,
     createdAt: '2026-06-28T10:00:00.000Z',

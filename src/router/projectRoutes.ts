@@ -18,6 +18,10 @@ export function getProjectRequirementEditRoute(projectId: string, requirementId:
     return `/projects/${projectId}/requirements/${requirementId}/edit`;
 }
 
+export function getProjectRequirementReviewRoute(projectId: string, requirementId: string): string {
+    return `/projects/${projectId}/requirements/${requirementId}/review`;
+}
+
 export function getProjectRequirementCreateRoute(projectId: string, categoryId?: string): string {
     const route = `/projects/${projectId}/requirements/new`;
 
@@ -42,18 +46,19 @@ export function getProjectCategoryEditRoute(projectId: string, categoryId: strin
 
 export function getProjectCategoryDetailsCloseRoute(route: string): string | undefined {
     const match =
-        matchPath('/projects/:projectId/categories/new', route)
-        ?? matchPath('/projects/:projectId/categories/:categoryId/edit', route)
-        ?? matchPath('/projects/:projectId/categories/:categoryId', route);
+        matchPath('/projects/:projectId/categories/new', route) ??
+        matchPath('/projects/:projectId/categories/:categoryId/edit', route) ??
+        matchPath('/projects/:projectId/categories/:categoryId', route);
 
     return match?.params.projectId === undefined ? undefined : getProjectCategoriesRoute(match.params.projectId);
 }
 
 export function getProjectRequirementDetailsCloseRoute(route: string): string | undefined {
     const match =
-        matchPath('/projects/:projectId/requirements/new', route)
-        ?? matchPath('/projects/:projectId/requirements/:requirementId/edit', route)
-        ?? matchPath('/projects/:projectId/requirements/:requirementId', route);
+        matchPath('/projects/:projectId/requirements/new', route) ??
+        matchPath('/projects/:projectId/requirements/:requirementId/edit', route) ??
+        matchPath('/projects/:projectId/requirements/:requirementId/review', route) ??
+        matchPath('/projects/:projectId/requirements/:requirementId', route);
 
     return match?.params.projectId === undefined ? undefined : getProjectRequirementsRoute(match.params.projectId);
 }

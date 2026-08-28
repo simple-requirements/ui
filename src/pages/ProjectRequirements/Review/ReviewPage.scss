@@ -1,0 +1,173 @@
+@use 'styles/UiMixins' as ui;
+
+.project-requirement-review-page {
+    height: 100%;
+}
+
+.project-requirement-review-page__splitter {
+    height: 100%;
+    border: 0;
+}
+
+.project-requirement-review-page__details {
+    height: 100%;
+    overflow: auto;
+    padding: 1.6rem;
+}
+
+.review-comments-panel {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 1.6rem;
+    background: var(--color-app-surface-muted);
+}
+
+.review-comments-panel__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.6rem;
+}
+
+.review-comments-panel__button {
+    @include ui.dialog-button;
+}
+
+.review-comments-panel__button--comment,
+.review-comments-panel__button--resolve {
+    @include ui.primary-button;
+}
+
+.review-comments-panel__button--reply {
+    @include ui.outline-button;
+}
+
+.review-comments-panel__list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+    overflow: auto;
+    padding-top: 1.6rem;
+}
+
+.review-comment {
+    align-self: flex-start;
+    width: min(90%, 44rem);
+    padding: 1.6rem;
+    border-radius: 1rem;
+    background: var(--color-app-surface);
+    box-shadow: var(--shadow-floating);
+}
+
+.review-comment--closed {
+    opacity: 0.8;
+}
+
+.review-comment__reply {
+    margin: 1.6rem 0 0 2rem;
+    padding: 1.6rem;
+    border-radius: 1rem;
+    background: var(--color-primary-100);
+}
+
+.review-comment__meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.8rem;
+    font-size: var(--font-size-small);
+}
+
+.review-comment__read-more {
+    margin-left: 0.4rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-primary-600);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.review-comment__status {
+    font-size: var(--font-size-small);
+    color: var(--color-app-text-muted);
+}
+
+.review-comment__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.8rem;
+}
+
+.review-dialog {
+    @include ui.dialog-shell(56rem);
+
+    min-block-size: 30rem;
+}
+
+.review-dialog--text {
+    min-block-size: 42rem;
+}
+
+.review-dialog__header {
+    @include ui.dialog-header;
+}
+
+.review-dialog__content {
+    @include ui.dialog-content;
+}
+
+.review-dialog__heading {
+    @include ui.dialog-heading;
+}
+
+.review-dialog__actions {
+    @include ui.dialog-actions(0);
+}
+
+.review-dialog__form {
+    min-block-size: 20rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-space-sm);
+}
+
+.review-dialog--text .review-dialog__form {
+    min-block-size: 31rem;
+}
+
+.review-dialog__form label {
+    @include ui.form-label;
+}
+
+.review-dialog__form .p-inputtext {
+    @include ui.form-line-control(100%);
+
+    font-size: var(--font-size-paragraph);
+    line-height: var(--line-height-paragraph);
+}
+
+.review-dialog__form textarea {
+    @include ui.form-textarea(100%);
+
+    flex: 1 1 auto;
+    min-block-size: 12rem;
+    font-size: var(--font-size-paragraph);
+    line-height: var(--line-height-paragraph);
+}
+
+.review-dialog__warning {
+    @include ui.form-message(var(--color-feedback-warning-text));
+}
+
+.review-dialog__button {
+    @include ui.dialog-button;
+}
+
+.review-dialog__button--abort {
+    @include ui.outline-button;
+}
+
+.review-dialog__button--confirm {
+    @include ui.primary-button;
+}

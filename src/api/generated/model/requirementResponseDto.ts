@@ -11,6 +11,7 @@ import type { RequirementResponseDtoDescription } from './requirementResponseDto
 import type { RequirementResponseDtoImplementedAt } from './requirementResponseDtoImplementedAt';
 import type { RequirementResponseDtoObsolescenceReason } from './requirementResponseDtoObsolescenceReason';
 import type { RequirementResponseDtoObsoleteAt } from './requirementResponseDtoObsoleteAt';
+import type { RequirementResponseDtoObsoletedBy } from './requirementResponseDtoObsoletedBy';
 import type { RequirementResponseDtoOwner } from './requirementResponseDtoOwner';
 import type { RequirementResponseDtoPriority } from './requirementResponseDtoPriority';
 import type { RequirementResponseDtoRationale } from './requirementResponseDtoRationale';
@@ -48,6 +49,8 @@ export interface RequirementResponseDto {
   rejectionReason?: RequirementResponseDtoRejectionReason;
   /** @nullable */
   reviewer?: RequirementResponseDtoReviewer;
+  /** @nullable */
+  obsoletedBy?: RequirementResponseDtoObsoletedBy;
   /** @nullable */
   rejectedAt?: RequirementResponseDtoRejectedAt;
   /** @nullable */

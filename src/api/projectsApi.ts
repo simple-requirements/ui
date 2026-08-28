@@ -8,6 +8,7 @@ export const projectSchema = z.object({
     createdAt: z.iso.datetime(),
     updatedAt: z.iso.datetime(),
     requirementCount: z.number().int().nonnegative().optional(),
+    ticketUrlTemplate: z.string().nullable().optional().transform((value) => value ?? null),
 });
 
 export type Project = z.infer<typeof projectSchema>;
@@ -28,4 +29,8 @@ export async function createProjectRequest(data: ProjectNameRequest): Promise<vo
 
 export async function updateProjectRequest(projectId: string, data: ProjectNameRequest): Promise<void> {
     await updateProject(projectId, data);
+}
+
+export async function updateProjectTicketUrlTemplateRequest(projectId: string, ticketUrlTemplate: string | null): Promise<void> {
+    await updateProject(projectId, { ticketUrlTemplate } as never);
 }

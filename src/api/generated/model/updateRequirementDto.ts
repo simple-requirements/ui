@@ -7,6 +7,7 @@
  */
 import type { UpdateRequirementDtoDescription } from './updateRequirementDtoDescription';
 import type { UpdateRequirementDtoObsolescenceReason } from './updateRequirementDtoObsolescenceReason';
+import type { UpdateRequirementDtoObsoletedBy } from './updateRequirementDtoObsoletedBy';
 import type { UpdateRequirementDtoOwner } from './updateRequirementDtoOwner';
 import type { UpdateRequirementDtoPriority } from './updateRequirementDtoPriority';
 import type { UpdateRequirementDtoRationale } from './updateRequirementDtoRationale';
@@ -31,6 +32,8 @@ export interface UpdateRequirementDto {
   status?: UpdateRequirementDtoStatus;
   /** @nullable */
   reviewer?: UpdateRequirementDtoReviewer;
+  /** @nullable */
+  obsoletedBy?: UpdateRequirementDtoObsoletedBy;
   /** @nullable */
   rejectionReason?: UpdateRequirementDtoRejectionReason;
   /** @nullable */

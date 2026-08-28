@@ -38,13 +38,37 @@ Feature: Project requirements
     And I select requirement "FR-AUTH-0001"
     Then the requirement details panel should show requirement "FR-AUTH-0001"
 
-  Scenario: User sees the start review action for a selected draft requirement
+  Scenario: User sees the review action for a selected draft requirement
     Given the backend contains a requirement test project named "Requirement BDD Project" with requirements
       | categoryKey | categoryType | categoryName   | description         | priority | owner | source          |
       | AUTH        | FR           | Authentication | Users can sign in. | p1       | Alice | Security policy |
     When I open the requirements list for the requirement test project
     And I select requirement "FR-AUTH-0001"
-    Then the Start review action should be visible
+    Then the Review action should be visible
+
+  Scenario: Reviewer rejects a draft requirement with name and reason
+    Given the backend contains a requirement test project named "Requirement BDD Project" with requirements
+      | categoryKey | categoryType | categoryName   | description         | priority | owner |
+      | AUTH        | FR           | Authentication | Users can sign in. | p1       | Alice |
+    When I open the requirements list for the requirement test project
+    And I select requirement "FR-AUTH-0001"
+    And I open the review for the selected requirement
+    And I reject the requirement as "Rita Reviewer" because "The acceptance criterion is ambiguous."
+    Then the requirement details should show rejection by "Rita Reviewer" because "The acceptance criterion is ambiguous."
+    And the Edit action should not be visible
+
+  Scenario: Reviewer approves and marks a requirement obsolete with name and reason
+    Given the backend contains a requirement test project named "Requirement BDD Project" with requirements
+      | categoryKey | categoryType | categoryName   | description         | priority | owner |
+      | AUTH        | FR           | Authentication | Users can sign in. | p1       | Alice |
+    When I open the requirements list for the requirement test project
+    And I select requirement "FR-AUTH-0001"
+    And I open the review for the selected requirement
+    And I approve the requirement as "Rita Reviewer"
+    Then the Obsolete action should be visible
+    When I mark the requirement obsolete as "Olivia Owner" because "Superseded by FR-AUTH-0002."
+    Then the requirement status should be "Obsolete"
+    And the requirement details should show obsolescence by "Olivia Owner" because "Superseded by FR-AUTH-0002."
 
   Scenario: User copies a requirement key from the table
     Given the backend contains a requirement test project named "Requirement BDD Project" with requirements

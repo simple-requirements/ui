@@ -13,6 +13,7 @@ const requirements: readonly Requirement[] = [
         id: '11111111-1111-4111-8111-111111111111',
         projectId: '22222222-2222-4222-8222-222222222222',
         categoryId: '33333333-3333-4333-8333-333333333333',
+        sequenceNumber: 1,
         revisionNumber: 2,
         visibleKey: 'FR-AUTH-0001',
         status: 'approved',
@@ -27,8 +28,10 @@ const requirements: readonly Requirement[] = [
         deletedAt: null,
         approvedAt: '2026-06-29T11:00:00.000Z',
         implementedAt: null,
+        obsoletedBy: null,
         obsolescenceReason: null,
         obsoleteAt: null,
+        implementationTickets: [],
         createdAt: '2026-06-28T10:00:00.000Z',
         updatedAt: '2026-06-29T11:30:00.000Z',
     },
@@ -36,6 +39,7 @@ const requirements: readonly Requirement[] = [
         id: '44444444-4444-4444-8444-444444444444',
         projectId: '22222222-2222-4222-8222-222222222222',
         categoryId: '55555555-5555-4555-8555-555555555555',
+        sequenceNumber: 1,
         revisionNumber: 1,
         visibleKey: 'NFR-PERF-0001',
         status: 'draft',
@@ -50,8 +54,10 @@ const requirements: readonly Requirement[] = [
         deletedAt: null,
         approvedAt: null,
         implementedAt: null,
+        obsoletedBy: null,
         obsolescenceReason: null,
         obsoleteAt: null,
+        implementationTickets: [],
         createdAt: '2026-06-28T10:00:00.000Z',
         updatedAt: '2026-06-28T10:00:00.000Z',
     },
@@ -62,6 +68,7 @@ const mocks = vi.hoisted(() => ({
     getProjectRequirementsCollection: vi.fn((projectId: string) => ({ id: `requirements:${projectId}` })),
     openTab: vi.fn(),
     showToastMessage: vi.fn(),
+    getReviewSummary: vi.fn(),
 }));
 
 vi.mock('@tanstack/react-db', () => ({ useLiveQuery: mocks.useLiveQuery }));
@@ -70,6 +77,7 @@ vi.mock('@/api/collections/projectRequirementsCollection', () => ({
 }));
 vi.mock('@/stores/tabBarStore', () => ({ openTab: mocks.openTab }));
 vi.mock('@/stores/toastStore', () => ({ showToastMessage: mocks.showToastMessage }));
+vi.mock('@/api/reviewApi', () => ({ getReviewSummary: mocks.getReviewSummary }));
 
 type QueryResult = Readonly<{ data?: readonly Requirement[]; isLoading: boolean; isError: boolean }>;
 
@@ -82,6 +90,7 @@ function LocationProbe() {
 }
 
 beforeEach(() => {
+    mocks.getReviewSummary.mockResolvedValue({ commentCount: 0, openCommentCount: 0, state: 'not_started' });
     clipboardWriteText.mockResolvedValue(undefined);
     Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: clipboardWriteText } });
 });
@@ -101,10 +110,7 @@ function renderRequirementsListPage(queryResult: Partial<QueryResult> = {}): Ret
                         </>
                     }
                 />
-                <Route
-                    path='/projects/:projectId/requirements/:requirementId'
-                    element={<LocationProbe />}
-                />
+                <Route path='/projects/:projectId/requirements/:requirementId' element={<LocationProbe />} />
             </Routes>
         </MemoryRouter>,
     );

@@ -5,6 +5,7 @@
  * HTTP API for the Requirements Management app.
  * OpenAPI spec version: 0.0.1
  */
+import type { RequirementReviewCommentReplyResponseDto } from './requirementReviewCommentReplyResponseDto';
 import type { RequirementReviewCommentResponseDtoClosedAt } from './requirementReviewCommentResponseDtoClosedAt';
 import type { RequirementReviewCommentResponseDtoClosedBy } from './requirementReviewCommentResponseDtoClosedBy';
 import type { RequirementReviewCommentResponseDtoClosedInRevisionNumber } from './requirementReviewCommentResponseDtoClosedInRevisionNumber';
@@ -30,4 +31,5 @@ export interface RequirementReviewCommentResponseDto {
   closedAt?: RequirementReviewCommentResponseDtoClosedAt;
   createdAt: string;
   updatedAt: string;
+  replies: RequirementReviewCommentReplyResponseDto[];
 }

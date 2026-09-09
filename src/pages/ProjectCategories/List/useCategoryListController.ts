@@ -24,6 +24,7 @@ type CategoryNavigationTarget = Pick<Category, "id" | "key">;
 type UseCategoryListControllerOptions = Readonly<{
   projectId: string | undefined;
   navigate: NavigateFunction;
+  canManageRequirements: boolean;
   setSelectedCategoryId: (
     updater:
       | string
@@ -48,6 +49,7 @@ export type CategoryListController = Readonly<{
 export function useCategoryListController({
   projectId,
   navigate,
+  canManageRequirements,
   setSelectedCategoryId,
 }: UseCategoryListControllerOptions): CategoryListController {
   const contextMenuRef = useRef<ContextMenu | null>(null);
@@ -126,38 +128,40 @@ export function useCategoryListController({
     contextMenuRef.current?.show(event);
   }
 
-  const contextMenuItems: MenuItem[] = [
-    {
-      label: "Edit",
-      icon: "pi pi-pencil",
-      command: () => {
-        if (contextMenuCategory !== undefined) {
-          editCategory(contextMenuCategory);
-        }
-      },
-    },
-    {
-      label: "Delete",
-      icon: "pi pi-trash",
-      disabled:
-        contextMenuCategory === undefined ||
-        !canDeleteCategory(contextMenuCategory),
-      command: () => {
-        if (contextMenuCategory !== undefined) {
-          requestDeleteCategory(contextMenuCategory);
-        }
-      },
-    },
-    {
-      label: "Add requirement",
-      icon: "pi pi-plus",
-      command: () => {
-        if (contextMenuCategory !== undefined) {
-          addRequirement(contextMenuCategory);
-        }
-      },
-    },
-  ];
+  const contextMenuItems: MenuItem[] = canManageRequirements
+    ? [
+        {
+          label: "Edit",
+          icon: "pi pi-pencil",
+          command: () => {
+            if (contextMenuCategory !== undefined) {
+              editCategory(contextMenuCategory);
+            }
+          },
+        },
+        {
+          label: "Delete",
+          icon: "pi pi-trash",
+          disabled:
+            contextMenuCategory === undefined ||
+            !canDeleteCategory(contextMenuCategory),
+          command: () => {
+            if (contextMenuCategory !== undefined) {
+              requestDeleteCategory(contextMenuCategory);
+            }
+          },
+        },
+        {
+          label: "Add requirement",
+          icon: "pi pi-plus",
+          command: () => {
+            if (contextMenuCategory !== undefined) {
+              addRequirement(contextMenuCategory);
+            }
+          },
+        },
+      ]
+    : [];
 
   return {
     contextMenuRef,

@@ -5,12 +5,15 @@
  * HTTP API for the Requirements Management app.
  * OpenAPI spec version: 0.0.1
  */
+import type { ProjectResponseDtoTicketUrlTemplate } from './projectResponseDtoTicketUrlTemplate';
 
 export interface ProjectResponseDto {
   /** Stable project identifier. */
   id: string;
   /** Human-readable project name. */
   name: string;
+  /** @nullable */
+  ticketUrlTemplate?: ProjectResponseDtoTicketUrlTemplate;
   /** Date and time when the project was created. */
   createdAt: string;
   /** Date and time when the project was last updated. */

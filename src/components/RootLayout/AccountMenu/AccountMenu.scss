@@ -1,0 +1,26 @@
+.account-menu {
+  block-size: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--ui-space-sm);
+  padding-inline: var(--ui-space-md);
+  background: var(--color-app-surface-subtle);
+  border-block-end: var(--ui-border);
+
+  &__identity {
+    display: grid;
+    min-inline-size: 0;
+    line-height: 1.2;
+
+    strong,
+    small {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    small {
+      color: var(--color-app-text-muted);
+    }
+  }
+}

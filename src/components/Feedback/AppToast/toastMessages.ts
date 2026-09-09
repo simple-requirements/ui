@@ -115,6 +115,24 @@ export const toastMessages = {
     detail: `${key} has been approved.`,
     life: successLife,
   }),
+  projectMembershipSaved: (displayName: string): AppToastMessage => ({
+    severity: "success",
+    summary: "Project membership saved",
+    detail: `Project roles for ${displayName} have been saved.`,
+    life: successLife,
+  }),
+  projectMembershipRemoved: (displayName: string): AppToastMessage => ({
+    severity: "success",
+    summary: "Project membership removed",
+    detail: `${displayName} no longer has a membership in this project.`,
+    life: successLife,
+  }),
+  projectMembershipAdministrationFailed: (): AppToastMessage => ({
+    severity: "error",
+    summary: "Project membership could not be changed",
+    detail: "The project membership change could not be completed.",
+    life: errorLife,
+  }),
   reviewFailed: (detail: string): AppToastMessage => ({
     severity: "error",
     summary: "Review action failed",

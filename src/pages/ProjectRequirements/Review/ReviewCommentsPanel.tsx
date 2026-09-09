@@ -27,12 +27,20 @@ function ExpandableText({
 type Props = Readonly<{
     comments: readonly ReviewComment[];
     pending: boolean;
+    readOnly?: boolean;
     onComment: () => void;
     onReply: (comment: ReviewComment) => void;
     onResolve: (comment: ReviewComment) => void;
 }>;
 
-export function ReviewCommentsPanel({ comments, pending, onComment, onReply, onResolve }: Props) {
+export function ReviewCommentsPanel({
+    comments,
+    pending,
+    readOnly = false,
+    onComment,
+    onReply,
+    onResolve,
+}: Props) {
     const [expandedIds, setExpandedIds] = useState<ReadonlySet<string>>(new Set());
     const expand = (id: string): void => setExpandedIds((current) => new Set(current).add(id));
 
@@ -40,13 +48,15 @@ export function ReviewCommentsPanel({ comments, pending, onComment, onReply, onR
         <section className='review-comments-panel' aria-labelledby='review-comments-title'>
             <header className='review-comments-panel__header'>
                 <h2 id='review-comments-title'>Review comments</h2>
-                <Button
-                    type='button'
-                    label='Comment'
-                    disabled={pending}
-                    pt={{ root: { className: 'review-comments-panel__button review-comments-panel__button--comment' } }}
-                    onClick={onComment}
-                />
+                {!readOnly && (
+                    <Button
+                        type='button'
+                        label='Comment'
+                        disabled={pending}
+                        pt={{ root: { className: 'review-comments-panel__button review-comments-panel__button--comment' } }}
+                        onClick={onComment}
+                    />
+                )}
             </header>
             <div className='review-comments-panel__list'>
                 {comments.length === 0 && <p>No review comments yet.</p>}
@@ -83,7 +93,7 @@ export function ReviewCommentsPanel({ comments, pending, onComment, onReply, onR
                                 />
                             </div>
                         ))}
-                        {comment.status === 'open' && (
+                        {comment.status === 'open' && !readOnly && (
                             <div className='review-comment__actions'>
                                 <Button
                                     type='button'

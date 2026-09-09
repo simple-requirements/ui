@@ -12,7 +12,7 @@
         "test/e2e/**/*.ts",
         "src/**/*.ts",
         "src/**/*.tsx"
-    ],
+, "test/pages/ProjectMembershipAdministrationPage.spec.tsx", "test/pages/ProjectMemberships.spec.tsx"    ],
     "exclude": [
         "test/e2e/.features-gen",
         ".features-gen",

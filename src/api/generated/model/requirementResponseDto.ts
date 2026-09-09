@@ -5,6 +5,7 @@
  * HTTP API for the Requirements Management app.
  * OpenAPI spec version: 0.0.1
  */
+import type { ImplementationTicketResponseDto } from './implementationTicketResponseDto';
 import type { RequirementResponseDtoApprovedAt } from './requirementResponseDtoApprovedAt';
 import type { RequirementResponseDtoDeletedAt } from './requirementResponseDtoDeletedAt';
 import type { RequirementResponseDtoDescription } from './requirementResponseDtoDescription';
@@ -30,7 +31,7 @@ export interface RequirementResponseDto {
   categoryId: string;
   /** Sequential number within the category used to build the visible key. */
   sequenceNumber: number;
-  /** @pattern ^(FR|NFR)-[A-Z]{2,4}-[0-9]{4}$ */
+  /** @pattern ^(FR|NFR)-[A-Z]{2,4}-\d{4}$ */
   visibleKey: string;
   /** Current revision number of this requirement. */
   revisionNumber: number;
@@ -63,6 +64,7 @@ export interface RequirementResponseDto {
   obsolescenceReason?: RequirementResponseDtoObsolescenceReason;
   /** @nullable */
   obsoleteAt?: RequirementResponseDtoObsoleteAt;
+  implementationTickets: ImplementationTicketResponseDto[];
   /** Date and time when the requirement was created. */
   createdAt: string;
   /** Date and time when the requirement was last updated. */

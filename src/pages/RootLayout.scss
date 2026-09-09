@@ -1,17 +1,18 @@
 .root-layout {
     min-block-size: 100vh;
     display: grid;
-    grid-template-columns: max-content minmax(0, 1fr);
+    grid-template-columns: max-content minmax(0, 1fr) max-content;
     grid-template-rows: var(--layout-region-height) var(--layout-region-height) minmax(0, 1fr);
     grid-template-areas:
-        'tabbar tabbar'
-        'sidebar actionbar'
-        'sidebar content';
+        'tabbar tabbar account'
+        'sidebar actionbar actionbar'
+        'sidebar content content';
     overflow: hidden;
     background: var(--color-app-background);
     color: var(--color-app-text);
 
     &__tabbar,
+    &__account,
     &__sidebar,
     &__actionbar,
     &__content {
@@ -22,6 +23,13 @@
     &__tabbar {
         grid-area: tabbar;
         block-size: 100%;
+    }
+
+    &__account {
+        grid-area: account;
+        block-size: 100%;
+        min-inline-size: 20rem;
+        max-inline-size: 32rem;
     }
 
     &__sidebar {

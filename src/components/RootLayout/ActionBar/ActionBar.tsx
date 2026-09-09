@@ -10,6 +10,7 @@ import {
 } from "@/components/RootLayout/ActionBar/actionBarConfiguration";
 import { RequirementKeyLookup } from "@/components/RootLayout/ActionBar/RequirementKeyLookup";
 import { useObsoleteRequirementAction } from "@/components/RootLayout/ActionBar/useObsoleteRequirementAction";
+import { useProjectPermissions } from "@/auth/projectPermissions";
 import { useImplementRequirementAction } from "@/components/RootLayout/ActionBar/useImplementRequirementAction";
 import { RequirementLifecycleDialog } from "@/pages/ProjectRequirements/RequirementLifecycleDialog";
 import {
@@ -38,6 +39,7 @@ export function ActionBar({ onFindRequirementKey }: ActionBarProps) {
   const { projectId } = useParams();
   const { actionBar: actionBarKind } = useRouteUiMetadata();
   const configuration = getActionBarConfiguration(actionBarKind);
+  const permissions = useProjectPermissions(projectId);
   const reviewActionRequirement = useSelector(
     actionBarStore,
     (state) => state.reviewActionRequirement,
@@ -45,27 +47,36 @@ export function ActionBar({ onFindRequirementKey }: ActionBarProps) {
   const obsoleteAction = useObsoleteRequirementAction(reviewActionRequirement);
   const implementAction = useImplementRequirementAction(reviewActionRequirement);
 
-  const canCreate =
+  const showCreate =
     configuration.createActionKind !== undefined &&
-    !configuration.disabled &&
-    projectId !== undefined;
+    permissions.canManageRequirements;
+  const canCreate =
+    showCreate && !configuration.disabled && projectId !== undefined;
   const isDraftRequirement = isDraftRequirementStatus(
     reviewActionRequirement?.status,
   );
   const canEditRequirement =
     configuration.showEditRequirement &&
+    permissions.canManageRequirements &&
     reviewActionRequirement !== undefined &&
     reviewActionRequirement.status !== "rejected";
   const canMarkObsolete =
     configuration.showObsoleteRequirement &&
+    permissions.canManageRequirements &&
     canBecomeObsolete(reviewActionRequirement?.status);
   const canMarkImplemented =
     configuration.showImplementedRequirement &&
+    permissions.canManageRequirements &&
     reviewActionRequirement?.status === "approved" &&
     (reviewActionRequirement.implementationTicketCount ?? 0) > 0;
-  const canReview = configuration.showReview && isDraftRequirement;
+  const canReview =
+    configuration.showReview &&
+    permissions.canManageRequirements &&
+    isDraftRequirement;
   const canDecideReview =
-    configuration.showReviewDecisions && isDraftRequirement;
+    configuration.showReviewDecisions &&
+    permissions.canManageRequirements &&
+    isDraftRequirement;
 
   function handleCreate(): void {
     if (
@@ -123,7 +134,7 @@ export function ActionBar({ onFindRequirementKey }: ActionBarProps) {
         />
       )}
 
-      {configuration.createActionKind !== undefined && (
+      {showCreate && (
         <Button
           type="button"
           label="Create"

@@ -55,7 +55,7 @@ describe('SidebarContextMenu', () => {
         it('all context menu entries in the expected order.', () => {
             const contextMenuRef = createRef<ContextMenu>();
 
-            render(<SidebarContextMenu contextMenuRef={contextMenuRef} />);
+            render(<SidebarContextMenu contextMenuRef={contextMenuRef} canAdministerProjects />);
 
             const menuItems = screen.getAllByRole('menuitem');
 
@@ -70,10 +70,20 @@ describe('SidebarContextMenu', () => {
         it('a separator between delete and export actions.', () => {
             const contextMenuRef = createRef<ContextMenu>();
 
-            render(<SidebarContextMenu contextMenuRef={contextMenuRef} />);
+            render(<SidebarContextMenu contextMenuRef={contextMenuRef} canAdministerProjects />);
 
             expect(screen.getAllByRole('separator')).toHaveLength(1);
         });
+    });
+
+    it('hides project administration entries for non-Administrators.', () => {
+        const contextMenuRef = createRef<ContextMenu>();
+
+        render(<SidebarContextMenu contextMenuRef={contextMenuRef} canAdministerProjects={false} />);
+
+        expect(screen.queryByRole('menuitem', { name: /rename project/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole('menuitem', { name: /delete project/i })).not.toBeInTheDocument();
+        expect(screen.getByRole('menuitem', { name: /^export project$/i })).toBeInTheDocument();
     });
 
     it('calls the matching handler when an entry is clicked.', async () => {
@@ -88,6 +98,7 @@ describe('SidebarContextMenu', () => {
         render(
             <SidebarContextMenu
                 contextMenuRef={contextMenuRef}
+                canAdministerProjects
                 onRenameProject={onRenameProject}
                 onDeleteProject={onDeleteProject}
                 onExportProject={onExportProject}

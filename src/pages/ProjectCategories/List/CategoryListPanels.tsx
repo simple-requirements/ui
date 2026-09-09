@@ -17,6 +17,7 @@ type CategoryListPanelsProps = Readonly<{
     selectedCategoryId: string | undefined;
     setSelectedCategoryId: ProjectCategoriesListState['setSelectedCategoryId'];
     controller: CategoryListController;
+    canManageRequirements: boolean;
 }>;
 
 export function CategoryListPanels({
@@ -26,6 +27,7 @@ export function CategoryListPanels({
     selectedCategoryId,
     setSelectedCategoryId,
     controller,
+    canManageRequirements,
 }: CategoryListPanelsProps) {
     return (
         <Splitter
@@ -73,7 +75,7 @@ export function CategoryListPanels({
                 <CategoryDetailsPanel
                     category={selectedCategory}
                     title='Category details'
-                    onEditCategory={controller.editCategory}
+                    onEditCategory={canManageRequirements ? controller.editCategory : undefined}
                 />
             </SplitterPanel>
         </Splitter>

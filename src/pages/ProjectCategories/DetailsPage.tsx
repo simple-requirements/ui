@@ -3,6 +3,7 @@ import { useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { getProjectCategoriesCollection } from '@/api/collections/projectCategoriesCollection';
+import { useProjectPermissions } from '@/auth/projectPermissions';
 import { InlineStatus } from '@/components/Feedback/InlineStatus';
 import { LoadableContent } from '@/components/Feedback/LoadableContent';
 import { getProjectCategoryDetailsRoute, getProjectCategoryEditRoute } from '@/router/projectRoutes';
@@ -15,6 +16,7 @@ import '@/pages/ProjectCategories/DetailsPage.scss';
 export function DetailsPage() {
     const { projectId, categoryId } = useParams();
     const navigate = useNavigate();
+    const permissions = useProjectPermissions(projectId);
 
     const categoryDetailsRoute =
         projectId === undefined || categoryId === undefined ?
@@ -86,7 +88,7 @@ export function DetailsPage() {
                     title={category === undefined ? 'Category details' : `Category ${category.key}`}
                     titleElement='h1'
                     titleId='project-categories-details-page-title'
-                    onEditCategory={handleEditCategory}
+                    onEditCategory={permissions.canManageRequirements ? handleEditCategory : undefined}
                 />
             </LoadableContent>
         </section>

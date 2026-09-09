@@ -7,6 +7,7 @@ import { AppContextMenu } from '@/components/ContextMenu/AppContextMenu';
 
 type Props = Readonly<{
     contextMenuRef: RefObject<ContextMenu | null>;
+    canAdministerProjects?: boolean;
     onRenameProject?: () => void;
     onDeleteProject?: () => void;
     onExportProject?: () => void;
@@ -15,6 +16,7 @@ type Props = Readonly<{
 
 export function SidebarContextMenu({
     contextMenuRef,
+    canAdministerProjects = false,
     onRenameProject,
     onDeleteProject,
     onExportProject,
@@ -22,13 +24,15 @@ export function SidebarContextMenu({
 }: Props) {
     const menuItems = useMemo<MenuItem[]>(
         () => [
-            { label: 'Rename project', icon: 'pi pi-pencil', command: onRenameProject },
-            { label: 'Delete project', icon: 'pi pi-trash', command: onDeleteProject },
-            { separator: true },
+            ...(canAdministerProjects ? [
+                { label: 'Rename project', icon: 'pi pi-pencil', command: onRenameProject },
+                { label: 'Delete project', icon: 'pi pi-trash', command: onDeleteProject },
+                { separator: true },
+            ] : []),
             { label: 'Export project', icon: 'pi pi-chart-bar', command: onExportProject },
             { label: 'Export all projects', icon: 'pi pi-database', command: onExportAllProjects },
         ],
-        [onDeleteProject, onExportAllProjects, onExportProject, onRenameProject],
+        [canAdministerProjects, onDeleteProject, onExportAllProjects, onExportProject, onRenameProject],
     );
 
     return (

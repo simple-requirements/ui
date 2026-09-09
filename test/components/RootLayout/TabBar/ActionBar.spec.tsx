@@ -11,6 +11,7 @@ import { ActionBar } from "@/components/RootLayout/ActionBar/ActionBar";
 import { RequirementKeyLookup } from "@/components/RootLayout/ActionBar/RequirementKeyLookup";
 import type * as ActionBarStoreModule from "@/stores/actionBarStore";
 import { actionBarStore } from "@/stores/actionBarStore";
+import { clearAuthenticatedSession, setAuthenticatedSession } from "@/stores/authStore";
 
 const mocks = vi.hoisted(() => ({
   markProjectRequirementObsoleteRequest: vi.fn(),
@@ -121,6 +122,7 @@ afterEach(() => {
   cleanup();
   actionBarStore.setState({ requirementKey: "" });
   vi.clearAllMocks();
+  clearAuthenticatedSession();
 });
 
 describe("ActionBar", () => {
@@ -344,6 +346,33 @@ describe("ActionBar", () => {
     expect(screen.getByLabelText("Current route")).toHaveTextContent(
       "/projects/project-alpha/categories/new",
     );
+  });
+
+  it("hides requirement mutation actions for a Viewer while preserving lookup.", () => {
+    setAuthenticatedSession({
+      accessToken: "viewer-token",
+      user: {
+        id: "11111111-1111-4111-8111-111111111111",
+        username: "viewer",
+        email: "viewer@example.org",
+        displayName: "Viewer",
+        status: "active",
+        globalRoles: [],
+        projectMemberships: [
+          { projectId: "project-alpha", roles: ["viewer"] },
+        ],
+      },
+    });
+    setMockReviewActionRequirement("draft");
+
+    renderActionBar("/projects/project-alpha/requirements");
+
+    expect(
+      screen.getByRole("textbox", { name: /requirement key/i }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Create" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Edit" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Review" })).not.toBeInTheDocument();
   });
 
   it("requires a reason and marks an approved requirement obsolete.", async () => {

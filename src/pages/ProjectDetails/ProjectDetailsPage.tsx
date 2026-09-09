@@ -2,6 +2,7 @@ import { Card } from 'primereact/card';
 import { Link, useParams } from 'react-router';
 
 import { InlineStatus } from '@/components/Feedback/InlineStatus';
+import { useProjectPermissions } from '@/auth/projectPermissions';
 import { LoadableContent } from '@/components/Feedback/LoadableContent';
 import { getProjectCategoriesRoute, getProjectRequirementsRoute } from '@/router/projectRoutes';
 import { ProjectStatistics } from '@/pages/ProjectDetails/ProjectStatistics';
@@ -20,6 +21,7 @@ function formatDateTime(value: string): string {
 export function ProjectDetailsPage() {
     const { projectId } = useParams();
     const details = useProjectDetails(projectId);
+    const permissions = useProjectPermissions(projectId);
 
     if (projectId === undefined) {
         return (
@@ -94,7 +96,9 @@ export function ProjectDetailsPage() {
                             requirementsCount={details.requirementsCount}
                             statusStatistics={details.requirementStatusStatistics}
                         />
-                        <TicketSystemSettings project={details.project} />
+                        {permissions.canAdministerProject && (
+                            <TicketSystemSettings project={details.project} />
+                        )}
                     </div>
                 )}
             </LoadableContent>

@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from 'react-router';
 
 import { AppContextMenu } from '@/components/ContextMenu/AppContextMenu';
+import { useProjectPermissions } from '@/auth/projectPermissions';
 import { InlineStatus } from '@/components/Feedback/InlineStatus';
 
 import { CategoryDeleteDialog } from '@/pages/ProjectCategories/List/CategoryDeleteDialog';
@@ -13,9 +14,15 @@ import '@/pages/ProjectCategories/List/ListPage.scss';
 export function ListPage() {
     const { projectId } = useParams();
     const navigate = useNavigate();
+    const permissions = useProjectPermissions(projectId);
     const { categories, categoriesQuery, selectedCategory, selectedCategoryId, setSelectedCategoryId } =
         useProjectCategoriesList(projectId);
-    const controller = useCategoryListController({ projectId, navigate, setSelectedCategoryId });
+    const controller = useCategoryListController({
+        projectId,
+        navigate,
+        setSelectedCategoryId,
+        canManageRequirements: permissions.canManageRequirements,
+    });
 
     if (projectId === undefined) {
         return (
@@ -49,6 +56,7 @@ export function ListPage() {
                 selectedCategoryId={selectedCategoryId}
                 setSelectedCategoryId={setSelectedCategoryId}
                 controller={controller}
+                canManageRequirements={permissions.canManageRequirements}
             />
         </section>
     );

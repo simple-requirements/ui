@@ -1,0 +1,86 @@
+.user-administration {
+  padding: var(--ui-space-xl);
+
+  &__eyebrow {
+    margin: 0;
+    color: var(--color-app-text-muted);
+  }
+  &__layout {
+    display: grid;
+    grid-template-columns: minmax(24rem, 1fr) minmax(30rem, 1.5fr);
+    gap: var(--ui-space-xl);
+    align-items: start;
+  }
+  &__table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    background: var(--color-app-surface);
+  }
+  &__table caption {
+    text-align: start;
+    font-weight: 700;
+    padding-block-end: var(--ui-space-sm);
+  }
+  &__table th,
+  &__table td {
+    padding: var(--ui-space-sm);
+    border-block-end: var(--ui-border);
+    text-align: start;
+    vertical-align: middle;
+  }
+  &__user-button {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    text-align: start;
+    font: inherit;
+  }
+  &__user-button[aria-pressed="true"] {
+    color: var(--color-app-active-border);
+    text-decoration: underline;
+  }
+  &__user-button small {
+    display: block;
+    color: var(--color-app-text-muted);
+  }
+  &__details,
+  &__selection {
+    padding: var(--ui-space-lg);
+    background: var(--color-app-surface);
+    border: var(--ui-border);
+    border-radius: var(--ui-border-radius-small);
+  }
+  &__metadata {
+    display: grid;
+    gap: var(--ui-space-sm);
+  }
+  &__metadata div {
+    display: grid;
+    grid-template-columns: 10rem 1fr;
+    gap: var(--ui-space-sm);
+  }
+  &__metadata dt {
+    font-weight: 700;
+  }
+  &__metadata dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+  &__sessions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--ui-space-md);
+    margin-block-start: var(--ui-space-xl);
+  }
+  &__hint {
+    color: var(--color-app-text-muted);
+  }
+
+  @media (max-width: 70rem) {
+    &__layout {
+      grid-template-columns: 1fr;
+    }
+  }
+}

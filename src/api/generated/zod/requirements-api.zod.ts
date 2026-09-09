@@ -16,6 +16,9 @@ export const AppControllerGetHelloResponse = zod.unknown()
 export const ListProjectsResponseItem = zod.object({
   "id": zod.string().describe('Stable project identifier.'),
   "name": zod.string().describe('Human-readable project name.'),
+  "ticketUrlTemplate": zod.looseObject({
+
+}).nullish(),
   "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the project was created.'),
   "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the project was last updated.')
 })
@@ -32,6 +35,9 @@ export const CreateProjectBody = zod.object({
 export const CreateProjectResponse = zod.object({
   "id": zod.string().describe('Stable project identifier.'),
   "name": zod.string().describe('Human-readable project name.'),
+  "ticketUrlTemplate": zod.looseObject({
+
+}).nullish(),
   "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the project was created.'),
   "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the project was last updated.')
 })
@@ -47,6 +53,9 @@ export const GetProjectParams = zod.object({
 export const GetProjectResponse = zod.object({
   "id": zod.string().describe('Stable project identifier.'),
   "name": zod.string().describe('Human-readable project name.'),
+  "ticketUrlTemplate": zod.looseObject({
+
+}).nullish(),
   "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the project was created.'),
   "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the project was last updated.')
 })
@@ -60,12 +69,18 @@ export const UpdateProjectParams = zod.object({
 })
 
 export const UpdateProjectBody = zod.object({
-  "name": zod.string().describe('New human-readable project name.')
+  "name": zod.string().optional().describe('New human-readable project name.'),
+  "ticketUrlTemplate": zod.looseObject({
+
+}).nullish()
 })
 
 export const UpdateProjectResponse = zod.object({
   "id": zod.string().describe('Stable project identifier.'),
   "name": zod.string().describe('Human-readable project name.'),
+  "ticketUrlTemplate": zod.looseObject({
+
+}).nullish(),
   "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the project was created.'),
   "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the project was last updated.')
 })
@@ -171,7 +186,7 @@ export const ListRequirementsQueryParams = zod.object({
   "deleted": zod.string().optional().describe('Return requirements from the recycle bin.')
 })
 
-export const listRequirementsResponseVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-[0-9]{4}$');
+export const listRequirementsResponseVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-\\d{4}$');
 
 
 export const ListRequirementsResponseItem = zod.object({
@@ -222,6 +237,18 @@ export const ListRequirementsResponseItem = zod.object({
   "obsoleteAt": zod.looseObject({
 
 }).nullish(),
+  "implementationTickets": zod.array(zod.object({
+  "ticketId": zod.string(),
+  "completedBy": zod.string(),
+  "completedAt": zod.iso.date(),
+  "id": zod.string(),
+  "requirementId": zod.string(),
+  "url": zod.looseObject({
+
+}).nullish(),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "updatedAt": zod.iso.datetime({"offset":true})
+})),
   "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was created.'),
   "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was last updated.')
 })
@@ -252,7 +279,7 @@ export const CreateRequirementBody = zod.object({
 }).nullish()
 })
 
-export const createRequirementResponseVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-[0-9]{4}$');
+export const createRequirementResponseVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-\\d{4}$');
 
 
 export const CreateRequirementResponse = zod.object({
@@ -303,6 +330,18 @@ export const CreateRequirementResponse = zod.object({
   "obsoleteAt": zod.looseObject({
 
 }).nullish(),
+  "implementationTickets": zod.array(zod.object({
+  "ticketId": zod.string(),
+  "completedBy": zod.string(),
+  "completedAt": zod.iso.date(),
+  "id": zod.string(),
+  "requirementId": zod.string(),
+  "url": zod.looseObject({
+
+}).nullish(),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "updatedAt": zod.iso.datetime({"offset":true})
+})),
   "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was created.'),
   "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was last updated.')
 })
@@ -335,7 +374,7 @@ export const GetRequirementQueryParams = zod.object({
   "revision": zod.number().optional().describe('Return the requirement version with this revision number.')
 })
 
-export const getRequirementResponseVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-[0-9]{4}$');
+export const getRequirementResponseVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-\\d{4}$');
 
 
 export const GetRequirementResponse = zod.object({
@@ -386,6 +425,18 @@ export const GetRequirementResponse = zod.object({
   "obsoleteAt": zod.looseObject({
 
 }).nullish(),
+  "implementationTickets": zod.array(zod.object({
+  "ticketId": zod.string(),
+  "completedBy": zod.string(),
+  "completedAt": zod.iso.date(),
+  "id": zod.string(),
+  "requirementId": zod.string(),
+  "url": zod.looseObject({
+
+}).nullish(),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "updatedAt": zod.iso.datetime({"offset":true})
+})),
   "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was created.'),
   "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was last updated.')
 })
@@ -429,7 +480,7 @@ export const UpdateRequirementBody = zod.object({
 }).nullish()
 })
 
-export const updateRequirementResponseVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-[0-9]{4}$');
+export const updateRequirementResponseVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-\\d{4}$');
 
 
 export const UpdateRequirementResponse = zod.object({
@@ -480,6 +531,18 @@ export const UpdateRequirementResponse = zod.object({
   "obsoleteAt": zod.looseObject({
 
 }).nullish(),
+  "implementationTickets": zod.array(zod.object({
+  "ticketId": zod.string(),
+  "completedBy": zod.string(),
+  "completedAt": zod.iso.date(),
+  "id": zod.string(),
+  "requirementId": zod.string(),
+  "url": zod.looseObject({
+
+}).nullish(),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "updatedAt": zod.iso.datetime({"offset":true})
+})),
   "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was created.'),
   "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was last updated.')
 })
@@ -498,6 +561,347 @@ export const DeleteRequirementQueryParams = zod.object({
 })
 
 export const DeleteRequirementResponse = zod.void()
+
+
+/**
+ * @summary List implementation tickets.
+ */
+export const ListImplementationTicketsParams = zod.object({
+  "projectId": zod.string(),
+  "requirementId": zod.string()
+})
+
+export const ListImplementationTicketsResponseItem = zod.object({
+  "ticketId": zod.string(),
+  "completedBy": zod.string(),
+  "completedAt": zod.iso.date(),
+  "id": zod.string(),
+  "requirementId": zod.string(),
+  "url": zod.looseObject({
+
+}).nullish(),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "updatedAt": zod.iso.datetime({"offset":true})
+})
+export const ListImplementationTicketsResponse = zod.array(ListImplementationTicketsResponseItem)
+
+
+/**
+ * @summary Add an implementation ticket.
+ */
+export const CreateImplementationTicketParams = zod.object({
+  "projectId": zod.string(),
+  "requirementId": zod.string()
+})
+
+export const CreateImplementationTicketBody = zod.object({
+  "ticketId": zod.string(),
+  "completedBy": zod.string(),
+  "completedAt": zod.iso.date()
+})
+
+export const CreateImplementationTicketResponse = zod.object({
+  "ticketId": zod.string(),
+  "completedBy": zod.string(),
+  "completedAt": zod.iso.date(),
+  "id": zod.string(),
+  "requirementId": zod.string(),
+  "url": zod.looseObject({
+
+}).nullish(),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "updatedAt": zod.iso.datetime({"offset":true})
+})
+
+
+/**
+ * @summary Update an implementation ticket.
+ */
+export const UpdateImplementationTicketParams = zod.object({
+  "projectId": zod.string(),
+  "requirementId": zod.string(),
+  "ticketRecordId": zod.string()
+})
+
+export const UpdateImplementationTicketBody = zod.object({
+  "ticketId": zod.string(),
+  "completedBy": zod.string(),
+  "completedAt": zod.iso.date()
+})
+
+export const UpdateImplementationTicketResponse = zod.object({
+  "ticketId": zod.string(),
+  "completedBy": zod.string(),
+  "completedAt": zod.iso.date(),
+  "id": zod.string(),
+  "requirementId": zod.string(),
+  "url": zod.looseObject({
+
+}).nullish(),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "updatedAt": zod.iso.datetime({"offset":true})
+})
+
+
+/**
+ * @summary Remove an implementation ticket.
+ */
+export const DeleteImplementationTicketParams = zod.object({
+  "projectId": zod.string(),
+  "requirementId": zod.string(),
+  "ticketRecordId": zod.string()
+})
+
+export const DeleteImplementationTicketResponse = zod.void()
+
+
+export const AuthControllerLoginBody = zod.object({
+  "username": zod.string(),
+  "password": zod.string()
+})
+
+export const AuthControllerLoginResponse = zod.object({
+  "accessToken": zod.string().describe('Opaque bearer token. It is returned only once and must not be persisted by the SPA.'),
+  "user": zod.object({
+  "id": zod.uuid(),
+  "username": zod.string(),
+  "email": zod.email(),
+  "displayName": zod.string(),
+  "status": zod.enum(['pending', 'active', 'deactivated']),
+  "globalRoles": zod.array(zod.enum(['administrator']))
+})
+})
+
+
+export const AuthControllerLogoutResponse = zod.void()
+
+
+export const AuthControllerMeResponse = zod.object({
+  "id": zod.uuid(),
+  "username": zod.string(),
+  "email": zod.email(),
+  "displayName": zod.string(),
+  "status": zod.enum(['pending', 'active', 'deactivated']),
+  "globalRoles": zod.array(zod.enum(['administrator']))
+})
+
+
+/**
+ * @summary Check whether initial Administrator registration is available.
+ */
+export const GetAuthenticationBootstrapStatusResponse = zod.object({
+  "registrationAvailable": zod.boolean()
+})
+
+
+/**
+ * @summary Register the first local Administrator account.
+ */
+export const bootstrapAdministratorBodyPasswordMin = 15;
+export const bootstrapAdministratorBodyPasswordMax = 128;
+
+
+
+
+export const BootstrapAdministratorBody = zod.object({
+  "username": zod.string(),
+  "email": zod.string(),
+  "displayName": zod.string(),
+  "password": zod.string().min(bootstrapAdministratorBodyPasswordMin).max(bootstrapAdministratorBodyPasswordMax),
+  "bootstrapSecret": zod.string().min(1).optional()
+})
+
+export const BootstrapAdministratorResponse = zod.object({
+  "message": zod.string()
+})
+
+
+export const PasswordResetControllerRequestPasswordResetBody = zod.object({
+  "email": zod.email()
+})
+
+export const PasswordResetControllerRequestPasswordResetResponse = zod.void()
+
+
+export const passwordResetControllerConfirmPasswordResetBodyPasswordMin = 15;
+export const passwordResetControllerConfirmPasswordResetBodyPasswordMax = 128;
+
+
+
+export const PasswordResetControllerConfirmPasswordResetBody = zod.object({
+  "token": zod.string(),
+  "password": zod.string().min(passwordResetControllerConfirmPasswordResetBodyPasswordMin).max(passwordResetControllerConfirmPasswordResetBodyPasswordMax)
+})
+
+export const PasswordResetControllerConfirmPasswordResetResponse = zod.void()
+
+
+/**
+ * @summary Register a pending local user account.
+ */
+export const registerUserBodyPasswordMin = 15;
+export const registerUserBodyPasswordMax = 128;
+
+
+
+export const RegisterUserBody = zod.object({
+  "username": zod.string().describe('Unique, case-insensitive login name.'),
+  "email": zod.string().describe('Unique email address used for verification and recovery.'),
+  "displayName": zod.string().describe('Human-readable user name.'),
+  "password": zod.string().min(registerUserBodyPasswordMin).max(registerUserBodyPasswordMax)
+})
+
+export const RegisterUserResponse = zod.object({
+  "message": zod.string()
+})
+
+
+/**
+ * @summary Confirm a local account email address.
+ */
+export const ConfirmEmailVerificationBody = zod.object({
+  "token": zod.string().describe('Single-use email verification token.')
+})
+
+export const ConfirmEmailVerificationResponse = zod.void()
+
+
+/**
+ * @summary Request another verification email.
+ */
+export const ResendEmailVerificationBody = zod.object({
+  "username": zod.string().describe('Case-insensitive local username.')
+})
+
+export const ResendEmailVerificationResponse = zod.object({
+  "message": zod.string()
+})
+
+
+export const UserAdministrationControllerListResponseItem = zod.object({
+  "id": zod.uuid(),
+  "username": zod.string(),
+  "email": zod.email(),
+  "displayName": zod.string(),
+  "status": zod.enum(['pending', 'active', 'deactivated']),
+  "emailVerifiedAt": zod.looseObject({
+
+}).nullable(),
+  "globalRoles": zod.array(zod.enum(['administrator'])),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "updatedAt": zod.iso.datetime({"offset":true})
+})
+export const UserAdministrationControllerListResponse = zod.array(UserAdministrationControllerListResponseItem)
+
+
+export const UserAdministrationControllerFindParams = zod.object({
+  "userId": zod.string()
+})
+
+export const UserAdministrationControllerFindResponse = zod.object({
+  "id": zod.uuid(),
+  "username": zod.string(),
+  "email": zod.email(),
+  "displayName": zod.string(),
+  "status": zod.enum(['pending', 'active', 'deactivated']),
+  "emailVerifiedAt": zod.looseObject({
+
+}).nullable(),
+  "globalRoles": zod.array(zod.enum(['administrator'])),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "updatedAt": zod.iso.datetime({"offset":true})
+})
+
+
+export const UserAdministrationControllerUpdateStatusParams = zod.object({
+  "userId": zod.string()
+})
+
+export const UserAdministrationControllerUpdateStatusBody = zod.object({
+  "status": zod.enum(['active', 'deactivated'])
+})
+
+export const UserAdministrationControllerUpdateStatusResponse = zod.object({
+  "id": zod.uuid(),
+  "username": zod.string(),
+  "email": zod.email(),
+  "displayName": zod.string(),
+  "status": zod.enum(['pending', 'active', 'deactivated']),
+  "emailVerifiedAt": zod.looseObject({
+
+}).nullable(),
+  "globalRoles": zod.array(zod.enum(['administrator'])),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "updatedAt": zod.iso.datetime({"offset":true})
+})
+
+
+export const UserAdministrationControllerListSessionsParams = zod.object({
+  "userId": zod.string()
+})
+
+export const UserAdministrationControllerListSessionsResponseItem = zod.object({
+  "id": zod.uuid(),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "lastActivityAt": zod.iso.datetime({"offset":true}),
+  "revokedAt": zod.looseObject({
+
+}).nullable()
+})
+export const UserAdministrationControllerListSessionsResponse = zod.array(UserAdministrationControllerListSessionsResponseItem)
+
+
+export const UserAdministrationControllerRevokeAllParams = zod.object({
+  "userId": zod.string()
+})
+
+export const UserAdministrationControllerRevokeAllResponse = zod.void()
+
+
+export const UserAdministrationControllerRevokeOneParams = zod.object({
+  "userId": zod.string(),
+  "sessionId": zod.string()
+})
+
+export const UserAdministrationControllerRevokeOneResponse = zod.void()
+
+
+export const ProjectMembershipControllerListParams = zod.object({
+  "projectId": zod.string()
+})
+
+export const ProjectMembershipControllerListResponseItem = zod.object({
+  "userId": zod.uuid(),
+  "username": zod.string(),
+  "displayName": zod.string(),
+  "roles": zod.array(zod.enum(['requirements_engineer', 'developer', 'viewer']))
+})
+export const ProjectMembershipControllerListResponse = zod.array(ProjectMembershipControllerListResponseItem)
+
+
+export const ProjectMembershipControllerSetParams = zod.object({
+  "projectId": zod.string(),
+  "userId": zod.string()
+})
+
+export const ProjectMembershipControllerSetBody = zod.object({
+  "roles": zod.array(zod.enum(['requirements_engineer', 'developer', 'viewer']))
+})
+
+export const ProjectMembershipControllerSetResponse = zod.object({
+  "userId": zod.uuid(),
+  "username": zod.string(),
+  "displayName": zod.string(),
+  "roles": zod.array(zod.enum(['requirements_engineer', 'developer', 'viewer']))
+})
+
+
+export const ProjectMembershipControllerRemoveParams = zod.object({
+  "projectId": zod.string(),
+  "userId": zod.string()
+})
+
+export const ProjectMembershipControllerRemoveResponse = zod.void()
 
 
 /**
@@ -675,7 +1079,7 @@ export const ApproveRequirementReviewBody = zod.object({
   "reviewer": zod.string()
 })
 
-export const approveRequirementReviewResponseVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-[0-9]{4}$');
+export const approveRequirementReviewResponseVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-\\d{4}$');
 
 
 export const ApproveRequirementReviewResponse = zod.object({
@@ -726,6 +1130,18 @@ export const ApproveRequirementReviewResponse = zod.object({
   "obsoleteAt": zod.looseObject({
 
 }).nullish(),
+  "implementationTickets": zod.array(zod.object({
+  "ticketId": zod.string(),
+  "completedBy": zod.string(),
+  "completedAt": zod.iso.date(),
+  "id": zod.string(),
+  "requirementId": zod.string(),
+  "url": zod.looseObject({
+
+}).nullish(),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "updatedAt": zod.iso.datetime({"offset":true})
+})),
   "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was created.'),
   "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was last updated.')
 })
@@ -744,7 +1160,7 @@ export const RejectRequirementReviewBody = zod.object({
   "rejectionReason": zod.string()
 })
 
-export const rejectRequirementReviewResponseVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-[0-9]{4}$');
+export const rejectRequirementReviewResponseVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-\\d{4}$');
 
 
 export const RejectRequirementReviewResponse = zod.object({
@@ -795,6 +1211,18 @@ export const RejectRequirementReviewResponse = zod.object({
   "obsoleteAt": zod.looseObject({
 
 }).nullish(),
+  "implementationTickets": zod.array(zod.object({
+  "ticketId": zod.string(),
+  "completedBy": zod.string(),
+  "completedAt": zod.iso.date(),
+  "id": zod.string(),
+  "requirementId": zod.string(),
+  "url": zod.looseObject({
+
+}).nullish(),
+  "createdAt": zod.iso.datetime({"offset":true}),
+  "updatedAt": zod.iso.datetime({"offset":true})
+})),
   "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was created.'),
   "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was last updated.')
 })

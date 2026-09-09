@@ -7,6 +7,7 @@ import { useNavigate, useParams } from "react-router";
 
 import { getProjectRequirementsCollection } from "@/api/collections/projectRequirementsCollection";
 import { queryClient } from "@/api/queryClient";
+import { useProjectPermissions } from "@/auth/projectPermissions";
 import { getListProjectRequirementsQueryKey } from "@/api/requirementsApi";
 import {
   approveReview,
@@ -41,6 +42,7 @@ import "@/pages/ProjectRequirements/Review/ReviewPage.scss";
 export function ReviewPage() {
   const { projectId, requirementId } = useParams();
   const navigate = useNavigate();
+  const permissions = useProjectPermissions(projectId);
   const decisionRequest = useSelector(
     actionBarStore,
     (state) => state.reviewDecisionRequest,
@@ -88,6 +90,14 @@ export function ReviewPage() {
     enabled: projectId !== undefined && requirementId !== undefined,
   });
   const requirement = requirementQuery.data;
+
+  useEffect(() => {
+    if (!permissions.canManageRequirements) {
+      setComposer(undefined);
+      setCommentToResolve(undefined);
+      clearReviewDecisionRequest();
+    }
+  }, [permissions.canManageRequirements]);
 
   useEffect(() => {
     if (projectId === undefined || requirement === undefined) {
@@ -188,6 +198,7 @@ export function ReviewPage() {
               <ReviewCommentsPanel
                 comments={comments}
                 pending={pending}
+                readOnly={!permissions.canManageRequirements}
                 onComment={() => setComposer({ mode: "comment" })}
                 onReply={(comment) => setComposer({ mode: "reply", comment })}
                 onResolve={setCommentToResolve}
@@ -202,7 +213,7 @@ export function ReviewPage() {
             ? composer.comment.id
             : (composer?.mode ?? "closed")
         }
-        visible={composer !== undefined}
+        visible={composer !== undefined && permissions.canManageRequirements}
         title={
           composer?.mode === "reply" ? "Reply to comment" : "Create comment"
         }
@@ -231,7 +242,7 @@ export function ReviewPage() {
       />
       <ReviewNameDialog
         key={commentToResolve?.id ?? "closed"}
-        visible={commentToResolve !== undefined}
+        visible={commentToResolve !== undefined && permissions.canManageRequirements}
         pending={pending}
         onAbort={() => setCommentToResolve(undefined)}
         onConfirm={async (name) => {
@@ -251,7 +262,7 @@ export function ReviewPage() {
       />
       <RequirementLifecycleDialog
         key={decisionRequest ?? "closed"}
-        visible={decisionRequest !== undefined}
+        visible={decisionRequest !== undefined && permissions.canManageRequirements}
         title={
           decisionRequest === "reject"
             ? "Reject requirement"

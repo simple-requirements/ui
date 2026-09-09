@@ -4,9 +4,10 @@ import * as ReactQuery from '@tanstack/react-query';
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { Sidebar } from '@/components/RootLayout/Sidebar/Sidebar';
+import { clearAuthenticatedSession, setAuthenticatedSession } from '@/stores/authStore';
 
 type TestProject = Readonly<{
     id: string;
@@ -151,11 +152,28 @@ function mockRequirementCountQueries(countsByProjectId: Readonly<Record<string, 
     );
 }
 
+
+beforeEach(() => {
+    setAuthenticatedSession({
+        accessToken: 'test-token',
+        user: {
+            id: '11111111-1111-4111-8111-111111111111',
+            username: 'admin',
+            email: 'admin@example.org',
+            displayName: 'Administrator',
+            status: 'active',
+            globalRoles: ['administrator'],
+            projectMemberships: [],
+        },
+    });
+});
+
 afterEach(() => {
     cleanup();
     mocks.useLiveQuery.mockReset();
     mocks.useQueries.mockReset();
     mocks.contextMenuShow.mockReset();
+    clearAuthenticatedSession();
 });
 
 describe('Sidebar', () => {
@@ -253,6 +271,26 @@ describe('Sidebar', () => {
 
         expect(screen.getByRole('button', { name: /synchronize projects/i })).toBeDisabled();
         expect(screen.getByRole('button', { name: /new project/i })).toBeDisabled();
+    });
+
+    it('hides project creation for a non-Administrator.', () => {
+        setAuthenticatedSession({
+            accessToken: 'viewer-token',
+            user: {
+                id: '22222222-2222-4222-8222-222222222222',
+                username: 'viewer',
+                email: 'viewer@example.org',
+                displayName: 'Viewer',
+                status: 'active',
+                globalRoles: [],
+                projectMemberships: [{ projectId: 'project-alpha', roles: ['viewer'] }],
+            },
+        });
+        mockUseLiveQuery({ data: [createProject({ id: 'project-alpha', name: 'Alpha Project' })] });
+
+        renderSidebar();
+
+        expect(screen.queryByRole('button', { name: /new project/i })).not.toBeInTheDocument();
     });
 
     it('opens the create dialog from the New project action.', async () => {

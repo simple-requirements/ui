@@ -5,8 +5,11 @@
  * HTTP API for the Requirements Management app.
  * OpenAPI spec version: 0.0.1
  */
+import type { UpdateProjectDtoTicketUrlTemplate } from './updateProjectDtoTicketUrlTemplate';
 
 export interface UpdateProjectDto {
   /** New human-readable project name. */
-  name: string;
+  name?: string;
+  /** @nullable */
+  ticketUrlTemplate?: UpdateProjectDtoTicketUrlTemplate;
 }

@@ -47,5 +47,5 @@
         "src/**/*.ts",
         "src/**/*.tsx",
         "src/**/*.d.ts"
-    ]
+, "test/pages/ProjectMembershipAdministrationPage.spec.tsx", "test/pages/ProjectMemberships.spec.tsx", "test/pages/ProjectMembershipAdministrationPage.spec.tsx", "test/pages/ProjectMemberships.spec.tsx"    ]
 }

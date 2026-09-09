@@ -2,9 +2,14 @@ import { Button } from 'primereact/button';
 
 import '@/components/RootLayout/Sidebar/ActionButton.scss';
 
-type Props = Readonly<{ disabled?: boolean; onNewProject?: () => void; onSynchronize?: () => void }>;
+type Props = Readonly<{
+    disabled?: boolean;
+    showNewProject?: boolean;
+    onNewProject?: () => void;
+    onSynchronize?: () => void;
+}>;
 
-export function ActionButton({ disabled = false, onNewProject, onSynchronize }: Props) {
+export function ActionButton({ disabled = false, showNewProject = true, onNewProject, onSynchronize }: Props) {
     return (
         <>
             <Button
@@ -19,16 +24,18 @@ export function ActionButton({ disabled = false, onNewProject, onSynchronize }: 
                 }}
             />
 
-            <Button
-                type='button'
-                label='New project'
-                disabled={disabled}
-                onClick={onNewProject}
-                pt={{
-                    root: { className: 'sidebar-action-button' },
-                    label: { className: 'sidebar-action-button__label' },
-                }}
-            />
+            {showNewProject && (
+                <Button
+                    type='button'
+                    label='New project'
+                    disabled={disabled}
+                    onClick={onNewProject}
+                    pt={{
+                        root: { className: 'sidebar-action-button' },
+                        label: { className: 'sidebar-action-button__label' },
+                    }}
+                />
+            )}
         </>
     );
 }

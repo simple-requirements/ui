@@ -31,5 +31,5 @@
     },
     "include": [
         "src"
-    ]
+, "test/pages/ProjectMembershipAdministrationPage.spec.tsx", "test/pages/ProjectMemberships.spec.tsx"    ]
 }

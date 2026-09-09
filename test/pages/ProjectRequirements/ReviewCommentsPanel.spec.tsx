@@ -48,4 +48,22 @@ describe('ReviewCommentsPanel', () => {
         expect(onReply).toHaveBeenCalledWith(comment);
         expect(onResolve).toHaveBeenCalledWith(comment);
     });
+    it('renders existing comments without mutation controls in read-only mode.', () => {
+        render(
+            <ReviewCommentsPanel
+                comments={[comment]}
+                pending={false}
+                readOnly
+                onComment={vi.fn()}
+                onReply={vi.fn()}
+                onResolve={vi.fn()}
+            />,
+        );
+
+        expect(screen.getByText('Jane Reviewer')).toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'Comment' })).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'Reply' })).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'Resolve' })).not.toBeInTheDocument();
+    });
+
 });

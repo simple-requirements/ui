@@ -10,6 +10,7 @@ import { useProjectDialogController } from '@/components/RootLayout/Sidebar/useP
 import { useProjectNavigation } from '@/components/RootLayout/Sidebar/useProjectNavigation';
 import { useSidebarProjects } from '@/components/RootLayout/Sidebar/useSidebarProjects';
 import { useRouteUiMetadata } from '@/router/routeUiMetadata';
+import { useIsAdministrator } from '@/auth/projectPermissions';
 
 import '@/components/RootLayout/Sidebar/Sidebar.scss';
 
@@ -18,6 +19,7 @@ export function Sidebar() {
     const projectDialog = useProjectDialogController();
     const projectNavigation = useProjectNavigation(activeProjectRoute);
     const routeUiMetadata = useRouteUiMetadata();
+    const isAdministrator = useIsAdministrator();
 
     const projectsWithRequirementCounts = useSidebarProjects();
 
@@ -59,6 +61,7 @@ export function Sidebar() {
         <aside className="sidebar" aria-label="Projects">
             <SidebarContextMenu
                 contextMenuRef={projectContextMenu.contextMenuRef}
+                canAdministerProjects={isAdministrator}
                 onRenameProject={handleRenameProject}
                 onDeleteProject={handleDeleteProject}
                 onExportProject={handleExportProject}
@@ -68,6 +71,7 @@ export function Sidebar() {
             <div className="sidebar__actions" role="group" aria-label="Project actions">
                 <ActionButton
                     disabled={routeUiMetadata.disableChromeActions}
+                    showNewProject={isAdministrator}
                     onNewProject={projectDialog.openCreateProjectDialog}
                     onSynchronize={handleSynchronizeProjects}
                 />

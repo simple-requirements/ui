@@ -42,6 +42,8 @@ type ApiResponse<T> = Readonly<{ data: T }>;
 const baseUrl = (projectId: string, requirementId: string): string =>
     `/projects/${projectId}/requirements/${requirementId}`;
 
+const LEGACY_AUTHENTICATED_ACTOR = 'Authenticated user';
+
 export async function getReviewSummary(projectId: string, requirementId: string): Promise<ReviewSummary> {
     const response = await apiFetch<ApiResponse<unknown>>(`${baseUrl(projectId, requirementId)}/review-summary`);
     return reviewSummarySchema.parse(response.data);
@@ -61,38 +63,36 @@ async function send<T>(url: string, method: 'POST' | 'PATCH', body: object, sche
     return schema.parse(response.data);
 }
 
-export const createReviewComment = (projectId: string, requirementId: string, text: string, author: string) =>
-    send(`${baseUrl(projectId, requirementId)}/review-comments`, 'POST', { text, author }, commentSchema);
+export const createReviewComment = (projectId: string, requirementId: string, text: string) =>
+    send(`${baseUrl(projectId, requirementId)}/review-comments`, 'POST', { text, author: LEGACY_AUTHENTICATED_ACTOR }, commentSchema);
 
 export const createReviewReply = (
     projectId: string,
     requirementId: string,
     commentId: string,
     text: string,
-    author: string,
 ) =>
     send(
         `${baseUrl(projectId, requirementId)}/review-comments/${commentId}/replies`,
         'POST',
-        { text, author },
+        { text, author: LEGACY_AUTHENTICATED_ACTOR },
         replySchema,
     );
 
-export const resolveReviewComment = (projectId: string, requirementId: string, commentId: string, closedBy: string) =>
-    send(`${baseUrl(projectId, requirementId)}/review-comments/${commentId}`, 'PATCH', { closedBy }, commentSchema);
+export const resolveReviewComment = (projectId: string, requirementId: string, commentId: string) =>
+    send(`${baseUrl(projectId, requirementId)}/review-comments/${commentId}`, 'PATCH', { closedBy: LEGACY_AUTHENTICATED_ACTOR }, commentSchema);
 
-export const approveReview = (projectId: string, requirementId: string, reviewer: string): Promise<Requirement> =>
-    send(`${baseUrl(projectId, requirementId)}/review/approve`, 'POST', { reviewer }, requirementSchema);
+export const approveReview = (projectId: string, requirementId: string): Promise<Requirement> =>
+    send(`${baseUrl(projectId, requirementId)}/review/approve`, 'POST', { reviewer: LEGACY_AUTHENTICATED_ACTOR }, requirementSchema);
 
 export const rejectReview = (
     projectId: string,
     requirementId: string,
-    reviewer: string,
     rejectionReason: string,
 ): Promise<Requirement> =>
     send(
         `${baseUrl(projectId, requirementId)}/review/reject`,
         'POST',
-        { reviewer, rejectionReason },
+        { reviewer: LEGACY_AUTHENTICATED_ACTOR, rejectionReason },
         requirementSchema,
     );

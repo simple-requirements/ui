@@ -31,7 +31,9 @@ export const implementationTicketSchema = z.object({
   updatedAt: z.iso.datetime(),
 });
 export type ImplementationTicket = z.infer<typeof implementationTicketSchema>;
-export type ImplementationTicketInput = Readonly<Pick<ImplementationTicket, "ticketId" | "completedBy" | "completedAt">>;
+export type ImplementationTicketInput = Readonly<Pick<ImplementationTicket, "ticketId" | "completedAt">>;
+
+const LEGACY_AUTHENTICATED_ACTOR = "Authenticated user";
 
 const nullableIsoDateTimeSchema = z.iso
   .datetime()
@@ -127,7 +129,7 @@ export async function createImplementationTicketRequest(projectId: string, requi
   const response = await apiFetch<{ data: unknown }>(ticketBaseUrl(projectId, requirementId), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(input),
+    body: JSON.stringify({ ...input, completedBy: LEGACY_AUTHENTICATED_ACTOR }),
   });
   return implementationTicketSchema.parse(response.data);
 }
@@ -136,7 +138,7 @@ export async function updateImplementationTicketRequest(projectId: string, requi
   const response = await apiFetch<{ data: unknown }>(`${ticketBaseUrl(projectId, requirementId)}/${id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(input),
+    body: JSON.stringify({ ...input, completedBy: LEGACY_AUTHENTICATED_ACTOR }),
   });
   return implementationTicketSchema.parse(response.data);
 }
@@ -179,12 +181,11 @@ export async function updateProjectRequirementRequest(
 export async function markProjectRequirementObsoleteRequest(
   projectId: string,
   requirementId: string,
-  obsoletedBy: string,
   obsolescenceReason: string,
 ): Promise<Requirement> {
   const response = await updateGeneratedRequirement(projectId, requirementId, {
     status: "obsolete",
-    obsoletedBy,
+    obsoletedBy: LEGACY_AUTHENTICATED_ACTOR,
     obsolescenceReason,
   } as unknown as UpdateRequirementDto);
 

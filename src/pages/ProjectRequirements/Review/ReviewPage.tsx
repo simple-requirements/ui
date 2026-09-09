@@ -221,7 +221,7 @@ export function ReviewPage() {
         confirmLabel={composer?.mode === "reply" ? "Reply" : "Comment"}
         pending={pending}
         onAbort={() => setComposer(undefined)}
-        onConfirm={async (text, author) => {
+        onConfirm={async (text) => {
           await run(
             () =>
               composer?.mode === "reply"
@@ -230,9 +230,8 @@ export function ReviewPage() {
                     requirementId,
                     composer.comment.id,
                     text,
-                    author,
                   )
-                : createReviewComment(projectId, requirementId, text, author),
+                : createReviewComment(projectId, requirementId, text),
             composer?.mode === "reply"
               ? toastMessages.reviewReplyCreated()
               : toastMessages.reviewCommentCreated(),
@@ -245,7 +244,7 @@ export function ReviewPage() {
         visible={commentToResolve !== undefined && permissions.canManageRequirements}
         pending={pending}
         onAbort={() => setCommentToResolve(undefined)}
-        onConfirm={async (name) => {
+        onConfirm={async () => {
           if (commentToResolve === undefined) return;
           const succeeded = await run(
             () =>
@@ -253,7 +252,6 @@ export function ReviewPage() {
                 projectId,
                 requirementId,
                 commentToResolve.id,
-                name,
               ),
             toastMessages.reviewCommentResolved(),
           );
@@ -281,7 +279,7 @@ export function ReviewPage() {
         }
         pending={pending}
         onAbort={clearReviewDecisionRequest}
-        onConfirm={async (reviewer, reason) => {
+        onConfirm={async (reason) => {
           const succeeded = await run(
             async () => {
               const decidedRequirement =
@@ -289,10 +287,9 @@ export function ReviewPage() {
                   ? rejectReview(
                       projectId,
                       requirementId,
-                      reviewer,
                       reason ?? "",
                     )
-                  : approveReview(projectId, requirementId, reviewer);
+                  : approveReview(projectId, requirementId);
               const updatedRequirement = await decidedRequirement;
               setReviewActionRequirement({
                 projectId,

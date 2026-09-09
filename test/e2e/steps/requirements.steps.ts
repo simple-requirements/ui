@@ -404,10 +404,12 @@ When("I open the review for the selected requirement", async ({ page }) => {
 
 When(
   "I reject the requirement as {string} because {string}",
-  async ({ page }, reviewer: string, reason: string) => {
+  async ({ page }, _reviewer: string, reason: string) => {
     await page.getByRole("button", { name: "Reject" }).click();
     const dialog = page.getByRole("dialog", { name: "Reject requirement" });
-    await dialog.getByRole("textbox", { name: "Reviewer" }).fill(reviewer);
+    await expect(
+      dialog.getByRole("textbox", { name: "Reviewer" }),
+    ).toHaveCount(0);
     await dialog.getByRole("textbox", { name: "Reason" }).fill(reason);
     await dialog.getByRole("button", { name: "OK" }).click();
   },
@@ -415,22 +417,24 @@ When(
 
 When(
   "I approve the requirement as {string}",
-  async ({ page }, reviewer: string) => {
+  async ({ page }, _reviewer: string) => {
     await page.getByRole("button", { name: "Approve" }).click();
     const dialog = page.getByRole("dialog", { name: "Approve requirement" });
-    await dialog.getByRole("textbox", { name: "Reviewer" }).fill(reviewer);
+    await expect(
+      dialog.getByRole("textbox", { name: "Reviewer" }),
+    ).toHaveCount(0);
     await dialog.getByRole("button", { name: "OK" }).click();
   },
 );
 
 When(
   "I mark the requirement obsolete as {string} because {string}",
-  async ({ page }, name: string, reason: string) => {
+  async ({ page }, _name: string, reason: string) => {
     await page.getByRole("button", { name: "Obsolete" }).click();
     const dialog = page.getByRole("dialog", {
       name: "Mark requirement obsolete",
     });
-    await dialog.getByRole("textbox", { name: "Name" }).fill(name);
+    await expect(dialog.getByRole("textbox", { name: "Name" })).toHaveCount(0);
     await dialog.getByRole("textbox", { name: "Reason" }).fill(reason);
     await dialog.getByRole("button", { name: "OK" }).click();
   },

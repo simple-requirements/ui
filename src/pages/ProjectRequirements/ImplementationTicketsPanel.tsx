@@ -17,13 +17,11 @@ import { showToastMessage } from "@/stores/toastStore";
 
 type FormState = Readonly<{
   ticketId: string;
-  completedBy: string;
   completedAt: string;
 }>;
 
 const emptyForm: FormState = {
   ticketId: "",
-  completedBy: "",
   completedAt: "",
 };
 
@@ -42,9 +40,7 @@ export function ImplementationTicketsPanel({
 
   const editable =
     requirement.status === "approved" && permissions.canManageTickets;
-  const valid = Object.values(form).every(
-    (value) => value.trim().length > 0,
-  );
+  const valid = form.ticketId.trim().length > 0 && form.completedAt.trim().length > 0;
 
   async function refresh(): Promise<void> {
     await queryClient.invalidateQueries({
@@ -116,7 +112,6 @@ export function ImplementationTicketsPanel({
     setEditing(ticket);
     setForm({
       ticketId: ticket.ticketId,
-      completedBy: ticket.completedBy,
       completedAt: ticket.completedAt,
     });
   }
@@ -136,15 +131,6 @@ export function ImplementationTicketsPanel({
               value={form.ticketId}
               onChange={(event) =>
                 setForm({ ...form, ticketId: event.currentTarget.value })
-              }
-            />
-          </label>
-          <label>
-            Completed by
-            <InputText
-              value={form.completedBy}
-              onChange={(event) =>
-                setForm({ ...form, completedBy: event.currentTarget.value })
               }
             />
           </label>

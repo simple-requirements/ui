@@ -142,7 +142,7 @@ describe("requirementsApi", () => {
         deletedAt: null,
         approvedAt: "2026-06-29T11:00:00.000Z",
         implementedAt: null,
-        obsoletedBy: "Olivia Owner",
+        obsoletedBy: "Authenticated user",
         obsolescenceReason: "Superseded by FR-AUTH-0002.",
         obsoleteAt: "2026-08-24T12:00:00.000Z",
         createdAt: "2026-06-28T10:00:00.000Z",
@@ -156,7 +156,6 @@ describe("requirementsApi", () => {
       markProjectRequirementObsoleteRequest(
         "22222222-2222-4222-8222-222222222222",
         "11111111-1111-4111-8111-111111111111",
-        "Olivia Owner",
         "Superseded by FR-AUTH-0002.",
       ),
     ).resolves.toEqual(expect.objectContaining({ status: "obsolete" }));
@@ -167,7 +166,7 @@ describe("requirementsApi", () => {
         method: "PATCH",
         body: JSON.stringify({
           status: "obsolete",
-          obsoletedBy: "Olivia Owner",
+          obsoletedBy: "Authenticated user",
           obsolescenceReason: "Superseded by FR-AUTH-0002.",
         }),
       }),

@@ -391,10 +391,7 @@ describe("ActionBar", () => {
     const confirmButton = screen.getByRole("button", { name: "OK" });
     expect(confirmButton).toBeDisabled();
 
-    await user.type(
-      screen.getByRole("textbox", { name: "Name" }),
-      "Olivia Owner",
-    );
+    expect(screen.queryByRole("textbox", { name: "Name" })).not.toBeInTheDocument();
     await user.type(
       screen.getByRole("textbox", { name: "Reason" }),
       "Superseded by FR-AUTH-0002.",
@@ -404,7 +401,6 @@ describe("ActionBar", () => {
     expect(mocks.markProjectRequirementObsoleteRequest).toHaveBeenCalledWith(
       "project-alpha",
       "requirement-alpha",
-      "Olivia Owner",
       "Superseded by FR-AUTH-0002.",
     );
   });

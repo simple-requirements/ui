@@ -75,6 +75,7 @@ describe("ImplementationTicketsPanel permissions", () => {
     authenticate("developer");
     render(<ImplementationTicketsPanel requirement={approvedRequirement} />);
 
+    expect(screen.queryByRole("textbox", { name: "Completed by" })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Add ticket" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Edit ticket" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Delete ticket" })).toBeInTheDocument();

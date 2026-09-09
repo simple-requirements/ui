@@ -1,6 +1,5 @@
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
-import { InputText } from 'primereact/inputtext';
 import { useState } from 'react';
 
 type Props = Readonly<{
@@ -10,7 +9,7 @@ type Props = Readonly<{
     confirmLabel: string;
     pending?: boolean;
     onAbort: () => void;
-    onConfirm: (text: string, author: string) => void | Promise<void>;
+    onConfirm: (text: string) => void | Promise<void>;
 }>;
 
 export function ReviewTextDialog({
@@ -23,8 +22,7 @@ export function ReviewTextDialog({
     onConfirm,
 }: Props) {
     const [text, setText] = useState('');
-    const [author, setAuthor] = useState('');
-    const valid = text.trim().length > 0 && author.trim().length > 0;
+    const valid = text.trim().length > 0;
 
     return (
         <Dialog
@@ -47,16 +45,10 @@ export function ReviewTextDialog({
                 className='review-dialog__form'
                 onSubmit={(event) => {
                     event.preventDefault();
-                    if (valid) void onConfirm(text.trim(), author.trim());
+                    if (valid) void onConfirm(text.trim());
                 }}
             >
-                <label htmlFor='review-dialog-author'>Name</label>
-                <InputText
-                    id='review-dialog-author'
-                    value={author}
-                    disabled={pending}
-                    onChange={(event) => setAuthor(event.currentTarget.value)}
-                />
+                <p>The backend records the author from the authenticated session.</p>
                 <label htmlFor='review-dialog-text'>{textLabel}</label>
                 <textarea
                     id='review-dialog-text'

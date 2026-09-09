@@ -1,6 +1,5 @@
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
-import { InputText } from "primereact/inputtext";
 import { useState } from "react";
 
 import "@/pages/ProjectRequirements/RequirementLifecycleDialog.scss";
@@ -8,19 +7,17 @@ import "@/pages/ProjectRequirements/RequirementLifecycleDialog.scss";
 export type RequirementLifecycleDialogProps = Readonly<{
   visible: boolean;
   title: string;
-  nameLabel?: string;
   reasonRequired?: boolean;
   warning?: string;
   confirmationBlocked?: boolean;
   pending?: boolean;
   onAbort: () => void;
-  onConfirm: (name: string, reason?: string) => void | Promise<void>;
+  onConfirm: (reason?: string) => void | Promise<void>;
 }>;
 
 export function RequirementLifecycleDialog({
   visible,
   title,
-  nameLabel = "Reviewer",
   reasonRequired = false,
   warning,
   confirmationBlocked = false,
@@ -28,10 +25,8 @@ export function RequirementLifecycleDialog({
   onAbort,
   onConfirm,
 }: RequirementLifecycleDialogProps) {
-  const [name, setName] = useState("");
   const [reason, setReason] = useState("");
-  const valid =
-    name.trim().length > 0 && (!reasonRequired || reason.trim().length > 0);
+  const valid = !reasonRequired || reason.trim().length > 0;
   const fieldPrefix = title.toLowerCase().replaceAll(/[^a-z0-9]+/gu, "-");
 
   return (
@@ -58,23 +53,13 @@ export function RequirementLifecycleDialog({
         onSubmit={(event) => {
           event.preventDefault();
           if (valid && !confirmationBlocked) {
-            void onConfirm(
-              name.trim(),
-              reasonRequired ? reason.trim() : undefined,
-            );
+            void onConfirm(reasonRequired ? reason.trim() : undefined);
           }
         }}
       >
         {warning !== undefined && (
           <p className="requirement-lifecycle-dialog__warning">{warning}</p>
         )}
-        <label htmlFor={`${fieldPrefix}-name`}>{nameLabel}</label>
-        <InputText
-          id={`${fieldPrefix}-name`}
-          value={name}
-          disabled={pending}
-          onChange={(event) => setName(event.currentTarget.value)}
-        />
         {reasonRequired && (
           <>
             <label htmlFor={`${fieldPrefix}-reason`}>Reason</label>

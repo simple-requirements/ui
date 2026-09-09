@@ -210,7 +210,6 @@ export function ActionBar({ onFindRequirementKey }: ActionBarProps) {
         }
         visible={obsoleteAction.visible}
         title="Mark requirement obsolete"
-        nameLabel="Name"
         reasonRequired
         pending={obsoleteAction.pending}
         onAbort={obsoleteAction.abort}

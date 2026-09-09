@@ -18,14 +18,13 @@ export function useObsoleteRequirementAction(
   const [visible, setVisible] = useState(false);
   const [pending, setPending] = useState(false);
 
-  async function confirm(obsoletedBy: string, reason?: string): Promise<void> {
+  async function confirm(reason?: string): Promise<void> {
     if (requirement === undefined || reason === undefined) return;
     setPending(true);
     try {
       const updatedRequirement = await markProjectRequirementObsoleteRequest(
         requirement.projectId,
         requirement.requirementId,
-        obsoletedBy,
         reason,
       );
       setReviewActionRequirement({

@@ -3,11 +3,11 @@ import type {
   UserAdministrationResponse,
 } from "@/api/authApi";
 
-import { MembershipRow } from "./MembershipRow";
+import { MembershipRow } from "@/pages/Administration/ProjectMemberships/MembershipRow";
 import type {
   RemoveProjectMembershipHandler,
   SetProjectMembershipHandler,
-} from "./types";
+} from "@/pages/Administration/ProjectMemberships/types";
 
 type MembershipTableProps = Readonly<{
   projectName: string;

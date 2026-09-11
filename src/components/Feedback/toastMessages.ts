@@ -1,1 +1,1 @@
-export { toastMessages } from "./AppToast/toastMessages";
+export { toastMessages } from "@/components/Feedback/AppToast/toastMessages";

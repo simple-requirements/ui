@@ -8,7 +8,7 @@ import {
   projectRolesFromValues,
 } from "@/auth/projectRoleMetadata";
 
-import type { SetProjectMembershipHandler } from "./types";
+import type { SetProjectMembershipHandler } from "@/pages/Administration/ProjectMemberships/types";
 
 type AssignmentFormProps = Readonly<{
   users: readonly UserAdministrationResponse[];

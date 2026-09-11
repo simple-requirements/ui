@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 
-import { AssignmentForm } from "./AssignmentForm";
-import { MembershipTable } from "./MembershipTable";
-import type { ProjectMembershipsProps } from "./types";
+import { AssignmentForm } from "@/pages/Administration/ProjectMemberships/AssignmentForm";
+import { MembershipTable } from "@/pages/Administration/ProjectMemberships/MembershipTable";
+import type { ProjectMembershipsProps } from "@/pages/Administration/ProjectMemberships/types";
 
 export function ProjectMemberships({
   projectName,

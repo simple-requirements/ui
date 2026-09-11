@@ -12,11 +12,11 @@ import {
   sameProjectRoles,
 } from "@/auth/projectRoleMetadata";
 
-import { RoleSelection } from "./RoleSelection";
+import { RoleSelection } from "@/pages/Administration/ProjectMemberships/RoleSelection";
 import type {
   RemoveProjectMembershipHandler,
   SetProjectMembershipHandler,
-} from "./types";
+} from "@/pages/Administration/ProjectMemberships/types";
 
 type MembershipRowProps = Readonly<{
   membership: ProjectMembershipResponse;

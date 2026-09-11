@@ -31,8 +31,9 @@ export const implementationTicketSchema = z.object({
   updatedAt: z.iso.datetime(),
 });
 export type ImplementationTicket = z.infer<typeof implementationTicketSchema>;
-export type ImplementationTicketInput = Readonly<Pick<ImplementationTicket, "ticketId" | "completedAt">>;
-
+export type ImplementationTicketInput = Readonly<
+  Pick<ImplementationTicket, "ticketId" | "completedAt">
+>;
 
 const nullableIsoDateTimeSchema = z.iso
   .datetime()
@@ -111,6 +112,24 @@ export type UpdateRequirementRequest = z.infer<
 
 const requirementsResponseSchema = z.array(requirementSchema);
 
+function toCreateRequirementDto(
+  requirement: CreateRequirementRequest,
+): CreateRequirementDto {
+  return requirement as unknown as CreateRequirementDto;
+}
+
+function toUpdateRequirementDto(
+  requirement: UpdateRequirementRequest,
+): UpdateRequirementDto {
+  return requirement as unknown as UpdateRequirementDto;
+}
+
+function toRequirementLifecycleDto(
+  requirement: Pick<UpdateRequirementDto, "status" | "obsolescenceReason">,
+): UpdateRequirementDto {
+  return requirement;
+}
+
 export { getListRequirementsQueryKey as getListProjectRequirementsQueryKey };
 
 export async function listProjectRequirementsRequest(
@@ -124,30 +143,58 @@ export async function listProjectRequirementsRequest(
 const ticketBaseUrl = (projectId: string, requirementId: string) =>
   `/projects/${projectId}/requirements/${requirementId}/implementation-tickets`;
 
-export async function createImplementationTicketRequest(projectId: string, requirementId: string, input: ImplementationTicketInput): Promise<ImplementationTicket> {
-  const response = await apiFetch<{ data: unknown }>(ticketBaseUrl(projectId, requirementId), {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(input),
-  });
+export async function createImplementationTicketRequest(
+  projectId: string,
+  requirementId: string,
+  input: ImplementationTicketInput,
+): Promise<ImplementationTicket> {
+  const response = await apiFetch<{ data: unknown }>(
+    ticketBaseUrl(projectId, requirementId),
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+    },
+  );
   return implementationTicketSchema.parse(response.data);
 }
 
-export async function updateImplementationTicketRequest(projectId: string, requirementId: string, id: string, input: ImplementationTicketInput): Promise<ImplementationTicket> {
-  const response = await apiFetch<{ data: unknown }>(`${ticketBaseUrl(projectId, requirementId)}/${id}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(input),
-  });
+export async function updateImplementationTicketRequest(
+  projectId: string,
+  requirementId: string,
+  id: string,
+  input: ImplementationTicketInput,
+): Promise<ImplementationTicket> {
+  const response = await apiFetch<{ data: unknown }>(
+    `${ticketBaseUrl(projectId, requirementId)}/${id}`,
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+    },
+  );
   return implementationTicketSchema.parse(response.data);
 }
 
-export async function deleteImplementationTicketRequest(projectId: string, requirementId: string, id: string): Promise<void> {
-  await apiFetch(`${ticketBaseUrl(projectId, requirementId)}/${id}`, { method: "DELETE" });
+export async function deleteImplementationTicketRequest(
+  projectId: string,
+  requirementId: string,
+  id: string,
+): Promise<void> {
+  await apiFetch(`${ticketBaseUrl(projectId, requirementId)}/${id}`, {
+    method: "DELETE",
+  });
 }
 
-export async function markProjectRequirementImplementedRequest(projectId: string, requirementId: string): Promise<Requirement> {
-  const response = await updateGeneratedRequirement(projectId, requirementId, { status: "implemented" } as unknown as UpdateRequirementDto);
+export async function markProjectRequirementImplementedRequest(
+  projectId: string,
+  requirementId: string,
+): Promise<Requirement> {
+  const response = await updateGeneratedRequirement(
+    projectId,
+    requirementId,
+    toRequirementLifecycleDto({ status: "implemented" }),
+  );
   return requirementSchema.parse(response.data);
 }
 
@@ -157,7 +204,7 @@ export async function createProjectRequirementRequest(
 ): Promise<Requirement> {
   const response = await createGeneratedRequirement(
     projectId,
-    requirement as unknown as CreateRequirementDto,
+    toCreateRequirementDto(requirement),
   );
 
   return requirementSchema.parse(response.data);
@@ -171,7 +218,7 @@ export async function updateProjectRequirementRequest(
   const response = await updateGeneratedRequirement(
     projectId,
     requirementId,
-    requirement as unknown as UpdateRequirementDto,
+    toUpdateRequirementDto(requirement),
   );
 
   return requirementSchema.parse(response.data);
@@ -182,10 +229,14 @@ export async function markProjectRequirementObsoleteRequest(
   requirementId: string,
   obsolescenceReason: string,
 ): Promise<Requirement> {
-  const response = await updateGeneratedRequirement(projectId, requirementId, {
-    status: "obsolete",
-    obsolescenceReason,
-  } as unknown as UpdateRequirementDto);
+  const response = await updateGeneratedRequirement(
+    projectId,
+    requirementId,
+    toRequirementLifecycleDto({
+      status: "obsolete",
+      obsolescenceReason,
+    }),
+  );
 
   return requirementSchema.parse(response.data);
 }

@@ -1,35 +1,23 @@
 import { expect, type Page } from '@playwright/test';
 import { createBdd, test } from 'playwright-bdd';
-import { z } from 'zod';
+import {
+    createTestCategory,
+    createTestProject,
+    openAuthenticatedRoute,
+    resetTestBackend,
+} from './authenticated-test-backend';
 
 const { Given, When, Then } = createBdd(test);
 
-const DEFAULT_API_BASE_URL = 'http://localhost:3000';
-const API_BASE_URL = process.env.E2E_API_BASE_URL ?? process.env.VITE_API_BASE_URL ?? DEFAULT_API_BASE_URL;
 const APPLICATION_LOADING_TIMEOUT_MS = 15_000;
 
 type DataTable = Readonly<{ hashes: () => readonly Record<string, string>[] }>;
 
-const backendProjectSchema = z.object({ id: z.string().min(1), name: z.string().min(1) });
-const backendProjectsSchema = z.array(backendProjectSchema);
-const backendCategorySchema = z.object({
-    id: z.string().min(1),
-    projectId: z.string().min(1),
-    name: z.string().min(1),
-    key: z.string().min(1),
-    type: z.enum(['FR', 'NFR']),
-    requirementCount: z.number().optional(),
-});
-
-type BackendProject = z.infer<typeof backendProjectSchema>;
-type BackendCategory = z.infer<typeof backendCategorySchema>;
+type BackendProject = Awaited<ReturnType<typeof createTestProject>>;
+type BackendCategory = Awaited<ReturnType<typeof createTestCategory>>;
 type CategoryTestContext = Readonly<{ project: BackendProject; categories: readonly BackendCategory[] }>;
 
 let categoryTestContext: CategoryTestContext | undefined;
-
-function createApiUrl(path: string): string {
-    return new URL(path, API_BASE_URL).toString();
-}
 
 function escapeRegExp(value: string): string {
     return value.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&');
@@ -68,70 +56,20 @@ function getCategoryRows(dataTable: DataTable): readonly Record<string, string>[
     });
 }
 
-async function readJsonResponse(response: Response): Promise<unknown> {
-    const contentType = response.headers.get('content-type');
-
-    if (contentType?.includes('application/json') !== true) {
-        return undefined;
-    }
-
-    return response.json() as Promise<unknown>;
-}
-
-async function listBackendProjects(): Promise<BackendProject[]> {
-    const response = await fetch(createApiUrl('/projects'), { headers: { Accept: 'application/json' } });
-
-    expect(response.ok, 'Expected the backend project list request to succeed.').toBe(true);
-
-    const responseBody = await readJsonResponse(response);
-
-    return backendProjectsSchema.parse(responseBody);
-}
 
 async function createBackendProject(projectName: string): Promise<BackendProject> {
-    const response = await fetch(createApiUrl('/projects'), {
-        method: 'POST',
-        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: projectName }),
-    });
-
-    expect(response.status, `Expected project "${projectName}" to be created.`).toBe(201);
-
-    const responseBody = await readJsonResponse(response);
-
-    return backendProjectSchema.parse(responseBody);
+    return createTestProject(projectName);
 }
 
 async function createBackendCategory(
     projectId: string,
     categoryData: Readonly<{ key: string; type: string; name: string }>,
 ): Promise<BackendCategory> {
-    const response = await fetch(createApiUrl(`/projects/${projectId}/categories`), {
-        method: 'POST',
-        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-        body: JSON.stringify(categoryData),
-    });
-
-    expect(response.status, `Expected category "${categoryData.key}" to be created.`).toBe(201);
-
-    const responseBody = await readJsonResponse(response);
-
-    return backendCategorySchema.parse(responseBody);
+    return createTestCategory(projectId, categoryData);
 }
 
-async function deleteBackendProject(projectId: string): Promise<void> {
-    const response = await fetch(createApiUrl(`/projects/${projectId}`), {
-        method: 'DELETE',
-        headers: { Accept: 'application/json' },
-    });
-
-    expect(response.status, `Expected project "${projectId}" to be deleted.`).toBe(204);
-}
-
-async function clearBackendProjects(): Promise<void> {
-    const projects = await listBackendProjects();
-
-    await Promise.all(projects.map((project) => deleteBackendProject(project.id)));
+async function openAuthenticatedApplicationRoute(page: Page, route: string): Promise<void> {
+    await openAuthenticatedRoute(page, route);
 }
 
 async function waitUntilApplicationHasLoaded(page: Page): Promise<void> {
@@ -172,7 +110,7 @@ function getCategoryDetailsPanel(page: Page) {
 }
 
 async function openCategoryList(page: Page): Promise<void> {
-    await page.goto(getCategoryListRoute());
+    await openAuthenticatedApplicationRoute(page, getCategoryListRoute());
     await waitUntilApplicationHasLoaded(page);
     await expect(getCategoryTable(page)).toBeVisible();
 }
@@ -187,7 +125,7 @@ Given(
     'the backend contains a category test project named {string} with categories',
     // eslint-disable-next-line no-empty-pattern -- {} Is correct Playwright syntax
     async ({}, projectName: string, dataTable: DataTable) => {
-        await clearBackendProjects();
+        await resetTestBackend();
 
         const project = await createBackendProject(projectName);
         const categories: BackendCategory[] = [];
@@ -227,7 +165,7 @@ When('I close the {string} tab', async ({ page }, tabLabel: string) => {
 });
 
 When('I open the category details URL directly for category {string}', async ({ page }, categoryKey: string) => {
-    await page.goto(getCategoryDetailsRoute(categoryKey));
+    await openAuthenticatedApplicationRoute(page, getCategoryDetailsRoute(categoryKey));
     await waitUntilApplicationHasLoaded(page);
 });
 

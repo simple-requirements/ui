@@ -1,50 +1,24 @@
 import { expect, type Page } from "@playwright/test";
 import { createBdd, test } from "playwright-bdd";
-import { z } from "zod";
+import {
+  createTestCategory,
+  createTestProject,
+  createTestRequirement,
+  openAuthenticatedRoute,
+  resetTestBackend,
+} from "./authenticated-test-backend";
 
 const { Given, When, Then } = createBdd(test);
 
-const DEFAULT_API_BASE_URL = "http://localhost:3000";
-const API_BASE_URL =
-  process.env.E2E_API_BASE_URL ??
-  process.env.VITE_API_BASE_URL ??
-  DEFAULT_API_BASE_URL;
 const APPLICATION_LOADING_TIMEOUT_MS = 15_000;
 
 const OPTIONAL_TABLE_VALUE = "—";
 
 type DataTable = Readonly<{ hashes: () => readonly Record<string, string>[] }>;
 
-const backendProjectSchema = z.object({
-  id: z.string().min(1),
-  name: z.string().min(1),
-});
-const backendProjectsSchema = z.array(backendProjectSchema);
-const backendCategorySchema = z.object({
-  id: z.string().min(1),
-  projectId: z.string().min(1),
-  name: z.string().min(1),
-  key: z.string().min(1),
-  type: z.enum(["FR", "NFR"]),
-  requirementCount: z.number().optional(),
-});
-const backendRequirementSchema = z.object({
-  id: z.string().min(1),
-  projectId: z.string().min(1),
-  categoryId: z.string().min(1),
-  visibleKey: z.string().min(1),
-  status: z.enum(["draft", "approved", "implemented", "obsolete", "rejected"]),
-  description: z.string().nullable(),
-  priority: z.enum(["p1", "p2", "p3"]).nullable(),
-  owner: z.string().nullable(),
-  rationale: z.string().nullable(),
-  source: z.string().nullable(),
-  reviewer: z.string().nullable(),
-});
-
-type BackendProject = z.infer<typeof backendProjectSchema>;
-type BackendCategory = z.infer<typeof backendCategorySchema>;
-type BackendRequirement = z.infer<typeof backendRequirementSchema>;
+type BackendProject = Awaited<ReturnType<typeof createTestProject>>;
+type BackendCategory = Awaited<ReturnType<typeof createTestCategory>>;
+type BackendRequirement = Awaited<ReturnType<typeof createTestRequirement>>;
 type RequirementTestContext = Readonly<{
   project: BackendProject;
   categories: readonly BackendCategory[];
@@ -52,10 +26,6 @@ type RequirementTestContext = Readonly<{
 }>;
 
 let requirementTestContext: RequirementTestContext | undefined;
-
-function createApiUrl(path: string): string {
-  return new URL(path, API_BASE_URL).toString();
-}
 
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
@@ -124,127 +94,34 @@ function getRequirementRows(
   });
 }
 
-async function readJsonResponse(response: Response): Promise<unknown> {
-  const contentType = response.headers.get("content-type");
 
-  if (contentType?.includes("application/json") !== true) {
-    return undefined;
-  }
-
-  return response.json() as Promise<unknown>;
-}
-
-async function listBackendProjects(): Promise<BackendProject[]> {
-  const response = await fetch(createApiUrl("/projects"), {
-    headers: { Accept: "application/json" },
-  });
-
-  expect(
-    response.ok,
-    "Expected the backend project list request to succeed.",
-  ).toBe(true);
-
-  const responseBody = await readJsonResponse(response);
-
-  return backendProjectsSchema.parse(responseBody);
-}
-
-async function createBackendProject(
-  projectName: string,
-): Promise<BackendProject> {
-  const response = await fetch(createApiUrl("/projects"), {
-    method: "POST",
-    headers: { Accept: "application/json", "Content-Type": "application/json" },
-    body: JSON.stringify({ name: projectName }),
-  });
-
-  expect(
-    response.status,
-    `Expected project "${projectName}" to be created.`,
-  ).toBe(201);
-
-  const responseBody = await readJsonResponse(response);
-
-  return backendProjectSchema.parse(responseBody);
+async function createBackendProject(projectName: string): Promise<BackendProject> {
+  return createTestProject(projectName);
 }
 
 async function createBackendCategory(
   projectId: string,
   categoryData: Readonly<{ key: string; type: string; name: string }>,
 ): Promise<BackendCategory> {
-  const response = await fetch(
-    createApiUrl(`/projects/${projectId}/categories`),
-    {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(categoryData),
-    },
-  );
-
-  expect(
-    response.status,
-    `Expected category "${categoryData.key}" to be created.`,
-  ).toBe(201);
-
-  const responseBody = await readJsonResponse(response);
-
-  return backendCategorySchema.parse(responseBody);
+  return createTestCategory(projectId, categoryData);
 }
 
 async function createBackendRequirement(
   projectId: string,
   requirementData: Readonly<{
     categoryId: string;
-    description: string;
+    description: string | null;
     priority: string | null;
     owner: string | null;
     rationale: string | null;
     source: string | null;
   }>,
 ): Promise<BackendRequirement> {
-  const response = await fetch(
-    createApiUrl(`/projects/${projectId}/requirements`),
-    {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requirementData),
-    },
-  );
-
-  expect(
-    response.status,
-    `Expected requirement "${requirementData.description}" to be created.`,
-  ).toBe(201);
-
-  const responseBody = await readJsonResponse(response);
-
-  return backendRequirementSchema.parse(responseBody);
+  return createTestRequirement(projectId, requirementData);
 }
 
-async function deleteBackendProject(projectId: string): Promise<void> {
-  const response = await fetch(createApiUrl(`/projects/${projectId}`), {
-    method: "DELETE",
-    headers: { Accept: "application/json" },
-  });
-
-  expect(
-    response.status,
-    `Expected project "${projectId}" to be deleted.`,
-  ).toBe(204);
-}
-
-async function clearBackendProjects(): Promise<void> {
-  const projects = await listBackendProjects();
-
-  await Promise.all(
-    projects.map((project) => deleteBackendProject(project.id)),
-  );
+async function openAuthenticatedApplicationRoute(page: Page, route: string): Promise<void> {
+  await openAuthenticatedRoute(page, route);
 }
 
 async function waitUntilApplicationHasLoaded(page: Page): Promise<void> {
@@ -320,7 +197,7 @@ function getProjectButton(page: Page, projectName: string) {
 }
 
 async function openRequirementList(page: Page): Promise<void> {
-  await page.goto(getRequirementListRoute());
+  await openAuthenticatedApplicationRoute(page, getRequirementListRoute());
   await waitUntilApplicationHasLoaded(page);
   await expect(getRequirementTable(page)).toBeVisible();
 }
@@ -343,7 +220,7 @@ Given(
   "the backend contains a requirement test project named {string} with requirements",
   // eslint-disable-next-line no-empty-pattern -- {} Is correct Playwright syntax
   async ({}, projectName: string, dataTable: DataTable) => {
-    await clearBackendProjects();
+    await resetTestBackend();
 
     const project = await createBackendProject(projectName);
     const categoriesByKey = new Map<string, BackendCategory>();
@@ -403,8 +280,8 @@ When("I open the review for the selected requirement", async ({ page }) => {
 });
 
 When(
-  "I reject the requirement as {string} because {string}",
-  async ({ page }, _reviewer: string, reason: string) => {
+  "I reject the requirement because {string}",
+  async ({ page }, reason: string) => {
     await page.getByRole("button", { name: "Reject" }).click();
     const dialog = page.getByRole("dialog", { name: "Reject requirement" });
     await expect(
@@ -416,8 +293,8 @@ When(
 );
 
 When(
-  "I approve the requirement as {string}",
-  async ({ page }, _reviewer: string) => {
+  "I approve the requirement",
+  async ({ page }) => {
     await page.getByRole("button", { name: "Approve" }).click();
     const dialog = page.getByRole("dialog", { name: "Approve requirement" });
     await expect(
@@ -428,8 +305,8 @@ When(
 );
 
 When(
-  "I mark the requirement obsolete as {string} because {string}",
-  async ({ page }, _name: string, reason: string) => {
+  "I mark the requirement obsolete because {string}",
+  async ({ page }, reason: string) => {
     await page.getByRole("button", { name: "Obsolete" }).click();
     const dialog = page.getByRole("dialog", {
       name: "Mark requirement obsolete",
@@ -469,7 +346,7 @@ Given(
 When(
   "I open the requirement details URL directly for requirement {string}",
   async ({ page }, requirementKey: string) => {
-    await page.goto(getRequirementDetailsRoute(requirementKey));
+    await openAuthenticatedApplicationRoute(page, getRequirementDetailsRoute(requirementKey));
     await waitUntilApplicationHasLoaded(page);
   },
 );
@@ -555,11 +432,10 @@ Then("the Edit action should not be visible", async ({ page }) => {
 });
 
 Then(
-  "the requirement details should show rejection by {string} because {string}",
-  async ({ page }, reviewer: string, reason: string) => {
+  "the requirement details should show rejection because {string}",
+  async ({ page }, reason: string) => {
     const detailsPanel = getRequirementDetailsPanel(page);
     await expect(detailsPanel).toContainText("Rejected");
-    await expect(detailsPanel).toContainText(reviewer);
     await expect(detailsPanel).toContainText(reason);
   },
 );
@@ -572,11 +448,10 @@ Then(
 );
 
 Then(
-  "the requirement details should show obsolescence by {string} because {string}",
-  async ({ page }, name: string, reason: string) => {
+  "the requirement details should show obsolescence because {string}",
+  async ({ page }, reason: string) => {
     const detailsPanel = getRequirementDetailsPanel(page);
     await expect(detailsPanel).toContainText("Obsoleted by");
-    await expect(detailsPanel).toContainText(name);
     await expect(detailsPanel).toContainText("Obsolescence reason");
     await expect(detailsPanel).toContainText(reason);
   },

@@ -1,83 +1,42 @@
 import { expect, type Page } from "@playwright/test";
 import { createBdd, test } from "playwright-bdd";
+import {
+  listUsers,
+  publicJsonRequest,
+  requireBackendAvailable,
+} from "./authenticated-test-backend";
 
 const { Given, When, Then } = createBdd(test);
 
-const API_BASE_URL =
-  process.env.E2E_API_BASE_URL ??
-  process.env.VITE_API_BASE_URL ??
-  "http://localhost:3000";
+let registeredAccount:
+  | Readonly<{ username: string; email: string; displayName: string }>
+  | undefined;
 
-let registrationBody: unknown;
-let verificationTokens: unknown[] = [];
-let passwordResetBody: unknown;
-
-async function mockPublicAccountApi(page: Page): Promise<void> {
-  registrationBody = undefined;
-  verificationTokens = [];
-  passwordResetBody = undefined;
-
-  await page.route(`${API_BASE_URL}/**`, async (route) => {
-    const request = route.request();
-    const pathname = new URL(request.url()).pathname;
-
-    if (pathname === "/auth/register") {
-      registrationBody = request.postDataJSON();
-      await route.fulfill({
-        status: 202,
-        contentType: "application/json",
-        body: JSON.stringify({ message: "Accepted." }),
-      });
-      return;
-    }
-
-    if (pathname === "/auth/email-verification/confirm") {
-      verificationTokens.push(request.postDataJSON());
-      await route.fulfill({ status: 204, body: "" });
-      return;
-    }
-
-    if (pathname === "/auth/email-verification/resend") {
-      await route.fulfill({
-        status: 202,
-        contentType: "application/json",
-        body: JSON.stringify({ message: "Accepted." }),
-      });
-      return;
-    }
-
-    if (pathname === "/auth/password-reset/request") {
-      await route.fulfill({
-        status: 202,
-        contentType: "application/json",
-        body: JSON.stringify({ message: "Accepted." }),
-      });
-      return;
-    }
-
-    if (pathname === "/auth/password-reset/confirm") {
-      passwordResetBody = request.postDataJSON();
-      await route.fulfill({ status: 204, body: "" });
-      return;
-    }
-
-    await route.fulfill({
-      status: 404,
-      contentType: "application/json",
-      body: JSON.stringify({ message: "Not found." }),
-    });
-  });
+function uniqueAccount(): Readonly<{
+  username: string;
+  email: string;
+  displayName: string;
+}> {
+  const suffix = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  const username = `alice-${suffix}`.slice(0, 64);
+  return {
+    username,
+    email: `${username}@example.invalid`,
+    displayName: `Alice ${suffix}`,
+  };
 }
 
-Given("the public account API is available", async ({ page }) => {
-  await mockPublicAccountApi(page);
+Given("the real public account API is available", async () => {
+  registeredAccount = undefined;
+  await requireBackendAvailable();
 });
 
-When("I register a local frontend account", async ({ page }) => {
+When("I register a unique local frontend account", async ({ page }) => {
+  registeredAccount = uniqueAccount();
   await page.goto("/register");
-  await page.getByLabel("Username").fill(" alice ");
-  await page.getByLabel("Email address").fill(" ALICE@Example.org ");
-  await page.getByLabel("Display name").fill(" Alice Example ");
+  await page.getByLabel("Username").fill(` ${registeredAccount.username} `);
+  await page.getByLabel("Email address").fill(` ${registeredAccount.email.toUpperCase()} `);
+  await page.getByLabel("Display name").fill(` ${registeredAccount.displayName} `);
   await page
     .getByLabel("Password", { exact: true })
     .fill("correct horse battery staple");
@@ -96,33 +55,32 @@ Then("the registration instructions should be visible", async ({ page }) => {
   );
 });
 
-Then("the normalized registration data should have been submitted", () => {
-  expect(registrationBody).toEqual({
-    username: "alice",
-    email: "alice@example.org",
-    displayName: "Alice Example",
-    password: "correct horse battery staple",
-  });
+Then("the normalized registration data should be visible to administration", async () => {
+  if (registeredAccount === undefined) throw new Error("No account was registered.");
+  const users = await listUsers();
+  const user = users.find((candidate) => candidate.username === registeredAccount?.username);
+  expect(user).toBeDefined();
+  expect(user?.email).toBe(registeredAccount.email);
+  expect(user?.displayName).toBe(registeredAccount.displayName);
+  expect(user?.status).toBe("pending");
 });
 
-When("I open a frontend email-verification link", async ({ page }) => {
-  await page.goto("/verify-email?token=verification-token");
+When("I open an invalid frontend email-verification link", async ({ page }) => {
+  await page.goto(`/verify-email?token=invalid-${Date.now()}`);
 });
 
 Then(
-  "the email-verification confirmation should be visible",
+  "the email-verification invalid-link message should be visible",
   async ({ page }) => {
-    await expect(page.getByRole("status")).toContainText("has been verified");
+    await expect(page.getByRole("alert")).toContainText(
+      "verification link is invalid or has expired",
+    );
   },
 );
 
-Then("the verification token should have been submitted once", () => {
-  expect(verificationTokens).toEqual([{ token: "verification-token" }]);
-});
-
 When("I request another frontend verification email", async ({ page }) => {
   await page.goto("/verify-email/resend");
-  await page.getByLabel("Username").fill("alice");
+  await page.getByLabel("Username").fill(`unknown-${Date.now()}`);
   await page.getByRole("button", { name: "Send verification email" }).click();
 });
 
@@ -137,7 +95,7 @@ Then(
 
 When("I request a frontend password reset", async ({ page }) => {
   await page.goto("/forgot-password");
-  await page.getByLabel("Email address").fill("alice@example.org");
+  await page.getByLabel("Email address").fill(`unknown-${Date.now()}@example.invalid`);
   await page.getByRole("button", { name: "Send reset email" }).click();
 });
 
@@ -150,8 +108,8 @@ Then(
   },
 );
 
-When("I open a frontend password-reset link", async ({ page }) => {
-  await page.goto("/reset-password?token=reset-token");
+When("I open an invalid frontend password-reset link", async ({ page }) => {
+  await page.goto(`/reset-password?token=invalid-${Date.now()}`);
 });
 
 When("I submit a new frontend password", async ({ page }) => {
@@ -164,15 +122,8 @@ When("I submit a new frontend password", async ({ page }) => {
   await page.getByRole("button", { name: "Change password" }).click();
 });
 
-Then("the password-change confirmation should be visible", async ({ page }) => {
-  await expect(page.getByRole("status")).toContainText(
-    "Existing sessions have been revoked",
+Then("the password-reset invalid-link message should be visible", async ({ page }) => {
+  await expect(page.getByRole("alert")).toContainText(
+    "password-reset link is invalid",
   );
-});
-
-Then("the password-reset token should have been submitted", () => {
-  expect(passwordResetBody).toEqual({
-    token: "reset-token",
-    password: "new correct horse battery staple",
-  });
 });

@@ -42,7 +42,6 @@ type ApiResponse<T> = Readonly<{ data: T }>;
 const baseUrl = (projectId: string, requirementId: string): string =>
     `/projects/${projectId}/requirements/${requirementId}`;
 
-const LEGACY_AUTHENTICATED_ACTOR = 'Authenticated user';
 
 export async function getReviewSummary(projectId: string, requirementId: string): Promise<ReviewSummary> {
     const response = await apiFetch<ApiResponse<unknown>>(`${baseUrl(projectId, requirementId)}/review-summary`);
@@ -64,7 +63,7 @@ async function send<T>(url: string, method: 'POST' | 'PATCH', body: object, sche
 }
 
 export const createReviewComment = (projectId: string, requirementId: string, text: string) =>
-    send(`${baseUrl(projectId, requirementId)}/review-comments`, 'POST', { text, author: LEGACY_AUTHENTICATED_ACTOR }, commentSchema);
+    send(`${baseUrl(projectId, requirementId)}/review-comments`, 'POST', { text }, commentSchema);
 
 export const createReviewReply = (
     projectId: string,
@@ -75,15 +74,15 @@ export const createReviewReply = (
     send(
         `${baseUrl(projectId, requirementId)}/review-comments/${commentId}/replies`,
         'POST',
-        { text, author: LEGACY_AUTHENTICATED_ACTOR },
+        { text },
         replySchema,
     );
 
 export const resolveReviewComment = (projectId: string, requirementId: string, commentId: string) =>
-    send(`${baseUrl(projectId, requirementId)}/review-comments/${commentId}`, 'PATCH', { closedBy: LEGACY_AUTHENTICATED_ACTOR }, commentSchema);
+    send(`${baseUrl(projectId, requirementId)}/review-comments/${commentId}`, 'PATCH', {}, commentSchema);
 
 export const approveReview = (projectId: string, requirementId: string): Promise<Requirement> =>
-    send(`${baseUrl(projectId, requirementId)}/review/approve`, 'POST', { reviewer: LEGACY_AUTHENTICATED_ACTOR }, requirementSchema);
+    send(`${baseUrl(projectId, requirementId)}/review/approve`, 'POST', {}, requirementSchema);
 
 export const rejectReview = (
     projectId: string,
@@ -93,6 +92,6 @@ export const rejectReview = (
     send(
         `${baseUrl(projectId, requirementId)}/review/reject`,
         'POST',
-        { reviewer: LEGACY_AUTHENTICATED_ACTOR, rejectionReason },
+        { rejectionReason },
         requirementSchema,
     );

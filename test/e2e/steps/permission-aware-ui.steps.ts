@@ -1,18 +1,32 @@
-import { expect, type Page } from "@playwright/test";
+import { expect } from "@playwright/test";
 import { createBdd, test } from "playwright-bdd";
+import {
+  createImplementationTicket,
+  createTestCategory,
+  createTestProject,
+  createTestRequirement,
+  E2E_ACCESS_TOKEN,
+  E2E_ADMIN_USER_ID,
+  E2E_DEVELOPER_ACCESS_TOKEN,
+  E2E_DEVELOPER_LOGIN_USERNAME,
+  E2E_DEVELOPER_USER_ID,
+  E2E_LOGIN_USERNAME,
+  E2E_REQUIREMENTS_ENGINEER_ACCESS_TOKEN,
+  E2E_REQUIREMENTS_ENGINEER_LOGIN_USERNAME,
+  E2E_REQUIREMENTS_ENGINEER_USER_ID,
+  E2E_VIEWER_ACCESS_TOKEN,
+  E2E_VIEWER_LOGIN_USERNAME,
+  E2E_VIEWER_USER_ID,
+  removeProjectMembership,
+  resetTestBackend,
+  setProjectMembership,
+  updateRequirementStatus,
+  signInToRealBackend,
+  type ProjectRole,
+  type Requirement,
+} from "./authenticated-test-backend";
 
 const { Given, When, Then } = createBdd(test);
-
-const API_BASE_URL =
-  process.env.E2E_API_BASE_URL ??
-  process.env.VITE_API_BASE_URL ??
-  "http://localhost:3000";
-const PROJECT_ID = "11111111-1111-4111-8111-111111111111";
-const HIDDEN_PROJECT_ID = "22222222-2222-4222-8222-222222222222";
-const REQUIREMENT_ID = "33333333-3333-4333-8333-333333333333";
-const CATEGORY_ID = "44444444-4444-4444-8444-444444444444";
-const TICKET_ID = "55555555-5555-4555-8555-555555555555";
-const ACCESS_TOKEN = "permission-aware-token";
 
 type TestRole =
   | "Viewer"
@@ -20,9 +34,48 @@ type TestRole =
   | "Requirements Engineer"
   | "Administrator";
 
-type ProjectRole = "viewer" | "developer" | "requirements_engineer";
+type PermissionContext = Readonly<{
+  role: TestRole;
+  requirement: Requirement;
+  projectId: string;
+  hiddenProjectId: string;
+}>;
 
-function projectRoles(role: TestRole): readonly ProjectRole[] {
+let context: PermissionContext | undefined;
+
+function requireContext(): PermissionContext {
+  if (context === undefined) throw new Error("Permission test context was not created.");
+  return context;
+}
+
+function configuredPrincipal(
+  role: TestRole,
+): Readonly<{ token: string; userId: string; username: string }> {
+  switch (role) {
+    case "Administrator":
+      return { token: E2E_ACCESS_TOKEN, userId: E2E_ADMIN_USER_ID, username: E2E_LOGIN_USERNAME };
+    case "Requirements Engineer":
+      return {
+        token: E2E_REQUIREMENTS_ENGINEER_ACCESS_TOKEN,
+        userId: E2E_REQUIREMENTS_ENGINEER_USER_ID,
+        username: E2E_REQUIREMENTS_ENGINEER_LOGIN_USERNAME,
+      };
+    case "Developer":
+      return {
+        token: E2E_DEVELOPER_ACCESS_TOKEN,
+        userId: E2E_DEVELOPER_USER_ID,
+        username: E2E_DEVELOPER_LOGIN_USERNAME,
+      };
+    case "Viewer":
+      return {
+        token: E2E_VIEWER_ACCESS_TOKEN,
+        userId: E2E_VIEWER_USER_ID,
+        username: E2E_VIEWER_LOGIN_USERNAME,
+      };
+  }
+}
+
+function roleMembership(role: TestRole): readonly ProjectRole[] {
   switch (role) {
     case "Viewer":
       return ["viewer"];
@@ -33,171 +86,6 @@ function projectRoles(role: TestRole): readonly ProjectRole[] {
     case "Administrator":
       return [];
   }
-}
-
-function isAdministrator(role: TestRole): boolean {
-  return role === "Administrator";
-}
-
-function currentUser(role: TestRole) {
-  return {
-    id: "66666666-6666-4666-8666-666666666666",
-    username: "permission-user",
-    email: "permission-user@example.org",
-    displayName: role,
-    status: "active",
-    globalRoles: isAdministrator(role) ? ["administrator"] : [],
-    projectMemberships: isAdministrator(role)
-      ? []
-      : [{ projectId: PROJECT_ID, roles: projectRoles(role) }],
-  };
-}
-
-const projects = [
-  {
-    id: PROJECT_ID,
-    name: "Assigned Project",
-    createdAt: "2026-09-01T09:00:00.000Z",
-    updatedAt: "2026-09-01T09:00:00.000Z",
-    ticketUrlTemplate: null,
-  },
-  {
-    id: HIDDEN_PROJECT_ID,
-    name: "Unassigned Project",
-    createdAt: "2026-09-01T09:00:00.000Z",
-    updatedAt: "2026-09-01T09:00:00.000Z",
-    ticketUrlTemplate: null,
-  },
-] as const;
-
-const requirement = {
-  id: REQUIREMENT_ID,
-  projectId: PROJECT_ID,
-  categoryId: CATEGORY_ID,
-  sequenceNumber: 1,
-  revisionNumber: 2,
-  visibleKey: "FR-AUTH-0001",
-  status: "approved",
-  description: "Users can sign in.",
-  priority: "p1",
-  owner: "Alice",
-  rationale: null,
-  source: null,
-  rejectionReason: null,
-  reviewer: "Rita Reviewer",
-  obsoletedBy: null,
-  rejectedAt: null,
-  deletedAt: null,
-  approvedAt: "2026-09-01T10:00:00.000Z",
-  implementedAt: null,
-  obsolescenceReason: null,
-  obsoleteAt: null,
-  implementationTickets: [
-    {
-      id: TICKET_ID,
-      requirementId: REQUIREMENT_ID,
-      ticketId: "AUTH-42",
-      completedBy: "Dev Example",
-      completedAt: "2026-09-02",
-      url: null,
-      createdAt: "2026-09-02T10:00:00.000Z",
-      updatedAt: "2026-09-02T10:00:00.000Z",
-    },
-  ],
-  createdAt: "2026-08-30T10:00:00.000Z",
-  updatedAt: "2026-09-02T10:00:00.000Z",
-};
-
-async function mockPermissionApi(page: Page, role: TestRole): Promise<void> {
-  await page.route(`${API_BASE_URL}/**`, async (route) => {
-    const request = route.request();
-    const { pathname } = new URL(request.url());
-
-    if (pathname === "/auth/bootstrap/status") {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({ registrationAvailable: false }),
-      });
-      return;
-    }
-
-    if (pathname === "/auth/login") {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({ accessToken: ACCESS_TOKEN, user: currentUser(role) }),
-      });
-      return;
-    }
-
-    if (pathname === "/auth/me") {
-      expect(request.headers().authorization).toBe(`Bearer ${ACCESS_TOKEN}`);
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify(currentUser(role)),
-      });
-      return;
-    }
-
-    if (pathname === "/projects" && request.method() === "GET") {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify(projects),
-      });
-      return;
-    }
-
-    if (
-      pathname === `/projects/${PROJECT_ID}/requirements` &&
-      request.method() === "GET"
-    ) {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify([requirement]),
-      });
-      return;
-    }
-
-    if (
-      pathname === `/projects/${PROJECT_ID}/requirements/${REQUIREMENT_ID}/review-summary`
-    ) {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({
-          state: "not_started",
-          commentCount: 0,
-          openCommentCount: 0,
-        }),
-      });
-      return;
-    }
-
-    if (pathname === `/projects/${HIDDEN_PROJECT_ID}/requirements`) {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: "[]",
-      });
-      return;
-    }
-
-    await route.fulfill({
-      status: 404,
-      contentType: "application/json",
-      body: JSON.stringify({ message: `Unhandled permission test route: ${pathname}` }),
-    });
-  });
-}
-
-async function signIn(page: Page): Promise<void> {
-  await page.getByLabel("Username").fill("permission-user");
-  await page.getByLabel("Password").fill("correct horse battery staple");
-  await page.getByRole("button", { name: "Sign in" }).click();
 }
 
 Given(
@@ -212,20 +100,53 @@ Given(
     const role = roles.find((candidate) => candidate === roleName);
     if (role === undefined) throw new Error(`Unknown permission test role: ${roleName}`);
 
-    await mockPermissionApi(page, role);
+    const principal = configuredPrincipal(role);
+    await resetTestBackend();
+    const project = await createTestProject("Assigned Project");
+    const hiddenProject = await createTestProject("Unassigned Project");
+    const category = await createTestCategory(project.id, {
+      key: "AUTH",
+      type: "FR",
+      name: "Authentication",
+    });
+    const draft = await createTestRequirement(project.id, {
+      categoryId: category.id,
+      description: "Users can sign in.",
+      priority: "p1",
+      owner: "Alice",
+      rationale: null,
+      source: null,
+    });
+    const requirement = await updateRequirementStatus(project.id, draft.id, {
+      status: "approved",
+      reviewer: "E2E Requirements Engineer",
+    });
+    await createImplementationTicket(project.id, requirement.id, "AUTH-42");
+
+    await removeProjectMembership(project.id, E2E_ADMIN_USER_ID);
+    await removeProjectMembership(hiddenProject.id, E2E_ADMIN_USER_ID);
+
+    if (role !== "Administrator") {
+      await setProjectMembership(project.id, principal.userId, roleMembership(role));
+      await removeProjectMembership(hiddenProject.id, principal.userId);
+    }
+
+    context = {
+      role,
+      requirement,
+      projectId: project.id,
+      hiddenProjectId: hiddenProject.id,
+    };
+    await page.goto("/login");
+    await signInToRealBackend(page, principal.username);
   },
 );
 
 When("I open the permission test requirement details", async ({ page }) => {
-  await page.goto(
-    `/projects/${PROJECT_ID}/requirements/${REQUIREMENT_ID}`,
-  );
-  await expect(page).toHaveURL(/\/login$/u);
-  await signIn(page);
-  await expect(page).toHaveURL(
-    new RegExp(`/projects/${PROJECT_ID}/requirements/${REQUIREMENT_ID}$`, "u"),
-  );
-  await expect(page.getByRole("heading", { name: "FR-AUTH-0001" })).toBeVisible();
+  const { projectId, requirement, role } = requireContext();
+  await page.goto(`/projects/${projectId}/requirements/${requirement.id}`);
+  await signInToRealBackend(page, configuredPrincipal(role).username);
+  await expect(page.getByRole("heading", { name: requirement.visibleKey })).toBeVisible();
 });
 
 Then("only the assigned permission test project should be visible", async ({ page }) => {

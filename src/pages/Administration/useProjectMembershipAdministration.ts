@@ -6,6 +6,7 @@ import {
   listUsers,
   removeProjectMembership,
   setProjectMembership,
+  type ProjectMembershipResponse,
 } from "@/api/authApi";
 import { listProjectsRequest } from "@/api/projectsApi";
 import { queryClient } from "@/api/queryClient";
@@ -74,6 +75,16 @@ export function useProjectMembershipAdministration(
     }: SetMembershipVariables) =>
       (await setProjectMembership(projectId, userId, roles)).data,
     onSuccess: async (membership, variables) => {
+      queryClient.setQueryData<ProjectMembershipResponse[]>(
+        projectMembershipsQueryKey(variables.projectId),
+        (currentMemberships = []) => {
+          const withoutUpdatedUser = currentMemberships.filter(
+            (currentMembership) => currentMembership.userId !== membership.userId,
+          );
+
+          return [...withoutUpdatedUser, membership];
+        },
+      );
       await queryClient.invalidateQueries({
         queryKey: projectMembershipsQueryKey(variables.projectId),
       });
@@ -89,6 +100,13 @@ export function useProjectMembershipAdministration(
     mutationFn: ({ projectId, userId }: RemoveMembershipVariables) =>
       removeProjectMembership(projectId, userId),
     onSuccess: async (_response, variables) => {
+      queryClient.setQueryData<ProjectMembershipResponse[]>(
+        projectMembershipsQueryKey(variables.projectId),
+        (currentMemberships = []) =>
+          currentMemberships.filter(
+            (membership) => membership.userId !== variables.userId,
+          ),
+      );
       await queryClient.invalidateQueries({
         queryKey: projectMembershipsQueryKey(variables.projectId),
       });

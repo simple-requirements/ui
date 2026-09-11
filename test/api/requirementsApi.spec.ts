@@ -2,9 +2,11 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type * as FetchModule from "@/api/fetch";
 import {
+  createImplementationTicketRequest,
   getListProjectRequirementsQueryKey,
   listProjectRequirementsRequest,
   markProjectRequirementObsoleteRequest,
+  updateImplementationTicketRequest,
   implementationTicketSchema,
   requirementSchema,
 } from "@/api/requirementsApi";
@@ -121,6 +123,50 @@ describe("requirementsApi", () => {
     );
   });
 
+
+  it("creates and updates implementation tickets without client-supplied completer names.", async () => {
+    const ticketResponse = {
+      id: "44444444-4444-4444-8444-444444444444",
+      requirementId: "11111111-1111-4111-8111-111111111111",
+      ticketId: "AUTH-42",
+      completedBy: "Backend User",
+      completedAt: "2026-09-09",
+      url: null,
+      createdAt: "2026-09-09T10:00:00.000Z",
+      updatedAt: "2026-09-09T10:00:00.000Z",
+    };
+    mocks.apiFetch.mockResolvedValue({ data: ticketResponse });
+
+    await createImplementationTicketRequest(
+      "22222222-2222-4222-8222-222222222222",
+      "11111111-1111-4111-8111-111111111111",
+      { ticketId: "AUTH-42", completedAt: "2026-09-09" },
+    );
+
+    expect(mocks.apiFetch).toHaveBeenLastCalledWith(
+      "/projects/22222222-2222-4222-8222-222222222222/requirements/11111111-1111-4111-8111-111111111111/implementation-tickets",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({ ticketId: "AUTH-42", completedAt: "2026-09-09" }),
+      }),
+    );
+
+    await updateImplementationTicketRequest(
+      "22222222-2222-4222-8222-222222222222",
+      "11111111-1111-4111-8111-111111111111",
+      "44444444-4444-4444-8444-444444444444",
+      { ticketId: "AUTH-43", completedAt: "2026-09-10" },
+    );
+
+    expect(mocks.apiFetch).toHaveBeenLastCalledWith(
+      "/projects/22222222-2222-4222-8222-222222222222/requirements/11111111-1111-4111-8111-111111111111/implementation-tickets/44444444-4444-4444-8444-444444444444",
+      expect.objectContaining({
+        method: "PATCH",
+        body: JSON.stringify({ ticketId: "AUTH-43", completedAt: "2026-09-10" }),
+      }),
+    );
+  });
+
   it("marks a requirement obsolete with a reason.", async () => {
     mocks.apiFetch.mockResolvedValue({
       data: {
@@ -142,7 +188,7 @@ describe("requirementsApi", () => {
         deletedAt: null,
         approvedAt: "2026-06-29T11:00:00.000Z",
         implementedAt: null,
-        obsoletedBy: "Authenticated user",
+        obsoletedBy: "Backend User",
         obsolescenceReason: "Superseded by FR-AUTH-0002.",
         obsoleteAt: "2026-08-24T12:00:00.000Z",
         createdAt: "2026-06-28T10:00:00.000Z",
@@ -166,7 +212,6 @@ describe("requirementsApi", () => {
         method: "PATCH",
         body: JSON.stringify({
           status: "obsolete",
-          obsoletedBy: "Authenticated user",
           obsolescenceReason: "Superseded by FR-AUTH-0002.",
         }),
       }),

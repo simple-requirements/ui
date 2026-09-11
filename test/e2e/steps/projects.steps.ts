@@ -1,24 +1,20 @@
 import { expect, type Page } from '@playwright/test';
 import { createBdd, test } from 'playwright-bdd';
-import { z } from 'zod';
+import {
+    createTestProject,
+    deleteTestProject,
+    listTestProjects,
+    openAuthenticatedRoute,
+    resetTestBackend,
+} from './authenticated-test-backend';
 
 const { Given, When, Then } = createBdd(test);
 
-const DEFAULT_API_BASE_URL = 'http://localhost:3000';
-const API_BASE_URL = process.env.E2E_API_BASE_URL ?? process.env.VITE_API_BASE_URL ?? DEFAULT_API_BASE_URL;
 const APPLICATION_LOADING_TIMEOUT_MS = 15_000;
 
 type DataTable = Readonly<{ hashes: () => readonly Record<string, string>[] }>;
 
-const backendProjectSchema = z.object({ id: z.string().min(1), name: z.string().min(1) });
-
-const backendProjectsSchema = z.array(backendProjectSchema);
-
-type BackendProject = z.infer<typeof backendProjectSchema>;
-
-function createApiUrl(path: string): string {
-    return new URL(path, API_BASE_URL).toString();
-}
+type BackendProject = Awaited<ReturnType<typeof createTestProject>>;
 
 function getProjectNames(dataTable: DataTable): string[] {
     return dataTable.hashes().map((row) => {
@@ -32,49 +28,24 @@ function getProjectNames(dataTable: DataTable): string[] {
     });
 }
 
-async function readJsonResponse(response: Response): Promise<unknown> {
-    const contentType = response.headers.get('content-type');
-
-    if (contentType?.includes('application/json') !== true) {
-        return undefined;
-    }
-
-    return response.json() as Promise<unknown>;
-}
-
 async function listBackendProjects(): Promise<BackendProject[]> {
-    const response = await fetch(createApiUrl('/projects'), { headers: { Accept: 'application/json' } });
-
-    expect(response.ok, 'Expected the backend project list request to succeed.').toBe(true);
-
-    const responseBody = await readJsonResponse(response);
-
-    return backendProjectsSchema.parse(responseBody);
+    return listTestProjects();
 }
 
 async function createBackendProject(projectName: string): Promise<void> {
-    const response = await fetch(createApiUrl('/projects'), {
-        method: 'POST',
-        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: projectName }),
-    });
-
-    expect(response.status, `Expected project "${projectName}" to be created.`).toBe(201);
+    await createTestProject(projectName);
 }
 
 async function deleteBackendProject(projectId: string): Promise<void> {
-    const response = await fetch(createApiUrl(`/projects/${projectId}`), {
-        method: 'DELETE',
-        headers: { Accept: 'application/json' },
-    });
-
-    expect(response.status, `Expected project "${projectId}" to be deleted.`).toBe(204);
+    await deleteTestProject(projectId);
 }
 
 async function clearBackendProjects(): Promise<void> {
     const projects = await listBackendProjects();
 
-    await Promise.all(projects.map((project) => deleteBackendProject(project.id)));
+    for (const project of projects) {
+        await deleteBackendProject(project.id);
+    }
 }
 
 async function setBackendProjects(projectNames: readonly string[]): Promise<void> {
@@ -83,6 +54,10 @@ async function setBackendProjects(projectNames: readonly string[]): Promise<void
     for (const projectName of projectNames) {
         await createBackendProject(projectName);
     }
+}
+
+async function prepareAuthenticatedApplication(page: Page): Promise<void> {
+    await openAuthenticatedRoute(page, '/');
 }
 
 function getProjectList(page: Page) {
@@ -123,7 +98,7 @@ async function submitProjectDialog(page: Page): Promise<void> {
 }
 
 Given('the backend contains no projects', async () => {
-    await clearBackendProjects();
+    await resetTestBackend();
 });
 
 // eslint-disable-next-line no-empty-pattern -- {} Is correct Playwright syntax
@@ -137,7 +112,7 @@ Given('the backend contains the projects', async ({}, dataTable: DataTable) => {
 });
 
 When('I open the application', async ({ page }) => {
-    await page.goto('/');
+    await prepareAuthenticatedApplication(page);
     await waitUntilApplicationHasLoaded(page);
 });
 

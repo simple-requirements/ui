@@ -1,7 +1,27 @@
 import { defineConfig, devices } from '@playwright/test';
 import { cucumberReporter, defineBddConfig } from 'playwright-bdd';
+import { loadEnv } from 'vite';
+
+const e2eEnv = loadEnv('e2e', process.cwd(), '');
+for (const [key, value] of Object.entries(e2eEnv)) {
+    process.env[key] ??= value;
+}
 
 const isCI = Boolean(process.env.CI);
+const frontendBaseUrl = process.env.E2E_FRONTEND_BASE_URL ?? 'http://localhost:5173';
+const apiBaseUrl = process.env.E2E_API_BASE_URL ?? process.env.VITE_API_BASE_URL ?? 'http://localhost:3000';
+
+function currentStringEnvironment(): Record<string, string> {
+    const environment: Record<string, string> = {};
+
+    for (const [key, value] of Object.entries(process.env)) {
+        if (typeof value === 'string') {
+            environment[key] = value;
+        }
+    }
+
+    return environment;
+}
 
 // 1. Configure BDD to generate tests from features
 const testDir = defineBddConfig({
@@ -15,10 +35,14 @@ export default defineConfig({
     testDir,
     tsconfig: './tsconfig.playwright.json',
 
-    // 2. Start Vite server automatically
+    // 2. Start Vite server automatically. The E2E mode loads .env.e2e without shell-specific source/export commands.
     webServer: {
-        command: 'pnpm run dev', // Or 'vite'
-        url: 'http://localhost:5173', // Default Vite port
+        command: 'pnpm exec vite dev --mode e2e --host 127.0.0.1',
+        env: {
+            ...currentStringEnvironment(),
+            VITE_API_BASE_URL: apiBaseUrl,
+        },
+        url: frontendBaseUrl,
         reuseExistingServer: !isCI,
         timeout: 120 * 1000,
     },
@@ -52,7 +76,7 @@ export default defineConfig({
     ],
 
     use: {
-        baseURL: 'http://localhost:5173', // Base URL for all tests
+        baseURL: frontendBaseUrl,
         trace: 'on-first-retry',
         screenshot: 'only-on-failure',
     },

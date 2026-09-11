@@ -1,5 +1,5 @@
 import { Button } from "primereact/button";
-import { useEffect, useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState, type FormEvent } from "react";
 
 import type {
   ProjectMembershipResponse,
@@ -42,6 +42,16 @@ function roleSummary(roles: readonly ProjectRole[]): string {
     .join(", ");
 }
 
+function rolesFromAssignmentForm(form: HTMLFormElement): ProjectRole[] {
+  const values = new FormData(form).getAll("roles");
+
+  return normalizeRoles(
+    values.filter((value): value is ProjectRole =>
+      projectRoleOptions.some((option) => option.value === value),
+    ),
+  );
+}
+
 type RoleSelectionProps = Readonly<{
   legend: string;
   roles: readonly ProjectRole[];
@@ -75,8 +85,38 @@ function RoleSelection({
             <input
               id={inputId}
               type="checkbox"
+              value={option.value}
               checked={roles.includes(option.value)}
               onChange={() => toggleRole(option.value)}
+            />
+            {option.label}
+          </label>
+        );
+      })}
+    </fieldset>
+  );
+}
+
+type AssignmentRoleSelectionProps = Readonly<{
+  disabled: boolean;
+}>;
+
+function AssignmentRoleSelection({ disabled }: AssignmentRoleSelectionProps) {
+  const id = useId();
+
+  return (
+    <fieldset className="project-memberships__roles" disabled={disabled}>
+      <legend>Roles for new membership</legend>
+      {projectRoleOptions.map((option) => {
+        const inputId = `${id}-${option.value}`;
+
+        return (
+          <label key={option.value} htmlFor={inputId}>
+            <input
+              id={inputId}
+              name="roles"
+              type="checkbox"
+              value={option.value}
             />
             {option.label}
           </label>
@@ -182,8 +222,6 @@ export function ProjectMemberships({
   onRemoveMembership,
 }: ProjectMembershipsProps) {
   const userSelectId = useId();
-  const [selectedUserId, setSelectedUserId] = useState("");
-  const [assignmentRoles, setAssignmentRoles] = useState<ProjectRole[]>([]);
   const memberUserIds = useMemo(
     () => new Set(memberships.map((membership) => membership.userId)),
     [memberships],
@@ -192,30 +230,25 @@ export function ProjectMemberships({
     () => users.filter((user) => !memberUserIds.has(user.id)),
     [memberUserIds, users],
   );
-  const selectedUser = availableUsers.find(
-    (user) => user.id === selectedUserId,
-  );
 
-  useEffect(() => {
-    if (
-      selectedUserId !== "" &&
-      !availableUsers.some((user) => user.id === selectedUserId)
-    ) {
-      setSelectedUserId("");
-      setAssignmentRoles([]);
-    }
-  }, [availableUsers, selectedUserId]);
+  function addMembership(event: FormEvent<HTMLFormElement>): void {
+    event.preventDefault();
 
-  function addMembership(): void {
-    if (selectedUser === undefined || assignmentRoles.length === 0) {
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const userId = formData.get("userId");
+    const user =
+      typeof userId === "string"
+        ? users.find((candidate) => candidate.id === userId)
+        : undefined;
+    const roles = rolesFromAssignmentForm(form);
+
+    if (user === undefined || roles.length === 0) {
       return;
     }
 
-    onSetMembership(
-      selectedUser.id,
-      selectedUser.displayName,
-      assignmentRoles,
-    );
+    onSetMembership(user.id, user.displayName, roles);
+    form.reset();
   }
 
   return (
@@ -235,18 +268,15 @@ export function ProjectMemberships({
       <form
         className="project-memberships__assignment"
         aria-label="Assign project membership"
-        onSubmit={(event) => {
-          event.preventDefault();
-          addMembership();
-        }}
+        onSubmit={addMembership}
       >
         <div className="project-memberships__user-select">
           <label htmlFor={userSelectId}>User</label>
           <select
             id={userSelectId}
-            value={selectedUserId}
+            name="userId"
+            defaultValue=""
             disabled={pending || availableUsers.length === 0}
-            onChange={(event) => setSelectedUserId(event.target.value)}
           >
             <option value="">Select a user</option>
             {availableUsers.map((user) => (
@@ -259,19 +289,16 @@ export function ProjectMemberships({
             ))}
           </select>
         </div>
-        <RoleSelection
-          legend="Roles for new membership"
-          roles={assignmentRoles}
-          disabled={pending || selectedUser === undefined}
-          onChange={setAssignmentRoles}
+        <AssignmentRoleSelection
+          disabled={pending || availableUsers.length === 0}
         />
-        <Button
+        <button
           type="submit"
-          label="Add membership"
-          disabled={
-            pending || selectedUser === undefined || assignmentRoles.length === 0
-          }
-        />
+          className="p-button p-component"
+          disabled={pending || availableUsers.length === 0}
+        >
+          <span className="p-button-label">Add membership</span>
+        </button>
         {availableUsers.length === 0 && (
           <p className="project-memberships__hint">
             {users.length === 0

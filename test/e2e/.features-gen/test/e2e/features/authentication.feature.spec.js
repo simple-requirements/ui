@@ -4,13 +4,13 @@ import { test } from "playwright-bdd";
 test.describe('Frontend authentication session', () => {
 
   test('Protected application routes require authentication', { tag: ['@authentication'] }, async ({ Given, When, Then, page }) => { 
-    await Given('initial Administrator bootstrap is complete for frontend authentication', null, { page }); 
+    await Given('initial Administrator bootstrap is complete for frontend authentication'); 
     await When('I navigate to a protected frontend route', null, { page }); 
     await Then('the frontend login page should be visible', null, { page }); 
   });
 
   test('User signs in and returns to the requested route', { tag: ['@authentication'] }, async ({ Given, When, Then, And, page }) => { 
-    await Given('the frontend authentication API accepts valid credentials', null, { page }); 
+    await Given('the frontend authentication API accepts valid credentials'); 
     await When('I navigate to a protected frontend route', null, { page }); 
     await And('I sign in through the frontend', null, { page }); 
     await Then('the requested protected route should be visible', null, { page }); 

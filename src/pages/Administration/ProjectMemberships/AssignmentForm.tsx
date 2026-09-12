@@ -2,6 +2,7 @@ import { useId, useState, type FormEvent } from "react";
 
 import type { UserAdministrationResponse } from "@/api/authApi";
 import type { ProjectRole } from "@/auth/authTypes";
+import { isAdministrator } from "@/auth/globalPermissions";
 import {
   normalizeProjectRoles,
   projectRoleOptions,
@@ -80,9 +81,7 @@ export function AssignmentForm({
           {availableUsers.map((user) => (
             <option key={user.id} value={user.id}>
               {user.displayName} (@{user.username}) — {user.status}
-              {user.globalRoles.includes("administrator")
-                ? " — Administrator"
-                : ""}
+              {isAdministrator(user) ? " — Administrator" : ""}
             </option>
           ))}
         </select>

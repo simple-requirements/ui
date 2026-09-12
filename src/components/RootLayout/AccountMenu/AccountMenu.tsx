@@ -6,6 +6,7 @@ import { useNavigate } from "react-router";
 import { logout } from "@/api/authApi";
 import { clearUserScopedState } from "@/auth/authenticationFailure";
 import { LOGIN_ROUTE, USER_ADMINISTRATION_ROUTE } from "@/auth/authRoutes";
+import { isAdministrator } from "@/auth/globalPermissions";
 import { authStore } from "@/stores/authStore";
 
 import "@/components/RootLayout/AccountMenu/AccountMenu.scss";
@@ -42,7 +43,7 @@ export function AccountMenu() {
         <strong>{user.displayName}</strong>
         <small>@{user.username}</small>
       </span>
-      {user.globalRoles.includes("administrator") && (
+      {isAdministrator(user) && (
         <Button
           type="button"
           text

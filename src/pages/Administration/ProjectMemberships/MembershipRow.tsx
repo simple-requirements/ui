@@ -6,6 +6,7 @@ import type {
   UserAdministrationResponse,
 } from "@/api/authApi";
 import type { ProjectRole } from "@/auth/authTypes";
+import { isAdministrator } from "@/auth/globalPermissions";
 import {
   normalizeProjectRoles,
   projectRoleSummary,
@@ -42,14 +43,14 @@ export function MembershipRow({
   }, [membership.roles]);
 
   const dirty = !sameProjectRoles(roles, membership.roles);
-  const isAdministrator = user?.globalRoles.includes("administrator") ?? false;
+  const userIsAdministrator = isAdministrator(user);
 
   return (
     <tr>
       <th scope="row">
         {membership.displayName}
         <small>@{membership.username}</small>
-        {isAdministrator && <small>Administrator</small>}
+        {userIsAdministrator && <small>Administrator</small>}
       </th>
       <td>{projectRoleSummary(membership.roles)}</td>
       <td>

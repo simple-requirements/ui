@@ -17,6 +17,7 @@ import { RegistrationPage } from "@/pages/RegistrationPage/RegistrationPage";
 import { ProtectedRoute } from "@/auth/ProtectedRoute";
 import { AdministratorRoute } from "@/auth/AdministratorRoute";
 import { ProjectPermissionRoute } from "@/auth/ProjectPermissionRoute";
+import { projectPermissionKinds } from "@/auth/projectPermissions";
 import { ProjectMembershipAdministrationPage } from "@/pages/Administration/ProjectMembershipAdministrationPage";
 import { UserAdministrationPage } from "@/pages/Administration/UserAdministrationPage";
 import { createBrowserRouter, type RouteObject } from "react-router";
@@ -62,7 +63,7 @@ export const routes: RouteObject[] = [
             ],
           },
           {
-            element: <ProjectPermissionRoute permission="read" />,
+            element: <ProjectPermissionRoute permission={projectPermissionKinds.read} />,
             children: [
               {
                 path: "projects/:projectId",
@@ -80,7 +81,7 @@ export const routes: RouteObject[] = [
                       },
                       {
                         element: (
-                          <ProjectPermissionRoute permission="manage_requirements" />
+                          <ProjectPermissionRoute permission={projectPermissionKinds.manageRequirements} />
                         ),
                         children: [
                           {
@@ -119,7 +120,7 @@ export const routes: RouteObject[] = [
                       { index: true, element: <ProjectCategoriesListPage /> },
                       {
                         element: (
-                          <ProjectPermissionRoute permission="manage_requirements" />
+                          <ProjectPermissionRoute permission={projectPermissionKinds.manageRequirements} />
                         ),
                         children: [
                           {

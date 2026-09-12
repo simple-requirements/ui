@@ -1,11 +1,21 @@
 import { useSelector } from "@tanstack/react-store";
 import { Navigate, Outlet, useParams } from "react-router";
 
-import { getProjectPermissions } from "@/auth/projectPermissions";
+import {
+  hasProjectPermission,
+  getProjectPermissions,
+  type ProjectPermission,
+  projectPermissionKinds,
+} from "@/auth/projectPermissions";
 import { getProjectRoute } from "@/router/projectRoutes";
 import { authStore } from "@/stores/authStore";
 
-export type ProjectPermission = "read" | "manage_requirements";
+function deniedRedirectTarget(
+  projectId: string,
+  permission: ProjectPermission,
+): string {
+  return permission === projectPermissionKinds.read ? "/" : getProjectRoute(projectId);
+}
 
 export function ProjectPermissionRoute({
   permission,
@@ -16,18 +26,9 @@ export function ProjectPermissionRoute({
   if (projectId === undefined) return <Navigate to="/" replace />;
 
   const permissions = getProjectPermissions(user, projectId);
-  const allowed =
-    permission === "read"
-      ? permissions.canReadProject
-      : permissions.canManageRequirements;
 
-  if (!allowed) {
-    return (
-      <Navigate
-        to={permission === "read" ? "/" : getProjectRoute(projectId)}
-        replace
-      />
-    );
+  if (!hasProjectPermission(permissions, permission)) {
+    return <Navigate to={deniedRedirectTarget(projectId, permission)} replace />;
   }
 
   return <Outlet />;

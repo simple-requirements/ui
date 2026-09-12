@@ -16,7 +16,10 @@ function ExpandableText({
         <p>
             {truncated ? `${text.slice(0, previewLength)}…` : text}
             {truncated && (
-                <button type='button' className='review-comment__read-more' onClick={() => onExpand(id)}>
+                <button
+                    type='button'
+                    className='review-comment__read-more'
+                    onClick={() => onExpand(id)}>
                     weiter lesen
                 </button>
             )}
@@ -33,19 +36,14 @@ type Props = Readonly<{
     onResolve: (comment: ReviewComment) => void;
 }>;
 
-export function ReviewCommentsPanel({
-    comments,
-    pending,
-    readOnly = false,
-    onComment,
-    onReply,
-    onResolve,
-}: Props) {
+export function ReviewCommentsPanel({ comments, pending, readOnly = false, onComment, onReply, onResolve }: Props) {
     const [expandedIds, setExpandedIds] = useState<ReadonlySet<string>>(new Set());
     const expand = (id: string): void => setExpandedIds((current) => new Set(current).add(id));
 
     return (
-        <section className='review-comments-panel' aria-labelledby='review-comments-title'>
+        <section
+            className='review-comments-panel'
+            aria-labelledby='review-comments-title'>
             <header className='review-comments-panel__header'>
                 <h2 id='review-comments-title'>Review comments</h2>
                 {!readOnly && (
@@ -53,7 +51,9 @@ export function ReviewCommentsPanel({
                         type='button'
                         label='Comment'
                         disabled={pending}
-                        pt={{ root: { className: 'review-comments-panel__button review-comments-panel__button--comment' } }}
+                        pt={{
+                            root: { className: 'review-comments-panel__button review-comments-panel__button--comment' },
+                        }}
                         onClick={onComment}
                     />
                 )}
@@ -61,7 +61,9 @@ export function ReviewCommentsPanel({
             <div className='review-comments-panel__list'>
                 {comments.length === 0 && <p>No review comments yet.</p>}
                 {comments.map((comment) => (
-                    <article key={comment.id} className={`review-comment review-comment--${comment.status}`}>
+                    <article
+                        key={comment.id}
+                        className={`review-comment review-comment--${comment.status}`}>
                         <div className='review-comment__meta'>
                             <strong>{comment.author}</strong>
                             <time>{new Date(comment.createdAt).toLocaleString()}</time>
@@ -73,14 +75,16 @@ export function ReviewCommentsPanel({
                             onExpand={expand}
                         />
                         <p className='review-comment__status'>
-                            {comment.status === 'open'
-                                ? 'Open'
-                                : comment.closeReason === 'requirement_rejected'
-                                  ? 'Closed because requirement was rejected'
-                                  : 'Resolved'}
+                            {comment.status === 'open' ?
+                                'Open'
+                            : comment.closeReason === 'requirement_rejected' ?
+                                'Closed because requirement was rejected'
+                            :   'Resolved'}
                         </p>
                         {comment.replies.map((reply) => (
-                            <div key={reply.id} className='review-comment__reply'>
+                            <div
+                                key={reply.id}
+                                className='review-comment__reply'>
                                 <div className='review-comment__meta'>
                                     <strong>{reply.author}</strong>
                                     <time>{new Date(reply.createdAt).toLocaleString()}</time>

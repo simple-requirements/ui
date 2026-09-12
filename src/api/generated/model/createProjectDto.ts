@@ -7,6 +7,6 @@
  */
 
 export interface CreateProjectDto {
-  /** Human-readable project name. */
-  name: string;
+    /** Human-readable project name. */
+    name: string;
 }

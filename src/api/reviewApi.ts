@@ -42,7 +42,6 @@ type ApiResponse<T> = Readonly<{ data: T }>;
 const baseUrl = (projectId: string, requirementId: string): string =>
     `/projects/${projectId}/requirements/${requirementId}`;
 
-
 export async function getReviewSummary(projectId: string, requirementId: string): Promise<ReviewSummary> {
     const response = await apiFetch<ApiResponse<unknown>>(`${baseUrl(projectId, requirementId)}/review-summary`);
     return reviewSummarySchema.parse(response.data);
@@ -65,18 +64,8 @@ async function send<T>(url: string, method: 'POST' | 'PATCH', body: object, sche
 export const createReviewComment = (projectId: string, requirementId: string, text: string) =>
     send(`${baseUrl(projectId, requirementId)}/review-comments`, 'POST', { text }, commentSchema);
 
-export const createReviewReply = (
-    projectId: string,
-    requirementId: string,
-    commentId: string,
-    text: string,
-) =>
-    send(
-        `${baseUrl(projectId, requirementId)}/review-comments/${commentId}/replies`,
-        'POST',
-        { text },
-        replySchema,
-    );
+export const createReviewReply = (projectId: string, requirementId: string, commentId: string, text: string) =>
+    send(`${baseUrl(projectId, requirementId)}/review-comments/${commentId}/replies`, 'POST', { text }, replySchema);
 
 export const resolveReviewComment = (projectId: string, requirementId: string, commentId: string) =>
     send(`${baseUrl(projectId, requirementId)}/review-comments/${commentId}`, 'PATCH', {}, commentSchema);
@@ -84,14 +73,5 @@ export const resolveReviewComment = (projectId: string, requirementId: string, c
 export const approveReview = (projectId: string, requirementId: string): Promise<Requirement> =>
     send(`${baseUrl(projectId, requirementId)}/review/approve`, 'POST', {}, requirementSchema);
 
-export const rejectReview = (
-    projectId: string,
-    requirementId: string,
-    rejectionReason: string,
-): Promise<Requirement> =>
-    send(
-        `${baseUrl(projectId, requirementId)}/review/reject`,
-        'POST',
-        { rejectionReason },
-        requirementSchema,
-    );
+export const rejectReview = (projectId: string, requirementId: string, rejectionReason: string): Promise<Requirement> =>
+    send(`${baseUrl(projectId, requirementId)}/review/reject`, 'POST', { rejectionReason }, requirementSchema);

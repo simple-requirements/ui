@@ -1,21 +1,16 @@
-import { createStore } from "@tanstack/react-store";
+import { createStore } from '@tanstack/react-store';
 
-import type { AuthenticatedSession } from "@/auth/authTypes";
+import type { AuthenticatedSession } from '@/auth/authTypes';
 
 export type AuthState =
-  | Readonly<{
-      status: "unauthenticated";
-      accessToken?: undefined;
-      user?: undefined;
-      reason?: "session-expired";
-    }>
-  | Readonly<{
-      status: "authenticated";
-      accessToken: AuthenticatedSession["accessToken"];
-      user: AuthenticatedSession["user"];
-    }>;
+    | Readonly<{ status: 'unauthenticated'; accessToken?: undefined; user?: undefined; reason?: 'session-expired' }>
+    | Readonly<{
+          status: 'authenticated';
+          accessToken: AuthenticatedSession['accessToken'];
+          user: AuthenticatedSession['user'];
+      }>;
 
-const unauthenticatedState: AuthState = { status: "unauthenticated" };
+const unauthenticatedState: AuthState = { status: 'unauthenticated' };
 
 /**
  * Deliberately process-local. Authentication must not survive a reload or a
@@ -24,17 +19,13 @@ const unauthenticatedState: AuthState = { status: "unauthenticated" };
 export const authStore = createStore<AuthState>(unauthenticatedState);
 
 export function setAuthenticatedSession(session: AuthenticatedSession): void {
-  authStore.setState(() => ({ status: "authenticated", ...session }));
+    authStore.setState(() => ({ status: 'authenticated', ...session }));
 }
 
-export function clearAuthenticatedSession(reason?: "session-expired"): void {
-  authStore.setState(() =>
-    reason === undefined
-      ? unauthenticatedState
-      : { status: "unauthenticated", reason },
-  );
+export function clearAuthenticatedSession(reason?: 'session-expired'): void {
+    authStore.setState(() => (reason === undefined ? unauthenticatedState : { status: 'unauthenticated', reason }));
 }
 
 export function getAccessToken(): string | undefined {
-  return authStore.state.accessToken;
+    return authStore.state.accessToken;
 }

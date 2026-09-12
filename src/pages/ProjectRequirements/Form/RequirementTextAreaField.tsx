@@ -36,7 +36,9 @@ export function RequirementTextAreaField({
 
     return (
         <div className='project-requirements-form-page__field'>
-            <label className='project-requirements-form-page__label' htmlFor={fieldId}>
+            <label
+                className='project-requirements-form-page__label'
+                htmlFor={fieldId}>
                 {label}
             </label>
             <textarea

@@ -7,5 +7,5 @@
  */
 
 export interface CloseRequirementReviewCommentDto {
-  closedBy: string;
+    closedBy: string;
 }

@@ -13,23 +13,23 @@ import type { RequirementReviewCommentResponseDtoCloseReason } from './requireme
 import type { RequirementReviewCommentResponseDtoStatus } from './requirementReviewCommentResponseDtoStatus';
 
 export interface RequirementReviewCommentResponseDto {
-  id: string;
-  projectId: string;
-  requirementId: string;
-  /** Requirement revision number this comment was created against. */
-  createdForRevisionNumber: number;
-  text: string;
-  status: RequirementReviewCommentResponseDtoStatus;
-  author: string;
-  /** @nullable */
-  closedBy?: RequirementReviewCommentResponseDtoClosedBy;
-  /** @nullable */
-  closeReason?: RequirementReviewCommentResponseDtoCloseReason;
-  /** @nullable */
-  closedInRevisionNumber?: RequirementReviewCommentResponseDtoClosedInRevisionNumber;
-  /** @nullable */
-  closedAt?: RequirementReviewCommentResponseDtoClosedAt;
-  createdAt: string;
-  updatedAt: string;
-  replies: RequirementReviewCommentReplyResponseDto[];
+    id: string;
+    projectId: string;
+    requirementId: string;
+    /** Requirement revision number this comment was created against. */
+    createdForRevisionNumber: number;
+    text: string;
+    status: RequirementReviewCommentResponseDtoStatus;
+    author: string;
+    /** @nullable */
+    closedBy?: RequirementReviewCommentResponseDtoClosedBy;
+    /** @nullable */
+    closeReason?: RequirementReviewCommentResponseDtoCloseReason;
+    /** @nullable */
+    closedInRevisionNumber?: RequirementReviewCommentResponseDtoClosedInRevisionNumber;
+    /** @nullable */
+    closedAt?: RequirementReviewCommentResponseDtoClosedAt;
+    createdAt: string;
+    updatedAt: string;
+    replies: RequirementReviewCommentReplyResponseDto[];
 }

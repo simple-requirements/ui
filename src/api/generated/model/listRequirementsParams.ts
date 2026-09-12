@@ -7,8 +7,8 @@
  */
 
 export type ListRequirementsParams = {
-/**
- * Return requirements from the recycle bin.
- */
-deleted?: string;
+    /**
+     * Return requirements from the recycle bin.
+     */
+    deleted?: string;
 };

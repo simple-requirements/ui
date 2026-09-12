@@ -110,7 +110,10 @@ function renderRequirementsListPage(queryResult: Partial<QueryResult> = {}): Ret
                         </>
                     }
                 />
-                <Route path='/projects/:projectId/requirements/:requirementId' element={<LocationProbe />} />
+                <Route
+                    path='/projects/:projectId/requirements/:requirementId'
+                    element={<LocationProbe />}
+                />
             </Routes>
         </MemoryRouter>,
     );

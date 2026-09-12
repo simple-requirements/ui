@@ -5,695 +5,819 @@
  * HTTP API for the Requirements Management app.
  * OpenAPI spec version: 0.0.1
  */
-import {
-  useQuery
-} from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import type {
-  DataTag,
-  DefinedInitialDataOptions,
-  DefinedUseQueryResult,
-  QueryClient,
-  QueryFunction,
-  QueryKey,
-  UndefinedInitialDataOptions,
-  UseQueryOptions,
-  UseQueryResult
+    DataTag,
+    DefinedInitialDataOptions,
+    DefinedUseQueryResult,
+    QueryClient,
+    QueryFunction,
+    QueryKey,
+    UndefinedInitialDataOptions,
+    UseQueryOptions,
+    UseQueryResult,
 } from '@tanstack/react-query';
 
-import type {
-  SessionResponseDto,
-  UpdateUserStatusDto,
-  UserAdministrationResponseDto
-} from '../model';
+import type { SessionResponseDto, UpdateUserStatusDto, UserAdministrationResponseDto } from '../model';
 
 import { apiFetch } from '../../fetch';
 
-
-
-
 const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKey: K } => {
-  const result = { queryKey } as T & { queryKey: K };
-  for (const key of Object.keys(query)) {
-    // The explicit queryKey always wins, matching the previous
-    // `{ ...query, queryKey }` spread where it was set last.
-    if (key === 'queryKey') continue;
-    Object.defineProperty(result, key, {
-      enumerable: true,
-      configurable: true,
-      get: () => (query as Record<string, unknown>)[key],
-    });
-  }
-  return result;
+    const result = { queryKey } as T & { queryKey: K };
+    for (const key of Object.keys(query)) {
+        // The explicit queryKey always wins, matching the previous
+        // `{ ...query, queryKey }` spread where it was set last.
+        if (key === 'queryKey') continue;
+        Object.defineProperty(result, key, {
+            enumerable: true,
+            configurable: true,
+            get: () => (query as Record<string, unknown>)[key],
+        });
+    }
+    return result;
 };
 
-export type userAdministrationControllerListResponse200 = {
-  data: UserAdministrationResponseDto[]
-  status: 200
-}
+export type userAdministrationControllerListResponse200 = { data: UserAdministrationResponseDto[]; status: 200 };
 
-export type userAdministrationControllerListResponseSuccess = (userAdministrationControllerListResponse200) & {
-  headers: Headers;
+export type userAdministrationControllerListResponseSuccess = userAdministrationControllerListResponse200 & {
+    headers: Headers;
 };
-;
-
-export type userAdministrationControllerListResponse = (userAdministrationControllerListResponseSuccess)
+export type userAdministrationControllerListResponse = userAdministrationControllerListResponseSuccess;
 
 export const getUserAdministrationControllerListUrl = () => {
+    return `/admin/users`;
+};
 
-
-
-
-  return `/admin/users`
-}
-
-export const userAdministrationControllerList = async ( options?: RequestInit): Promise<userAdministrationControllerListResponse> => {
-
-  return apiFetch<userAdministrationControllerListResponse>(getUserAdministrationControllerListUrl(),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
+export const userAdministrationControllerList = async (
+    options?: RequestInit,
+): Promise<userAdministrationControllerListResponse> => {
+    return apiFetch<userAdministrationControllerListResponse>(getUserAdministrationControllerListUrl(), {
+        ...options,
+        method: 'GET',
+    });
+};
 
 export const getUserAdministrationControllerListQueryKey = () => {
-    return [
-    `/admin/users`
-    ] as const;
-    }
-
-
-export const getUserAdministrationControllerListQueryOptions = <TData = Awaited<ReturnType<typeof userAdministrationControllerList>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerList>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getUserAdministrationControllerListQueryKey();
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof userAdministrationControllerList>>> = ({ signal }) => userAdministrationControllerList({ signal });
-
-
-
-
-
-   return  { queryKey, queryFn,   staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerList>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type UserAdministrationControllerListQueryResult = NonNullable<Awaited<ReturnType<typeof userAdministrationControllerList>>>
-export type UserAdministrationControllerListQueryError = unknown
-
-
-export function useUserAdministrationControllerList<TData = Awaited<ReturnType<typeof userAdministrationControllerList>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerList>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof userAdministrationControllerList>>,
-          TError,
-          Awaited<ReturnType<typeof userAdministrationControllerList>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useUserAdministrationControllerList<TData = Awaited<ReturnType<typeof userAdministrationControllerList>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerList>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof userAdministrationControllerList>>,
-          TError,
-          Awaited<ReturnType<typeof userAdministrationControllerList>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useUserAdministrationControllerList<TData = Awaited<ReturnType<typeof userAdministrationControllerList>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerList>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-
-export function useUserAdministrationControllerList<TData = Awaited<ReturnType<typeof userAdministrationControllerList>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerList>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getUserAdministrationControllerListQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-export type userAdministrationControllerFindResponse200 = {
-  data: UserAdministrationResponseDto
-  status: 200
-}
-
-export type userAdministrationControllerFindResponseSuccess = (userAdministrationControllerFindResponse200) & {
-  headers: Headers;
+    return [`/admin/users`] as const;
 };
-;
 
-export type userAdministrationControllerFindResponse = (userAdministrationControllerFindResponseSuccess)
+export const getUserAdministrationControllerListQueryOptions = <
+    TData = Awaited<ReturnType<typeof userAdministrationControllerList>>,
+    TError = unknown,
+>(options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerList>>, TError, TData>>;
+}) => {
+    const { query: queryOptions } = options ?? {};
 
-export const getUserAdministrationControllerFindUrl = (userId: string,) => {
+    const queryKey = queryOptions?.queryKey ?? getUserAdministrationControllerListQueryKey();
 
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof userAdministrationControllerList>>> = ({ signal }) =>
+        userAdministrationControllerList({ signal });
 
-
-
-  return `/admin/users/${userId}`
-}
-
-export const userAdministrationControllerFind = async (userId: string, options?: RequestInit): Promise<userAdministrationControllerFindResponse> => {
-
-  return apiFetch<userAdministrationControllerFindResponse>(getUserAdministrationControllerFindUrl(userId),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getUserAdministrationControllerFindQueryKey = (userId: string,) => {
-    return [
-    `/admin/users/${userId}`
-    ] as const;
-    }
-
-
-export const getUserAdministrationControllerFindQueryOptions = <TData = Awaited<ReturnType<typeof userAdministrationControllerFind>>, TError = unknown>(userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerFind>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getUserAdministrationControllerFindQueryKey(userId);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof userAdministrationControllerFind>>> = ({ signal }) => userAdministrationControllerFind(userId, { signal });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: userId !== null && userId !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerFind>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type UserAdministrationControllerFindQueryResult = NonNullable<Awaited<ReturnType<typeof userAdministrationControllerFind>>>
-export type UserAdministrationControllerFindQueryError = unknown
-
-
-export function useUserAdministrationControllerFind<TData = Awaited<ReturnType<typeof userAdministrationControllerFind>>, TError = unknown>(
- userId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerFind>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof userAdministrationControllerFind>>,
-          TError,
-          Awaited<ReturnType<typeof userAdministrationControllerFind>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useUserAdministrationControllerFind<TData = Awaited<ReturnType<typeof userAdministrationControllerFind>>, TError = unknown>(
- userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerFind>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof userAdministrationControllerFind>>,
-          TError,
-          Awaited<ReturnType<typeof userAdministrationControllerFind>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useUserAdministrationControllerFind<TData = Awaited<ReturnType<typeof userAdministrationControllerFind>>, TError = unknown>(
- userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerFind>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-
-export function useUserAdministrationControllerFind<TData = Awaited<ReturnType<typeof userAdministrationControllerFind>>, TError = unknown>(
- userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerFind>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getUserAdministrationControllerFindQueryOptions(userId,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-export type userAdministrationControllerUpdateStatusResponse200 = {
-  data: UserAdministrationResponseDto
-  status: 200
-}
-
-export type userAdministrationControllerUpdateStatusResponseSuccess = (userAdministrationControllerUpdateStatusResponse200) & {
-  headers: Headers;
+    return { queryKey, queryFn, staleTime: 30000, ...queryOptions } as UseQueryOptions<
+        Awaited<ReturnType<typeof userAdministrationControllerList>>,
+        TError,
+        TData
+    > & { queryKey: DataTag<QueryKey, TData, TError> };
 };
-;
 
-export type userAdministrationControllerUpdateStatusResponse = (userAdministrationControllerUpdateStatusResponseSuccess)
+export type UserAdministrationControllerListQueryResult = NonNullable<
+    Awaited<ReturnType<typeof userAdministrationControllerList>>
+>;
+export type UserAdministrationControllerListQueryError = unknown;
 
-export const getUserAdministrationControllerUpdateStatusUrl = (userId: string,) => {
+export function useUserAdministrationControllerList<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerList>>,
+    TError = unknown,
+>(
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerList>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof userAdministrationControllerList>>,
+                    TError,
+                    Awaited<ReturnType<typeof userAdministrationControllerList>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useUserAdministrationControllerList<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerList>>,
+    TError = unknown,
+>(
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerList>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof userAdministrationControllerList>>,
+                    TError,
+                    Awaited<ReturnType<typeof userAdministrationControllerList>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useUserAdministrationControllerList<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerList>>,
+    TError = unknown,
+>(
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerList>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
+export function useUserAdministrationControllerList<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerList>>,
+    TError = unknown,
+>(
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerList>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getUserAdministrationControllerListQueryOptions(options);
 
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
 
-
-  return `/admin/users/${userId}/status`
+    return withQueryKey(query, queryOptions.queryKey);
 }
 
-export const userAdministrationControllerUpdateStatus = async (userId: string,
-    updateUserStatusDto: UpdateUserStatusDto, options?: RequestInit): Promise<userAdministrationControllerUpdateStatusResponse> => {
+export type userAdministrationControllerFindResponse200 = { data: UserAdministrationResponseDto; status: 200 };
 
-  return apiFetch<userAdministrationControllerUpdateStatusResponse>(getUserAdministrationControllerUpdateStatusUrl(userId),
-  {
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(updateUserStatusDto)
-  }
-);}
-
-
-
-
-
-export const getUserAdministrationControllerUpdateStatusQueryKey = (userId: string,
-    updateUserStatusDto?: UpdateUserStatusDto,) => {
-    return [
-    'PATCH', `/admin/users/${userId}/status`, updateUserStatusDto
-    ] as const;
-    }
-
-
-export const getUserAdministrationControllerUpdateStatusQueryOptions = <TData = Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>, TError = unknown>(userId: string,
-    updateUserStatusDto: UpdateUserStatusDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getUserAdministrationControllerUpdateStatusQueryKey(userId,updateUserStatusDto);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>> = ({ signal }) => userAdministrationControllerUpdateStatus(userId,updateUserStatusDto, { signal });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: userId !== null && userId !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type UserAdministrationControllerUpdateStatusQueryResult = NonNullable<Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>>
-export type UserAdministrationControllerUpdateStatusQueryError = unknown
-
-
-export function useUserAdministrationControllerUpdateStatus<TData = Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>, TError = unknown>(
- userId: string,
-    updateUserStatusDto: UpdateUserStatusDto, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>,
-          TError,
-          Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useUserAdministrationControllerUpdateStatus<TData = Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>, TError = unknown>(
- userId: string,
-    updateUserStatusDto: UpdateUserStatusDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>,
-          TError,
-          Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useUserAdministrationControllerUpdateStatus<TData = Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>, TError = unknown>(
- userId: string,
-    updateUserStatusDto: UpdateUserStatusDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-
-export function useUserAdministrationControllerUpdateStatus<TData = Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>, TError = unknown>(
- userId: string,
-    updateUserStatusDto: UpdateUserStatusDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getUserAdministrationControllerUpdateStatusQueryOptions(userId,updateUserStatusDto,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-export type userAdministrationControllerListSessionsResponse200 = {
-  data: SessionResponseDto[]
-  status: 200
-}
-
-export type userAdministrationControllerListSessionsResponseSuccess = (userAdministrationControllerListSessionsResponse200) & {
-  headers: Headers;
+export type userAdministrationControllerFindResponseSuccess = userAdministrationControllerFindResponse200 & {
+    headers: Headers;
 };
-;
+export type userAdministrationControllerFindResponse = userAdministrationControllerFindResponseSuccess;
 
-export type userAdministrationControllerListSessionsResponse = (userAdministrationControllerListSessionsResponseSuccess)
-
-export const getUserAdministrationControllerListSessionsUrl = (userId: string,) => {
-
-
-
-
-  return `/admin/users/${userId}/sessions`
-}
-
-export const userAdministrationControllerListSessions = async (userId: string, options?: RequestInit): Promise<userAdministrationControllerListSessionsResponse> => {
-
-  return apiFetch<userAdministrationControllerListSessionsResponse>(getUserAdministrationControllerListSessionsUrl(userId),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getUserAdministrationControllerListSessionsQueryKey = (userId: string,) => {
-    return [
-    `/admin/users/${userId}/sessions`
-    ] as const;
-    }
-
-
-export const getUserAdministrationControllerListSessionsQueryOptions = <TData = Awaited<ReturnType<typeof userAdministrationControllerListSessions>>, TError = unknown>(userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerListSessions>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getUserAdministrationControllerListSessionsQueryKey(userId);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof userAdministrationControllerListSessions>>> = ({ signal }) => userAdministrationControllerListSessions(userId, { signal });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: userId !== null && userId !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerListSessions>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type UserAdministrationControllerListSessionsQueryResult = NonNullable<Awaited<ReturnType<typeof userAdministrationControllerListSessions>>>
-export type UserAdministrationControllerListSessionsQueryError = unknown
-
-
-export function useUserAdministrationControllerListSessions<TData = Awaited<ReturnType<typeof userAdministrationControllerListSessions>>, TError = unknown>(
- userId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerListSessions>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof userAdministrationControllerListSessions>>,
-          TError,
-          Awaited<ReturnType<typeof userAdministrationControllerListSessions>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useUserAdministrationControllerListSessions<TData = Awaited<ReturnType<typeof userAdministrationControllerListSessions>>, TError = unknown>(
- userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerListSessions>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof userAdministrationControllerListSessions>>,
-          TError,
-          Awaited<ReturnType<typeof userAdministrationControllerListSessions>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useUserAdministrationControllerListSessions<TData = Awaited<ReturnType<typeof userAdministrationControllerListSessions>>, TError = unknown>(
- userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerListSessions>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-
-export function useUserAdministrationControllerListSessions<TData = Awaited<ReturnType<typeof userAdministrationControllerListSessions>>, TError = unknown>(
- userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerListSessions>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getUserAdministrationControllerListSessionsQueryOptions(userId,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-export type userAdministrationControllerRevokeAllResponse204 = {
-  data: void
-  status: 204
-}
-
-export type userAdministrationControllerRevokeAllResponseSuccess = (userAdministrationControllerRevokeAllResponse204) & {
-  headers: Headers;
+export const getUserAdministrationControllerFindUrl = (userId: string) => {
+    return `/admin/users/${userId}`;
 };
-;
 
-export type userAdministrationControllerRevokeAllResponse = (userAdministrationControllerRevokeAllResponseSuccess)
-
-export const getUserAdministrationControllerRevokeAllUrl = (userId: string,) => {
-
-
-
-
-  return `/admin/users/${userId}/sessions/revoke`
-}
-
-export const userAdministrationControllerRevokeAll = async (userId: string, options?: RequestInit): Promise<userAdministrationControllerRevokeAllResponse> => {
-
-  return apiFetch<userAdministrationControllerRevokeAllResponse>(getUserAdministrationControllerRevokeAllUrl(userId),
-  {
-    ...options,
-    method: 'POST'
-
-
-  }
-);}
-
-
-
-
-
-export const getUserAdministrationControllerRevokeAllQueryKey = (userId: string,) => {
-    return [
-    'POST', `/admin/users/${userId}/sessions/revoke`
-    ] as const;
-    }
-
-
-export const getUserAdministrationControllerRevokeAllQueryOptions = <TData = Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>, TError = unknown>(userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getUserAdministrationControllerRevokeAllQueryKey(userId);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>> = ({ signal }) => userAdministrationControllerRevokeAll(userId, { signal });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: userId !== null && userId !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type UserAdministrationControllerRevokeAllQueryResult = NonNullable<Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>>
-export type UserAdministrationControllerRevokeAllQueryError = unknown
-
-
-export function useUserAdministrationControllerRevokeAll<TData = Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>, TError = unknown>(
- userId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>,
-          TError,
-          Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useUserAdministrationControllerRevokeAll<TData = Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>, TError = unknown>(
- userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>,
-          TError,
-          Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useUserAdministrationControllerRevokeAll<TData = Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>, TError = unknown>(
- userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-
-export function useUserAdministrationControllerRevokeAll<TData = Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>, TError = unknown>(
- userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getUserAdministrationControllerRevokeAllQueryOptions(userId,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-export type userAdministrationControllerRevokeOneResponse204 = {
-  data: void
-  status: 204
-}
-
-export type userAdministrationControllerRevokeOneResponseSuccess = (userAdministrationControllerRevokeOneResponse204) & {
-  headers: Headers;
+export const userAdministrationControllerFind = async (
+    userId: string,
+    options?: RequestInit,
+): Promise<userAdministrationControllerFindResponse> => {
+    return apiFetch<userAdministrationControllerFindResponse>(getUserAdministrationControllerFindUrl(userId), {
+        ...options,
+        method: 'GET',
+    });
 };
-;
 
-export type userAdministrationControllerRevokeOneResponse = (userAdministrationControllerRevokeOneResponseSuccess)
+export const getUserAdministrationControllerFindQueryKey = (userId: string) => {
+    return [`/admin/users/${userId}`] as const;
+};
 
-export const getUserAdministrationControllerRevokeOneUrl = (userId: string,
-    sessionId: string,) => {
-
-
-
-
-  return `/admin/users/${userId}/sessions/${sessionId}/revoke`
-}
-
-export const userAdministrationControllerRevokeOne = async (userId: string,
-    sessionId: string, options?: RequestInit): Promise<userAdministrationControllerRevokeOneResponse> => {
-
-  return apiFetch<userAdministrationControllerRevokeOneResponse>(getUserAdministrationControllerRevokeOneUrl(userId,sessionId),
-  {
-    ...options,
-    method: 'POST'
-
-
-  }
-);}
-
-
-
-
-
-export const getUserAdministrationControllerRevokeOneQueryKey = (userId: string,
-    sessionId: string,) => {
-    return [
-    'POST', `/admin/users/${userId}/sessions/${sessionId}/revoke`
-    ] as const;
-    }
-
-
-export const getUserAdministrationControllerRevokeOneQueryOptions = <TData = Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>, TError = unknown>(userId: string,
-    sessionId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>, TError, TData>>, }
+export const getUserAdministrationControllerFindQueryOptions = <
+    TData = Awaited<ReturnType<typeof userAdministrationControllerFind>>,
+    TError = unknown,
+>(
+    userId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerFind>>, TError, TData>>;
+    },
 ) => {
+    const { query: queryOptions } = options ?? {};
 
-const {query: queryOptions} = options ?? {};
+    const queryKey = queryOptions?.queryKey ?? getUserAdministrationControllerFindQueryKey(userId);
 
-  const queryKey =  queryOptions?.queryKey ?? getUserAdministrationControllerRevokeOneQueryKey(userId,sessionId);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof userAdministrationControllerFind>>> = ({ signal }) =>
+        userAdministrationControllerFind(userId, { signal });
 
+    return {
+        queryKey,
+        queryFn,
+        enabled: userId !== null && userId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerFind>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
 
+export type UserAdministrationControllerFindQueryResult = NonNullable<
+    Awaited<ReturnType<typeof userAdministrationControllerFind>>
+>;
+export type UserAdministrationControllerFindQueryError = unknown;
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>> = ({ signal }) => userAdministrationControllerRevokeOne(userId,sessionId, { signal });
+export function useUserAdministrationControllerFind<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerFind>>,
+    TError = unknown,
+>(
+    userId: string,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerFind>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof userAdministrationControllerFind>>,
+                    TError,
+                    Awaited<ReturnType<typeof userAdministrationControllerFind>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useUserAdministrationControllerFind<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerFind>>,
+    TError = unknown,
+>(
+    userId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerFind>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof userAdministrationControllerFind>>,
+                    TError,
+                    Awaited<ReturnType<typeof userAdministrationControllerFind>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useUserAdministrationControllerFind<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerFind>>,
+    TError = unknown,
+>(
+    userId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerFind>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
+export function useUserAdministrationControllerFind<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerFind>>,
+    TError = unknown,
+>(
+    userId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerFind>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getUserAdministrationControllerFindQueryOptions(userId, options);
 
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
 
-
-
-   return  { queryKey, queryFn, enabled: userId !== null && userId !== undefined && sessionId !== null && sessionId !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+    return withQueryKey(query, queryOptions.queryKey);
 }
 
-export type UserAdministrationControllerRevokeOneQueryResult = NonNullable<Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>>
-export type UserAdministrationControllerRevokeOneQueryError = unknown
+export type userAdministrationControllerUpdateStatusResponse200 = { data: UserAdministrationResponseDto; status: 200 };
 
+export type userAdministrationControllerUpdateStatusResponseSuccess =
+    userAdministrationControllerUpdateStatusResponse200 & { headers: Headers };
+export type userAdministrationControllerUpdateStatusResponse = userAdministrationControllerUpdateStatusResponseSuccess;
 
-export function useUserAdministrationControllerRevokeOne<TData = Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>, TError = unknown>(
- userId: string,
-    sessionId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>,
-          TError,
-          Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useUserAdministrationControllerRevokeOne<TData = Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>, TError = unknown>(
- userId: string,
-    sessionId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>,
-          TError,
-          Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useUserAdministrationControllerRevokeOne<TData = Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>, TError = unknown>(
- userId: string,
-    sessionId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export const getUserAdministrationControllerUpdateStatusUrl = (userId: string) => {
+    return `/admin/users/${userId}/status`;
+};
 
-export function useUserAdministrationControllerRevokeOne<TData = Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>, TError = unknown>(
- userId: string,
-    sessionId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export const userAdministrationControllerUpdateStatus = async (
+    userId: string,
+    updateUserStatusDto: UpdateUserStatusDto,
+    options?: RequestInit,
+): Promise<userAdministrationControllerUpdateStatusResponse> => {
+    return apiFetch<userAdministrationControllerUpdateStatusResponse>(
+        getUserAdministrationControllerUpdateStatusUrl(userId),
+        {
+            ...options,
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', ...options?.headers },
+            body: JSON.stringify(updateUserStatusDto),
+        },
+    );
+};
 
-  const queryOptions = getUserAdministrationControllerRevokeOneQueryOptions(userId,sessionId,options)
+export const getUserAdministrationControllerUpdateStatusQueryKey = (
+    userId: string,
+    updateUserStatusDto?: UpdateUserStatusDto,
+) => {
+    return ['PATCH', `/admin/users/${userId}/status`, updateUserStatusDto] as const;
+};
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export const getUserAdministrationControllerUpdateStatusQueryOptions = <
+    TData = Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>,
+    TError = unknown,
+>(
+    userId: string,
+    updateUserStatusDto: UpdateUserStatusDto,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>, TError, TData>
+        >;
+    },
+) => {
+    const { query: queryOptions } = options ?? {};
 
-  return withQueryKey(query, queryOptions.queryKey);
+    const queryKey =
+        queryOptions?.queryKey ?? getUserAdministrationControllerUpdateStatusQueryKey(userId, updateUserStatusDto);
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>> = ({ signal }) =>
+        userAdministrationControllerUpdateStatus(userId, updateUserStatusDto, { signal });
+
+    return {
+        queryKey,
+        queryFn,
+        enabled: userId !== null && userId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
+
+export type UserAdministrationControllerUpdateStatusQueryResult = NonNullable<
+    Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>
+>;
+export type UserAdministrationControllerUpdateStatusQueryError = unknown;
+
+export function useUserAdministrationControllerUpdateStatus<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>,
+    TError = unknown,
+>(
+    userId: string,
+    updateUserStatusDto: UpdateUserStatusDto,
+    options: {
+        query: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>, TError, TData>
+        >
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>,
+                    TError,
+                    Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useUserAdministrationControllerUpdateStatus<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>,
+    TError = unknown,
+>(
+    userId: string,
+    updateUserStatusDto: UpdateUserStatusDto,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>, TError, TData>
+        >
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>,
+                    TError,
+                    Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useUserAdministrationControllerUpdateStatus<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>,
+    TError = unknown,
+>(
+    userId: string,
+    updateUserStatusDto: UpdateUserStatusDto,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>, TError, TData>
+        >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+export function useUserAdministrationControllerUpdateStatus<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>,
+    TError = unknown,
+>(
+    userId: string,
+    updateUserStatusDto: UpdateUserStatusDto,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerUpdateStatus>>, TError, TData>
+        >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getUserAdministrationControllerUpdateStatusQueryOptions(userId, updateUserStatusDto, options);
+
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+
+    return withQueryKey(query, queryOptions.queryKey);
 }
 
+export type userAdministrationControllerListSessionsResponse200 = { data: SessionResponseDto[]; status: 200 };
 
+export type userAdministrationControllerListSessionsResponseSuccess =
+    userAdministrationControllerListSessionsResponse200 & { headers: Headers };
+export type userAdministrationControllerListSessionsResponse = userAdministrationControllerListSessionsResponseSuccess;
 
+export const getUserAdministrationControllerListSessionsUrl = (userId: string) => {
+    return `/admin/users/${userId}/sessions`;
+};
 
+export const userAdministrationControllerListSessions = async (
+    userId: string,
+    options?: RequestInit,
+): Promise<userAdministrationControllerListSessionsResponse> => {
+    return apiFetch<userAdministrationControllerListSessionsResponse>(
+        getUserAdministrationControllerListSessionsUrl(userId),
+        { ...options, method: 'GET' },
+    );
+};
 
+export const getUserAdministrationControllerListSessionsQueryKey = (userId: string) => {
+    return [`/admin/users/${userId}/sessions`] as const;
+};
 
+export const getUserAdministrationControllerListSessionsQueryOptions = <
+    TData = Awaited<ReturnType<typeof userAdministrationControllerListSessions>>,
+    TError = unknown,
+>(
+    userId: string,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerListSessions>>, TError, TData>
+        >;
+    },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey = queryOptions?.queryKey ?? getUserAdministrationControllerListSessionsQueryKey(userId);
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof userAdministrationControllerListSessions>>> = ({ signal }) =>
+        userAdministrationControllerListSessions(userId, { signal });
+
+    return {
+        queryKey,
+        queryFn,
+        enabled: userId !== null && userId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerListSessions>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
+
+export type UserAdministrationControllerListSessionsQueryResult = NonNullable<
+    Awaited<ReturnType<typeof userAdministrationControllerListSessions>>
+>;
+export type UserAdministrationControllerListSessionsQueryError = unknown;
+
+export function useUserAdministrationControllerListSessions<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerListSessions>>,
+    TError = unknown,
+>(
+    userId: string,
+    options: {
+        query: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerListSessions>>, TError, TData>
+        >
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof userAdministrationControllerListSessions>>,
+                    TError,
+                    Awaited<ReturnType<typeof userAdministrationControllerListSessions>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useUserAdministrationControllerListSessions<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerListSessions>>,
+    TError = unknown,
+>(
+    userId: string,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerListSessions>>, TError, TData>
+        >
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof userAdministrationControllerListSessions>>,
+                    TError,
+                    Awaited<ReturnType<typeof userAdministrationControllerListSessions>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useUserAdministrationControllerListSessions<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerListSessions>>,
+    TError = unknown,
+>(
+    userId: string,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerListSessions>>, TError, TData>
+        >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+export function useUserAdministrationControllerListSessions<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerListSessions>>,
+    TError = unknown,
+>(
+    userId: string,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerListSessions>>, TError, TData>
+        >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getUserAdministrationControllerListSessionsQueryOptions(userId, options);
+
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+
+    return withQueryKey(query, queryOptions.queryKey);
+}
+
+export type userAdministrationControllerRevokeAllResponse204 = { data: void; status: 204 };
+
+export type userAdministrationControllerRevokeAllResponseSuccess = userAdministrationControllerRevokeAllResponse204 & {
+    headers: Headers;
+};
+export type userAdministrationControllerRevokeAllResponse = userAdministrationControllerRevokeAllResponseSuccess;
+
+export const getUserAdministrationControllerRevokeAllUrl = (userId: string) => {
+    return `/admin/users/${userId}/sessions/revoke`;
+};
+
+export const userAdministrationControllerRevokeAll = async (
+    userId: string,
+    options?: RequestInit,
+): Promise<userAdministrationControllerRevokeAllResponse> => {
+    return apiFetch<userAdministrationControllerRevokeAllResponse>(
+        getUserAdministrationControllerRevokeAllUrl(userId),
+        { ...options, method: 'POST' },
+    );
+};
+
+export const getUserAdministrationControllerRevokeAllQueryKey = (userId: string) => {
+    return ['POST', `/admin/users/${userId}/sessions/revoke`] as const;
+};
+
+export const getUserAdministrationControllerRevokeAllQueryOptions = <
+    TData = Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>,
+    TError = unknown,
+>(
+    userId: string,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>, TError, TData>
+        >;
+    },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey = queryOptions?.queryKey ?? getUserAdministrationControllerRevokeAllQueryKey(userId);
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>> = ({ signal }) =>
+        userAdministrationControllerRevokeAll(userId, { signal });
+
+    return {
+        queryKey,
+        queryFn,
+        enabled: userId !== null && userId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
+
+export type UserAdministrationControllerRevokeAllQueryResult = NonNullable<
+    Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>
+>;
+export type UserAdministrationControllerRevokeAllQueryError = unknown;
+
+export function useUserAdministrationControllerRevokeAll<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>,
+    TError = unknown,
+>(
+    userId: string,
+    options: {
+        query: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>, TError, TData>
+        >
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>,
+                    TError,
+                    Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useUserAdministrationControllerRevokeAll<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>,
+    TError = unknown,
+>(
+    userId: string,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>, TError, TData>
+        >
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>,
+                    TError,
+                    Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useUserAdministrationControllerRevokeAll<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>,
+    TError = unknown,
+>(
+    userId: string,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>, TError, TData>
+        >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+export function useUserAdministrationControllerRevokeAll<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>,
+    TError = unknown,
+>(
+    userId: string,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeAll>>, TError, TData>
+        >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getUserAdministrationControllerRevokeAllQueryOptions(userId, options);
+
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+
+    return withQueryKey(query, queryOptions.queryKey);
+}
+
+export type userAdministrationControllerRevokeOneResponse204 = { data: void; status: 204 };
+
+export type userAdministrationControllerRevokeOneResponseSuccess = userAdministrationControllerRevokeOneResponse204 & {
+    headers: Headers;
+};
+export type userAdministrationControllerRevokeOneResponse = userAdministrationControllerRevokeOneResponseSuccess;
+
+export const getUserAdministrationControllerRevokeOneUrl = (userId: string, sessionId: string) => {
+    return `/admin/users/${userId}/sessions/${sessionId}/revoke`;
+};
+
+export const userAdministrationControllerRevokeOne = async (
+    userId: string,
+    sessionId: string,
+    options?: RequestInit,
+): Promise<userAdministrationControllerRevokeOneResponse> => {
+    return apiFetch<userAdministrationControllerRevokeOneResponse>(
+        getUserAdministrationControllerRevokeOneUrl(userId, sessionId),
+        { ...options, method: 'POST' },
+    );
+};
+
+export const getUserAdministrationControllerRevokeOneQueryKey = (userId: string, sessionId: string) => {
+    return ['POST', `/admin/users/${userId}/sessions/${sessionId}/revoke`] as const;
+};
+
+export const getUserAdministrationControllerRevokeOneQueryOptions = <
+    TData = Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>,
+    TError = unknown,
+>(
+    userId: string,
+    sessionId: string,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>, TError, TData>
+        >;
+    },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey = queryOptions?.queryKey ?? getUserAdministrationControllerRevokeOneQueryKey(userId, sessionId);
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>> = ({ signal }) =>
+        userAdministrationControllerRevokeOne(userId, sessionId, { signal });
+
+    return {
+        queryKey,
+        queryFn,
+        enabled: userId !== null && userId !== undefined && sessionId !== null && sessionId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
+
+export type UserAdministrationControllerRevokeOneQueryResult = NonNullable<
+    Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>
+>;
+export type UserAdministrationControllerRevokeOneQueryError = unknown;
+
+export function useUserAdministrationControllerRevokeOne<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>,
+    TError = unknown,
+>(
+    userId: string,
+    sessionId: string,
+    options: {
+        query: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>, TError, TData>
+        >
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>,
+                    TError,
+                    Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useUserAdministrationControllerRevokeOne<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>,
+    TError = unknown,
+>(
+    userId: string,
+    sessionId: string,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>, TError, TData>
+        >
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>,
+                    TError,
+                    Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useUserAdministrationControllerRevokeOne<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>,
+    TError = unknown,
+>(
+    userId: string,
+    sessionId: string,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>, TError, TData>
+        >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+export function useUserAdministrationControllerRevokeOne<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>,
+    TError = unknown,
+>(
+    userId: string,
+    sessionId: string,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerRevokeOne>>, TError, TData>
+        >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getUserAdministrationControllerRevokeOneQueryOptions(userId, sessionId, options);
+
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+
+    return withQueryKey(query, queryOptions.queryKey);
+}

@@ -29,7 +29,11 @@ function getRequirementCountByCategory(requirements: readonly unknown[] | undefi
     return counts;
 }
 
-function getCategoryRequirementCount(categoryId: string, countByCategory: ReadonlyMap<string, number>, fallback: unknown): number {
+function getCategoryRequirementCount(
+    categoryId: string,
+    countByCategory: ReadonlyMap<string, number>,
+    fallback: unknown,
+): number {
     const count = countByCategory.get(categoryId);
 
     if (count !== undefined) {
@@ -112,5 +116,12 @@ export function useProjectCategoriesList(projectId: string | undefined) {
         });
     }, [categories]);
 
-    return { categories, categoriesQuery, requirementsQuery, selectedCategory, selectedCategoryId, setSelectedCategoryId };
+    return {
+        categories,
+        categoriesQuery,
+        requirementsQuery,
+        selectedCategory,
+        selectedCategoryId,
+        setSelectedCategoryId,
+    };
 }

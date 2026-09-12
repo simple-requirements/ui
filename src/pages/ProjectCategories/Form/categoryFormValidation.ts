@@ -2,7 +2,11 @@ import type { ZodError } from 'zod';
 
 import type { Category } from '@/api/categoriesApi';
 
-import type { CategoryFormFieldName, CategoryFormState, CategoryFormValues } from '@/pages/ProjectCategories/Form/categoryFormTypes';
+import type {
+    CategoryFormFieldName,
+    CategoryFormState,
+    CategoryFormValues,
+} from '@/pages/ProjectCategories/Form/categoryFormTypes';
 
 export class CategoryFormValidationError extends Error {
     readonly fieldErrors: CategoryFormState['fieldErrors'];

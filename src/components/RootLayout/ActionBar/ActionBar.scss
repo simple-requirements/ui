@@ -1,59 +1,63 @@
-@use "styles/UiMixins" as ui;
+@use 'styles/UiMixins' as ui;
 
 .action-bar {
-  block-size: 100%;
-  display: flex;
-  align-items: center;
-  gap: 1.2rem;
-  padding-inline: 1.2rem;
-  overflow: hidden;
-  background: var(--color-app-surface);
-  border-block-end: var(--ui-border);
-
-  &__lookup {
-    min-inline-size: 0;
+    block-size: 100%;
     display: flex;
     align-items: center;
-    gap: 0.8rem;
-  }
+    gap: 1.2rem;
+    padding-inline: 1.2rem;
+    overflow: hidden;
+    background: var(--color-app-surface);
+    border-block-end: var(--ui-border);
 
-  &__input {
-    inline-size: 18rem;
-    block-size: var(--ui-control-height);
-    padding-inline: 0.8rem;
-    border-radius: 0;
-    box-shadow: none;
-  }
-
-  &__button {
-    @include ui.outline-button;
-
-    block-size: var(--ui-control-height);
-    padding-inline: 1rem;
-    white-space: nowrap;
-  }
-
-  &__decision-button {
-    @include ui.dialog-button;
-
-    block-size: var(--ui-control-height);
-  }
-
-  &__decision-button--approve {
-    @include ui.primary-button;
-  }
-
-  &__decision-button--reject {
-    @include ui.prime-button-reset;
-
-    border: 0;
-    background: var(--color-feedback-error-border);
-    color: var(--color-app-text-inverse);
-
-    &:enabled:hover {
-      border: 0;
-      background: var(--color-feedback-error-text);
-      color: var(--color-app-text-inverse);
+    &__lookup {
+        min-inline-size: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
     }
-  }
+
+    &__input {
+        inline-size: 18rem;
+        block-size: var(--ui-control-height);
+        padding-inline: 0.8rem;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    &__button {
+        @include ui.outline-button;
+
+        block-size: var(--ui-control-height);
+        padding-inline: 1rem;
+        white-space: nowrap;
+    }
+
+    &__account {
+        margin-inline-start: auto;
+    }
+
+    &__decision-button {
+        @include ui.dialog-button;
+
+        block-size: var(--ui-control-height);
+    }
+
+    &__decision-button--approve {
+        @include ui.primary-button;
+    }
+
+    &__decision-button--reject {
+        @include ui.prime-button-reset;
+
+        border: 0;
+        background: var(--color-feedback-error-border);
+        color: var(--color-app-text-inverse);
+
+        &:enabled:hover {
+            border: 0;
+            background: var(--color-feedback-error-text);
+            color: var(--color-app-text-inverse);
+        }
+    }
 }

@@ -56,7 +56,6 @@ function getCategoryRows(dataTable: DataTable): readonly Record<string, string>[
     });
 }
 
-
 async function createBackendProject(projectName: string): Promise<BackendProject> {
     return createTestProject(projectName);
 }

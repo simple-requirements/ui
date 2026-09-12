@@ -1,137 +1,137 @@
 .project-membership-administration {
-  padding: var(--ui-space-xl);
+    padding: var(--ui-space-xl);
 
-  &__eyebrow {
-    margin: 0;
-    color: var(--color-app-text-muted);
-  }
+    &__eyebrow {
+        margin: 0;
+        color: var(--color-app-text-muted);
+    }
 
-  &__project-picker {
-    display: grid;
-    gap: var(--ui-space-xs);
-    max-inline-size: 32rem;
-    margin-block-end: var(--ui-space-xl);
-  }
+    &__project-picker {
+        display: grid;
+        gap: var(--ui-space-xs);
+        max-inline-size: 32rem;
+        margin-block-end: var(--ui-space-xl);
+    }
 
-  &__project-picker label {
-    font-weight: 700;
-  }
+    &__project-picker label {
+        font-weight: 700;
+    }
 
-  &__project-picker select,
-  .project-memberships__user-select select {
-    min-block-size: 2.75rem;
-    padding: var(--ui-space-sm);
-    border: var(--ui-border);
-    border-radius: var(--ui-border-radius-small);
-    background: var(--color-app-surface);
-    color: inherit;
-    font: inherit;
-  }
+    &__project-picker select,
+    .project-memberships__user-select select {
+        min-block-size: 2.75rem;
+        padding: var(--ui-space-sm);
+        border: var(--ui-border);
+        border-radius: var(--ui-border-radius-small);
+        background: var(--color-app-surface);
+        color: inherit;
+        font: inherit;
+    }
 
-  &__selection {
+    &__selection {
+        padding: var(--ui-space-lg);
+        border: var(--ui-border);
+        border-radius: var(--ui-border-radius-small);
+        background: var(--color-app-surface);
+    }
+}
+
+.project-memberships {
     padding: var(--ui-space-lg);
     border: var(--ui-border);
     border-radius: var(--ui-border-radius-small);
     background: var(--color-app-surface);
-  }
-}
 
-.project-memberships {
-  padding: var(--ui-space-lg);
-  border: var(--ui-border);
-  border-radius: var(--ui-border-radius-small);
-  background: var(--color-app-surface);
-
-  &__assignment {
-    display: grid;
-    grid-template-columns: minmax(18rem, 1fr) minmax(24rem, 2fr) auto;
-    gap: var(--ui-space-md);
-    align-items: end;
-    padding-block: var(--ui-space-lg);
-    border-block: var(--ui-border);
-  }
-
-  &__user-select {
-    display: grid;
-    gap: var(--ui-space-xs);
-  }
-
-  &__user-select label {
-    font-weight: 700;
-  }
-
-  &__roles {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--ui-space-sm) var(--ui-space-md);
-    margin: 0;
-    padding: var(--ui-space-sm);
-    border: var(--ui-border);
-    border-radius: var(--ui-border-radius-small);
-  }
-
-  &__roles legend {
-    padding-inline: var(--ui-space-xs);
-    font-weight: 700;
-  }
-
-  &__roles label {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--ui-space-xs);
-  }
-
-  &__table {
-    inline-size: 100%;
-    margin-block-start: var(--ui-space-xl);
-    border-collapse: collapse;
-  }
-
-  &__table caption {
-    padding-block-end: var(--ui-space-sm);
-    text-align: start;
-    font-weight: 700;
-  }
-
-  &__table th,
-  &__table td {
-    padding: var(--ui-space-sm);
-    border-block-end: var(--ui-border);
-    text-align: start;
-    vertical-align: top;
-  }
-
-  &__table th small {
-    display: block;
-    color: var(--color-app-text-muted);
-    font-weight: 400;
-  }
-
-  &__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--ui-space-sm);
-  }
-
-  &__hint,
-  &__empty {
-    color: var(--color-app-text-muted);
-  }
-
-  &__hint {
-    grid-column: 1 / -1;
-    margin: 0;
-  }
-
-  @media (max-width: 80rem) {
     &__assignment {
-      grid-template-columns: 1fr;
-      align-items: stretch;
+        display: grid;
+        grid-template-columns: minmax(18rem, 1fr) minmax(24rem, 2fr) auto;
+        gap: var(--ui-space-md);
+        align-items: end;
+        padding-block: var(--ui-space-lg);
+        border-block: var(--ui-border);
+    }
+
+    &__user-select {
+        display: grid;
+        gap: var(--ui-space-xs);
+    }
+
+    &__user-select label {
+        font-weight: 700;
+    }
+
+    &__roles {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--ui-space-sm) var(--ui-space-md);
+        margin: 0;
+        padding: var(--ui-space-sm);
+        border: var(--ui-border);
+        border-radius: var(--ui-border-radius-small);
+    }
+
+    &__roles legend {
+        padding-inline: var(--ui-space-xs);
+        font-weight: 700;
+    }
+
+    &__roles label {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--ui-space-xs);
     }
 
     &__table {
-      display: block;
-      overflow-x: auto;
+        inline-size: 100%;
+        margin-block-start: var(--ui-space-xl);
+        border-collapse: collapse;
     }
-  }
+
+    &__table caption {
+        padding-block-end: var(--ui-space-sm);
+        text-align: start;
+        font-weight: 700;
+    }
+
+    &__table th,
+    &__table td {
+        padding: var(--ui-space-sm);
+        border-block-end: var(--ui-border);
+        text-align: start;
+        vertical-align: top;
+    }
+
+    &__table th small {
+        display: block;
+        color: var(--color-app-text-muted);
+        font-weight: 400;
+    }
+
+    &__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--ui-space-sm);
+    }
+
+    &__hint,
+    &__empty {
+        color: var(--color-app-text-muted);
+    }
+
+    &__hint {
+        grid-column: 1 / -1;
+        margin: 0;
+    }
+
+    @media (max-width: 80rem) {
+        &__assignment {
+            grid-template-columns: 1fr;
+            align-items: stretch;
+        }
+
+        &__table {
+            display: block;
+            overflow-x: auto;
+        }
+    }
 }

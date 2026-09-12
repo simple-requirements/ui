@@ -8,7 +8,7 @@
 import type { RequirementReviewSummaryResponseDtoState } from './requirementReviewSummaryResponseDtoState';
 
 export interface RequirementReviewSummaryResponseDto {
-  commentCount: number;
-  openCommentCount: number;
-  state: RequirementReviewSummaryResponseDtoState;
+    commentCount: number;
+    openCommentCount: number;
+    state: RequirementReviewSummaryResponseDtoState;
 }

@@ -1,14 +1,1 @@
-{
-	"folders": [
-		{
-			"path": "."
-		},
-		{
-			"path": "../backend"
-		},
-		{
-			"path": "../config"
-		}
-	],
-    "settings": {}
-}
+{ "folders": [{ "path": "." }, { "path": "../backend" }, { "path": "../config" }], "settings": {} }

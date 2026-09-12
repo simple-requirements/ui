@@ -8,8 +8,8 @@
 import type { ProjectMembershipResponseDtoRolesItem } from './projectMembershipResponseDtoRolesItem';
 
 export interface ProjectMembershipResponseDto {
-  userId: string;
-  username: string;
-  displayName: string;
-  roles: ProjectMembershipResponseDtoRolesItem[];
+    userId: string;
+    username: string;
+    displayName: string;
+    roles: ProjectMembershipResponseDtoRolesItem[];
 }

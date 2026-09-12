@@ -23,50 +23,50 @@ import type { RequirementResponseDtoSource } from './requirementResponseDtoSourc
 import type { RequirementResponseDtoStatus } from './requirementResponseDtoStatus';
 
 export interface RequirementResponseDto {
-  /** Stable requirement identifier. */
-  id: string;
-  /** Owning project identifier. */
-  projectId: string;
-  /** Owning category identifier. */
-  categoryId: string;
-  /** Sequential number within the category used to build the visible key. */
-  sequenceNumber: number;
-  /** @pattern ^(FR|NFR)-[A-Z]{2,4}-\d{4}$ */
-  visibleKey: string;
-  /** Current revision number of this requirement. */
-  revisionNumber: number;
-  status: RequirementResponseDtoStatus;
-  /** @nullable */
-  description?: RequirementResponseDtoDescription;
-  /** @nullable */
-  priority?: RequirementResponseDtoPriority;
-  /** @nullable */
-  owner?: RequirementResponseDtoOwner;
-  /** @nullable */
-  rationale?: RequirementResponseDtoRationale;
-  /** @nullable */
-  source?: RequirementResponseDtoSource;
-  /** @nullable */
-  rejectionReason?: RequirementResponseDtoRejectionReason;
-  /** @nullable */
-  reviewer?: RequirementResponseDtoReviewer;
-  /** @nullable */
-  obsoletedBy?: RequirementResponseDtoObsoletedBy;
-  /** @nullable */
-  rejectedAt?: RequirementResponseDtoRejectedAt;
-  /** @nullable */
-  deletedAt?: RequirementResponseDtoDeletedAt;
-  /** @nullable */
-  approvedAt?: RequirementResponseDtoApprovedAt;
-  /** @nullable */
-  implementedAt?: RequirementResponseDtoImplementedAt;
-  /** @nullable */
-  obsolescenceReason?: RequirementResponseDtoObsolescenceReason;
-  /** @nullable */
-  obsoleteAt?: RequirementResponseDtoObsoleteAt;
-  implementationTickets: ImplementationTicketResponseDto[];
-  /** Date and time when the requirement was created. */
-  createdAt: string;
-  /** Date and time when the requirement was last updated. */
-  updatedAt: string;
+    /** Stable requirement identifier. */
+    id: string;
+    /** Owning project identifier. */
+    projectId: string;
+    /** Owning category identifier. */
+    categoryId: string;
+    /** Sequential number within the category used to build the visible key. */
+    sequenceNumber: number;
+    /** @pattern ^(FR|NFR)-[A-Z]{2,4}-\d{4}$ */
+    visibleKey: string;
+    /** Current revision number of this requirement. */
+    revisionNumber: number;
+    status: RequirementResponseDtoStatus;
+    /** @nullable */
+    description?: RequirementResponseDtoDescription;
+    /** @nullable */
+    priority?: RequirementResponseDtoPriority;
+    /** @nullable */
+    owner?: RequirementResponseDtoOwner;
+    /** @nullable */
+    rationale?: RequirementResponseDtoRationale;
+    /** @nullable */
+    source?: RequirementResponseDtoSource;
+    /** @nullable */
+    rejectionReason?: RequirementResponseDtoRejectionReason;
+    /** @nullable */
+    reviewer?: RequirementResponseDtoReviewer;
+    /** @nullable */
+    obsoletedBy?: RequirementResponseDtoObsoletedBy;
+    /** @nullable */
+    rejectedAt?: RequirementResponseDtoRejectedAt;
+    /** @nullable */
+    deletedAt?: RequirementResponseDtoDeletedAt;
+    /** @nullable */
+    approvedAt?: RequirementResponseDtoApprovedAt;
+    /** @nullable */
+    implementedAt?: RequirementResponseDtoImplementedAt;
+    /** @nullable */
+    obsolescenceReason?: RequirementResponseDtoObsolescenceReason;
+    /** @nullable */
+    obsoleteAt?: RequirementResponseDtoObsoleteAt;
+    implementationTickets: ImplementationTicketResponseDto[];
+    /** Date and time when the requirement was created. */
+    createdAt: string;
+    /** Date and time when the requirement was last updated. */
+    updatedAt: string;
 }

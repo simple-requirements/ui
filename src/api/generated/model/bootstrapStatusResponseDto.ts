@@ -7,5 +7,5 @@
  */
 
 export interface BootstrapStatusResponseDto {
-  registrationAvailable: boolean;
+    registrationAvailable: boolean;
 }

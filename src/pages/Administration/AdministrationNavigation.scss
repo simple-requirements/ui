@@ -1,26 +1,26 @@
 .administration-navigation {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--ui-space-sm);
-  margin-block: var(--ui-space-md) var(--ui-space-xl);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ui-space-sm);
+    margin-block: var(--ui-space-md) var(--ui-space-xl);
 
-  &__link {
-    padding: var(--ui-space-sm) var(--ui-space-md);
-    border: var(--ui-border);
-    border-radius: var(--ui-border-radius-small);
-    color: inherit;
-    text-decoration: none;
-    background: var(--color-app-surface);
-  }
+    &__link {
+        padding: var(--ui-space-sm) var(--ui-space-md);
+        border: var(--ui-border);
+        border-radius: var(--ui-border-radius-small);
+        color: inherit;
+        text-decoration: none;
+        background: var(--color-app-surface);
+    }
 
-  &__link:hover,
-  &__link:focus-visible,
-  &__link--active {
-    border-color: var(--color-app-active-border);
-  }
+    &__link:hover,
+    &__link:focus-visible,
+    &__link--active {
+        border-color: var(--color-app-active-border);
+    }
 
-  &__link--active {
-    color: var(--color-app-active-border);
-    font-weight: 700;
-  }
+    &__link--active {
+        color: var(--color-app-active-border);
+        font-weight: 700;
+    }
 }

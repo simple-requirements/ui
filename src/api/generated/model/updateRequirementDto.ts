@@ -17,25 +17,25 @@ import type { UpdateRequirementDtoSource } from './updateRequirementDtoSource';
 import type { UpdateRequirementDtoStatus } from './updateRequirementDtoStatus';
 
 export interface UpdateRequirementDto {
-  /** Owning category identifier. */
-  categoryId?: string;
-  /** @nullable */
-  description?: UpdateRequirementDtoDescription;
-  /** @nullable */
-  priority?: UpdateRequirementDtoPriority;
-  /** @nullable */
-  owner?: UpdateRequirementDtoOwner;
-  /** @nullable */
-  rationale?: UpdateRequirementDtoRationale;
-  /** @nullable */
-  source?: UpdateRequirementDtoSource;
-  status?: UpdateRequirementDtoStatus;
-  /** @nullable */
-  reviewer?: UpdateRequirementDtoReviewer;
-  /** @nullable */
-  obsoletedBy?: UpdateRequirementDtoObsoletedBy;
-  /** @nullable */
-  rejectionReason?: UpdateRequirementDtoRejectionReason;
-  /** @nullable */
-  obsolescenceReason?: UpdateRequirementDtoObsolescenceReason;
+    /** Owning category identifier. */
+    categoryId?: string;
+    /** @nullable */
+    description?: UpdateRequirementDtoDescription;
+    /** @nullable */
+    priority?: UpdateRequirementDtoPriority;
+    /** @nullable */
+    owner?: UpdateRequirementDtoOwner;
+    /** @nullable */
+    rationale?: UpdateRequirementDtoRationale;
+    /** @nullable */
+    source?: UpdateRequirementDtoSource;
+    status?: UpdateRequirementDtoStatus;
+    /** @nullable */
+    reviewer?: UpdateRequirementDtoReviewer;
+    /** @nullable */
+    obsoletedBy?: UpdateRequirementDtoObsoletedBy;
+    /** @nullable */
+    rejectionReason?: UpdateRequirementDtoRejectionReason;
+    /** @nullable */
+    obsolescenceReason?: UpdateRequirementDtoObsolescenceReason;
 }

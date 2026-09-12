@@ -8,10 +8,10 @@
 import type { UpdateCategoryDtoType } from './updateCategoryDtoType';
 
 export interface UpdateCategoryDto {
-  /** Human-readable category name. */
-  name?: string;
-  /** Uppercase category key used for visible requirement keys. */
-  key?: string;
-  /** Requirement type handled by this category. */
-  type?: UpdateCategoryDtoType;
+    /** Human-readable category name. */
+    name?: string;
+    /** Uppercase category key used for visible requirement keys. */
+    key?: string;
+    /** Requirement type handled by this category. */
+    type?: UpdateCategoryDtoType;
 }

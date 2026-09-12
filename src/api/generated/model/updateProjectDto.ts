@@ -8,8 +8,8 @@
 import type { UpdateProjectDtoTicketUrlTemplate } from './updateProjectDtoTicketUrlTemplate';
 
 export interface UpdateProjectDto {
-  /** New human-readable project name. */
-  name?: string;
-  /** @nullable */
-  ticketUrlTemplate?: UpdateProjectDtoTicketUrlTemplate;
+    /** New human-readable project name. */
+    name?: string;
+    /** @nullable */
+    ticketUrlTemplate?: UpdateProjectDtoTicketUrlTemplate;
 }

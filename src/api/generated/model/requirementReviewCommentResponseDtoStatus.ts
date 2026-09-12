@@ -6,10 +6,7 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export type RequirementReviewCommentResponseDtoStatus = typeof RequirementReviewCommentResponseDtoStatus[keyof typeof RequirementReviewCommentResponseDtoStatus];
+export type RequirementReviewCommentResponseDtoStatus =
+    (typeof RequirementReviewCommentResponseDtoStatus)[keyof typeof RequirementReviewCommentResponseDtoStatus];
 
-
-export const RequirementReviewCommentResponseDtoStatus = {
-  open: 'open',
-  closed: 'closed',
-} as const;
+export const RequirementReviewCommentResponseDtoStatus = { open: 'open', closed: 'closed' } as const;

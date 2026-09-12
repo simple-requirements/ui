@@ -8,9 +8,9 @@
 import type { SessionResponseDtoRevokedAt } from './sessionResponseDtoRevokedAt';
 
 export interface SessionResponseDto {
-  id: string;
-  createdAt: string;
-  lastActivityAt: string;
-  /** @nullable */
-  revokedAt: SessionResponseDtoRevokedAt;
+    id: string;
+    createdAt: string;
+    lastActivityAt: string;
+    /** @nullable */
+    revokedAt: SessionResponseDtoRevokedAt;
 }

@@ -38,10 +38,7 @@ export default defineConfig({
     // 2. Start Vite server automatically. The E2E mode loads .env.e2e without shell-specific source/export commands.
     webServer: {
         command: 'pnpm exec vite dev --mode e2e --host 127.0.0.1',
-        env: {
-            ...currentStringEnvironment(),
-            VITE_API_BASE_URL: apiBaseUrl,
-        },
+        env: { ...currentStringEnvironment(), VITE_API_BASE_URL: apiBaseUrl },
         url: frontendBaseUrl,
         reuseExistingServer: !isCI,
         timeout: 120 * 1000,
@@ -75,9 +72,5 @@ export default defineConfig({
         // { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
     ],
 
-    use: {
-        baseURL: frontendBaseUrl,
-        trace: 'on-first-retry',
-        screenshot: 'only-on-failure',
-    },
+    use: { baseURL: frontendBaseUrl, trace: 'on-first-retry', screenshot: 'only-on-failure' },
 });

@@ -30,10 +30,14 @@ export function FormPage() {
     }
 
     return (
-        <section className='project-requirements-form-page' aria-labelledby='project-requirements-form-page-title'>
+        <section
+            className='project-requirements-form-page'
+            aria-labelledby='project-requirements-form-page-title'>
             <div className='project-requirements-form-page__panel'>
                 <header className='project-requirements-form-page__header'>
-                    <h1 id='project-requirements-form-page-title' className='project-requirements-form-page__title'>
+                    <h1
+                        id='project-requirements-form-page-title'
+                        className='project-requirements-form-page__title'>
                         {formController.formTitle}
                     </h1>
                 </header>
@@ -44,9 +48,12 @@ export function FormPage() {
                     empty={isUpdateMissing}
                     loadingMessage='Loading requirement form …'
                     errorMessage='Requirement form data could not be loaded.'
-                    emptyMessage='Requirement could not be found in the project requirements list.'
-                >
-                    <RequirementForm mode={route.mode} categories={formData.categories} controller={formController} />
+                    emptyMessage='Requirement could not be found in the project requirements list.'>
+                    <RequirementForm
+                        mode={route.mode}
+                        categories={formData.categories}
+                        controller={formController}
+                    />
                 </LoadableContent>
 
                 <DirtyFormNavigationDialog

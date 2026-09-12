@@ -152,7 +152,6 @@ function mockRequirementCountQueries(countsByProjectId: Readonly<Record<string, 
     );
 }
 
-
 beforeEach(() => {
     setAuthenticatedSession({
         accessToken: 'test-token',

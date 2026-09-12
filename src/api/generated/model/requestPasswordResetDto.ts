@@ -7,5 +7,5 @@
  */
 
 export interface RequestPasswordResetDto {
-  email: string;
+    email: string;
 }

@@ -7,12 +7,12 @@
  */
 
 export type GetRequirementParams = {
-/**
- * Return all stored historical revisions.
- */
-allrevisions?: unknown;
-/**
- * Return the requirement version with this revision number.
- */
-revision?: number;
+    /**
+     * Return all stored historical revisions.
+     */
+    allrevisions?: unknown;
+    /**
+     * Return the requirement version with this revision number.
+     */
+    revision?: number;
 };

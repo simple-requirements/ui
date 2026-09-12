@@ -7,6 +7,6 @@
  */
 
 export interface CreateRequirementReviewCommentDto {
-  text: string;
-  author: string;
+    text: string;
+    author: string;
 }

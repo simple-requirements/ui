@@ -6,11 +6,11 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export type RequirementReviewSummaryResponseDtoState = typeof RequirementReviewSummaryResponseDtoState[keyof typeof RequirementReviewSummaryResponseDtoState];
-
+export type RequirementReviewSummaryResponseDtoState =
+    (typeof RequirementReviewSummaryResponseDtoState)[keyof typeof RequirementReviewSummaryResponseDtoState];
 
 export const RequirementReviewSummaryResponseDtoState = {
-  not_started: 'not_started',
-  in_review: 'in_review',
-  decision_pending: 'decision_pending',
+    not_started: 'not_started',
+    in_review: 'in_review',
+    decision_pending: 'decision_pending',
 } as const;

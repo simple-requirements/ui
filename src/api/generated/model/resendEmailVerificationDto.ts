@@ -7,6 +7,6 @@
  */
 
 export interface ResendEmailVerificationDto {
-  /** Case-insensitive local username. */
-  username: string;
+    /** Case-insensitive local username. */
+    username: string;
 }

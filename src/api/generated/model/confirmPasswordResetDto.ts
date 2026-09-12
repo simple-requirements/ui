@@ -7,10 +7,10 @@
  */
 
 export interface ConfirmPasswordResetDto {
-  token: string;
-  /**
+    token: string;
+    /**
      * @minLength 15
      * @maxLength 128
      */
-  password: string;
+    password: string;
 }

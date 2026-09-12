@@ -9,11 +9,8 @@
 /**
  * @nullable
  */
-export type UpdateRequirementDtoPriority = typeof UpdateRequirementDtoPriority[keyof typeof UpdateRequirementDtoPriority] | null;
+export type UpdateRequirementDtoPriority =
+    | (typeof UpdateRequirementDtoPriority)[keyof typeof UpdateRequirementDtoPriority]
+    | null;
 
-
-export const UpdateRequirementDtoPriority = {
-  p1: 'p1',
-  p2: 'p2',
-  p3: 'p3',
-} as const;
+export const UpdateRequirementDtoPriority = { p1: 'p1', p2: 'p2', p3: 'p3' } as const;

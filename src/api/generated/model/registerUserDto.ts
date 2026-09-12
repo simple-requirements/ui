@@ -7,15 +7,15 @@
  */
 
 export interface RegisterUserDto {
-  /** Unique, case-insensitive login name. */
-  username: string;
-  /** Unique email address used for verification and recovery. */
-  email: string;
-  /** Human-readable user name. */
-  displayName: string;
-  /**
+    /** Unique, case-insensitive login name. */
+    username: string;
+    /** Unique email address used for verification and recovery. */
+    email: string;
+    /** Human-readable user name. */
+    displayName: string;
+    /**
      * @minLength 15
      * @maxLength 128
      */
-  password: string;
+    password: string;
 }

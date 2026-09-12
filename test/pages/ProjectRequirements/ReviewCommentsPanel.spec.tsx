@@ -65,5 +65,4 @@ describe('ReviewCommentsPanel', () => {
         expect(screen.queryByRole('button', { name: 'Reply' })).not.toBeInTheDocument();
         expect(screen.queryByRole('button', { name: 'Resolve' })).not.toBeInTheDocument();
     });
-
 });

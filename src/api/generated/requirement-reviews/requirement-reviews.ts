@@ -5,1015 +5,1205 @@
  * HTTP API for the Requirements Management app.
  * OpenAPI spec version: 0.0.1
  */
-import {
-  useQuery
-} from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import type {
-  DataTag,
-  DefinedInitialDataOptions,
-  DefinedUseQueryResult,
-  QueryClient,
-  QueryFunction,
-  QueryKey,
-  UndefinedInitialDataOptions,
-  UseQueryOptions,
-  UseQueryResult
+    DataTag,
+    DefinedInitialDataOptions,
+    DefinedUseQueryResult,
+    QueryClient,
+    QueryFunction,
+    QueryKey,
+    UndefinedInitialDataOptions,
+    UseQueryOptions,
+    UseQueryResult,
 } from '@tanstack/react-query';
 
 import type {
-  ApproveRequirementDto,
-  CloseRequirementReviewCommentDto,
-  CreateRequirementReviewCommentDto,
-  CreateRequirementReviewCommentReplyDto,
-  RejectRequirementDto,
-  RequirementResponseDto,
-  RequirementReviewCommentReplyResponseDto,
-  RequirementReviewCommentResponseDto,
-  RequirementReviewSummaryResponseDto
+    ApproveRequirementDto,
+    CloseRequirementReviewCommentDto,
+    CreateRequirementReviewCommentDto,
+    CreateRequirementReviewCommentReplyDto,
+    RejectRequirementDto,
+    RequirementResponseDto,
+    RequirementReviewCommentReplyResponseDto,
+    RequirementReviewCommentResponseDto,
+    RequirementReviewSummaryResponseDto,
 } from '../model';
 
 import { apiFetch } from '../../fetch';
 
-
-
-
 const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKey: K } => {
-  const result = { queryKey } as T & { queryKey: K };
-  for (const key of Object.keys(query)) {
-    // The explicit queryKey always wins, matching the previous
-    // `{ ...query, queryKey }` spread where it was set last.
-    if (key === 'queryKey') continue;
-    Object.defineProperty(result, key, {
-      enumerable: true,
-      configurable: true,
-      get: () => (query as Record<string, unknown>)[key],
+    const result = { queryKey } as T & { queryKey: K };
+    for (const key of Object.keys(query)) {
+        // The explicit queryKey always wins, matching the previous
+        // `{ ...query, queryKey }` spread where it was set last.
+        if (key === 'queryKey') continue;
+        Object.defineProperty(result, key, {
+            enumerable: true,
+            configurable: true,
+            get: () => (query as Record<string, unknown>)[key],
+        });
+    }
+    return result;
+};
+
+export type listRequirementReviewCommentsResponse200 = { data: RequirementReviewCommentResponseDto[]; status: 200 };
+
+export type listRequirementReviewCommentsResponse404 = { data: void; status: 404 };
+
+export type listRequirementReviewCommentsResponseSuccess = listRequirementReviewCommentsResponse200 & {
+    headers: Headers;
+};
+export type listRequirementReviewCommentsResponseError = listRequirementReviewCommentsResponse404 & {
+    headers: Headers;
+};
+
+export type listRequirementReviewCommentsResponse =
+    | listRequirementReviewCommentsResponseSuccess
+    | listRequirementReviewCommentsResponseError;
+
+export const getListRequirementReviewCommentsUrl = (projectId: string, requirementId: string) => {
+    return `/projects/${projectId}/requirements/${requirementId}/review-comments`;
+};
+
+/**
+ * @summary List review comments of a requirement.
+ */
+export const listRequirementReviewComments = async (
+    projectId: string,
+    requirementId: string,
+    options?: RequestInit,
+): Promise<listRequirementReviewCommentsResponse> => {
+    return apiFetch<listRequirementReviewCommentsResponse>(
+        getListRequirementReviewCommentsUrl(projectId, requirementId),
+        { ...options, method: 'GET' },
+    );
+};
+
+export const getListRequirementReviewCommentsQueryKey = (projectId: string, requirementId: string) => {
+    return [`/projects/${projectId}/requirements/${requirementId}/review-comments`] as const;
+};
+
+export const getListRequirementReviewCommentsQueryOptions = <
+    TData = Awaited<ReturnType<typeof listRequirementReviewComments>>,
+    TError = void,
+>(
+    projectId: string,
+    requirementId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listRequirementReviewComments>>, TError, TData>>;
+    },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey = queryOptions?.queryKey ?? getListRequirementReviewCommentsQueryKey(projectId, requirementId);
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listRequirementReviewComments>>> = ({ signal }) =>
+        listRequirementReviewComments(projectId, requirementId, { signal });
+
+    return {
+        queryKey,
+        queryFn,
+        enabled: projectId !== null && projectId !== undefined && requirementId !== null && requirementId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof listRequirementReviewComments>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
+
+export type ListRequirementReviewCommentsQueryResult = NonNullable<
+    Awaited<ReturnType<typeof listRequirementReviewComments>>
+>;
+export type ListRequirementReviewCommentsQueryError = void;
+
+export function useListRequirementReviewComments<
+    TData = Awaited<ReturnType<typeof listRequirementReviewComments>>,
+    TError = void,
+>(
+    projectId: string,
+    requirementId: string,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof listRequirementReviewComments>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof listRequirementReviewComments>>,
+                    TError,
+                    Awaited<ReturnType<typeof listRequirementReviewComments>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useListRequirementReviewComments<
+    TData = Awaited<ReturnType<typeof listRequirementReviewComments>>,
+    TError = void,
+>(
+    projectId: string,
+    requirementId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listRequirementReviewComments>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof listRequirementReviewComments>>,
+                    TError,
+                    Awaited<ReturnType<typeof listRequirementReviewComments>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useListRequirementReviewComments<
+    TData = Awaited<ReturnType<typeof listRequirementReviewComments>>,
+    TError = void,
+>(
+    projectId: string,
+    requirementId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listRequirementReviewComments>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary List review comments of a requirement.
+ */
+
+export function useListRequirementReviewComments<
+    TData = Awaited<ReturnType<typeof listRequirementReviewComments>>,
+    TError = void,
+>(
+    projectId: string,
+    requirementId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listRequirementReviewComments>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getListRequirementReviewCommentsQueryOptions(projectId, requirementId, options);
+
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+
+    return withQueryKey(query, queryOptions.queryKey);
+}
+
+export type createRequirementReviewCommentResponse201 = { data: RequirementReviewCommentResponseDto; status: 201 };
+
+export type createRequirementReviewCommentResponse400 = { data: void; status: 400 };
+
+export type createRequirementReviewCommentResponse404 = { data: void; status: 404 };
+
+export type createRequirementReviewCommentResponseSuccess = createRequirementReviewCommentResponse201 & {
+    headers: Headers;
+};
+export type createRequirementReviewCommentResponseError = (
+    | createRequirementReviewCommentResponse400
+    | createRequirementReviewCommentResponse404
+) & { headers: Headers };
+
+export type createRequirementReviewCommentResponse =
+    | createRequirementReviewCommentResponseSuccess
+    | createRequirementReviewCommentResponseError;
+
+export const getCreateRequirementReviewCommentUrl = (projectId: string, requirementId: string) => {
+    return `/projects/${projectId}/requirements/${requirementId}/review-comments`;
+};
+
+/**
+ * @summary Create a review comment.
+ */
+export const createRequirementReviewComment = async (
+    projectId: string,
+    requirementId: string,
+    createRequirementReviewCommentDto: CreateRequirementReviewCommentDto,
+    options?: RequestInit,
+): Promise<createRequirementReviewCommentResponse> => {
+    return apiFetch<createRequirementReviewCommentResponse>(
+        getCreateRequirementReviewCommentUrl(projectId, requirementId),
+        {
+            ...options,
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...options?.headers },
+            body: JSON.stringify(createRequirementReviewCommentDto),
+        },
+    );
+};
+
+export const getCreateRequirementReviewCommentQueryKey = (
+    projectId: string,
+    requirementId: string,
+    createRequirementReviewCommentDto?: CreateRequirementReviewCommentDto,
+) => {
+    return [
+        'POST',
+        `/projects/${projectId}/requirements/${requirementId}/review-comments`,
+        createRequirementReviewCommentDto,
+    ] as const;
+};
+
+export const getCreateRequirementReviewCommentQueryOptions = <
+    TData = Awaited<ReturnType<typeof createRequirementReviewComment>>,
+    TError = void,
+>(
+    projectId: string,
+    requirementId: string,
+    createRequirementReviewCommentDto: CreateRequirementReviewCommentDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewComment>>, TError, TData>>;
+    },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey =
+        queryOptions?.queryKey
+        ?? getCreateRequirementReviewCommentQueryKey(projectId, requirementId, createRequirementReviewCommentDto);
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof createRequirementReviewComment>>> = ({ signal }) =>
+        createRequirementReviewComment(projectId, requirementId, createRequirementReviewCommentDto, { signal });
+
+    return {
+        queryKey,
+        queryFn,
+        enabled: projectId !== null && projectId !== undefined && requirementId !== null && requirementId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewComment>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
+
+export type CreateRequirementReviewCommentQueryResult = NonNullable<
+    Awaited<ReturnType<typeof createRequirementReviewComment>>
+>;
+export type CreateRequirementReviewCommentQueryError = void;
+
+export function useCreateRequirementReviewComment<
+    TData = Awaited<ReturnType<typeof createRequirementReviewComment>>,
+    TError = void,
+>(
+    projectId: string,
+    requirementId: string,
+    createRequirementReviewCommentDto: CreateRequirementReviewCommentDto,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewComment>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof createRequirementReviewComment>>,
+                    TError,
+                    Awaited<ReturnType<typeof createRequirementReviewComment>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useCreateRequirementReviewComment<
+    TData = Awaited<ReturnType<typeof createRequirementReviewComment>>,
+    TError = void,
+>(
+    projectId: string,
+    requirementId: string,
+    createRequirementReviewCommentDto: CreateRequirementReviewCommentDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewComment>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof createRequirementReviewComment>>,
+                    TError,
+                    Awaited<ReturnType<typeof createRequirementReviewComment>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useCreateRequirementReviewComment<
+    TData = Awaited<ReturnType<typeof createRequirementReviewComment>>,
+    TError = void,
+>(
+    projectId: string,
+    requirementId: string,
+    createRequirementReviewCommentDto: CreateRequirementReviewCommentDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewComment>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Create a review comment.
+ */
+
+export function useCreateRequirementReviewComment<
+    TData = Awaited<ReturnType<typeof createRequirementReviewComment>>,
+    TError = void,
+>(
+    projectId: string,
+    requirementId: string,
+    createRequirementReviewCommentDto: CreateRequirementReviewCommentDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewComment>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getCreateRequirementReviewCommentQueryOptions(
+        projectId,
+        requirementId,
+        createRequirementReviewCommentDto,
+        options,
+    );
+
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+
+    return withQueryKey(query, queryOptions.queryKey);
+}
+
+export type getRequirementReviewSummaryResponse200 = { data: RequirementReviewSummaryResponseDto; status: 200 };
+
+export type getRequirementReviewSummaryResponse404 = { data: void; status: 404 };
+
+export type getRequirementReviewSummaryResponseSuccess = getRequirementReviewSummaryResponse200 & { headers: Headers };
+export type getRequirementReviewSummaryResponseError = getRequirementReviewSummaryResponse404 & { headers: Headers };
+
+export type getRequirementReviewSummaryResponse =
+    | getRequirementReviewSummaryResponseSuccess
+    | getRequirementReviewSummaryResponseError;
+
+export const getGetRequirementReviewSummaryUrl = (projectId: string, requirementId: string) => {
+    return `/projects/${projectId}/requirements/${requirementId}/review-summary`;
+};
+
+/**
+ * @summary Get the derived review state and comment counts.
+ */
+export const getRequirementReviewSummary = async (
+    projectId: string,
+    requirementId: string,
+    options?: RequestInit,
+): Promise<getRequirementReviewSummaryResponse> => {
+    return apiFetch<getRequirementReviewSummaryResponse>(getGetRequirementReviewSummaryUrl(projectId, requirementId), {
+        ...options,
+        method: 'GET',
     });
-  }
-  return result;
 };
 
-export type listRequirementReviewCommentsResponse200 = {
-  data: RequirementReviewCommentResponseDto[]
-  status: 200
-}
-
-export type listRequirementReviewCommentsResponse404 = {
-  data: void
-  status: 404
-}
-
-export type listRequirementReviewCommentsResponseSuccess = (listRequirementReviewCommentsResponse200) & {
-  headers: Headers;
-};
-export type listRequirementReviewCommentsResponseError = (listRequirementReviewCommentsResponse404) & {
-  headers: Headers;
+export const getGetRequirementReviewSummaryQueryKey = (projectId: string, requirementId: string) => {
+    return [`/projects/${projectId}/requirements/${requirementId}/review-summary`] as const;
 };
 
-export type listRequirementReviewCommentsResponse = (listRequirementReviewCommentsResponseSuccess | listRequirementReviewCommentsResponseError)
-
-export const getListRequirementReviewCommentsUrl = (projectId: string,
-    requirementId: string,) => {
-
-
-
-
-  return `/projects/${projectId}/requirements/${requirementId}/review-comments`
-}
-
-/**
- * @summary List review comments of a requirement.
- */
-export const listRequirementReviewComments = async (projectId: string,
-    requirementId: string, options?: RequestInit): Promise<listRequirementReviewCommentsResponse> => {
-
-  return apiFetch<listRequirementReviewCommentsResponse>(getListRequirementReviewCommentsUrl(projectId,requirementId),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getListRequirementReviewCommentsQueryKey = (projectId: string,
-    requirementId: string,) => {
-    return [
-    `/projects/${projectId}/requirements/${requirementId}/review-comments`
-    ] as const;
-    }
-
-
-export const getListRequirementReviewCommentsQueryOptions = <TData = Awaited<ReturnType<typeof listRequirementReviewComments>>, TError = void>(projectId: string,
-    requirementId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listRequirementReviewComments>>, TError, TData>>, }
+export const getGetRequirementReviewSummaryQueryOptions = <
+    TData = Awaited<ReturnType<typeof getRequirementReviewSummary>>,
+    TError = void,
+>(
+    projectId: string,
+    requirementId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getRequirementReviewSummary>>, TError, TData>>;
+    },
 ) => {
+    const { query: queryOptions } = options ?? {};
 
-const {query: queryOptions} = options ?? {};
+    const queryKey = queryOptions?.queryKey ?? getGetRequirementReviewSummaryQueryKey(projectId, requirementId);
 
-  const queryKey =  queryOptions?.queryKey ?? getListRequirementReviewCommentsQueryKey(projectId,requirementId);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRequirementReviewSummary>>> = ({ signal }) =>
+        getRequirementReviewSummary(projectId, requirementId, { signal });
 
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof listRequirementReviewComments>>> = ({ signal }) => listRequirementReviewComments(projectId,requirementId, { signal });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: projectId !== null && projectId !== undefined && requirementId !== null && requirementId !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listRequirementReviewComments>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type ListRequirementReviewCommentsQueryResult = NonNullable<Awaited<ReturnType<typeof listRequirementReviewComments>>>
-export type ListRequirementReviewCommentsQueryError = void
-
-
-export function useListRequirementReviewComments<TData = Awaited<ReturnType<typeof listRequirementReviewComments>>, TError = void>(
- projectId: string,
-    requirementId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listRequirementReviewComments>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof listRequirementReviewComments>>,
-          TError,
-          Awaited<ReturnType<typeof listRequirementReviewComments>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListRequirementReviewComments<TData = Awaited<ReturnType<typeof listRequirementReviewComments>>, TError = void>(
- projectId: string,
-    requirementId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listRequirementReviewComments>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof listRequirementReviewComments>>,
-          TError,
-          Awaited<ReturnType<typeof listRequirementReviewComments>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListRequirementReviewComments<TData = Awaited<ReturnType<typeof listRequirementReviewComments>>, TError = void>(
- projectId: string,
-    requirementId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listRequirementReviewComments>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary List review comments of a requirement.
- */
-
-export function useListRequirementReviewComments<TData = Awaited<ReturnType<typeof listRequirementReviewComments>>, TError = void>(
- projectId: string,
-    requirementId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listRequirementReviewComments>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getListRequirementReviewCommentsQueryOptions(projectId,requirementId,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-export type createRequirementReviewCommentResponse201 = {
-  data: RequirementReviewCommentResponseDto
-  status: 201
-}
-
-export type createRequirementReviewCommentResponse400 = {
-  data: void
-  status: 400
-}
-
-export type createRequirementReviewCommentResponse404 = {
-  data: void
-  status: 404
-}
-
-export type createRequirementReviewCommentResponseSuccess = (createRequirementReviewCommentResponse201) & {
-  headers: Headers;
-};
-export type createRequirementReviewCommentResponseError = (createRequirementReviewCommentResponse400 | createRequirementReviewCommentResponse404) & {
-  headers: Headers;
+    return {
+        queryKey,
+        queryFn,
+        enabled: projectId !== null && projectId !== undefined && requirementId !== null && requirementId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof getRequirementReviewSummary>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
 };
 
-export type createRequirementReviewCommentResponse = (createRequirementReviewCommentResponseSuccess | createRequirementReviewCommentResponseError)
+export type GetRequirementReviewSummaryQueryResult = NonNullable<
+    Awaited<ReturnType<typeof getRequirementReviewSummary>>
+>;
+export type GetRequirementReviewSummaryQueryError = void;
 
-export const getCreateRequirementReviewCommentUrl = (projectId: string,
-    requirementId: string,) => {
-
-
-
-
-  return `/projects/${projectId}/requirements/${requirementId}/review-comments`
-}
-
-/**
- * @summary Create a review comment.
- */
-export const createRequirementReviewComment = async (projectId: string,
+export function useGetRequirementReviewSummary<
+    TData = Awaited<ReturnType<typeof getRequirementReviewSummary>>,
+    TError = void,
+>(
+    projectId: string,
     requirementId: string,
-    createRequirementReviewCommentDto: CreateRequirementReviewCommentDto, options?: RequestInit): Promise<createRequirementReviewCommentResponse> => {
-
-  return apiFetch<createRequirementReviewCommentResponse>(getCreateRequirementReviewCommentUrl(projectId,requirementId),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(createRequirementReviewCommentDto)
-  }
-);}
-
-
-
-
-
-export const getCreateRequirementReviewCommentQueryKey = (projectId: string,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getRequirementReviewSummary>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof getRequirementReviewSummary>>,
+                    TError,
+                    Awaited<ReturnType<typeof getRequirementReviewSummary>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetRequirementReviewSummary<
+    TData = Awaited<ReturnType<typeof getRequirementReviewSummary>>,
+    TError = void,
+>(
+    projectId: string,
     requirementId: string,
-    createRequirementReviewCommentDto?: CreateRequirementReviewCommentDto,) => {
-    return [
-    'POST', `/projects/${projectId}/requirements/${requirementId}/review-comments`, createRequirementReviewCommentDto
-    ] as const;
-    }
-
-
-export const getCreateRequirementReviewCommentQueryOptions = <TData = Awaited<ReturnType<typeof createRequirementReviewComment>>, TError = void>(projectId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getRequirementReviewSummary>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof getRequirementReviewSummary>>,
+                    TError,
+                    Awaited<ReturnType<typeof getRequirementReviewSummary>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetRequirementReviewSummary<
+    TData = Awaited<ReturnType<typeof getRequirementReviewSummary>>,
+    TError = void,
+>(
+    projectId: string,
     requirementId: string,
-    createRequirementReviewCommentDto: CreateRequirementReviewCommentDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewComment>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getCreateRequirementReviewCommentQueryKey(projectId,requirementId,createRequirementReviewCommentDto);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof createRequirementReviewComment>>> = ({ signal }) => createRequirementReviewComment(projectId,requirementId,createRequirementReviewCommentDto, { signal });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: projectId !== null && projectId !== undefined && requirementId !== null && requirementId !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewComment>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type CreateRequirementReviewCommentQueryResult = NonNullable<Awaited<ReturnType<typeof createRequirementReviewComment>>>
-export type CreateRequirementReviewCommentQueryError = void
-
-
-export function useCreateRequirementReviewComment<TData = Awaited<ReturnType<typeof createRequirementReviewComment>>, TError = void>(
- projectId: string,
-    requirementId: string,
-    createRequirementReviewCommentDto: CreateRequirementReviewCommentDto, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewComment>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof createRequirementReviewComment>>,
-          TError,
-          Awaited<ReturnType<typeof createRequirementReviewComment>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCreateRequirementReviewComment<TData = Awaited<ReturnType<typeof createRequirementReviewComment>>, TError = void>(
- projectId: string,
-    requirementId: string,
-    createRequirementReviewCommentDto: CreateRequirementReviewCommentDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewComment>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof createRequirementReviewComment>>,
-          TError,
-          Awaited<ReturnType<typeof createRequirementReviewComment>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCreateRequirementReviewComment<TData = Awaited<ReturnType<typeof createRequirementReviewComment>>, TError = void>(
- projectId: string,
-    requirementId: string,
-    createRequirementReviewCommentDto: CreateRequirementReviewCommentDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewComment>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Create a review comment.
- */
-
-export function useCreateRequirementReviewComment<TData = Awaited<ReturnType<typeof createRequirementReviewComment>>, TError = void>(
- projectId: string,
-    requirementId: string,
-    createRequirementReviewCommentDto: CreateRequirementReviewCommentDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewComment>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getCreateRequirementReviewCommentQueryOptions(projectId,requirementId,createRequirementReviewCommentDto,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-export type getRequirementReviewSummaryResponse200 = {
-  data: RequirementReviewSummaryResponseDto
-  status: 200
-}
-
-export type getRequirementReviewSummaryResponse404 = {
-  data: void
-  status: 404
-}
-
-export type getRequirementReviewSummaryResponseSuccess = (getRequirementReviewSummaryResponse200) & {
-  headers: Headers;
-};
-export type getRequirementReviewSummaryResponseError = (getRequirementReviewSummaryResponse404) & {
-  headers: Headers;
-};
-
-export type getRequirementReviewSummaryResponse = (getRequirementReviewSummaryResponseSuccess | getRequirementReviewSummaryResponseError)
-
-export const getGetRequirementReviewSummaryUrl = (projectId: string,
-    requirementId: string,) => {
-
-
-
-
-  return `/projects/${projectId}/requirements/${requirementId}/review-summary`
-}
-
-/**
- * @summary Get the derived review state and comment counts.
- */
-export const getRequirementReviewSummary = async (projectId: string,
-    requirementId: string, options?: RequestInit): Promise<getRequirementReviewSummaryResponse> => {
-
-  return apiFetch<getRequirementReviewSummaryResponse>(getGetRequirementReviewSummaryUrl(projectId,requirementId),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getGetRequirementReviewSummaryQueryKey = (projectId: string,
-    requirementId: string,) => {
-    return [
-    `/projects/${projectId}/requirements/${requirementId}/review-summary`
-    ] as const;
-    }
-
-
-export const getGetRequirementReviewSummaryQueryOptions = <TData = Awaited<ReturnType<typeof getRequirementReviewSummary>>, TError = void>(projectId: string,
-    requirementId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRequirementReviewSummary>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetRequirementReviewSummaryQueryKey(projectId,requirementId);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRequirementReviewSummary>>> = ({ signal }) => getRequirementReviewSummary(projectId,requirementId, { signal });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: projectId !== null && projectId !== undefined && requirementId !== null && requirementId !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getRequirementReviewSummary>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetRequirementReviewSummaryQueryResult = NonNullable<Awaited<ReturnType<typeof getRequirementReviewSummary>>>
-export type GetRequirementReviewSummaryQueryError = void
-
-
-export function useGetRequirementReviewSummary<TData = Awaited<ReturnType<typeof getRequirementReviewSummary>>, TError = void>(
- projectId: string,
-    requirementId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRequirementReviewSummary>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getRequirementReviewSummary>>,
-          TError,
-          Awaited<ReturnType<typeof getRequirementReviewSummary>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetRequirementReviewSummary<TData = Awaited<ReturnType<typeof getRequirementReviewSummary>>, TError = void>(
- projectId: string,
-    requirementId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRequirementReviewSummary>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getRequirementReviewSummary>>,
-          TError,
-          Awaited<ReturnType<typeof getRequirementReviewSummary>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetRequirementReviewSummary<TData = Awaited<ReturnType<typeof getRequirementReviewSummary>>, TError = void>(
- projectId: string,
-    requirementId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRequirementReviewSummary>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getRequirementReviewSummary>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
  * @summary Get the derived review state and comment counts.
  */
 
-export function useGetRequirementReviewSummary<TData = Awaited<ReturnType<typeof getRequirementReviewSummary>>, TError = void>(
- projectId: string,
-    requirementId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRequirementReviewSummary>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetRequirementReviewSummary<
+    TData = Awaited<ReturnType<typeof getRequirementReviewSummary>>,
+    TError = void,
+>(
+    projectId: string,
+    requirementId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getRequirementReviewSummary>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getGetRequirementReviewSummaryQueryOptions(projectId, requirementId, options);
 
-  const queryOptions = getGetRequirementReviewSummaryQueryOptions(projectId,requirementId,options)
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
+    return withQueryKey(query, queryOptions.queryKey);
 }
-
-
-
-
-
 
 export type createRequirementReviewCommentReplyResponse201 = {
-  data: RequirementReviewCommentReplyResponseDto
-  status: 201
-}
-
-export type createRequirementReviewCommentReplyResponse400 = {
-  data: void
-  status: 400
-}
-
-export type createRequirementReviewCommentReplyResponse404 = {
-  data: void
-  status: 404
-}
-
-export type createRequirementReviewCommentReplyResponseSuccess = (createRequirementReviewCommentReplyResponse201) & {
-  headers: Headers;
-};
-export type createRequirementReviewCommentReplyResponseError = (createRequirementReviewCommentReplyResponse400 | createRequirementReviewCommentReplyResponse404) & {
-  headers: Headers;
+    data: RequirementReviewCommentReplyResponseDto;
+    status: 201;
 };
 
-export type createRequirementReviewCommentReplyResponse = (createRequirementReviewCommentReplyResponseSuccess | createRequirementReviewCommentReplyResponseError)
+export type createRequirementReviewCommentReplyResponse400 = { data: void; status: 400 };
 
-export const getCreateRequirementReviewCommentReplyUrl = (projectId: string,
+export type createRequirementReviewCommentReplyResponse404 = { data: void; status: 404 };
+
+export type createRequirementReviewCommentReplyResponseSuccess = createRequirementReviewCommentReplyResponse201 & {
+    headers: Headers;
+};
+export type createRequirementReviewCommentReplyResponseError = (
+    | createRequirementReviewCommentReplyResponse400
+    | createRequirementReviewCommentReplyResponse404
+) & { headers: Headers };
+
+export type createRequirementReviewCommentReplyResponse =
+    | createRequirementReviewCommentReplyResponseSuccess
+    | createRequirementReviewCommentReplyResponseError;
+
+export const getCreateRequirementReviewCommentReplyUrl = (
+    projectId: string,
     requirementId: string,
-    commentId: string,) => {
-
-
-
-
-  return `/projects/${projectId}/requirements/${requirementId}/review-comments/${commentId}/replies`
-}
+    commentId: string,
+) => {
+    return `/projects/${projectId}/requirements/${requirementId}/review-comments/${commentId}/replies`;
+};
 
 /**
  * @summary Reply to an open review comment.
  */
-export const createRequirementReviewCommentReply = async (projectId: string,
+export const createRequirementReviewCommentReply = async (
+    projectId: string,
     requirementId: string,
     commentId: string,
-    createRequirementReviewCommentReplyDto: CreateRequirementReviewCommentReplyDto, options?: RequestInit): Promise<createRequirementReviewCommentReplyResponse> => {
+    createRequirementReviewCommentReplyDto: CreateRequirementReviewCommentReplyDto,
+    options?: RequestInit,
+): Promise<createRequirementReviewCommentReplyResponse> => {
+    return apiFetch<createRequirementReviewCommentReplyResponse>(
+        getCreateRequirementReviewCommentReplyUrl(projectId, requirementId, commentId),
+        {
+            ...options,
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...options?.headers },
+            body: JSON.stringify(createRequirementReviewCommentReplyDto),
+        },
+    );
+};
 
-  return apiFetch<createRequirementReviewCommentReplyResponse>(getCreateRequirementReviewCommentReplyUrl(projectId,requirementId,commentId),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(createRequirementReviewCommentReplyDto)
-  }
-);}
-
-
-
-
-
-export const getCreateRequirementReviewCommentReplyQueryKey = (projectId: string,
+export const getCreateRequirementReviewCommentReplyQueryKey = (
+    projectId: string,
     requirementId: string,
     commentId: string,
-    createRequirementReviewCommentReplyDto?: CreateRequirementReviewCommentReplyDto,) => {
-    return [
-    'POST', `/projects/${projectId}/requirements/${requirementId}/review-comments/${commentId}/replies`, createRequirementReviewCommentReplyDto
-    ] as const;
-    }
-
-
-export const getCreateRequirementReviewCommentReplyQueryOptions = <TData = Awaited<ReturnType<typeof createRequirementReviewCommentReply>>, TError = void>(projectId: string,
-    requirementId: string,
-    commentId: string,
-    createRequirementReviewCommentReplyDto: CreateRequirementReviewCommentReplyDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewCommentReply>>, TError, TData>>, }
+    createRequirementReviewCommentReplyDto?: CreateRequirementReviewCommentReplyDto,
 ) => {
+    return [
+        'POST',
+        `/projects/${projectId}/requirements/${requirementId}/review-comments/${commentId}/replies`,
+        createRequirementReviewCommentReplyDto,
+    ] as const;
+};
 
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getCreateRequirementReviewCommentReplyQueryKey(projectId,requirementId,commentId,createRequirementReviewCommentReplyDto);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof createRequirementReviewCommentReply>>> = ({ signal }) => createRequirementReviewCommentReply(projectId,requirementId,commentId,createRequirementReviewCommentReplyDto, { signal });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: projectId !== null && projectId !== undefined && requirementId !== null && requirementId !== undefined && commentId !== null && commentId !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewCommentReply>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type CreateRequirementReviewCommentReplyQueryResult = NonNullable<Awaited<ReturnType<typeof createRequirementReviewCommentReply>>>
-export type CreateRequirementReviewCommentReplyQueryError = void
-
-
-export function useCreateRequirementReviewCommentReply<TData = Awaited<ReturnType<typeof createRequirementReviewCommentReply>>, TError = void>(
- projectId: string,
+export const getCreateRequirementReviewCommentReplyQueryOptions = <
+    TData = Awaited<ReturnType<typeof createRequirementReviewCommentReply>>,
+    TError = void,
+>(
+    projectId: string,
     requirementId: string,
     commentId: string,
-    createRequirementReviewCommentReplyDto: CreateRequirementReviewCommentReplyDto, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewCommentReply>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof createRequirementReviewCommentReply>>,
-          TError,
-          Awaited<ReturnType<typeof createRequirementReviewCommentReply>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCreateRequirementReviewCommentReply<TData = Awaited<ReturnType<typeof createRequirementReviewCommentReply>>, TError = void>(
- projectId: string,
+    createRequirementReviewCommentReplyDto: CreateRequirementReviewCommentReplyDto,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewCommentReply>>, TError, TData>
+        >;
+    },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey =
+        queryOptions?.queryKey
+        ?? getCreateRequirementReviewCommentReplyQueryKey(
+            projectId,
+            requirementId,
+            commentId,
+            createRequirementReviewCommentReplyDto,
+        );
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof createRequirementReviewCommentReply>>> = ({ signal }) =>
+        createRequirementReviewCommentReply(
+            projectId,
+            requirementId,
+            commentId,
+            createRequirementReviewCommentReplyDto,
+            { signal },
+        );
+
+    return {
+        queryKey,
+        queryFn,
+        enabled:
+            projectId !== null
+            && projectId !== undefined
+            && requirementId !== null
+            && requirementId !== undefined
+            && commentId !== null
+            && commentId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewCommentReply>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
+
+export type CreateRequirementReviewCommentReplyQueryResult = NonNullable<
+    Awaited<ReturnType<typeof createRequirementReviewCommentReply>>
+>;
+export type CreateRequirementReviewCommentReplyQueryError = void;
+
+export function useCreateRequirementReviewCommentReply<
+    TData = Awaited<ReturnType<typeof createRequirementReviewCommentReply>>,
+    TError = void,
+>(
+    projectId: string,
     requirementId: string,
     commentId: string,
-    createRequirementReviewCommentReplyDto: CreateRequirementReviewCommentReplyDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewCommentReply>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof createRequirementReviewCommentReply>>,
-          TError,
-          Awaited<ReturnType<typeof createRequirementReviewCommentReply>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCreateRequirementReviewCommentReply<TData = Awaited<ReturnType<typeof createRequirementReviewCommentReply>>, TError = void>(
- projectId: string,
+    createRequirementReviewCommentReplyDto: CreateRequirementReviewCommentReplyDto,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewCommentReply>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof createRequirementReviewCommentReply>>,
+                    TError,
+                    Awaited<ReturnType<typeof createRequirementReviewCommentReply>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useCreateRequirementReviewCommentReply<
+    TData = Awaited<ReturnType<typeof createRequirementReviewCommentReply>>,
+    TError = void,
+>(
+    projectId: string,
     requirementId: string,
     commentId: string,
-    createRequirementReviewCommentReplyDto: CreateRequirementReviewCommentReplyDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewCommentReply>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    createRequirementReviewCommentReplyDto: CreateRequirementReviewCommentReplyDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewCommentReply>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof createRequirementReviewCommentReply>>,
+                    TError,
+                    Awaited<ReturnType<typeof createRequirementReviewCommentReply>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useCreateRequirementReviewCommentReply<
+    TData = Awaited<ReturnType<typeof createRequirementReviewCommentReply>>,
+    TError = void,
+>(
+    projectId: string,
+    requirementId: string,
+    commentId: string,
+    createRequirementReviewCommentReplyDto: CreateRequirementReviewCommentReplyDto,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewCommentReply>>, TError, TData>
+        >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
  * @summary Reply to an open review comment.
  */
 
-export function useCreateRequirementReviewCommentReply<TData = Awaited<ReturnType<typeof createRequirementReviewCommentReply>>, TError = void>(
- projectId: string,
+export function useCreateRequirementReviewCommentReply<
+    TData = Awaited<ReturnType<typeof createRequirementReviewCommentReply>>,
+    TError = void,
+>(
+    projectId: string,
     requirementId: string,
     commentId: string,
-    createRequirementReviewCommentReplyDto: CreateRequirementReviewCommentReplyDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewCommentReply>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    createRequirementReviewCommentReplyDto: CreateRequirementReviewCommentReplyDto,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof createRequirementReviewCommentReply>>, TError, TData>
+        >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getCreateRequirementReviewCommentReplyQueryOptions(
+        projectId,
+        requirementId,
+        commentId,
+        createRequirementReviewCommentReplyDto,
+        options,
+    );
 
-  const queryOptions = getCreateRequirementReviewCommentReplyQueryOptions(projectId,requirementId,commentId,createRequirementReviewCommentReplyDto,options)
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
+    return withQueryKey(query, queryOptions.queryKey);
 }
 
+export type closeRequirementReviewCommentResponse200 = { data: RequirementReviewCommentResponseDto; status: 200 };
 
+export type closeRequirementReviewCommentResponse400 = { data: void; status: 400 };
 
+export type closeRequirementReviewCommentResponse404 = { data: void; status: 404 };
 
-
-
-export type closeRequirementReviewCommentResponse200 = {
-  data: RequirementReviewCommentResponseDto
-  status: 200
-}
-
-export type closeRequirementReviewCommentResponse400 = {
-  data: void
-  status: 400
-}
-
-export type closeRequirementReviewCommentResponse404 = {
-  data: void
-  status: 404
-}
-
-export type closeRequirementReviewCommentResponseSuccess = (closeRequirementReviewCommentResponse200) & {
-  headers: Headers;
+export type closeRequirementReviewCommentResponseSuccess = closeRequirementReviewCommentResponse200 & {
+    headers: Headers;
 };
-export type closeRequirementReviewCommentResponseError = (closeRequirementReviewCommentResponse400 | closeRequirementReviewCommentResponse404) & {
-  headers: Headers;
+export type closeRequirementReviewCommentResponseError = (
+    | closeRequirementReviewCommentResponse400
+    | closeRequirementReviewCommentResponse404
+) & { headers: Headers };
+
+export type closeRequirementReviewCommentResponse =
+    | closeRequirementReviewCommentResponseSuccess
+    | closeRequirementReviewCommentResponseError;
+
+export const getCloseRequirementReviewCommentUrl = (projectId: string, requirementId: string, commentId: string) => {
+    return `/projects/${projectId}/requirements/${requirementId}/review-comments/${commentId}`;
 };
-
-export type closeRequirementReviewCommentResponse = (closeRequirementReviewCommentResponseSuccess | closeRequirementReviewCommentResponseError)
-
-export const getCloseRequirementReviewCommentUrl = (projectId: string,
-    requirementId: string,
-    commentId: string,) => {
-
-
-
-
-  return `/projects/${projectId}/requirements/${requirementId}/review-comments/${commentId}`
-}
 
 /**
  * @summary Close a review comment.
  */
-export const closeRequirementReviewComment = async (projectId: string,
+export const closeRequirementReviewComment = async (
+    projectId: string,
     requirementId: string,
     commentId: string,
-    closeRequirementReviewCommentDto: CloseRequirementReviewCommentDto, options?: RequestInit): Promise<closeRequirementReviewCommentResponse> => {
+    closeRequirementReviewCommentDto: CloseRequirementReviewCommentDto,
+    options?: RequestInit,
+): Promise<closeRequirementReviewCommentResponse> => {
+    return apiFetch<closeRequirementReviewCommentResponse>(
+        getCloseRequirementReviewCommentUrl(projectId, requirementId, commentId),
+        {
+            ...options,
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', ...options?.headers },
+            body: JSON.stringify(closeRequirementReviewCommentDto),
+        },
+    );
+};
 
-  return apiFetch<closeRequirementReviewCommentResponse>(getCloseRequirementReviewCommentUrl(projectId,requirementId,commentId),
-  {
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(closeRequirementReviewCommentDto)
-  }
-);}
-
-
-
-
-
-export const getCloseRequirementReviewCommentQueryKey = (projectId: string,
+export const getCloseRequirementReviewCommentQueryKey = (
+    projectId: string,
     requirementId: string,
     commentId: string,
-    closeRequirementReviewCommentDto?: CloseRequirementReviewCommentDto,) => {
-    return [
-    'PATCH', `/projects/${projectId}/requirements/${requirementId}/review-comments/${commentId}`, closeRequirementReviewCommentDto
-    ] as const;
-    }
-
-
-export const getCloseRequirementReviewCommentQueryOptions = <TData = Awaited<ReturnType<typeof closeRequirementReviewComment>>, TError = void>(projectId: string,
-    requirementId: string,
-    commentId: string,
-    closeRequirementReviewCommentDto: CloseRequirementReviewCommentDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof closeRequirementReviewComment>>, TError, TData>>, }
+    closeRequirementReviewCommentDto?: CloseRequirementReviewCommentDto,
 ) => {
+    return [
+        'PATCH',
+        `/projects/${projectId}/requirements/${requirementId}/review-comments/${commentId}`,
+        closeRequirementReviewCommentDto,
+    ] as const;
+};
 
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getCloseRequirementReviewCommentQueryKey(projectId,requirementId,commentId,closeRequirementReviewCommentDto);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof closeRequirementReviewComment>>> = ({ signal }) => closeRequirementReviewComment(projectId,requirementId,commentId,closeRequirementReviewCommentDto, { signal });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: projectId !== null && projectId !== undefined && requirementId !== null && requirementId !== undefined && commentId !== null && commentId !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof closeRequirementReviewComment>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type CloseRequirementReviewCommentQueryResult = NonNullable<Awaited<ReturnType<typeof closeRequirementReviewComment>>>
-export type CloseRequirementReviewCommentQueryError = void
-
-
-export function useCloseRequirementReviewComment<TData = Awaited<ReturnType<typeof closeRequirementReviewComment>>, TError = void>(
- projectId: string,
+export const getCloseRequirementReviewCommentQueryOptions = <
+    TData = Awaited<ReturnType<typeof closeRequirementReviewComment>>,
+    TError = void,
+>(
+    projectId: string,
     requirementId: string,
     commentId: string,
-    closeRequirementReviewCommentDto: CloseRequirementReviewCommentDto, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof closeRequirementReviewComment>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof closeRequirementReviewComment>>,
-          TError,
-          Awaited<ReturnType<typeof closeRequirementReviewComment>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCloseRequirementReviewComment<TData = Awaited<ReturnType<typeof closeRequirementReviewComment>>, TError = void>(
- projectId: string,
+    closeRequirementReviewCommentDto: CloseRequirementReviewCommentDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof closeRequirementReviewComment>>, TError, TData>>;
+    },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey =
+        queryOptions?.queryKey
+        ?? getCloseRequirementReviewCommentQueryKey(
+            projectId,
+            requirementId,
+            commentId,
+            closeRequirementReviewCommentDto,
+        );
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof closeRequirementReviewComment>>> = ({ signal }) =>
+        closeRequirementReviewComment(projectId, requirementId, commentId, closeRequirementReviewCommentDto, {
+            signal,
+        });
+
+    return {
+        queryKey,
+        queryFn,
+        enabled:
+            projectId !== null
+            && projectId !== undefined
+            && requirementId !== null
+            && requirementId !== undefined
+            && commentId !== null
+            && commentId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof closeRequirementReviewComment>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
+
+export type CloseRequirementReviewCommentQueryResult = NonNullable<
+    Awaited<ReturnType<typeof closeRequirementReviewComment>>
+>;
+export type CloseRequirementReviewCommentQueryError = void;
+
+export function useCloseRequirementReviewComment<
+    TData = Awaited<ReturnType<typeof closeRequirementReviewComment>>,
+    TError = void,
+>(
+    projectId: string,
     requirementId: string,
     commentId: string,
-    closeRequirementReviewCommentDto: CloseRequirementReviewCommentDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof closeRequirementReviewComment>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof closeRequirementReviewComment>>,
-          TError,
-          Awaited<ReturnType<typeof closeRequirementReviewComment>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCloseRequirementReviewComment<TData = Awaited<ReturnType<typeof closeRequirementReviewComment>>, TError = void>(
- projectId: string,
+    closeRequirementReviewCommentDto: CloseRequirementReviewCommentDto,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof closeRequirementReviewComment>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof closeRequirementReviewComment>>,
+                    TError,
+                    Awaited<ReturnType<typeof closeRequirementReviewComment>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useCloseRequirementReviewComment<
+    TData = Awaited<ReturnType<typeof closeRequirementReviewComment>>,
+    TError = void,
+>(
+    projectId: string,
     requirementId: string,
     commentId: string,
-    closeRequirementReviewCommentDto: CloseRequirementReviewCommentDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof closeRequirementReviewComment>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    closeRequirementReviewCommentDto: CloseRequirementReviewCommentDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof closeRequirementReviewComment>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof closeRequirementReviewComment>>,
+                    TError,
+                    Awaited<ReturnType<typeof closeRequirementReviewComment>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useCloseRequirementReviewComment<
+    TData = Awaited<ReturnType<typeof closeRequirementReviewComment>>,
+    TError = void,
+>(
+    projectId: string,
+    requirementId: string,
+    commentId: string,
+    closeRequirementReviewCommentDto: CloseRequirementReviewCommentDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof closeRequirementReviewComment>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
  * @summary Close a review comment.
  */
 
-export function useCloseRequirementReviewComment<TData = Awaited<ReturnType<typeof closeRequirementReviewComment>>, TError = void>(
- projectId: string,
+export function useCloseRequirementReviewComment<
+    TData = Awaited<ReturnType<typeof closeRequirementReviewComment>>,
+    TError = void,
+>(
+    projectId: string,
     requirementId: string,
     commentId: string,
-    closeRequirementReviewCommentDto: CloseRequirementReviewCommentDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof closeRequirementReviewComment>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    closeRequirementReviewCommentDto: CloseRequirementReviewCommentDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof closeRequirementReviewComment>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getCloseRequirementReviewCommentQueryOptions(
+        projectId,
+        requirementId,
+        commentId,
+        closeRequirementReviewCommentDto,
+        options,
+    );
 
-  const queryOptions = getCloseRequirementReviewCommentQueryOptions(projectId,requirementId,commentId,closeRequirementReviewCommentDto,options)
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
+    return withQueryKey(query, queryOptions.queryKey);
 }
 
+export type approveRequirementReviewResponse200 = { data: RequirementResponseDto; status: 200 };
 
+export type approveRequirementReviewResponse400 = { data: void; status: 400 };
 
+export type approveRequirementReviewResponse404 = { data: void; status: 404 };
 
+export type approveRequirementReviewResponseSuccess = approveRequirementReviewResponse200 & { headers: Headers };
+export type approveRequirementReviewResponseError = (
+    | approveRequirementReviewResponse400
+    | approveRequirementReviewResponse404
+) & { headers: Headers };
 
+export type approveRequirementReviewResponse =
+    | approveRequirementReviewResponseSuccess
+    | approveRequirementReviewResponseError;
 
-export type approveRequirementReviewResponse200 = {
-  data: RequirementResponseDto
-  status: 200
-}
-
-export type approveRequirementReviewResponse400 = {
-  data: void
-  status: 400
-}
-
-export type approveRequirementReviewResponse404 = {
-  data: void
-  status: 404
-}
-
-export type approveRequirementReviewResponseSuccess = (approveRequirementReviewResponse200) & {
-  headers: Headers;
+export const getApproveRequirementReviewUrl = (projectId: string, requirementId: string) => {
+    return `/projects/${projectId}/requirements/${requirementId}/review/approve`;
 };
-export type approveRequirementReviewResponseError = (approveRequirementReviewResponse400 | approveRequirementReviewResponse404) & {
-  headers: Headers;
-};
-
-export type approveRequirementReviewResponse = (approveRequirementReviewResponseSuccess | approveRequirementReviewResponseError)
-
-export const getApproveRequirementReviewUrl = (projectId: string,
-    requirementId: string,) => {
-
-
-
-
-  return `/projects/${projectId}/requirements/${requirementId}/review/approve`
-}
 
 /**
  * @summary Approve a reviewed requirement.
  */
-export const approveRequirementReview = async (projectId: string,
+export const approveRequirementReview = async (
+    projectId: string,
     requirementId: string,
-    approveRequirementDto: ApproveRequirementDto, options?: RequestInit): Promise<approveRequirementReviewResponse> => {
+    approveRequirementDto: ApproveRequirementDto,
+    options?: RequestInit,
+): Promise<approveRequirementReviewResponse> => {
+    return apiFetch<approveRequirementReviewResponse>(getApproveRequirementReviewUrl(projectId, requirementId), {
+        ...options,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...options?.headers },
+        body: JSON.stringify(approveRequirementDto),
+    });
+};
 
-  return apiFetch<approveRequirementReviewResponse>(getApproveRequirementReviewUrl(projectId,requirementId),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(approveRequirementDto)
-  }
-);}
-
-
-
-
-
-export const getApproveRequirementReviewQueryKey = (projectId: string,
+export const getApproveRequirementReviewQueryKey = (
+    projectId: string,
     requirementId: string,
-    approveRequirementDto?: ApproveRequirementDto,) => {
-    return [
-    'POST', `/projects/${projectId}/requirements/${requirementId}/review/approve`, approveRequirementDto
-    ] as const;
-    }
-
-
-export const getApproveRequirementReviewQueryOptions = <TData = Awaited<ReturnType<typeof approveRequirementReview>>, TError = void>(projectId: string,
-    requirementId: string,
-    approveRequirementDto: ApproveRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof approveRequirementReview>>, TError, TData>>, }
+    approveRequirementDto?: ApproveRequirementDto,
 ) => {
+    return [
+        'POST',
+        `/projects/${projectId}/requirements/${requirementId}/review/approve`,
+        approveRequirementDto,
+    ] as const;
+};
 
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getApproveRequirementReviewQueryKey(projectId,requirementId,approveRequirementDto);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof approveRequirementReview>>> = ({ signal }) => approveRequirementReview(projectId,requirementId,approveRequirementDto, { signal });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: projectId !== null && projectId !== undefined && requirementId !== null && requirementId !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof approveRequirementReview>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type ApproveRequirementReviewQueryResult = NonNullable<Awaited<ReturnType<typeof approveRequirementReview>>>
-export type ApproveRequirementReviewQueryError = void
-
-
-export function useApproveRequirementReview<TData = Awaited<ReturnType<typeof approveRequirementReview>>, TError = void>(
- projectId: string,
+export const getApproveRequirementReviewQueryOptions = <
+    TData = Awaited<ReturnType<typeof approveRequirementReview>>,
+    TError = void,
+>(
+    projectId: string,
     requirementId: string,
-    approveRequirementDto: ApproveRequirementDto, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof approveRequirementReview>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof approveRequirementReview>>,
-          TError,
-          Awaited<ReturnType<typeof approveRequirementReview>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useApproveRequirementReview<TData = Awaited<ReturnType<typeof approveRequirementReview>>, TError = void>(
- projectId: string,
+    approveRequirementDto: ApproveRequirementDto,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof approveRequirementReview>>, TError, TData>> },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey =
+        queryOptions?.queryKey ?? getApproveRequirementReviewQueryKey(projectId, requirementId, approveRequirementDto);
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof approveRequirementReview>>> = ({ signal }) =>
+        approveRequirementReview(projectId, requirementId, approveRequirementDto, { signal });
+
+    return {
+        queryKey,
+        queryFn,
+        enabled: projectId !== null && projectId !== undefined && requirementId !== null && requirementId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof approveRequirementReview>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
+
+export type ApproveRequirementReviewQueryResult = NonNullable<Awaited<ReturnType<typeof approveRequirementReview>>>;
+export type ApproveRequirementReviewQueryError = void;
+
+export function useApproveRequirementReview<
+    TData = Awaited<ReturnType<typeof approveRequirementReview>>,
+    TError = void,
+>(
+    projectId: string,
     requirementId: string,
-    approveRequirementDto: ApproveRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof approveRequirementReview>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof approveRequirementReview>>,
-          TError,
-          Awaited<ReturnType<typeof approveRequirementReview>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useApproveRequirementReview<TData = Awaited<ReturnType<typeof approveRequirementReview>>, TError = void>(
- projectId: string,
+    approveRequirementDto: ApproveRequirementDto,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof approveRequirementReview>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof approveRequirementReview>>,
+                    TError,
+                    Awaited<ReturnType<typeof approveRequirementReview>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useApproveRequirementReview<
+    TData = Awaited<ReturnType<typeof approveRequirementReview>>,
+    TError = void,
+>(
+    projectId: string,
     requirementId: string,
-    approveRequirementDto: ApproveRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof approveRequirementReview>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    approveRequirementDto: ApproveRequirementDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof approveRequirementReview>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof approveRequirementReview>>,
+                    TError,
+                    Awaited<ReturnType<typeof approveRequirementReview>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useApproveRequirementReview<
+    TData = Awaited<ReturnType<typeof approveRequirementReview>>,
+    TError = void,
+>(
+    projectId: string,
+    requirementId: string,
+    approveRequirementDto: ApproveRequirementDto,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof approveRequirementReview>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
  * @summary Approve a reviewed requirement.
  */
 
-export function useApproveRequirementReview<TData = Awaited<ReturnType<typeof approveRequirementReview>>, TError = void>(
- projectId: string,
+export function useApproveRequirementReview<
+    TData = Awaited<ReturnType<typeof approveRequirementReview>>,
+    TError = void,
+>(
+    projectId: string,
     requirementId: string,
-    approveRequirementDto: ApproveRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof approveRequirementReview>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    approveRequirementDto: ApproveRequirementDto,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof approveRequirementReview>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getApproveRequirementReviewQueryOptions(
+        projectId,
+        requirementId,
+        approveRequirementDto,
+        options,
+    );
 
-  const queryOptions = getApproveRequirementReviewQueryOptions(projectId,requirementId,approveRequirementDto,options)
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
+    return withQueryKey(query, queryOptions.queryKey);
 }
 
+export type rejectRequirementReviewResponse200 = { data: RequirementResponseDto; status: 200 };
 
+export type rejectRequirementReviewResponse400 = { data: void; status: 400 };
 
+export type rejectRequirementReviewResponse404 = { data: void; status: 404 };
 
+export type rejectRequirementReviewResponseSuccess = rejectRequirementReviewResponse200 & { headers: Headers };
+export type rejectRequirementReviewResponseError = (
+    | rejectRequirementReviewResponse400
+    | rejectRequirementReviewResponse404
+) & { headers: Headers };
 
+export type rejectRequirementReviewResponse =
+    | rejectRequirementReviewResponseSuccess
+    | rejectRequirementReviewResponseError;
 
-export type rejectRequirementReviewResponse200 = {
-  data: RequirementResponseDto
-  status: 200
-}
-
-export type rejectRequirementReviewResponse400 = {
-  data: void
-  status: 400
-}
-
-export type rejectRequirementReviewResponse404 = {
-  data: void
-  status: 404
-}
-
-export type rejectRequirementReviewResponseSuccess = (rejectRequirementReviewResponse200) & {
-  headers: Headers;
+export const getRejectRequirementReviewUrl = (projectId: string, requirementId: string) => {
+    return `/projects/${projectId}/requirements/${requirementId}/review/reject`;
 };
-export type rejectRequirementReviewResponseError = (rejectRequirementReviewResponse400 | rejectRequirementReviewResponse404) & {
-  headers: Headers;
-};
-
-export type rejectRequirementReviewResponse = (rejectRequirementReviewResponseSuccess | rejectRequirementReviewResponseError)
-
-export const getRejectRequirementReviewUrl = (projectId: string,
-    requirementId: string,) => {
-
-
-
-
-  return `/projects/${projectId}/requirements/${requirementId}/review/reject`
-}
 
 /**
  * @summary Reject a reviewed requirement.
  */
-export const rejectRequirementReview = async (projectId: string,
+export const rejectRequirementReview = async (
+    projectId: string,
     requirementId: string,
-    rejectRequirementDto: RejectRequirementDto, options?: RequestInit): Promise<rejectRequirementReviewResponse> => {
+    rejectRequirementDto: RejectRequirementDto,
+    options?: RequestInit,
+): Promise<rejectRequirementReviewResponse> => {
+    return apiFetch<rejectRequirementReviewResponse>(getRejectRequirementReviewUrl(projectId, requirementId), {
+        ...options,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...options?.headers },
+        body: JSON.stringify(rejectRequirementDto),
+    });
+};
 
-  return apiFetch<rejectRequirementReviewResponse>(getRejectRequirementReviewUrl(projectId,requirementId),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(rejectRequirementDto)
-  }
-);}
-
-
-
-
-
-export const getRejectRequirementReviewQueryKey = (projectId: string,
+export const getRejectRequirementReviewQueryKey = (
+    projectId: string,
     requirementId: string,
-    rejectRequirementDto?: RejectRequirementDto,) => {
-    return [
-    'POST', `/projects/${projectId}/requirements/${requirementId}/review/reject`, rejectRequirementDto
-    ] as const;
-    }
-
-
-export const getRejectRequirementReviewQueryOptions = <TData = Awaited<ReturnType<typeof rejectRequirementReview>>, TError = void>(projectId: string,
-    requirementId: string,
-    rejectRequirementDto: RejectRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof rejectRequirementReview>>, TError, TData>>, }
+    rejectRequirementDto?: RejectRequirementDto,
 ) => {
+    return [
+        'POST',
+        `/projects/${projectId}/requirements/${requirementId}/review/reject`,
+        rejectRequirementDto,
+    ] as const;
+};
 
-const {query: queryOptions} = options ?? {};
+export const getRejectRequirementReviewQueryOptions = <
+    TData = Awaited<ReturnType<typeof rejectRequirementReview>>,
+    TError = void,
+>(
+    projectId: string,
+    requirementId: string,
+    rejectRequirementDto: RejectRequirementDto,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof rejectRequirementReview>>, TError, TData>> },
+) => {
+    const { query: queryOptions } = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getRejectRequirementReviewQueryKey(projectId,requirementId,rejectRequirementDto);
+    const queryKey =
+        queryOptions?.queryKey ?? getRejectRequirementReviewQueryKey(projectId, requirementId, rejectRequirementDto);
 
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof rejectRequirementReview>>> = ({ signal }) =>
+        rejectRequirementReview(projectId, requirementId, rejectRequirementDto, { signal });
 
+    return {
+        queryKey,
+        queryFn,
+        enabled: projectId !== null && projectId !== undefined && requirementId !== null && requirementId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof rejectRequirementReview>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof rejectRequirementReview>>> = ({ signal }) => rejectRequirementReview(projectId,requirementId,rejectRequirementDto, { signal });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: projectId !== null && projectId !== undefined && requirementId !== null && requirementId !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof rejectRequirementReview>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type RejectRequirementReviewQueryResult = NonNullable<Awaited<ReturnType<typeof rejectRequirementReview>>>
-export type RejectRequirementReviewQueryError = void
-
+export type RejectRequirementReviewQueryResult = NonNullable<Awaited<ReturnType<typeof rejectRequirementReview>>>;
+export type RejectRequirementReviewQueryError = void;
 
 export function useRejectRequirementReview<TData = Awaited<ReturnType<typeof rejectRequirementReview>>, TError = void>(
- projectId: string,
+    projectId: string,
     requirementId: string,
-    rejectRequirementDto: RejectRequirementDto, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof rejectRequirementReview>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof rejectRequirementReview>>,
-          TError,
-          Awaited<ReturnType<typeof rejectRequirementReview>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    rejectRequirementDto: RejectRequirementDto,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof rejectRequirementReview>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof rejectRequirementReview>>,
+                    TError,
+                    Awaited<ReturnType<typeof rejectRequirementReview>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useRejectRequirementReview<TData = Awaited<ReturnType<typeof rejectRequirementReview>>, TError = void>(
- projectId: string,
+    projectId: string,
     requirementId: string,
-    rejectRequirementDto: RejectRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof rejectRequirementReview>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof rejectRequirementReview>>,
-          TError,
-          Awaited<ReturnType<typeof rejectRequirementReview>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    rejectRequirementDto: RejectRequirementDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof rejectRequirementReview>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof rejectRequirementReview>>,
+                    TError,
+                    Awaited<ReturnType<typeof rejectRequirementReview>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useRejectRequirementReview<TData = Awaited<ReturnType<typeof rejectRequirementReview>>, TError = void>(
- projectId: string,
+    projectId: string,
     requirementId: string,
-    rejectRequirementDto: RejectRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof rejectRequirementReview>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    rejectRequirementDto: RejectRequirementDto,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof rejectRequirementReview>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
  * @summary Reject a reviewed requirement.
  */
 
 export function useRejectRequirementReview<TData = Awaited<ReturnType<typeof rejectRequirementReview>>, TError = void>(
- projectId: string,
+    projectId: string,
     requirementId: string,
-    rejectRequirementDto: RejectRequirementDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof rejectRequirementReview>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    rejectRequirementDto: RejectRequirementDto,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof rejectRequirementReview>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getRejectRequirementReviewQueryOptions(
+        projectId,
+        requirementId,
+        rejectRequirementDto,
+        options,
+    );
 
-  const queryOptions = getRejectRequirementReviewQueryOptions(projectId,requirementId,rejectRequirementDto,options)
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
+    return withQueryKey(query, queryOptions.queryKey);
 }
-
-
-
-
-
-

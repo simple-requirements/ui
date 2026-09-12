@@ -24,8 +24,7 @@ export function ReviewNameDialog({ visible, pending = false, onAbort, onConfirm 
                 header: { className: 'review-dialog__header' },
                 content: { className: 'review-dialog__content' },
             }}
-            onHide={onAbort}
-        >
+            onHide={onAbort}>
             <div className='review-dialog__form'>
                 <p>The backend records the resolver from the authenticated session.</p>
                 <div className='review-dialog__actions'>

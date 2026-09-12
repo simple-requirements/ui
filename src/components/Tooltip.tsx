@@ -7,10 +7,10 @@ export const DEFAULT_TOOLTIP_SHOW_DELAY_MS = 1_000;
 
 export type TooltipTriggerProps = Readonly<{
     'aria-describedby'?: string;
-    onMouseEnter: () => void;
-    onMouseLeave: () => void;
-    onFocus: () => void;
-    onBlur: () => void;
+    'onMouseEnter': () => void;
+    'onMouseLeave': () => void;
+    'onFocus': () => void;
+    'onBlur': () => void;
 }>;
 
 type Props = Readonly<{
@@ -57,10 +57,10 @@ export function Tooltip({ content, children, delayMs = DEFAULT_TOOLTIP_SHOW_DELA
         <span className='tooltip'>
             {children({
                 'aria-describedby': visible ? tooltipId : undefined,
-                onMouseEnter: showTooltipDelayed,
-                onMouseLeave: hideTooltip,
-                onFocus: showTooltipDelayed,
-                onBlur: hideTooltip,
+                'onMouseEnter': showTooltipDelayed,
+                'onMouseLeave': hideTooltip,
+                'onFocus': showTooltipDelayed,
+                'onBlur': hideTooltip,
             })}
 
             {visible && (

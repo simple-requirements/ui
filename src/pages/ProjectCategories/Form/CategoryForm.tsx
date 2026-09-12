@@ -8,10 +8,7 @@ import { InlineStatus } from '@/components/Feedback/InlineStatus';
 import type { CategoryFormController } from '@/pages/ProjectCategories/Form/useCategoryFormController';
 import type { CategoryFormFieldName, CategoryFormMode } from '@/pages/ProjectCategories/Form/categoryFormTypes';
 
-export type CategoryFormProps = Readonly<{
-    mode: CategoryFormMode;
-    controller: CategoryFormController;
-}>;
+export type CategoryFormProps = Readonly<{ mode: CategoryFormMode; controller: CategoryFormController }>;
 
 const categoryTypes = categoryTypeSchema.options;
 
@@ -30,13 +27,13 @@ function getFieldHint(
 
     if (fieldName === 'key') {
         return mode === 'update' ?
-            'The category key cannot be changed.'
-        :   'Use 2 to 4 uppercase letters. The key must be unique within the project.';
+                'The category key cannot be changed.'
+            :   'Use 2 to 4 uppercase letters. The key must be unique within the project.';
     }
 
     return mode === 'update' ?
-        'The category type cannot be changed.'
-    :   'Choose whether this is a functional or non-functional category.';
+            'The category type cannot be changed.'
+        :   'Choose whether this is a functional or non-functional category.';
 }
 
 export function CategoryForm({ mode, controller }: CategoryFormProps) {

@@ -12,16 +12,16 @@ import type { CreateRequirementDtoRationale } from './createRequirementDtoRation
 import type { CreateRequirementDtoSource } from './createRequirementDtoSource';
 
 export interface CreateRequirementDto {
-  /** Owning category identifier. */
-  categoryId: string;
-  /** @nullable */
-  description?: CreateRequirementDtoDescription;
-  /** @nullable */
-  priority?: CreateRequirementDtoPriority;
-  /** @nullable */
-  owner?: CreateRequirementDtoOwner;
-  /** @nullable */
-  rationale?: CreateRequirementDtoRationale;
-  /** @nullable */
-  source?: CreateRequirementDtoSource;
+    /** Owning category identifier. */
+    categoryId: string;
+    /** @nullable */
+    description?: CreateRequirementDtoDescription;
+    /** @nullable */
+    priority?: CreateRequirementDtoPriority;
+    /** @nullable */
+    owner?: CreateRequirementDtoOwner;
+    /** @nullable */
+    rationale?: CreateRequirementDtoRationale;
+    /** @nullable */
+    source?: CreateRequirementDtoSource;
 }

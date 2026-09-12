@@ -9,10 +9,10 @@ import type { AuthenticatedUserResponseDtoGlobalRolesItem } from './authenticate
 import type { AuthenticatedUserResponseDtoStatus } from './authenticatedUserResponseDtoStatus';
 
 export interface AuthenticatedUserResponseDto {
-  id: string;
-  username: string;
-  email: string;
-  displayName: string;
-  status: AuthenticatedUserResponseDtoStatus;
-  globalRoles: AuthenticatedUserResponseDtoGlobalRolesItem[];
+    id: string;
+    username: string;
+    email: string;
+    displayName: string;
+    status: AuthenticatedUserResponseDtoStatus;
+    globalRoles: AuthenticatedUserResponseDtoGlobalRolesItem[];
 }

@@ -5,644 +5,552 @@
  * HTTP API for the Requirements Management app.
  * OpenAPI spec version: 0.0.1
  */
-import {
-  useQuery
-} from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import type {
-  DataTag,
-  DefinedInitialDataOptions,
-  DefinedUseQueryResult,
-  QueryClient,
-  QueryFunction,
-  QueryKey,
-  UndefinedInitialDataOptions,
-  UseQueryOptions,
-  UseQueryResult
+    DataTag,
+    DefinedInitialDataOptions,
+    DefinedUseQueryResult,
+    QueryClient,
+    QueryFunction,
+    QueryKey,
+    UndefinedInitialDataOptions,
+    UseQueryOptions,
+    UseQueryResult,
 } from '@tanstack/react-query';
 
-import type {
-  CreateProjectDto,
-  ProjectResponseDto,
-  UpdateProjectDto
-} from '../model';
+import type { CreateProjectDto, ProjectResponseDto, UpdateProjectDto } from '../model';
 
 import { apiFetch } from '../../fetch';
 
-
-
-
 const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKey: K } => {
-  const result = { queryKey } as T & { queryKey: K };
-  for (const key of Object.keys(query)) {
-    // The explicit queryKey always wins, matching the previous
-    // `{ ...query, queryKey }` spread where it was set last.
-    if (key === 'queryKey') continue;
-    Object.defineProperty(result, key, {
-      enumerable: true,
-      configurable: true,
-      get: () => (query as Record<string, unknown>)[key],
-    });
-  }
-  return result;
+    const result = { queryKey } as T & { queryKey: K };
+    for (const key of Object.keys(query)) {
+        // The explicit queryKey always wins, matching the previous
+        // `{ ...query, queryKey }` spread where it was set last.
+        if (key === 'queryKey') continue;
+        Object.defineProperty(result, key, {
+            enumerable: true,
+            configurable: true,
+            get: () => (query as Record<string, unknown>)[key],
+        });
+    }
+    return result;
 };
 
-export type listProjectsResponse200 = {
-  data: ProjectResponseDto[]
-  status: 200
-}
+export type listProjectsResponse200 = { data: ProjectResponseDto[]; status: 200 };
 
-export type listProjectsResponseSuccess = (listProjectsResponse200) & {
-  headers: Headers;
-};
-;
-
-export type listProjectsResponse = (listProjectsResponseSuccess)
+export type listProjectsResponseSuccess = listProjectsResponse200 & { headers: Headers };
+export type listProjectsResponse = listProjectsResponseSuccess;
 
 export const getListProjectsUrl = () => {
-
-
-
-
-  return `/projects`
-}
+    return `/projects`;
+};
 
 /**
  * @summary List all projects.
  */
-export const listProjects = async ( options?: RequestInit): Promise<listProjectsResponse> => {
-
-  return apiFetch<listProjectsResponse>(getListProjectsUrl(),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
+export const listProjects = async (options?: RequestInit): Promise<listProjectsResponse> => {
+    return apiFetch<listProjectsResponse>(getListProjectsUrl(), { ...options, method: 'GET' });
+};
 
 export const getListProjectsQueryKey = () => {
-    return [
-    `/projects`
-    ] as const;
-    }
+    return [`/projects`] as const;
+};
 
+export const getListProjectsQueryOptions = <
+    TData = Awaited<ReturnType<typeof listProjects>>,
+    TError = unknown,
+>(options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listProjects>>, TError, TData>>;
+}) => {
+    const { query: queryOptions } = options ?? {};
 
-export const getListProjectsQueryOptions = <TData = Awaited<ReturnType<typeof listProjects>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listProjects>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getListProjectsQueryKey();
-
-
+    const queryKey = queryOptions?.queryKey ?? getListProjectsQueryKey();
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof listProjects>>> = ({ signal }) => listProjects({ signal });
 
+    return { queryKey, queryFn, staleTime: 30000, ...queryOptions } as UseQueryOptions<
+        Awaited<ReturnType<typeof listProjects>>,
+        TError,
+        TData
+    > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-
-
-
-   return  { queryKey, queryFn,   staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listProjects>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type ListProjectsQueryResult = NonNullable<Awaited<ReturnType<typeof listProjects>>>
-export type ListProjectsQueryError = unknown
-
+export type ListProjectsQueryResult = NonNullable<Awaited<ReturnType<typeof listProjects>>>;
+export type ListProjectsQueryError = unknown;
 
 export function useListProjects<TData = Awaited<ReturnType<typeof listProjects>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listProjects>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof listProjects>>,
-          TError,
-          Awaited<ReturnType<typeof listProjects>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof listProjects>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof listProjects>>,
+                    TError,
+                    Awaited<ReturnType<typeof listProjects>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useListProjects<TData = Awaited<ReturnType<typeof listProjects>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listProjects>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof listProjects>>,
-          TError,
-          Awaited<ReturnType<typeof listProjects>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listProjects>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof listProjects>>,
+                    TError,
+                    Awaited<ReturnType<typeof listProjects>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useListProjects<TData = Awaited<ReturnType<typeof listProjects>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listProjects>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listProjects>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
  * @summary List all projects.
  */
 
 export function useListProjects<TData = Awaited<ReturnType<typeof listProjects>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listProjects>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listProjects>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getListProjectsQueryOptions(options);
 
-  const queryOptions = getListProjectsQueryOptions(options)
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
+    return withQueryKey(query, queryOptions.queryKey);
 }
 
+export type createProjectResponse201 = { data: ProjectResponseDto; status: 201 };
 
+export type createProjectResponse400 = { data: void; status: 400 };
 
+export type createProjectResponseSuccess = createProjectResponse201 & { headers: Headers };
+export type createProjectResponseError = createProjectResponse400 & { headers: Headers };
 
-
-
-export type createProjectResponse201 = {
-  data: ProjectResponseDto
-  status: 201
-}
-
-export type createProjectResponse400 = {
-  data: void
-  status: 400
-}
-
-export type createProjectResponseSuccess = (createProjectResponse201) & {
-  headers: Headers;
-};
-export type createProjectResponseError = (createProjectResponse400) & {
-  headers: Headers;
-};
-
-export type createProjectResponse = (createProjectResponseSuccess | createProjectResponseError)
+export type createProjectResponse = createProjectResponseSuccess | createProjectResponseError;
 
 export const getCreateProjectUrl = () => {
-
-
-
-
-  return `/projects`
-}
+    return `/projects`;
+};
 
 /**
  * @summary Create a project.
  */
-export const createProject = async (createProjectDto: CreateProjectDto, options?: RequestInit): Promise<createProjectResponse> => {
+export const createProject = async (
+    createProjectDto: CreateProjectDto,
+    options?: RequestInit,
+): Promise<createProjectResponse> => {
+    return apiFetch<createProjectResponse>(getCreateProjectUrl(), {
+        ...options,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...options?.headers },
+        body: JSON.stringify(createProjectDto),
+    });
+};
 
-  return apiFetch<createProjectResponse>(getCreateProjectUrl(),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(createProjectDto)
-  }
-);}
+export const getCreateProjectQueryKey = (createProjectDto?: CreateProjectDto) => {
+    return ['POST', `/projects`, createProjectDto] as const;
+};
 
-
-
-
-
-export const getCreateProjectQueryKey = (createProjectDto?: CreateProjectDto,) => {
-    return [
-    'POST', `/projects`, createProjectDto
-    ] as const;
-    }
-
-
-export const getCreateProjectQueryOptions = <TData = Awaited<ReturnType<typeof createProject>>, TError = void>(createProjectDto: CreateProjectDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createProject>>, TError, TData>>, }
+export const getCreateProjectQueryOptions = <TData = Awaited<ReturnType<typeof createProject>>, TError = void>(
+    createProjectDto: CreateProjectDto,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createProject>>, TError, TData>> },
 ) => {
+    const { query: queryOptions } = options ?? {};
 
-const {query: queryOptions} = options ?? {};
+    const queryKey = queryOptions?.queryKey ?? getCreateProjectQueryKey(createProjectDto);
 
-  const queryKey =  queryOptions?.queryKey ?? getCreateProjectQueryKey(createProjectDto);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof createProject>>> = ({ signal }) =>
+        createProject(createProjectDto, { signal });
 
+    return { queryKey, queryFn, staleTime: 30000, ...queryOptions } as UseQueryOptions<
+        Awaited<ReturnType<typeof createProject>>,
+        TError,
+        TData
+    > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof createProject>>> = ({ signal }) => createProject(createProjectDto, { signal });
-
-
-
-
-
-   return  { queryKey, queryFn,   staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof createProject>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type CreateProjectQueryResult = NonNullable<Awaited<ReturnType<typeof createProject>>>
-export type CreateProjectQueryError = void
-
+export type CreateProjectQueryResult = NonNullable<Awaited<ReturnType<typeof createProject>>>;
+export type CreateProjectQueryError = void;
 
 export function useCreateProject<TData = Awaited<ReturnType<typeof createProject>>, TError = void>(
- createProjectDto: CreateProjectDto, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof createProject>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof createProject>>,
-          TError,
-          Awaited<ReturnType<typeof createProject>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    createProjectDto: CreateProjectDto,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof createProject>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof createProject>>,
+                    TError,
+                    Awaited<ReturnType<typeof createProject>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useCreateProject<TData = Awaited<ReturnType<typeof createProject>>, TError = void>(
- createProjectDto: CreateProjectDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createProject>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof createProject>>,
-          TError,
-          Awaited<ReturnType<typeof createProject>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    createProjectDto: CreateProjectDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createProject>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof createProject>>,
+                    TError,
+                    Awaited<ReturnType<typeof createProject>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useCreateProject<TData = Awaited<ReturnType<typeof createProject>>, TError = void>(
- createProjectDto: CreateProjectDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createProject>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    createProjectDto: CreateProjectDto,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createProject>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
  * @summary Create a project.
  */
 
 export function useCreateProject<TData = Awaited<ReturnType<typeof createProject>>, TError = void>(
- createProjectDto: CreateProjectDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createProject>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    createProjectDto: CreateProjectDto,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createProject>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getCreateProjectQueryOptions(createProjectDto, options);
 
-  const queryOptions = getCreateProjectQueryOptions(createProjectDto,options)
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
+    return withQueryKey(query, queryOptions.queryKey);
 }
 
+export type getProjectResponse200 = { data: ProjectResponseDto; status: 200 };
 
+export type getProjectResponse404 = { data: void; status: 404 };
 
+export type getProjectResponseSuccess = getProjectResponse200 & { headers: Headers };
+export type getProjectResponseError = getProjectResponse404 & { headers: Headers };
 
+export type getProjectResponse = getProjectResponseSuccess | getProjectResponseError;
 
-
-export type getProjectResponse200 = {
-  data: ProjectResponseDto
-  status: 200
-}
-
-export type getProjectResponse404 = {
-  data: void
-  status: 404
-}
-
-export type getProjectResponseSuccess = (getProjectResponse200) & {
-  headers: Headers;
+export const getGetProjectUrl = (id: string) => {
+    return `/projects/${id}`;
 };
-export type getProjectResponseError = (getProjectResponse404) & {
-  headers: Headers;
-};
-
-export type getProjectResponse = (getProjectResponseSuccess | getProjectResponseError)
-
-export const getGetProjectUrl = (id: string,) => {
-
-
-
-
-  return `/projects/${id}`
-}
 
 /**
  * @summary Get one project.
  */
 export const getProject = async (id: string, options?: RequestInit): Promise<getProjectResponse> => {
+    return apiFetch<getProjectResponse>(getGetProjectUrl(id), { ...options, method: 'GET' });
+};
 
-  return apiFetch<getProjectResponse>(getGetProjectUrl(id),
-  {
-    ...options,
-    method: 'GET'
+export const getGetProjectQueryKey = (id: string) => {
+    return [`/projects/${id}`] as const;
+};
 
-
-  }
-);}
-
-
-
-
-
-export const getGetProjectQueryKey = (id: string,) => {
-    return [
-    `/projects/${id}`
-    ] as const;
-    }
-
-
-export const getGetProjectQueryOptions = <TData = Awaited<ReturnType<typeof getProject>>, TError = void>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>, }
+export const getGetProjectQueryOptions = <TData = Awaited<ReturnType<typeof getProject>>, TError = void>(
+    id: string,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>> },
 ) => {
+    const { query: queryOptions } = options ?? {};
 
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetProjectQueryKey(id);
-
-
+    const queryKey = queryOptions?.queryKey ?? getGetProjectQueryKey(id);
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof getProject>>> = ({ signal }) => getProject(id, { signal });
 
+    return {
+        queryKey,
+        queryFn,
+        enabled: id !== null && id !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
 
-
-
-
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetProjectQueryResult = NonNullable<Awaited<ReturnType<typeof getProject>>>
-export type GetProjectQueryError = void
-
+export type GetProjectQueryResult = NonNullable<Awaited<ReturnType<typeof getProject>>>;
+export type GetProjectQueryError = void;
 
 export function useGetProject<TData = Awaited<ReturnType<typeof getProject>>, TError = void>(
- id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getProject>>,
-          TError,
-          Awaited<ReturnType<typeof getProject>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    id: string,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof getProject>>,
+                    TError,
+                    Awaited<ReturnType<typeof getProject>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetProject<TData = Awaited<ReturnType<typeof getProject>>, TError = void>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getProject>>,
-          TError,
-          Awaited<ReturnType<typeof getProject>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    id: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof getProject>>,
+                    TError,
+                    Awaited<ReturnType<typeof getProject>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetProject<TData = Awaited<ReturnType<typeof getProject>>, TError = void>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    id: string,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
  * @summary Get one project.
  */
 
 export function useGetProject<TData = Awaited<ReturnType<typeof getProject>>, TError = void>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    id: string,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getGetProjectQueryOptions(id, options);
 
-  const queryOptions = getGetProjectQueryOptions(id,options)
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
+    return withQueryKey(query, queryOptions.queryKey);
 }
 
+export type updateProjectResponse200 = { data: ProjectResponseDto; status: 200 };
 
+export type updateProjectResponse400 = { data: void; status: 400 };
 
+export type updateProjectResponse404 = { data: void; status: 404 };
 
+export type updateProjectResponseSuccess = updateProjectResponse200 & { headers: Headers };
+export type updateProjectResponseError = (updateProjectResponse400 | updateProjectResponse404) & { headers: Headers };
 
+export type updateProjectResponse = updateProjectResponseSuccess | updateProjectResponseError;
 
-export type updateProjectResponse200 = {
-  data: ProjectResponseDto
-  status: 200
-}
-
-export type updateProjectResponse400 = {
-  data: void
-  status: 400
-}
-
-export type updateProjectResponse404 = {
-  data: void
-  status: 404
-}
-
-export type updateProjectResponseSuccess = (updateProjectResponse200) & {
-  headers: Headers;
+export const getUpdateProjectUrl = (id: string) => {
+    return `/projects/${id}`;
 };
-export type updateProjectResponseError = (updateProjectResponse400 | updateProjectResponse404) & {
-  headers: Headers;
-};
-
-export type updateProjectResponse = (updateProjectResponseSuccess | updateProjectResponseError)
-
-export const getUpdateProjectUrl = (id: string,) => {
-
-
-
-
-  return `/projects/${id}`
-}
 
 /**
  * @summary Rename a project.
  */
-export const updateProject = async (id: string,
-    updateProjectDto: UpdateProjectDto, options?: RequestInit): Promise<updateProjectResponse> => {
+export const updateProject = async (
+    id: string,
+    updateProjectDto: UpdateProjectDto,
+    options?: RequestInit,
+): Promise<updateProjectResponse> => {
+    return apiFetch<updateProjectResponse>(getUpdateProjectUrl(id), {
+        ...options,
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', ...options?.headers },
+        body: JSON.stringify(updateProjectDto),
+    });
+};
 
-  return apiFetch<updateProjectResponse>(getUpdateProjectUrl(id),
-  {
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(updateProjectDto)
-  }
-);}
+export const getUpdateProjectQueryKey = (id: string, updateProjectDto?: UpdateProjectDto) => {
+    return ['PATCH', `/projects/${id}`, updateProjectDto] as const;
+};
 
-
-
-
-
-export const getUpdateProjectQueryKey = (id: string,
-    updateProjectDto?: UpdateProjectDto,) => {
-    return [
-    'PATCH', `/projects/${id}`, updateProjectDto
-    ] as const;
-    }
-
-
-export const getUpdateProjectQueryOptions = <TData = Awaited<ReturnType<typeof updateProject>>, TError = void>(id: string,
-    updateProjectDto: UpdateProjectDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateProject>>, TError, TData>>, }
+export const getUpdateProjectQueryOptions = <TData = Awaited<ReturnType<typeof updateProject>>, TError = void>(
+    id: string,
+    updateProjectDto: UpdateProjectDto,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof updateProject>>, TError, TData>> },
 ) => {
+    const { query: queryOptions } = options ?? {};
 
-const {query: queryOptions} = options ?? {};
+    const queryKey = queryOptions?.queryKey ?? getUpdateProjectQueryKey(id, updateProjectDto);
 
-  const queryKey =  queryOptions?.queryKey ?? getUpdateProjectQueryKey(id,updateProjectDto);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof updateProject>>> = ({ signal }) =>
+        updateProject(id, updateProjectDto, { signal });
 
+    return {
+        queryKey,
+        queryFn,
+        enabled: id !== null && id !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof updateProject>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
 
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof updateProject>>> = ({ signal }) => updateProject(id,updateProjectDto, { signal });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof updateProject>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type UpdateProjectQueryResult = NonNullable<Awaited<ReturnType<typeof updateProject>>>
-export type UpdateProjectQueryError = void
-
+export type UpdateProjectQueryResult = NonNullable<Awaited<ReturnType<typeof updateProject>>>;
+export type UpdateProjectQueryError = void;
 
 export function useUpdateProject<TData = Awaited<ReturnType<typeof updateProject>>, TError = void>(
- id: string,
-    updateProjectDto: UpdateProjectDto, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateProject>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof updateProject>>,
-          TError,
-          Awaited<ReturnType<typeof updateProject>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    id: string,
+    updateProjectDto: UpdateProjectDto,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof updateProject>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof updateProject>>,
+                    TError,
+                    Awaited<ReturnType<typeof updateProject>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useUpdateProject<TData = Awaited<ReturnType<typeof updateProject>>, TError = void>(
- id: string,
-    updateProjectDto: UpdateProjectDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateProject>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof updateProject>>,
-          TError,
-          Awaited<ReturnType<typeof updateProject>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    id: string,
+    updateProjectDto: UpdateProjectDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof updateProject>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof updateProject>>,
+                    TError,
+                    Awaited<ReturnType<typeof updateProject>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useUpdateProject<TData = Awaited<ReturnType<typeof updateProject>>, TError = void>(
- id: string,
-    updateProjectDto: UpdateProjectDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateProject>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    id: string,
+    updateProjectDto: UpdateProjectDto,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof updateProject>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
  * @summary Rename a project.
  */
 
 export function useUpdateProject<TData = Awaited<ReturnType<typeof updateProject>>, TError = void>(
- id: string,
-    updateProjectDto: UpdateProjectDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateProject>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    id: string,
+    updateProjectDto: UpdateProjectDto,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof updateProject>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getUpdateProjectQueryOptions(id, updateProjectDto, options);
 
-  const queryOptions = getUpdateProjectQueryOptions(id,updateProjectDto,options)
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
+    return withQueryKey(query, queryOptions.queryKey);
 }
 
+export type deleteProjectResponse204 = { data: void; status: 204 };
 
+export type deleteProjectResponse404 = { data: void; status: 404 };
 
+export type deleteProjectResponseSuccess = deleteProjectResponse204 & { headers: Headers };
+export type deleteProjectResponseError = deleteProjectResponse404 & { headers: Headers };
 
+export type deleteProjectResponse = deleteProjectResponseSuccess | deleteProjectResponseError;
 
-
-export type deleteProjectResponse204 = {
-  data: void
-  status: 204
-}
-
-export type deleteProjectResponse404 = {
-  data: void
-  status: 404
-}
-
-export type deleteProjectResponseSuccess = (deleteProjectResponse204) & {
-  headers: Headers;
+export const getDeleteProjectUrl = (id: string) => {
+    return `/projects/${id}`;
 };
-export type deleteProjectResponseError = (deleteProjectResponse404) & {
-  headers: Headers;
-};
-
-export type deleteProjectResponse = (deleteProjectResponseSuccess | deleteProjectResponseError)
-
-export const getDeleteProjectUrl = (id: string,) => {
-
-
-
-
-  return `/projects/${id}`
-}
 
 /**
  * @summary Delete a project.
  */
 export const deleteProject = async (id: string, options?: RequestInit): Promise<deleteProjectResponse> => {
+    return apiFetch<deleteProjectResponse>(getDeleteProjectUrl(id), { ...options, method: 'DELETE' });
+};
 
-  return apiFetch<deleteProjectResponse>(getDeleteProjectUrl(id),
-  {
-    ...options,
-    method: 'DELETE'
+export const getDeleteProjectQueryKey = (id: string) => {
+    return ['DELETE', `/projects/${id}`] as const;
+};
 
-
-  }
-);}
-
-
-
-
-
-export const getDeleteProjectQueryKey = (id: string,) => {
-    return [
-    'DELETE', `/projects/${id}`
-    ] as const;
-    }
-
-
-export const getDeleteProjectQueryOptions = <TData = Awaited<ReturnType<typeof deleteProject>>, TError = void>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteProject>>, TError, TData>>, }
+export const getDeleteProjectQueryOptions = <TData = Awaited<ReturnType<typeof deleteProject>>, TError = void>(
+    id: string,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteProject>>, TError, TData>> },
 ) => {
+    const { query: queryOptions } = options ?? {};
 
-const {query: queryOptions} = options ?? {};
+    const queryKey = queryOptions?.queryKey ?? getDeleteProjectQueryKey(id);
 
-  const queryKey =  queryOptions?.queryKey ?? getDeleteProjectQueryKey(id);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof deleteProject>>> = ({ signal }) =>
+        deleteProject(id, { signal });
 
+    return {
+        queryKey,
+        queryFn,
+        enabled: id !== null && id !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof deleteProject>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
 
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof deleteProject>>> = ({ signal }) => deleteProject(id, { signal });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof deleteProject>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type DeleteProjectQueryResult = NonNullable<Awaited<ReturnType<typeof deleteProject>>>
-export type DeleteProjectQueryError = void
-
+export type DeleteProjectQueryResult = NonNullable<Awaited<ReturnType<typeof deleteProject>>>;
+export type DeleteProjectQueryError = void;
 
 export function useDeleteProject<TData = Awaited<ReturnType<typeof deleteProject>>, TError = void>(
- id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteProject>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof deleteProject>>,
-          TError,
-          Awaited<ReturnType<typeof deleteProject>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    id: string,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteProject>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof deleteProject>>,
+                    TError,
+                    Awaited<ReturnType<typeof deleteProject>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useDeleteProject<TData = Awaited<ReturnType<typeof deleteProject>>, TError = void>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteProject>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof deleteProject>>,
-          TError,
-          Awaited<ReturnType<typeof deleteProject>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    id: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteProject>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof deleteProject>>,
+                    TError,
+                    Awaited<ReturnType<typeof deleteProject>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useDeleteProject<TData = Awaited<ReturnType<typeof deleteProject>>, TError = void>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteProject>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    id: string,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteProject>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
  * @summary Delete a project.
  */
 
 export function useDeleteProject<TData = Awaited<ReturnType<typeof deleteProject>>, TError = void>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteProject>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    id: string,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteProject>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getDeleteProjectQueryOptions(id, options);
 
-  const queryOptions = getDeleteProjectQueryOptions(id,options)
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
+    return withQueryKey(query, queryOptions.queryKey);
 }
-
-
-
-
-
-

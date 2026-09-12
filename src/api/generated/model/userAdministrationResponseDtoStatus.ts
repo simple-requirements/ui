@@ -6,11 +6,11 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export type UserAdministrationResponseDtoStatus = typeof UserAdministrationResponseDtoStatus[keyof typeof UserAdministrationResponseDtoStatus];
-
+export type UserAdministrationResponseDtoStatus =
+    (typeof UserAdministrationResponseDtoStatus)[keyof typeof UserAdministrationResponseDtoStatus];
 
 export const UserAdministrationResponseDtoStatus = {
-  pending: 'pending',
-  active: 'active',
-  deactivated: 'deactivated',
+    pending: 'pending',
+    active: 'active',
+    deactivated: 'deactivated',
 } as const;

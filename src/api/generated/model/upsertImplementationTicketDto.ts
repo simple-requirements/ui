@@ -7,7 +7,7 @@
  */
 
 export interface UpsertImplementationTicketDto {
-  ticketId: string;
-  completedBy: string;
-  completedAt: string;
+    ticketId: string;
+    completedBy: string;
+    completedAt: string;
 }

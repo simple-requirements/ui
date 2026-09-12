@@ -1,86 +1,67 @@
-import { Button } from "primereact/button";
-import { useEffect, useState } from "react";
+import { Button } from 'primereact/button';
+import { useEffect, useState } from 'react';
 
-import type {
-  ProjectMembershipResponse,
-  UserAdministrationResponse,
-} from "@/api/authApi";
-import type { ProjectRole } from "@/auth/authTypes";
-import { isAdministrator } from "@/auth/globalPermissions";
-import {
-  normalizeProjectRoles,
-  projectRoleSummary,
-  sameProjectRoles,
-} from "@/auth/projectRoleMetadata";
+import type { ProjectMembershipResponse, UserAdministrationResponse } from '@/api/authApi';
+import type { ProjectRole } from '@/auth/authTypes';
+import { isAdministrator } from '@/auth/globalPermissions';
+import { normalizeProjectRoles, projectRoleSummary, sameProjectRoles } from '@/auth/projectRoleMetadata';
 
-import { RoleSelection } from "@/pages/Administration/ProjectMemberships/RoleSelection";
+import { RoleSelection } from '@/pages/Administration/ProjectMemberships/RoleSelection';
 import type {
-  RemoveProjectMembershipHandler,
-  SetProjectMembershipHandler,
-} from "@/pages/Administration/ProjectMemberships/types";
+    RemoveProjectMembershipHandler,
+    SetProjectMembershipHandler,
+} from '@/pages/Administration/ProjectMemberships/types';
 
 type MembershipRowProps = Readonly<{
-  membership: ProjectMembershipResponse;
-  user: UserAdministrationResponse | undefined;
-  pending: boolean;
-  onSetMembership: SetProjectMembershipHandler;
-  onRemoveMembership: RemoveProjectMembershipHandler;
+    membership: ProjectMembershipResponse;
+    user: UserAdministrationResponse | undefined;
+    pending: boolean;
+    onSetMembership: SetProjectMembershipHandler;
+    onRemoveMembership: RemoveProjectMembershipHandler;
 }>;
 
-export function MembershipRow({
-  membership,
-  user,
-  pending,
-  onSetMembership,
-  onRemoveMembership,
-}: MembershipRowProps) {
-  const [roles, setRoles] = useState<ProjectRole[]>(() =>
-    normalizeProjectRoles(membership.roles),
-  );
+export function MembershipRow({ membership, user, pending, onSetMembership, onRemoveMembership }: MembershipRowProps) {
+    const [roles, setRoles] = useState<ProjectRole[]>(() => normalizeProjectRoles(membership.roles));
 
-  useEffect(() => {
-    setRoles(normalizeProjectRoles(membership.roles));
-  }, [membership.roles]);
+    useEffect(() => {
+        setRoles(normalizeProjectRoles(membership.roles));
+    }, [membership.roles]);
 
-  const dirty = !sameProjectRoles(roles, membership.roles);
-  const userIsAdministrator = isAdministrator(user);
+    const dirty = !sameProjectRoles(roles, membership.roles);
+    const userIsAdministrator = isAdministrator(user);
 
-  return (
-    <tr>
-      <th scope="row">
-        {membership.displayName}
-        <small>@{membership.username}</small>
-        {userIsAdministrator && <small>Administrator</small>}
-      </th>
-      <td>{projectRoleSummary(membership.roles)}</td>
-      <td>
-        <RoleSelection
-          legend={`Roles for ${membership.displayName}`}
-          roles={roles}
-          disabled={pending}
-          onChange={setRoles}
-        />
-      </td>
-      <td className="project-memberships__actions">
-        <Button
-          type="button"
-          label="Save roles"
-          disabled={pending || roles.length === 0 || !dirty}
-          onClick={() =>
-            onSetMembership(membership.userId, membership.displayName, roles)
-          }
-        />
-        <Button
-          type="button"
-          outlined
-          severity="danger"
-          label="Remove membership"
-          disabled={pending}
-          onClick={() =>
-            onRemoveMembership(membership.userId, membership.displayName)
-          }
-        />
-      </td>
-    </tr>
-  );
+    return (
+        <tr>
+            <th scope='row'>
+                {membership.displayName}
+                <small>@{membership.username}</small>
+                {userIsAdministrator && <small>Administrator</small>}
+            </th>
+            <td>{projectRoleSummary(membership.roles)}</td>
+            <td>
+                <RoleSelection
+                    legend={`Roles for ${membership.displayName}`}
+                    roles={roles}
+                    disabled={pending}
+                    onChange={setRoles}
+                />
+            </td>
+            <td className='project-memberships__actions'>
+                <Button
+                    type='button'
+                    label='Save roles'
+                    disabled={pending || roles.length === 0 || !dirty}
+                    onClick={() => onSetMembership(membership.userId, membership.displayName, roles)}
+                />
+                <Button
+                    type='button'
+                    outlined
+                    severity='danger'
+                    label='Remove membership'
+                    disabled={pending}
+                    onClick={() => onRemoveMembership(membership.userId, membership.displayName)}
+                />
+            </td>
+        </tr>
+    );
 }

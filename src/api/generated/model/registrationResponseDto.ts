@@ -7,5 +7,5 @@
  */
 
 export interface RegistrationResponseDto {
-  message: string;
+    message: string;
 }

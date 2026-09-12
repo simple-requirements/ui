@@ -7,14 +7,14 @@
  */
 
 export interface BootstrapAdministratorDto {
-  username: string;
-  email: string;
-  displayName: string;
-  /**
+    username: string;
+    email: string;
+    displayName: string;
+    /**
      * @minLength 15
      * @maxLength 128
      */
-  password: string;
-  /** @minLength 1 */
-  bootstrapSecret?: string;
+    password: string;
+    /** @minLength 1 */
+    bootstrapSecret?: string;
 }

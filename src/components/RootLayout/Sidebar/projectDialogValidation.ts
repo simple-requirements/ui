@@ -1,8 +1,6 @@
 import { z } from 'zod';
 
-export const projectDialogSchema = z.object({
-    name: z.string().trim().min(1, 'Project name is required.'),
-});
+export const projectDialogSchema = z.object({ name: z.string().trim().min(1, 'Project name is required.') });
 export type ProjectDialogSubmitData = z.infer<typeof projectDialogSchema>;
 
 export function getProjectName(formData: FormData): string {

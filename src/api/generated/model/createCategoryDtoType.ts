@@ -9,10 +9,6 @@
 /**
  * Requirement type handled by this category.
  */
-export type CreateCategoryDtoType = typeof CreateCategoryDtoType[keyof typeof CreateCategoryDtoType];
+export type CreateCategoryDtoType = (typeof CreateCategoryDtoType)[keyof typeof CreateCategoryDtoType];
 
-
-export const CreateCategoryDtoType = {
-  FR: 'FR',
-  NFR: 'NFR',
-} as const;
+export const CreateCategoryDtoType = { FR: 'FR', NFR: 'NFR' } as const;

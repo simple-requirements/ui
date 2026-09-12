@@ -30,11 +30,9 @@ export function useRequirementFormNavigation(
     const dirtyFormNavigation = useDirtyFormNavigationGuard(isDirty, allowNavigationRef);
 
     const formRoute =
-        projectId === undefined
-            ? ''
-            : mode === 'create'
-              ? getProjectRequirementsRoute(projectId)
-              : getProjectRequirementEditRoute(projectId, requirementId ?? '');
+        projectId === undefined ? ''
+        : mode === 'create' ? getProjectRequirementsRoute(projectId)
+        : getProjectRequirementEditRoute(projectId, requirementId ?? '');
 
     function allowNavigation(): void {
         allowNavigationRef.current = true;
@@ -46,9 +44,9 @@ export function useRequirementFormNavigation(
         }
 
         const abortRoute =
-            mode === 'update' && requirementId !== undefined
-                ? getProjectRequirementDetailsRoute(projectId, requirementId)
-                : getProjectRequirementsRoute(projectId);
+            mode === 'update' && requirementId !== undefined ?
+                getProjectRequirementDetailsRoute(projectId, requirementId)
+            :   getProjectRequirementsRoute(projectId);
 
         dirtyFormNavigation.requestNavigation(() => {
             void navigate(abortRoute);

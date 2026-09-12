@@ -8,7 +8,7 @@
 import type { AuthenticatedUserResponseDto } from './authenticatedUserResponseDto';
 
 export interface LoginResponseDto {
-  /** Opaque bearer token. It is returned only once and must not be persisted by the SPA. */
-  accessToken: string;
-  user: AuthenticatedUserResponseDto;
+    /** Opaque bearer token. It is returned only once and must not be persisted by the SPA. */
+    accessToken: string;
+    user: AuthenticatedUserResponseDto;
 }

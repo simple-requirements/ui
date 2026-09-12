@@ -8,13 +8,13 @@
 import type { ImplementationTicketResponseDtoUrl } from './implementationTicketResponseDtoUrl';
 
 export interface ImplementationTicketResponseDto {
-  ticketId: string;
-  completedBy: string;
-  completedAt: string;
-  id: string;
-  requirementId: string;
-  /** @nullable */
-  url?: ImplementationTicketResponseDtoUrl;
-  createdAt: string;
-  updatedAt: string;
+    ticketId: string;
+    completedBy: string;
+    completedAt: string;
+    id: string;
+    requirementId: string;
+    /** @nullable */
+    url?: ImplementationTicketResponseDtoUrl;
+    createdAt: string;
+    updatedAt: string;
 }

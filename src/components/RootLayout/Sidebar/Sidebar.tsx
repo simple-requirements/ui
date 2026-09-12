@@ -58,7 +58,9 @@ export function Sidebar() {
     }
 
     return (
-        <aside className="sidebar" aria-label="Projects">
+        <aside
+            className='sidebar'
+            aria-label='Projects'>
             <SidebarContextMenu
                 contextMenuRef={projectContextMenu.contextMenuRef}
                 canAdministerProjects={isAdministrator}
@@ -68,7 +70,10 @@ export function Sidebar() {
                 onExportAllProjects={handleExportAllProjects}
             />
 
-            <div className="sidebar__actions" role="group" aria-label="Project actions">
+            <div
+                className='sidebar__actions'
+                role='group'
+                aria-label='Project actions'>
                 <ActionButton
                     disabled={routeUiMetadata.disableChromeActions}
                     showNewProject={isAdministrator}

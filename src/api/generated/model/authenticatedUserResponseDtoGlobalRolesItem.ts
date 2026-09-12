@@ -6,9 +6,7 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export type AuthenticatedUserResponseDtoGlobalRolesItem = typeof AuthenticatedUserResponseDtoGlobalRolesItem[keyof typeof AuthenticatedUserResponseDtoGlobalRolesItem];
+export type AuthenticatedUserResponseDtoGlobalRolesItem =
+    (typeof AuthenticatedUserResponseDtoGlobalRolesItem)[keyof typeof AuthenticatedUserResponseDtoGlobalRolesItem];
 
-
-export const AuthenticatedUserResponseDtoGlobalRolesItem = {
-  administrator: 'administrator',
-} as const;
+export const AuthenticatedUserResponseDtoGlobalRolesItem = { administrator: 'administrator' } as const;

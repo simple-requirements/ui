@@ -34,19 +34,21 @@ export function ListPage() {
     }
 
     return (
-        <section className='project-requirements-list-page' aria-labelledby='project-requirements-list-page-title'>
-            <Splitter layout='vertical' pt={{ root: { className: 'project-requirements-list-page__splitter' } }}>
+        <section
+            className='project-requirements-list-page'
+            aria-labelledby='project-requirements-list-page-title'>
+            <Splitter
+                layout='vertical'
+                pt={{ root: { className: 'project-requirements-list-page__splitter' } }}>
                 <SplitterPanel
                     size={67}
                     minSize={25}
-                    pt={{ root: { className: 'project-requirements-list-page__splitter-panel' } }}
-                >
+                    pt={{ root: { className: 'project-requirements-list-page__splitter-panel' } }}>
                     <div className='project-requirements-list-page__list-panel'>
                         <header className='project-requirements-list-page__header'>
                             <h1
                                 id='project-requirements-list-page-title'
-                                className='project-requirements-list-page__title'
-                            >
+                                className='project-requirements-list-page__title'>
                                 Requirements
                             </h1>
                         </header>
@@ -56,8 +58,7 @@ export function ListPage() {
                             empty={requirements.length === 0}
                             loadingMessage='Loading requirements …'
                             errorMessage='Requirements could not be loaded.'
-                            emptyMessage='No requirements available.'
-                        >
+                            emptyMessage='No requirements available.'>
                             <RequirementTable
                                 requirements={requirements}
                                 selectedRequirement={selectedRequirement}
@@ -74,9 +75,11 @@ export function ListPage() {
                 <SplitterPanel
                     size={33}
                     minSize={20}
-                    pt={{ root: { className: 'project-requirements-list-page__splitter-panel' } }}
-                >
-                    <RequirementDetailsPanel requirement={selectedRequirement} title='Requirement details' />
+                    pt={{ root: { className: 'project-requirements-list-page__splitter-panel' } }}>
+                    <RequirementDetailsPanel
+                        requirement={selectedRequirement}
+                        title='Requirement details'
+                    />
                 </SplitterPanel>
             </Splitter>
         </section>

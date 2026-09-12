@@ -4,9 +4,7 @@ import { forwardRef } from 'react';
 
 import '@/components/ContextMenu/AppContextMenu.scss';
 
-type Props = Readonly<{
-    model: MenuItem[];
-}>;
+type Props = Readonly<{ model: MenuItem[] }>;
 
 export const AppContextMenu = forwardRef<ContextMenu, Props>(function AppContextMenu({ model }, ref) {
     return (

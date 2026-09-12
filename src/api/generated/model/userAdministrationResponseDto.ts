@@ -10,14 +10,14 @@ import type { UserAdministrationResponseDtoGlobalRolesItem } from './userAdminis
 import type { UserAdministrationResponseDtoStatus } from './userAdministrationResponseDtoStatus';
 
 export interface UserAdministrationResponseDto {
-  id: string;
-  username: string;
-  email: string;
-  displayName: string;
-  status: UserAdministrationResponseDtoStatus;
-  /** @nullable */
-  emailVerifiedAt: UserAdministrationResponseDtoEmailVerifiedAt;
-  globalRoles: UserAdministrationResponseDtoGlobalRolesItem[];
-  createdAt: string;
-  updatedAt: string;
+    id: string;
+    username: string;
+    email: string;
+    displayName: string;
+    status: UserAdministrationResponseDtoStatus;
+    /** @nullable */
+    emailVerifiedAt: UserAdministrationResponseDtoEmailVerifiedAt;
+    globalRoles: UserAdministrationResponseDtoGlobalRolesItem[];
+    createdAt: string;
+    updatedAt: string;
 }

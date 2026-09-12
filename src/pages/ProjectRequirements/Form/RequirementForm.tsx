@@ -24,8 +24,7 @@ export function RequirementForm({ mode, categories, controller }: RequirementFor
             name='requirement-form'
             className='project-requirements-form-page__form'
             action={formAction}
-            data-route={formRoute}
-        >
+            data-route={formRoute}>
             {formState.formError !== undefined && <InlineStatus kind='error'>{formState.formError}</InlineStatus>}
 
             <RequirementCategoryField
@@ -75,7 +74,11 @@ export function RequirementForm({ mode, categories, controller }: RequirementFor
                 onChange={updateFormValue}
             />
 
-            <RequirementFormActions mode={mode} pending={pending} onAbort={handleAbort} />
+            <RequirementFormActions
+                mode={mode}
+                pending={pending}
+                onAbort={handleAbort}
+            />
         </form>
     );
 }

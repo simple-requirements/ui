@@ -1,26 +1,39 @@
+@use 'styles/UiMixins' as ui;
+
 .account-menu {
-  block-size: 100%;
-  display: flex;
-  align-items: center;
-  gap: var(--ui-space-sm);
-  padding-inline: var(--ui-space-md);
-  background: var(--color-app-surface-subtle);
-  border-block-end: var(--ui-border);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 
-  &__identity {
-    display: grid;
-    min-inline-size: 0;
-    line-height: 1.2;
+    &__button {
+        @include ui.outline-button;
 
-    strong,
-    small {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+        inline-size: var(--ui-control-height);
+        block-size: var(--ui-control-height);
+        padding: 0;
     }
 
-    small {
-      color: var(--color-app-text-muted);
+    &__popup {
+        min-inline-size: 24rem;
     }
-  }
+
+    &__summary {
+        display: grid;
+        gap: var(--ui-space-2xs);
+        padding: var(--ui-space-sm) var(--ui-space-md);
+        border-block-end: var(--ui-border);
+        color: var(--color-app-text);
+        cursor: default;
+
+        strong,
+        small {
+            @include ui.text-ellipsis;
+        }
+
+        small {
+            color: var(--color-app-text-muted);
+            font-size: var(--font-size-small);
+            line-height: var(--line-height-small);
+        }
+    }
 }

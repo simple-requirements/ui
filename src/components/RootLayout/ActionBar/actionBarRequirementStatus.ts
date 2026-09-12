@@ -1,7 +1,7 @@
 export function isDraftRequirementStatus(status: string | undefined): boolean {
-    return status?.toLowerCase() === "draft";
+    return status?.toLowerCase() === 'draft';
 }
 
 export function canBecomeObsolete(status: string | undefined): boolean {
-    return status === "approved" || status === "implemented";
+    return status === 'approved' || status === 'implemented';
 }

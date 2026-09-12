@@ -8,18 +8,18 @@
 import type { CategoryResponseDtoType } from './categoryResponseDtoType';
 
 export interface CategoryResponseDto {
-  /** Stable category identifier. */
-  id: string;
-  /** Owning project identifier. */
-  projectId: string;
-  /** Human-readable category name. */
-  name: string;
-  /** Uppercase category key used for visible requirement keys. */
-  key: string;
-  /** Requirement type handled by this category. */
-  type: CategoryResponseDtoType;
-  /** Date and time when the category was created. */
-  createdAt: string;
-  /** Date and time when the category was last updated. */
-  updatedAt: string;
+    /** Stable category identifier. */
+    id: string;
+    /** Owning project identifier. */
+    projectId: string;
+    /** Human-readable category name. */
+    name: string;
+    /** Uppercase category key used for visible requirement keys. */
+    key: string;
+    /** Requirement type handled by this category. */
+    type: CategoryResponseDtoType;
+    /** Date and time when the category was created. */
+    createdAt: string;
+    /** Date and time when the category was last updated. */
+    updatedAt: string;
 }

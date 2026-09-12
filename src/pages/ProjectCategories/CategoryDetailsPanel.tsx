@@ -16,7 +16,6 @@ export type CategoryDetailsPanelProps = Readonly<{
     onEditCategory?: (category: Category) => void;
 }>;
 
-
 function getRequirementCountForCategory(category: Category): number {
     return category.requirementCount ?? 0;
 }

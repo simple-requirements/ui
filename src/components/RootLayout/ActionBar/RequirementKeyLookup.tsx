@@ -5,10 +5,7 @@ import type { ComponentProps } from 'react';
 
 import { actionBarStore, setRequirementKey } from '@/stores/actionBarStore';
 
-export type RequirementKeyLookupProps = Readonly<{
-    disabled?: boolean;
-    onFindKey?: (requirementKey: string) => void;
-}>;
+export type RequirementKeyLookupProps = Readonly<{ disabled?: boolean; onFindKey?: (requirementKey: string) => void }>;
 
 export function RequirementKeyLookup({ disabled = false, onFindKey }: RequirementKeyLookupProps) {
     const requirementKey = useSelector(actionBarStore, (state) => state.requirementKey);
@@ -22,20 +19,23 @@ export function RequirementKeyLookup({ disabled = false, onFindKey }: Requiremen
     };
 
     return (
-        <form className="action-bar__lookup" aria-label="Requirement key lookup" onSubmit={handleSubmit}>
+        <form
+            className='action-bar__lookup'
+            aria-label='Requirement key lookup'
+            onSubmit={handleSubmit}>
             <InputText
-                id="requirement-key"
+                id='requirement-key'
                 value={requirementKey}
                 disabled={disabled}
                 onChange={(event) => setRequirementKey(event.currentTarget.value)}
-                placeholder="FR-KEY-0001"
-                aria-label="Requirement key"
+                placeholder='FR-KEY-0001'
+                aria-label='Requirement key'
                 pt={{ root: { className: 'action-bar__input' } }}
             />
             <Button
                 outlined
-                type="submit"
-                label="Find requirement"
+                type='submit'
+                label='Find requirement'
                 disabled={disabled}
                 pt={{ root: { className: 'action-bar__button' } }}
             />

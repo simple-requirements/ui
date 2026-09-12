@@ -7,6 +7,6 @@
  */
 
 export interface RejectRequirementDto {
-  reviewer: string;
-  rejectionReason: string;
+    reviewer: string;
+    rejectionReason: string;
 }

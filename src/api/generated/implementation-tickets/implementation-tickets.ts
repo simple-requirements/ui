@@ -5,553 +5,646 @@
  * HTTP API for the Requirements Management app.
  * OpenAPI spec version: 0.0.1
  */
-import {
-  useQuery
-} from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import type {
-  DataTag,
-  DefinedInitialDataOptions,
-  DefinedUseQueryResult,
-  QueryClient,
-  QueryFunction,
-  QueryKey,
-  UndefinedInitialDataOptions,
-  UseQueryOptions,
-  UseQueryResult
+    DataTag,
+    DefinedInitialDataOptions,
+    DefinedUseQueryResult,
+    QueryClient,
+    QueryFunction,
+    QueryKey,
+    UndefinedInitialDataOptions,
+    UseQueryOptions,
+    UseQueryResult,
 } from '@tanstack/react-query';
 
-import type {
-  ImplementationTicketResponseDto,
-  UpsertImplementationTicketDto
-} from '../model';
+import type { ImplementationTicketResponseDto, UpsertImplementationTicketDto } from '../model';
 
 import { apiFetch } from '../../fetch';
 
-
-
-
 const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKey: K } => {
-  const result = { queryKey } as T & { queryKey: K };
-  for (const key of Object.keys(query)) {
-    // The explicit queryKey always wins, matching the previous
-    // `{ ...query, queryKey }` spread where it was set last.
-    if (key === 'queryKey') continue;
-    Object.defineProperty(result, key, {
-      enumerable: true,
-      configurable: true,
-      get: () => (query as Record<string, unknown>)[key],
+    const result = { queryKey } as T & { queryKey: K };
+    for (const key of Object.keys(query)) {
+        // The explicit queryKey always wins, matching the previous
+        // `{ ...query, queryKey }` spread where it was set last.
+        if (key === 'queryKey') continue;
+        Object.defineProperty(result, key, {
+            enumerable: true,
+            configurable: true,
+            get: () => (query as Record<string, unknown>)[key],
+        });
+    }
+    return result;
+};
+
+export type listImplementationTicketsResponse200 = { data: ImplementationTicketResponseDto[]; status: 200 };
+
+export type listImplementationTicketsResponseSuccess = listImplementationTicketsResponse200 & { headers: Headers };
+export type listImplementationTicketsResponse = listImplementationTicketsResponseSuccess;
+
+export const getListImplementationTicketsUrl = (projectId: string, requirementId: string) => {
+    return `/projects/${projectId}/requirements/${requirementId}/implementation-tickets`;
+};
+
+/**
+ * @summary List implementation tickets.
+ */
+export const listImplementationTickets = async (
+    projectId: string,
+    requirementId: string,
+    options?: RequestInit,
+): Promise<listImplementationTicketsResponse> => {
+    return apiFetch<listImplementationTicketsResponse>(getListImplementationTicketsUrl(projectId, requirementId), {
+        ...options,
+        method: 'GET',
     });
-  }
-  return result;
 };
 
-export type listImplementationTicketsResponse200 = {
-  data: ImplementationTicketResponseDto[]
-  status: 200
-}
-
-export type listImplementationTicketsResponseSuccess = (listImplementationTicketsResponse200) & {
-  headers: Headers;
+export const getListImplementationTicketsQueryKey = (projectId: string, requirementId: string) => {
+    return [`/projects/${projectId}/requirements/${requirementId}/implementation-tickets`] as const;
 };
-;
 
-export type listImplementationTicketsResponse = (listImplementationTicketsResponseSuccess)
-
-export const getListImplementationTicketsUrl = (projectId: string,
-    requirementId: string,) => {
-
-
-
-
-  return `/projects/${projectId}/requirements/${requirementId}/implementation-tickets`
-}
-
-/**
- * @summary List implementation tickets.
- */
-export const listImplementationTickets = async (projectId: string,
-    requirementId: string, options?: RequestInit): Promise<listImplementationTicketsResponse> => {
-
-  return apiFetch<listImplementationTicketsResponse>(getListImplementationTicketsUrl(projectId,requirementId),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getListImplementationTicketsQueryKey = (projectId: string,
-    requirementId: string,) => {
-    return [
-    `/projects/${projectId}/requirements/${requirementId}/implementation-tickets`
-    ] as const;
-    }
-
-
-export const getListImplementationTicketsQueryOptions = <TData = Awaited<ReturnType<typeof listImplementationTickets>>, TError = unknown>(projectId: string,
-    requirementId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listImplementationTickets>>, TError, TData>>, }
+export const getListImplementationTicketsQueryOptions = <
+    TData = Awaited<ReturnType<typeof listImplementationTickets>>,
+    TError = unknown,
+>(
+    projectId: string,
+    requirementId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listImplementationTickets>>, TError, TData>>;
+    },
 ) => {
+    const { query: queryOptions } = options ?? {};
 
-const {query: queryOptions} = options ?? {};
+    const queryKey = queryOptions?.queryKey ?? getListImplementationTicketsQueryKey(projectId, requirementId);
 
-  const queryKey =  queryOptions?.queryKey ?? getListImplementationTicketsQueryKey(projectId,requirementId);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listImplementationTickets>>> = ({ signal }) =>
+        listImplementationTickets(projectId, requirementId, { signal });
 
+    return {
+        queryKey,
+        queryFn,
+        enabled: projectId !== null && projectId !== undefined && requirementId !== null && requirementId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof listImplementationTickets>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
 
+export type ListImplementationTicketsQueryResult = NonNullable<Awaited<ReturnType<typeof listImplementationTickets>>>;
+export type ListImplementationTicketsQueryError = unknown;
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof listImplementationTickets>>> = ({ signal }) => listImplementationTickets(projectId,requirementId, { signal });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: projectId !== null && projectId !== undefined && requirementId !== null && requirementId !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listImplementationTickets>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type ListImplementationTicketsQueryResult = NonNullable<Awaited<ReturnType<typeof listImplementationTickets>>>
-export type ListImplementationTicketsQueryError = unknown
-
-
-export function useListImplementationTickets<TData = Awaited<ReturnType<typeof listImplementationTickets>>, TError = unknown>(
- projectId: string,
-    requirementId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listImplementationTickets>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof listImplementationTickets>>,
-          TError,
-          Awaited<ReturnType<typeof listImplementationTickets>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListImplementationTickets<TData = Awaited<ReturnType<typeof listImplementationTickets>>, TError = unknown>(
- projectId: string,
-    requirementId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listImplementationTickets>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof listImplementationTickets>>,
-          TError,
-          Awaited<ReturnType<typeof listImplementationTickets>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useListImplementationTickets<TData = Awaited<ReturnType<typeof listImplementationTickets>>, TError = unknown>(
- projectId: string,
-    requirementId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listImplementationTickets>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListImplementationTickets<
+    TData = Awaited<ReturnType<typeof listImplementationTickets>>,
+    TError = unknown,
+>(
+    projectId: string,
+    requirementId: string,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof listImplementationTickets>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof listImplementationTickets>>,
+                    TError,
+                    Awaited<ReturnType<typeof listImplementationTickets>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useListImplementationTickets<
+    TData = Awaited<ReturnType<typeof listImplementationTickets>>,
+    TError = unknown,
+>(
+    projectId: string,
+    requirementId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listImplementationTickets>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof listImplementationTickets>>,
+                    TError,
+                    Awaited<ReturnType<typeof listImplementationTickets>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useListImplementationTickets<
+    TData = Awaited<ReturnType<typeof listImplementationTickets>>,
+    TError = unknown,
+>(
+    projectId: string,
+    requirementId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listImplementationTickets>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
  * @summary List implementation tickets.
  */
 
-export function useListImplementationTickets<TData = Awaited<ReturnType<typeof listImplementationTickets>>, TError = unknown>(
- projectId: string,
-    requirementId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listImplementationTickets>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useListImplementationTickets<
+    TData = Awaited<ReturnType<typeof listImplementationTickets>>,
+    TError = unknown,
+>(
+    projectId: string,
+    requirementId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listImplementationTickets>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getListImplementationTicketsQueryOptions(projectId, requirementId, options);
 
-  const queryOptions = getListImplementationTicketsQueryOptions(projectId,requirementId,options)
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
+    return withQueryKey(query, queryOptions.queryKey);
 }
 
+export type createImplementationTicketResponse201 = { data: ImplementationTicketResponseDto; status: 201 };
 
+export type createImplementationTicketResponseSuccess = createImplementationTicketResponse201 & { headers: Headers };
+export type createImplementationTicketResponse = createImplementationTicketResponseSuccess;
 
-
-
-
-export type createImplementationTicketResponse201 = {
-  data: ImplementationTicketResponseDto
-  status: 201
-}
-
-export type createImplementationTicketResponseSuccess = (createImplementationTicketResponse201) & {
-  headers: Headers;
+export const getCreateImplementationTicketUrl = (projectId: string, requirementId: string) => {
+    return `/projects/${projectId}/requirements/${requirementId}/implementation-tickets`;
 };
-;
-
-export type createImplementationTicketResponse = (createImplementationTicketResponseSuccess)
-
-export const getCreateImplementationTicketUrl = (projectId: string,
-    requirementId: string,) => {
-
-
-
-
-  return `/projects/${projectId}/requirements/${requirementId}/implementation-tickets`
-}
 
 /**
  * @summary Add an implementation ticket.
  */
-export const createImplementationTicket = async (projectId: string,
+export const createImplementationTicket = async (
+    projectId: string,
     requirementId: string,
-    upsertImplementationTicketDto: UpsertImplementationTicketDto, options?: RequestInit): Promise<createImplementationTicketResponse> => {
+    upsertImplementationTicketDto: UpsertImplementationTicketDto,
+    options?: RequestInit,
+): Promise<createImplementationTicketResponse> => {
+    return apiFetch<createImplementationTicketResponse>(getCreateImplementationTicketUrl(projectId, requirementId), {
+        ...options,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...options?.headers },
+        body: JSON.stringify(upsertImplementationTicketDto),
+    });
+};
 
-  return apiFetch<createImplementationTicketResponse>(getCreateImplementationTicketUrl(projectId,requirementId),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(upsertImplementationTicketDto)
-  }
-);}
-
-
-
-
-
-export const getCreateImplementationTicketQueryKey = (projectId: string,
+export const getCreateImplementationTicketQueryKey = (
+    projectId: string,
     requirementId: string,
-    upsertImplementationTicketDto?: UpsertImplementationTicketDto,) => {
-    return [
-    'POST', `/projects/${projectId}/requirements/${requirementId}/implementation-tickets`, upsertImplementationTicketDto
-    ] as const;
-    }
-
-
-export const getCreateImplementationTicketQueryOptions = <TData = Awaited<ReturnType<typeof createImplementationTicket>>, TError = unknown>(projectId: string,
-    requirementId: string,
-    upsertImplementationTicketDto: UpsertImplementationTicketDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createImplementationTicket>>, TError, TData>>, }
+    upsertImplementationTicketDto?: UpsertImplementationTicketDto,
 ) => {
+    return [
+        'POST',
+        `/projects/${projectId}/requirements/${requirementId}/implementation-tickets`,
+        upsertImplementationTicketDto,
+    ] as const;
+};
 
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getCreateImplementationTicketQueryKey(projectId,requirementId,upsertImplementationTicketDto);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof createImplementationTicket>>> = ({ signal }) => createImplementationTicket(projectId,requirementId,upsertImplementationTicketDto, { signal });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: projectId !== null && projectId !== undefined && requirementId !== null && requirementId !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof createImplementationTicket>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type CreateImplementationTicketQueryResult = NonNullable<Awaited<ReturnType<typeof createImplementationTicket>>>
-export type CreateImplementationTicketQueryError = unknown
-
-
-export function useCreateImplementationTicket<TData = Awaited<ReturnType<typeof createImplementationTicket>>, TError = unknown>(
- projectId: string,
+export const getCreateImplementationTicketQueryOptions = <
+    TData = Awaited<ReturnType<typeof createImplementationTicket>>,
+    TError = unknown,
+>(
+    projectId: string,
     requirementId: string,
-    upsertImplementationTicketDto: UpsertImplementationTicketDto, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof createImplementationTicket>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof createImplementationTicket>>,
-          TError,
-          Awaited<ReturnType<typeof createImplementationTicket>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCreateImplementationTicket<TData = Awaited<ReturnType<typeof createImplementationTicket>>, TError = unknown>(
- projectId: string,
+    upsertImplementationTicketDto: UpsertImplementationTicketDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createImplementationTicket>>, TError, TData>>;
+    },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey =
+        queryOptions?.queryKey
+        ?? getCreateImplementationTicketQueryKey(projectId, requirementId, upsertImplementationTicketDto);
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof createImplementationTicket>>> = ({ signal }) =>
+        createImplementationTicket(projectId, requirementId, upsertImplementationTicketDto, { signal });
+
+    return {
+        queryKey,
+        queryFn,
+        enabled: projectId !== null && projectId !== undefined && requirementId !== null && requirementId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof createImplementationTicket>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
+
+export type CreateImplementationTicketQueryResult = NonNullable<Awaited<ReturnType<typeof createImplementationTicket>>>;
+export type CreateImplementationTicketQueryError = unknown;
+
+export function useCreateImplementationTicket<
+    TData = Awaited<ReturnType<typeof createImplementationTicket>>,
+    TError = unknown,
+>(
+    projectId: string,
     requirementId: string,
-    upsertImplementationTicketDto: UpsertImplementationTicketDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createImplementationTicket>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof createImplementationTicket>>,
-          TError,
-          Awaited<ReturnType<typeof createImplementationTicket>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCreateImplementationTicket<TData = Awaited<ReturnType<typeof createImplementationTicket>>, TError = unknown>(
- projectId: string,
+    upsertImplementationTicketDto: UpsertImplementationTicketDto,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof createImplementationTicket>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof createImplementationTicket>>,
+                    TError,
+                    Awaited<ReturnType<typeof createImplementationTicket>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useCreateImplementationTicket<
+    TData = Awaited<ReturnType<typeof createImplementationTicket>>,
+    TError = unknown,
+>(
+    projectId: string,
     requirementId: string,
-    upsertImplementationTicketDto: UpsertImplementationTicketDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createImplementationTicket>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    upsertImplementationTicketDto: UpsertImplementationTicketDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createImplementationTicket>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof createImplementationTicket>>,
+                    TError,
+                    Awaited<ReturnType<typeof createImplementationTicket>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useCreateImplementationTicket<
+    TData = Awaited<ReturnType<typeof createImplementationTicket>>,
+    TError = unknown,
+>(
+    projectId: string,
+    requirementId: string,
+    upsertImplementationTicketDto: UpsertImplementationTicketDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createImplementationTicket>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
  * @summary Add an implementation ticket.
  */
 
-export function useCreateImplementationTicket<TData = Awaited<ReturnType<typeof createImplementationTicket>>, TError = unknown>(
- projectId: string,
+export function useCreateImplementationTicket<
+    TData = Awaited<ReturnType<typeof createImplementationTicket>>,
+    TError = unknown,
+>(
+    projectId: string,
     requirementId: string,
-    upsertImplementationTicketDto: UpsertImplementationTicketDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof createImplementationTicket>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    upsertImplementationTicketDto: UpsertImplementationTicketDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createImplementationTicket>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getCreateImplementationTicketQueryOptions(
+        projectId,
+        requirementId,
+        upsertImplementationTicketDto,
+        options,
+    );
 
-  const queryOptions = getCreateImplementationTicketQueryOptions(projectId,requirementId,upsertImplementationTicketDto,options)
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
+    return withQueryKey(query, queryOptions.queryKey);
 }
 
+export type updateImplementationTicketResponse200 = { data: ImplementationTicketResponseDto; status: 200 };
 
+export type updateImplementationTicketResponseSuccess = updateImplementationTicketResponse200 & { headers: Headers };
+export type updateImplementationTicketResponse = updateImplementationTicketResponseSuccess;
 
-
-
-
-export type updateImplementationTicketResponse200 = {
-  data: ImplementationTicketResponseDto
-  status: 200
-}
-
-export type updateImplementationTicketResponseSuccess = (updateImplementationTicketResponse200) & {
-  headers: Headers;
+export const getUpdateImplementationTicketUrl = (projectId: string, requirementId: string, ticketRecordId: string) => {
+    return `/projects/${projectId}/requirements/${requirementId}/implementation-tickets/${ticketRecordId}`;
 };
-;
-
-export type updateImplementationTicketResponse = (updateImplementationTicketResponseSuccess)
-
-export const getUpdateImplementationTicketUrl = (projectId: string,
-    requirementId: string,
-    ticketRecordId: string,) => {
-
-
-
-
-  return `/projects/${projectId}/requirements/${requirementId}/implementation-tickets/${ticketRecordId}`
-}
 
 /**
  * @summary Update an implementation ticket.
  */
-export const updateImplementationTicket = async (projectId: string,
+export const updateImplementationTicket = async (
+    projectId: string,
     requirementId: string,
     ticketRecordId: string,
-    upsertImplementationTicketDto: UpsertImplementationTicketDto, options?: RequestInit): Promise<updateImplementationTicketResponse> => {
+    upsertImplementationTicketDto: UpsertImplementationTicketDto,
+    options?: RequestInit,
+): Promise<updateImplementationTicketResponse> => {
+    return apiFetch<updateImplementationTicketResponse>(
+        getUpdateImplementationTicketUrl(projectId, requirementId, ticketRecordId),
+        {
+            ...options,
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', ...options?.headers },
+            body: JSON.stringify(upsertImplementationTicketDto),
+        },
+    );
+};
 
-  return apiFetch<updateImplementationTicketResponse>(getUpdateImplementationTicketUrl(projectId,requirementId,ticketRecordId),
-  {
-    ...options,
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(upsertImplementationTicketDto)
-  }
-);}
-
-
-
-
-
-export const getUpdateImplementationTicketQueryKey = (projectId: string,
+export const getUpdateImplementationTicketQueryKey = (
+    projectId: string,
     requirementId: string,
     ticketRecordId: string,
-    upsertImplementationTicketDto?: UpsertImplementationTicketDto,) => {
-    return [
-    'PATCH', `/projects/${projectId}/requirements/${requirementId}/implementation-tickets/${ticketRecordId}`, upsertImplementationTicketDto
-    ] as const;
-    }
-
-
-export const getUpdateImplementationTicketQueryOptions = <TData = Awaited<ReturnType<typeof updateImplementationTicket>>, TError = unknown>(projectId: string,
-    requirementId: string,
-    ticketRecordId: string,
-    upsertImplementationTicketDto: UpsertImplementationTicketDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateImplementationTicket>>, TError, TData>>, }
+    upsertImplementationTicketDto?: UpsertImplementationTicketDto,
 ) => {
+    return [
+        'PATCH',
+        `/projects/${projectId}/requirements/${requirementId}/implementation-tickets/${ticketRecordId}`,
+        upsertImplementationTicketDto,
+    ] as const;
+};
 
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getUpdateImplementationTicketQueryKey(projectId,requirementId,ticketRecordId,upsertImplementationTicketDto);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof updateImplementationTicket>>> = ({ signal }) => updateImplementationTicket(projectId,requirementId,ticketRecordId,upsertImplementationTicketDto, { signal });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: projectId !== null && projectId !== undefined && requirementId !== null && requirementId !== undefined && ticketRecordId !== null && ticketRecordId !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof updateImplementationTicket>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type UpdateImplementationTicketQueryResult = NonNullable<Awaited<ReturnType<typeof updateImplementationTicket>>>
-export type UpdateImplementationTicketQueryError = unknown
-
-
-export function useUpdateImplementationTicket<TData = Awaited<ReturnType<typeof updateImplementationTicket>>, TError = unknown>(
- projectId: string,
+export const getUpdateImplementationTicketQueryOptions = <
+    TData = Awaited<ReturnType<typeof updateImplementationTicket>>,
+    TError = unknown,
+>(
+    projectId: string,
     requirementId: string,
     ticketRecordId: string,
-    upsertImplementationTicketDto: UpsertImplementationTicketDto, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateImplementationTicket>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof updateImplementationTicket>>,
-          TError,
-          Awaited<ReturnType<typeof updateImplementationTicket>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useUpdateImplementationTicket<TData = Awaited<ReturnType<typeof updateImplementationTicket>>, TError = unknown>(
- projectId: string,
+    upsertImplementationTicketDto: UpsertImplementationTicketDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof updateImplementationTicket>>, TError, TData>>;
+    },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey =
+        queryOptions?.queryKey
+        ?? getUpdateImplementationTicketQueryKey(
+            projectId,
+            requirementId,
+            ticketRecordId,
+            upsertImplementationTicketDto,
+        );
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof updateImplementationTicket>>> = ({ signal }) =>
+        updateImplementationTicket(projectId, requirementId, ticketRecordId, upsertImplementationTicketDto, { signal });
+
+    return {
+        queryKey,
+        queryFn,
+        enabled:
+            projectId !== null
+            && projectId !== undefined
+            && requirementId !== null
+            && requirementId !== undefined
+            && ticketRecordId !== null
+            && ticketRecordId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof updateImplementationTicket>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
+
+export type UpdateImplementationTicketQueryResult = NonNullable<Awaited<ReturnType<typeof updateImplementationTicket>>>;
+export type UpdateImplementationTicketQueryError = unknown;
+
+export function useUpdateImplementationTicket<
+    TData = Awaited<ReturnType<typeof updateImplementationTicket>>,
+    TError = unknown,
+>(
+    projectId: string,
     requirementId: string,
     ticketRecordId: string,
-    upsertImplementationTicketDto: UpsertImplementationTicketDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateImplementationTicket>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof updateImplementationTicket>>,
-          TError,
-          Awaited<ReturnType<typeof updateImplementationTicket>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useUpdateImplementationTicket<TData = Awaited<ReturnType<typeof updateImplementationTicket>>, TError = unknown>(
- projectId: string,
+    upsertImplementationTicketDto: UpsertImplementationTicketDto,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof updateImplementationTicket>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof updateImplementationTicket>>,
+                    TError,
+                    Awaited<ReturnType<typeof updateImplementationTicket>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useUpdateImplementationTicket<
+    TData = Awaited<ReturnType<typeof updateImplementationTicket>>,
+    TError = unknown,
+>(
+    projectId: string,
     requirementId: string,
     ticketRecordId: string,
-    upsertImplementationTicketDto: UpsertImplementationTicketDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateImplementationTicket>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    upsertImplementationTicketDto: UpsertImplementationTicketDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof updateImplementationTicket>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof updateImplementationTicket>>,
+                    TError,
+                    Awaited<ReturnType<typeof updateImplementationTicket>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useUpdateImplementationTicket<
+    TData = Awaited<ReturnType<typeof updateImplementationTicket>>,
+    TError = unknown,
+>(
+    projectId: string,
+    requirementId: string,
+    ticketRecordId: string,
+    upsertImplementationTicketDto: UpsertImplementationTicketDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof updateImplementationTicket>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
  * @summary Update an implementation ticket.
  */
 
-export function useUpdateImplementationTicket<TData = Awaited<ReturnType<typeof updateImplementationTicket>>, TError = unknown>(
- projectId: string,
+export function useUpdateImplementationTicket<
+    TData = Awaited<ReturnType<typeof updateImplementationTicket>>,
+    TError = unknown,
+>(
+    projectId: string,
     requirementId: string,
     ticketRecordId: string,
-    upsertImplementationTicketDto: UpsertImplementationTicketDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof updateImplementationTicket>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    upsertImplementationTicketDto: UpsertImplementationTicketDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof updateImplementationTicket>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getUpdateImplementationTicketQueryOptions(
+        projectId,
+        requirementId,
+        ticketRecordId,
+        upsertImplementationTicketDto,
+        options,
+    );
 
-  const queryOptions = getUpdateImplementationTicketQueryOptions(projectId,requirementId,ticketRecordId,upsertImplementationTicketDto,options)
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
+    return withQueryKey(query, queryOptions.queryKey);
 }
 
+export type deleteImplementationTicketResponse204 = { data: void; status: 204 };
 
+export type deleteImplementationTicketResponseSuccess = deleteImplementationTicketResponse204 & { headers: Headers };
+export type deleteImplementationTicketResponse = deleteImplementationTicketResponseSuccess;
 
-
-
-
-export type deleteImplementationTicketResponse204 = {
-  data: void
-  status: 204
-}
-
-export type deleteImplementationTicketResponseSuccess = (deleteImplementationTicketResponse204) & {
-  headers: Headers;
+export const getDeleteImplementationTicketUrl = (projectId: string, requirementId: string, ticketRecordId: string) => {
+    return `/projects/${projectId}/requirements/${requirementId}/implementation-tickets/${ticketRecordId}`;
 };
-;
-
-export type deleteImplementationTicketResponse = (deleteImplementationTicketResponseSuccess)
-
-export const getDeleteImplementationTicketUrl = (projectId: string,
-    requirementId: string,
-    ticketRecordId: string,) => {
-
-
-
-
-  return `/projects/${projectId}/requirements/${requirementId}/implementation-tickets/${ticketRecordId}`
-}
 
 /**
  * @summary Remove an implementation ticket.
  */
-export const deleteImplementationTicket = async (projectId: string,
+export const deleteImplementationTicket = async (
+    projectId: string,
     requirementId: string,
-    ticketRecordId: string, options?: RequestInit): Promise<deleteImplementationTicketResponse> => {
+    ticketRecordId: string,
+    options?: RequestInit,
+): Promise<deleteImplementationTicketResponse> => {
+    return apiFetch<deleteImplementationTicketResponse>(
+        getDeleteImplementationTicketUrl(projectId, requirementId, ticketRecordId),
+        { ...options, method: 'DELETE' },
+    );
+};
 
-  return apiFetch<deleteImplementationTicketResponse>(getDeleteImplementationTicketUrl(projectId,requirementId,ticketRecordId),
-  {
-    ...options,
-    method: 'DELETE'
-
-
-  }
-);}
-
-
-
-
-
-export const getDeleteImplementationTicketQueryKey = (projectId: string,
+export const getDeleteImplementationTicketQueryKey = (
+    projectId: string,
     requirementId: string,
-    ticketRecordId: string,) => {
-    return [
-    'DELETE', `/projects/${projectId}/requirements/${requirementId}/implementation-tickets/${ticketRecordId}`
-    ] as const;
-    }
-
-
-export const getDeleteImplementationTicketQueryOptions = <TData = Awaited<ReturnType<typeof deleteImplementationTicket>>, TError = unknown>(projectId: string,
-    requirementId: string,
-    ticketRecordId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteImplementationTicket>>, TError, TData>>, }
+    ticketRecordId: string,
 ) => {
+    return [
+        'DELETE',
+        `/projects/${projectId}/requirements/${requirementId}/implementation-tickets/${ticketRecordId}`,
+    ] as const;
+};
 
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getDeleteImplementationTicketQueryKey(projectId,requirementId,ticketRecordId);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof deleteImplementationTicket>>> = ({ signal }) => deleteImplementationTicket(projectId,requirementId,ticketRecordId, { signal });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: projectId !== null && projectId !== undefined && requirementId !== null && requirementId !== undefined && ticketRecordId !== null && ticketRecordId !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof deleteImplementationTicket>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type DeleteImplementationTicketQueryResult = NonNullable<Awaited<ReturnType<typeof deleteImplementationTicket>>>
-export type DeleteImplementationTicketQueryError = unknown
-
-
-export function useDeleteImplementationTicket<TData = Awaited<ReturnType<typeof deleteImplementationTicket>>, TError = unknown>(
- projectId: string,
+export const getDeleteImplementationTicketQueryOptions = <
+    TData = Awaited<ReturnType<typeof deleteImplementationTicket>>,
+    TError = unknown,
+>(
+    projectId: string,
     requirementId: string,
-    ticketRecordId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteImplementationTicket>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof deleteImplementationTicket>>,
-          TError,
-          Awaited<ReturnType<typeof deleteImplementationTicket>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useDeleteImplementationTicket<TData = Awaited<ReturnType<typeof deleteImplementationTicket>>, TError = unknown>(
- projectId: string,
+    ticketRecordId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteImplementationTicket>>, TError, TData>>;
+    },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey =
+        queryOptions?.queryKey ?? getDeleteImplementationTicketQueryKey(projectId, requirementId, ticketRecordId);
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof deleteImplementationTicket>>> = ({ signal }) =>
+        deleteImplementationTicket(projectId, requirementId, ticketRecordId, { signal });
+
+    return {
+        queryKey,
+        queryFn,
+        enabled:
+            projectId !== null
+            && projectId !== undefined
+            && requirementId !== null
+            && requirementId !== undefined
+            && ticketRecordId !== null
+            && ticketRecordId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof deleteImplementationTicket>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
+
+export type DeleteImplementationTicketQueryResult = NonNullable<Awaited<ReturnType<typeof deleteImplementationTicket>>>;
+export type DeleteImplementationTicketQueryError = unknown;
+
+export function useDeleteImplementationTicket<
+    TData = Awaited<ReturnType<typeof deleteImplementationTicket>>,
+    TError = unknown,
+>(
+    projectId: string,
     requirementId: string,
-    ticketRecordId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteImplementationTicket>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof deleteImplementationTicket>>,
-          TError,
-          Awaited<ReturnType<typeof deleteImplementationTicket>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useDeleteImplementationTicket<TData = Awaited<ReturnType<typeof deleteImplementationTicket>>, TError = unknown>(
- projectId: string,
+    ticketRecordId: string,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteImplementationTicket>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof deleteImplementationTicket>>,
+                    TError,
+                    Awaited<ReturnType<typeof deleteImplementationTicket>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useDeleteImplementationTicket<
+    TData = Awaited<ReturnType<typeof deleteImplementationTicket>>,
+    TError = unknown,
+>(
+    projectId: string,
     requirementId: string,
-    ticketRecordId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteImplementationTicket>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+    ticketRecordId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteImplementationTicket>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof deleteImplementationTicket>>,
+                    TError,
+                    Awaited<ReturnType<typeof deleteImplementationTicket>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useDeleteImplementationTicket<
+    TData = Awaited<ReturnType<typeof deleteImplementationTicket>>,
+    TError = unknown,
+>(
+    projectId: string,
+    requirementId: string,
+    ticketRecordId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteImplementationTicket>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
  * @summary Remove an implementation ticket.
  */
 
-export function useDeleteImplementationTicket<TData = Awaited<ReturnType<typeof deleteImplementationTicket>>, TError = unknown>(
- projectId: string,
+export function useDeleteImplementationTicket<
+    TData = Awaited<ReturnType<typeof deleteImplementationTicket>>,
+    TError = unknown,
+>(
+    projectId: string,
     requirementId: string,
-    ticketRecordId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteImplementationTicket>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    ticketRecordId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteImplementationTicket>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getDeleteImplementationTicketQueryOptions(projectId, requirementId, ticketRecordId, options);
 
-  const queryOptions = getDeleteImplementationTicketQueryOptions(projectId,requirementId,ticketRecordId,options)
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
+    return withQueryKey(query, queryOptions.queryKey);
 }
-
-
-
-
-
-

@@ -7,6 +7,6 @@
  */
 
 export interface ConfirmEmailVerificationDto {
-  /** Single-use email verification token. */
-  token: string;
+    /** Single-use email verification token. */
+    token: string;
 }

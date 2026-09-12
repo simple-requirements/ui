@@ -1,66 +1,66 @@
-@use "styles/UiMixins" as ui;
+@use 'styles/UiMixins' as ui;
 
 .requirement-lifecycle-dialog {
-  @include ui.dialog-shell(56rem);
+    @include ui.dialog-shell(56rem);
 
-  min-block-size: 38rem;
+    min-block-size: 38rem;
 
-  &__header {
-    @include ui.dialog-header;
-  }
+    &__header {
+        @include ui.dialog-header;
+    }
 
-  &__content {
-    @include ui.dialog-content;
-  }
+    &__content {
+        @include ui.dialog-content;
+    }
 
-  &__heading {
-    @include ui.dialog-heading;
-  }
+    &__heading {
+        @include ui.dialog-heading;
+    }
 
-  &__form {
-    min-block-size: 27rem;
-    display: flex;
-    flex-direction: column;
-    gap: var(--ui-space-sm);
-  }
+    &__form {
+        min-block-size: 27rem;
+        display: flex;
+        flex-direction: column;
+        gap: var(--ui-space-sm);
+    }
 
-  &__form label {
-    @include ui.form-label;
-  }
+    &__form label {
+        @include ui.form-label;
+    }
 
-  &__form .p-inputtext {
-    @include ui.form-line-control(100%);
+    &__form .p-inputtext {
+        @include ui.form-line-control(100%);
 
-    font-size: var(--font-size-paragraph);
-    line-height: var(--line-height-paragraph);
-  }
+        font-size: var(--font-size-paragraph);
+        line-height: var(--line-height-paragraph);
+    }
 
-  &__form textarea {
-    @include ui.form-textarea(100%);
+    &__form textarea {
+        @include ui.form-textarea(100%);
 
-    flex: 1 1 auto;
-    min-block-size: 12rem;
-    font-size: var(--font-size-paragraph);
-    line-height: var(--line-height-paragraph);
-  }
+        flex: 1 1 auto;
+        min-block-size: 12rem;
+        font-size: var(--font-size-paragraph);
+        line-height: var(--line-height-paragraph);
+    }
 
-  &__warning {
-    @include ui.form-message(var(--color-feedback-warning-text));
-  }
+    &__warning {
+        @include ui.form-message(var(--color-feedback-warning-text));
+    }
 
-  &__actions {
-    @include ui.dialog-actions(0);
-  }
+    &__actions {
+        @include ui.dialog-actions(0);
+    }
 
-  &__button {
-    @include ui.dialog-button;
-  }
+    &__button {
+        @include ui.dialog-button;
+    }
 
-  &__button--abort {
-    @include ui.outline-button;
-  }
+    &__button--abort {
+        @include ui.outline-button;
+    }
 
-  &__button--confirm {
-    @include ui.primary-button;
-  }
+    &__button--confirm {
+        @include ui.primary-button;
+    }
 }

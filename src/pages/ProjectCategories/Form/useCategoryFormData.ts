@@ -6,10 +6,7 @@ import { getProjectCategoriesCollection } from '@/api/collections/projectCategor
 
 import type { CategoryFormData } from '@/pages/ProjectCategories/Form/categoryFormTypes';
 
-export function useCategoryFormData(
-    projectId: string | undefined,
-    categoryId: string | undefined,
-): CategoryFormData {
+export function useCategoryFormData(projectId: string | undefined, categoryId: string | undefined): CategoryFormData {
     const categoriesCollection = useMemo(
         () => (projectId === undefined ? undefined : getProjectCategoriesCollection(projectId)),
         [projectId],

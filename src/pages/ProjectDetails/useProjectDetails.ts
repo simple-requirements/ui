@@ -16,12 +16,12 @@ function createEmptyRequirementStatusStatistics(): RequirementStatusStatistics {
 export function useProjectDetails(projectId: string | undefined) {
     const projectQuery = useLiveQuery(
         (query) =>
-            projectId === undefined
-                ? undefined
-                : query
-                      .from({ projects: projectsCollection })
-                      .where(({ projects }) => eq(projects.id, projectId))
-                      .findOne(),
+            projectId === undefined ? undefined : (
+                query
+                    .from({ projects: projectsCollection })
+                    .where(({ projects }) => eq(projects.id, projectId))
+                    .findOne()
+            ),
         [projectId],
     );
     const categoriesCollection = useMemo(

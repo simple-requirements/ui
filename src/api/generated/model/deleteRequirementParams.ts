@@ -7,8 +7,8 @@
  */
 
 export type DeleteRequirementParams = {
-/**
- * Permanently remove a recycled requirement.
- */
-deleted?: string;
+    /**
+     * Permanently remove a recycled requirement.
+     */
+    deleted?: string;
 };

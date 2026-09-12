@@ -33,9 +33,7 @@ interface WritableContextMenuRef {
 function ProjectContextMenuProbe() {
     const controller = useProjectContextMenu(projects);
 
-    (controller.contextMenuRef as WritableContextMenuRef).current = {
-        show: mocks.show,
-    } as unknown as ContextMenu;
+    (controller.contextMenuRef as WritableContextMenuRef).current = { show: mocks.show } as unknown as ContextMenu;
 
     return (
         <div>

@@ -24,11 +24,13 @@ export function SidebarContextMenu({
 }: Props) {
     const menuItems = useMemo<MenuItem[]>(
         () => [
-            ...(canAdministerProjects ? [
-                { label: 'Rename project', icon: 'pi pi-pencil', command: onRenameProject },
-                { label: 'Delete project', icon: 'pi pi-trash', command: onDeleteProject },
-                { separator: true },
-            ] : []),
+            ...(canAdministerProjects ?
+                [
+                    { label: 'Rename project', icon: 'pi pi-pencil', command: onRenameProject },
+                    { label: 'Delete project', icon: 'pi pi-trash', command: onDeleteProject },
+                    { separator: true },
+                ]
+            :   []),
             { label: 'Export project', icon: 'pi pi-chart-bar', command: onExportProject },
             { label: 'Export all projects', icon: 'pi pi-database', command: onExportAllProjects },
         ],

@@ -7,5 +7,5 @@
  */
 
 export interface ResendEmailVerificationResponseDto {
-  message: string;
+    message: string;
 }

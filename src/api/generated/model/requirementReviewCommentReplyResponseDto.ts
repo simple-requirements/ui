@@ -7,9 +7,9 @@
  */
 
 export interface RequirementReviewCommentReplyResponseDto {
-  id: string;
-  commentId: string;
-  text: string;
-  author: string;
-  createdAt: string;
+    id: string;
+    commentId: string;
+    text: string;
+    author: string;
+    createdAt: string;
 }

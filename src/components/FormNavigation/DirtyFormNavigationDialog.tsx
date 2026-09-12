@@ -24,8 +24,7 @@ export function DirtyFormNavigationDialog({ visible, message, onStay, onDiscard 
                 root: { className: 'dirty-form-navigation-dialog' },
                 header: { className: 'dirty-form-navigation-dialog__header' },
                 content: { className: 'dirty-form-navigation-dialog__content' },
-            }}
-        >
+            }}>
             <p className='dirty-form-navigation-dialog__message'>{message}</p>
 
             <div className='dirty-form-navigation-dialog__actions'>

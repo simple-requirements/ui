@@ -9,10 +9,6 @@
 /**
  * Requirement type handled by this category.
  */
-export type CategoryResponseDtoType = typeof CategoryResponseDtoType[keyof typeof CategoryResponseDtoType];
+export type CategoryResponseDtoType = (typeof CategoryResponseDtoType)[keyof typeof CategoryResponseDtoType];
 
-
-export const CategoryResponseDtoType = {
-  FR: 'FR',
-  NFR: 'NFR',
-} as const;
+export const CategoryResponseDtoType = { FR: 'FR', NFR: 'NFR' } as const;

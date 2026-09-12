@@ -7,5 +7,5 @@
  */
 
 export interface ApproveRequirementDto {
-  reviewer: string;
+    reviewer: string;
 }

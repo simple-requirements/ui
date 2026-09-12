@@ -1,11 +1,16 @@
-import { useSelector } from "@tanstack/react-store";
-import { Navigate, Outlet } from "react-router";
+import { useSelector } from '@tanstack/react-store';
+import { Navigate, Outlet } from 'react-router';
 
-import { isAdministrator } from "@/auth/globalPermissions";
-import { authStore } from "@/stores/authStore";
+import { isAdministrator } from '@/auth/globalPermissions';
+import { authStore } from '@/stores/authStore';
 
 export function AdministratorRoute() {
-  const user = useSelector(authStore, (state) => state.user);
+    const user = useSelector(authStore, (state) => state.user);
 
-  return isAdministrator(user) ? <Outlet /> : <Navigate to="/" replace />;
+    return isAdministrator(user) ?
+            <Outlet />
+        :   <Navigate
+                to='/'
+                replace
+            />;
 }

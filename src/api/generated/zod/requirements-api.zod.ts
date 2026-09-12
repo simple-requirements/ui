@@ -7,692 +7,493 @@
  */
 import * as zod from 'zod';
 
-export const AppControllerGetHelloResponse = zod.unknown()
-
+export const AppControllerGetHelloResponse = zod.unknown();
 
 /**
  * @summary List all projects.
  */
 export const ListProjectsResponseItem = zod.object({
-  "id": zod.string().describe('Stable project identifier.'),
-  "name": zod.string().describe('Human-readable project name.'),
-  "ticketUrlTemplate": zod.looseObject({
-
-}).nullish(),
-  "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the project was created.'),
-  "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the project was last updated.')
-})
-export const ListProjectsResponse = zod.array(ListProjectsResponseItem)
-
+    id: zod.string().describe('Stable project identifier.'),
+    name: zod.string().describe('Human-readable project name.'),
+    ticketUrlTemplate: zod.looseObject({}).nullish(),
+    createdAt: zod.iso.datetime({ offset: true }).describe('Date and time when the project was created.'),
+    updatedAt: zod.iso.datetime({ offset: true }).describe('Date and time when the project was last updated.'),
+});
+export const ListProjectsResponse = zod.array(ListProjectsResponseItem);
 
 /**
  * @summary Create a project.
  */
-export const CreateProjectBody = zod.object({
-  "name": zod.string().describe('Human-readable project name.')
-})
+export const CreateProjectBody = zod.object({ name: zod.string().describe('Human-readable project name.') });
 
 export const CreateProjectResponse = zod.object({
-  "id": zod.string().describe('Stable project identifier.'),
-  "name": zod.string().describe('Human-readable project name.'),
-  "ticketUrlTemplate": zod.looseObject({
-
-}).nullish(),
-  "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the project was created.'),
-  "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the project was last updated.')
-})
-
+    id: zod.string().describe('Stable project identifier.'),
+    name: zod.string().describe('Human-readable project name.'),
+    ticketUrlTemplate: zod.looseObject({}).nullish(),
+    createdAt: zod.iso.datetime({ offset: true }).describe('Date and time when the project was created.'),
+    updatedAt: zod.iso.datetime({ offset: true }).describe('Date and time when the project was last updated.'),
+});
 
 /**
  * @summary Get one project.
  */
-export const GetProjectParams = zod.object({
-  "id": zod.string().describe('Project identifier.')
-})
+export const GetProjectParams = zod.object({ id: zod.string().describe('Project identifier.') });
 
 export const GetProjectResponse = zod.object({
-  "id": zod.string().describe('Stable project identifier.'),
-  "name": zod.string().describe('Human-readable project name.'),
-  "ticketUrlTemplate": zod.looseObject({
-
-}).nullish(),
-  "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the project was created.'),
-  "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the project was last updated.')
-})
-
+    id: zod.string().describe('Stable project identifier.'),
+    name: zod.string().describe('Human-readable project name.'),
+    ticketUrlTemplate: zod.looseObject({}).nullish(),
+    createdAt: zod.iso.datetime({ offset: true }).describe('Date and time when the project was created.'),
+    updatedAt: zod.iso.datetime({ offset: true }).describe('Date and time when the project was last updated.'),
+});
 
 /**
  * @summary Rename a project.
  */
-export const UpdateProjectParams = zod.object({
-  "id": zod.string()
-})
+export const UpdateProjectParams = zod.object({ id: zod.string() });
 
 export const UpdateProjectBody = zod.object({
-  "name": zod.string().optional().describe('New human-readable project name.'),
-  "ticketUrlTemplate": zod.looseObject({
-
-}).nullish()
-})
+    name: zod.string().optional().describe('New human-readable project name.'),
+    ticketUrlTemplate: zod.looseObject({}).nullish(),
+});
 
 export const UpdateProjectResponse = zod.object({
-  "id": zod.string().describe('Stable project identifier.'),
-  "name": zod.string().describe('Human-readable project name.'),
-  "ticketUrlTemplate": zod.looseObject({
-
-}).nullish(),
-  "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the project was created.'),
-  "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the project was last updated.')
-})
-
+    id: zod.string().describe('Stable project identifier.'),
+    name: zod.string().describe('Human-readable project name.'),
+    ticketUrlTemplate: zod.looseObject({}).nullish(),
+    createdAt: zod.iso.datetime({ offset: true }).describe('Date and time when the project was created.'),
+    updatedAt: zod.iso.datetime({ offset: true }).describe('Date and time when the project was last updated.'),
+});
 
 /**
  * @summary Delete a project.
  */
-export const DeleteProjectParams = zod.object({
-  "id": zod.string()
-})
+export const DeleteProjectParams = zod.object({ id: zod.string() });
 
-export const DeleteProjectResponse = zod.void()
-
+export const DeleteProjectResponse = zod.void();
 
 /**
  * @summary List all categories of a project.
  */
-export const ListCategoriesParams = zod.object({
-  "projectId": zod.string().describe('Project identifier.')
-})
+export const ListCategoriesParams = zod.object({ projectId: zod.string().describe('Project identifier.') });
 
 export const ListCategoriesResponseItem = zod.object({
-  "id": zod.string().describe('Stable category identifier.'),
-  "projectId": zod.string().describe('Owning project identifier.'),
-  "name": zod.string().describe('Human-readable category name.'),
-  "key": zod.string().describe('Uppercase category key used for visible requirement keys.'),
-  "type": zod.enum(['FR', 'NFR']).describe('Requirement type handled by this category.'),
-  "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the category was created.'),
-  "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the category was last updated.')
-})
-export const ListCategoriesResponse = zod.array(ListCategoriesResponseItem)
-
+    id: zod.string().describe('Stable category identifier.'),
+    projectId: zod.string().describe('Owning project identifier.'),
+    name: zod.string().describe('Human-readable category name.'),
+    key: zod.string().describe('Uppercase category key used for visible requirement keys.'),
+    type: zod.enum(['FR', 'NFR']).describe('Requirement type handled by this category.'),
+    createdAt: zod.iso.datetime({ offset: true }).describe('Date and time when the category was created.'),
+    updatedAt: zod.iso.datetime({ offset: true }).describe('Date and time when the category was last updated.'),
+});
+export const ListCategoriesResponse = zod.array(ListCategoriesResponseItem);
 
 /**
  * @summary Create a category for a project.
  */
-export const CreateCategoryParams = zod.object({
-  "projectId": zod.string().describe('Project identifier.')
-})
+export const CreateCategoryParams = zod.object({ projectId: zod.string().describe('Project identifier.') });
 
 export const CreateCategoryBody = zod.object({
-  "name": zod.string().describe('Human-readable category name.'),
-  "key": zod.string().describe('Uppercase category key used for visible requirement keys.'),
-  "type": zod.enum(['FR', 'NFR']).describe('Requirement type handled by this category.')
-})
+    name: zod.string().describe('Human-readable category name.'),
+    key: zod.string().describe('Uppercase category key used for visible requirement keys.'),
+    type: zod.enum(['FR', 'NFR']).describe('Requirement type handled by this category.'),
+});
 
 export const CreateCategoryResponse = zod.object({
-  "id": zod.string().describe('Stable category identifier.'),
-  "projectId": zod.string().describe('Owning project identifier.'),
-  "name": zod.string().describe('Human-readable category name.'),
-  "key": zod.string().describe('Uppercase category key used for visible requirement keys.'),
-  "type": zod.enum(['FR', 'NFR']).describe('Requirement type handled by this category.'),
-  "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the category was created.'),
-  "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the category was last updated.')
-})
-
+    id: zod.string().describe('Stable category identifier.'),
+    projectId: zod.string().describe('Owning project identifier.'),
+    name: zod.string().describe('Human-readable category name.'),
+    key: zod.string().describe('Uppercase category key used for visible requirement keys.'),
+    type: zod.enum(['FR', 'NFR']).describe('Requirement type handled by this category.'),
+    createdAt: zod.iso.datetime({ offset: true }).describe('Date and time when the category was created.'),
+    updatedAt: zod.iso.datetime({ offset: true }).describe('Date and time when the category was last updated.'),
+});
 
 /**
  * @summary Update a category.
  */
 export const UpdateCategoryParams = zod.object({
-  "projectId": zod.string().describe('Project identifier.'),
-  "categoryId": zod.string().describe('Category identifier.')
-})
+    projectId: zod.string().describe('Project identifier.'),
+    categoryId: zod.string().describe('Category identifier.'),
+});
 
 export const UpdateCategoryBody = zod.object({
-  "name": zod.string().optional().describe('Human-readable category name.'),
-  "key": zod.string().optional().describe('Uppercase category key used for visible requirement keys.'),
-  "type": zod.enum(['FR', 'NFR']).optional().describe('Requirement type handled by this category.')
-})
+    name: zod.string().optional().describe('Human-readable category name.'),
+    key: zod.string().optional().describe('Uppercase category key used for visible requirement keys.'),
+    type: zod.enum(['FR', 'NFR']).optional().describe('Requirement type handled by this category.'),
+});
 
 export const UpdateCategoryResponse = zod.object({
-  "id": zod.string().describe('Stable category identifier.'),
-  "projectId": zod.string().describe('Owning project identifier.'),
-  "name": zod.string().describe('Human-readable category name.'),
-  "key": zod.string().describe('Uppercase category key used for visible requirement keys.'),
-  "type": zod.enum(['FR', 'NFR']).describe('Requirement type handled by this category.'),
-  "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the category was created.'),
-  "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the category was last updated.')
-})
-
+    id: zod.string().describe('Stable category identifier.'),
+    projectId: zod.string().describe('Owning project identifier.'),
+    name: zod.string().describe('Human-readable category name.'),
+    key: zod.string().describe('Uppercase category key used for visible requirement keys.'),
+    type: zod.enum(['FR', 'NFR']).describe('Requirement type handled by this category.'),
+    createdAt: zod.iso.datetime({ offset: true }).describe('Date and time when the category was created.'),
+    updatedAt: zod.iso.datetime({ offset: true }).describe('Date and time when the category was last updated.'),
+});
 
 /**
  * @summary Delete a category.
  */
 export const DeleteCategoryParams = zod.object({
-  "projectId": zod.string().describe('Project identifier.'),
-  "categoryId": zod.string().describe('Category identifier.')
-})
+    projectId: zod.string().describe('Project identifier.'),
+    categoryId: zod.string().describe('Category identifier.'),
+});
 
-export const DeleteCategoryResponse = zod.void()
-
+export const DeleteCategoryResponse = zod.void();
 
 /**
  * @summary List all requirements of a project.
  */
-export const ListRequirementsParams = zod.object({
-  "projectId": zod.string().describe('Project identifier.')
-})
+export const ListRequirementsParams = zod.object({ projectId: zod.string().describe('Project identifier.') });
 
 export const ListRequirementsQueryParams = zod.object({
-  "deleted": zod.string().optional().describe('Return requirements from the recycle bin.')
-})
+    deleted: zod.string().optional().describe('Return requirements from the recycle bin.'),
+});
 
 export const listRequirementsResponseVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-\\d{4}$');
 
-
 export const ListRequirementsResponseItem = zod.object({
-  "id": zod.string().describe('Stable requirement identifier.'),
-  "projectId": zod.string().describe('Owning project identifier.'),
-  "categoryId": zod.string().describe('Owning category identifier.'),
-  "sequenceNumber": zod.number().describe('Sequential number within the category used to build the visible key.'),
-  "visibleKey": zod.string().regex(listRequirementsResponseVisibleKeyRegExp),
-  "revisionNumber": zod.number().describe('Current revision number of this requirement.'),
-  "status": zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
-  "description": zod.looseObject({
-
-}).nullish(),
-  "priority": zod.enum(['p1', 'p2', 'p3']).nullish(),
-  "owner": zod.looseObject({
-
-}).nullish(),
-  "rationale": zod.looseObject({
-
-}).nullish(),
-  "source": zod.looseObject({
-
-}).nullish(),
-  "rejectionReason": zod.looseObject({
-
-}).nullish(),
-  "reviewer": zod.looseObject({
-
-}).nullish(),
-  "obsoletedBy": zod.looseObject({
-
-}).nullish(),
-  "rejectedAt": zod.looseObject({
-
-}).nullish(),
-  "deletedAt": zod.looseObject({
-
-}).nullish(),
-  "approvedAt": zod.looseObject({
-
-}).nullish(),
-  "implementedAt": zod.looseObject({
-
-}).nullish(),
-  "obsolescenceReason": zod.looseObject({
-
-}).nullish(),
-  "obsoleteAt": zod.looseObject({
-
-}).nullish(),
-  "implementationTickets": zod.array(zod.object({
-  "ticketId": zod.string(),
-  "completedBy": zod.string(),
-  "completedAt": zod.iso.date(),
-  "id": zod.string(),
-  "requirementId": zod.string(),
-  "url": zod.looseObject({
-
-}).nullish(),
-  "createdAt": zod.iso.datetime({"offset":true}),
-  "updatedAt": zod.iso.datetime({"offset":true})
-})),
-  "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was created.'),
-  "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was last updated.')
-})
-export const ListRequirementsResponse = zod.array(ListRequirementsResponseItem)
-
+    id: zod.string().describe('Stable requirement identifier.'),
+    projectId: zod.string().describe('Owning project identifier.'),
+    categoryId: zod.string().describe('Owning category identifier.'),
+    sequenceNumber: zod.number().describe('Sequential number within the category used to build the visible key.'),
+    visibleKey: zod.string().regex(listRequirementsResponseVisibleKeyRegExp),
+    revisionNumber: zod.number().describe('Current revision number of this requirement.'),
+    status: zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
+    description: zod.looseObject({}).nullish(),
+    priority: zod.enum(['p1', 'p2', 'p3']).nullish(),
+    owner: zod.looseObject({}).nullish(),
+    rationale: zod.looseObject({}).nullish(),
+    source: zod.looseObject({}).nullish(),
+    rejectionReason: zod.looseObject({}).nullish(),
+    reviewer: zod.looseObject({}).nullish(),
+    obsoletedBy: zod.looseObject({}).nullish(),
+    rejectedAt: zod.looseObject({}).nullish(),
+    deletedAt: zod.looseObject({}).nullish(),
+    approvedAt: zod.looseObject({}).nullish(),
+    implementedAt: zod.looseObject({}).nullish(),
+    obsolescenceReason: zod.looseObject({}).nullish(),
+    obsoleteAt: zod.looseObject({}).nullish(),
+    implementationTickets: zod.array(
+        zod.object({
+            ticketId: zod.string(),
+            completedBy: zod.string(),
+            completedAt: zod.iso.date(),
+            id: zod.string(),
+            requirementId: zod.string(),
+            url: zod.looseObject({}).nullish(),
+            createdAt: zod.iso.datetime({ offset: true }),
+            updatedAt: zod.iso.datetime({ offset: true }),
+        }),
+    ),
+    createdAt: zod.iso.datetime({ offset: true }).describe('Date and time when the requirement was created.'),
+    updatedAt: zod.iso.datetime({ offset: true }).describe('Date and time when the requirement was last updated.'),
+});
+export const ListRequirementsResponse = zod.array(ListRequirementsResponseItem);
 
 /**
  * @summary Create a draft requirement for a project.
  */
-export const CreateRequirementParams = zod.object({
-  "projectId": zod.string().describe('Project identifier.')
-})
+export const CreateRequirementParams = zod.object({ projectId: zod.string().describe('Project identifier.') });
 
 export const CreateRequirementBody = zod.object({
-  "categoryId": zod.string().describe('Owning category identifier.'),
-  "description": zod.looseObject({
-
-}).nullish(),
-  "priority": zod.enum(['p1', 'p2', 'p3']).nullish(),
-  "owner": zod.looseObject({
-
-}).nullish(),
-  "rationale": zod.looseObject({
-
-}).nullish(),
-  "source": zod.looseObject({
-
-}).nullish()
-})
+    categoryId: zod.string().describe('Owning category identifier.'),
+    description: zod.looseObject({}).nullish(),
+    priority: zod.enum(['p1', 'p2', 'p3']).nullish(),
+    owner: zod.looseObject({}).nullish(),
+    rationale: zod.looseObject({}).nullish(),
+    source: zod.looseObject({}).nullish(),
+});
 
 export const createRequirementResponseVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-\\d{4}$');
 
-
 export const CreateRequirementResponse = zod.object({
-  "id": zod.string().describe('Stable requirement identifier.'),
-  "projectId": zod.string().describe('Owning project identifier.'),
-  "categoryId": zod.string().describe('Owning category identifier.'),
-  "sequenceNumber": zod.number().describe('Sequential number within the category used to build the visible key.'),
-  "visibleKey": zod.string().regex(createRequirementResponseVisibleKeyRegExp),
-  "revisionNumber": zod.number().describe('Current revision number of this requirement.'),
-  "status": zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
-  "description": zod.looseObject({
-
-}).nullish(),
-  "priority": zod.enum(['p1', 'p2', 'p3']).nullish(),
-  "owner": zod.looseObject({
-
-}).nullish(),
-  "rationale": zod.looseObject({
-
-}).nullish(),
-  "source": zod.looseObject({
-
-}).nullish(),
-  "rejectionReason": zod.looseObject({
-
-}).nullish(),
-  "reviewer": zod.looseObject({
-
-}).nullish(),
-  "obsoletedBy": zod.looseObject({
-
-}).nullish(),
-  "rejectedAt": zod.looseObject({
-
-}).nullish(),
-  "deletedAt": zod.looseObject({
-
-}).nullish(),
-  "approvedAt": zod.looseObject({
-
-}).nullish(),
-  "implementedAt": zod.looseObject({
-
-}).nullish(),
-  "obsolescenceReason": zod.looseObject({
-
-}).nullish(),
-  "obsoleteAt": zod.looseObject({
-
-}).nullish(),
-  "implementationTickets": zod.array(zod.object({
-  "ticketId": zod.string(),
-  "completedBy": zod.string(),
-  "completedAt": zod.iso.date(),
-  "id": zod.string(),
-  "requirementId": zod.string(),
-  "url": zod.looseObject({
-
-}).nullish(),
-  "createdAt": zod.iso.datetime({"offset":true}),
-  "updatedAt": zod.iso.datetime({"offset":true})
-})),
-  "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was created.'),
-  "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was last updated.')
-})
-
+    id: zod.string().describe('Stable requirement identifier.'),
+    projectId: zod.string().describe('Owning project identifier.'),
+    categoryId: zod.string().describe('Owning category identifier.'),
+    sequenceNumber: zod.number().describe('Sequential number within the category used to build the visible key.'),
+    visibleKey: zod.string().regex(createRequirementResponseVisibleKeyRegExp),
+    revisionNumber: zod.number().describe('Current revision number of this requirement.'),
+    status: zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
+    description: zod.looseObject({}).nullish(),
+    priority: zod.enum(['p1', 'p2', 'p3']).nullish(),
+    owner: zod.looseObject({}).nullish(),
+    rationale: zod.looseObject({}).nullish(),
+    source: zod.looseObject({}).nullish(),
+    rejectionReason: zod.looseObject({}).nullish(),
+    reviewer: zod.looseObject({}).nullish(),
+    obsoletedBy: zod.looseObject({}).nullish(),
+    rejectedAt: zod.looseObject({}).nullish(),
+    deletedAt: zod.looseObject({}).nullish(),
+    approvedAt: zod.looseObject({}).nullish(),
+    implementedAt: zod.looseObject({}).nullish(),
+    obsolescenceReason: zod.looseObject({}).nullish(),
+    obsoleteAt: zod.looseObject({}).nullish(),
+    implementationTickets: zod.array(
+        zod.object({
+            ticketId: zod.string(),
+            completedBy: zod.string(),
+            completedAt: zod.iso.date(),
+            id: zod.string(),
+            requirementId: zod.string(),
+            url: zod.looseObject({}).nullish(),
+            createdAt: zod.iso.datetime({ offset: true }),
+            updatedAt: zod.iso.datetime({ offset: true }),
+        }),
+    ),
+    createdAt: zod.iso.datetime({ offset: true }).describe('Date and time when the requirement was created.'),
+    updatedAt: zod.iso.datetime({ offset: true }).describe('Date and time when the requirement was last updated.'),
+});
 
 /**
  * @summary Clear the requirement recycle bin.
  */
-export const ClearDeletedRequirementsParams = zod.object({
-  "projectId": zod.string().describe('Project identifier.')
-})
+export const ClearDeletedRequirementsParams = zod.object({ projectId: zod.string().describe('Project identifier.') });
 
 export const ClearDeletedRequirementsQueryParams = zod.object({
-  "deleted": zod.string().optional().describe('Required to clear the recycle bin.')
-})
+    deleted: zod.string().optional().describe('Required to clear the recycle bin.'),
+});
 
-export const ClearDeletedRequirementsResponse = zod.void()
-
+export const ClearDeletedRequirementsResponse = zod.void();
 
 /**
  * @summary Get one requirement or one/all stored revisions.
  */
 export const GetRequirementParams = zod.object({
-  "projectId": zod.string().describe('Project identifier.'),
-  "requirementId": zod.string().describe('Requirement identifier.')
-})
+    projectId: zod.string().describe('Project identifier.'),
+    requirementId: zod.string().describe('Requirement identifier.'),
+});
 
 export const GetRequirementQueryParams = zod.object({
-  "allrevisions": zod.unknown().optional().describe('Return all stored historical revisions.'),
-  "revision": zod.number().optional().describe('Return the requirement version with this revision number.')
-})
+    allrevisions: zod.unknown().optional().describe('Return all stored historical revisions.'),
+    revision: zod.number().optional().describe('Return the requirement version with this revision number.'),
+});
 
 export const getRequirementResponseVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-\\d{4}$');
 
-
 export const GetRequirementResponse = zod.object({
-  "id": zod.string().describe('Stable requirement identifier.'),
-  "projectId": zod.string().describe('Owning project identifier.'),
-  "categoryId": zod.string().describe('Owning category identifier.'),
-  "sequenceNumber": zod.number().describe('Sequential number within the category used to build the visible key.'),
-  "visibleKey": zod.string().regex(getRequirementResponseVisibleKeyRegExp),
-  "revisionNumber": zod.number().describe('Current revision number of this requirement.'),
-  "status": zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
-  "description": zod.looseObject({
-
-}).nullish(),
-  "priority": zod.enum(['p1', 'p2', 'p3']).nullish(),
-  "owner": zod.looseObject({
-
-}).nullish(),
-  "rationale": zod.looseObject({
-
-}).nullish(),
-  "source": zod.looseObject({
-
-}).nullish(),
-  "rejectionReason": zod.looseObject({
-
-}).nullish(),
-  "reviewer": zod.looseObject({
-
-}).nullish(),
-  "obsoletedBy": zod.looseObject({
-
-}).nullish(),
-  "rejectedAt": zod.looseObject({
-
-}).nullish(),
-  "deletedAt": zod.looseObject({
-
-}).nullish(),
-  "approvedAt": zod.looseObject({
-
-}).nullish(),
-  "implementedAt": zod.looseObject({
-
-}).nullish(),
-  "obsolescenceReason": zod.looseObject({
-
-}).nullish(),
-  "obsoleteAt": zod.looseObject({
-
-}).nullish(),
-  "implementationTickets": zod.array(zod.object({
-  "ticketId": zod.string(),
-  "completedBy": zod.string(),
-  "completedAt": zod.iso.date(),
-  "id": zod.string(),
-  "requirementId": zod.string(),
-  "url": zod.looseObject({
-
-}).nullish(),
-  "createdAt": zod.iso.datetime({"offset":true}),
-  "updatedAt": zod.iso.datetime({"offset":true})
-})),
-  "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was created.'),
-  "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was last updated.')
-})
-
+    id: zod.string().describe('Stable requirement identifier.'),
+    projectId: zod.string().describe('Owning project identifier.'),
+    categoryId: zod.string().describe('Owning category identifier.'),
+    sequenceNumber: zod.number().describe('Sequential number within the category used to build the visible key.'),
+    visibleKey: zod.string().regex(getRequirementResponseVisibleKeyRegExp),
+    revisionNumber: zod.number().describe('Current revision number of this requirement.'),
+    status: zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
+    description: zod.looseObject({}).nullish(),
+    priority: zod.enum(['p1', 'p2', 'p3']).nullish(),
+    owner: zod.looseObject({}).nullish(),
+    rationale: zod.looseObject({}).nullish(),
+    source: zod.looseObject({}).nullish(),
+    rejectionReason: zod.looseObject({}).nullish(),
+    reviewer: zod.looseObject({}).nullish(),
+    obsoletedBy: zod.looseObject({}).nullish(),
+    rejectedAt: zod.looseObject({}).nullish(),
+    deletedAt: zod.looseObject({}).nullish(),
+    approvedAt: zod.looseObject({}).nullish(),
+    implementedAt: zod.looseObject({}).nullish(),
+    obsolescenceReason: zod.looseObject({}).nullish(),
+    obsoleteAt: zod.looseObject({}).nullish(),
+    implementationTickets: zod.array(
+        zod.object({
+            ticketId: zod.string(),
+            completedBy: zod.string(),
+            completedAt: zod.iso.date(),
+            id: zod.string(),
+            requirementId: zod.string(),
+            url: zod.looseObject({}).nullish(),
+            createdAt: zod.iso.datetime({ offset: true }),
+            updatedAt: zod.iso.datetime({ offset: true }),
+        }),
+    ),
+    createdAt: zod.iso.datetime({ offset: true }).describe('Date and time when the requirement was created.'),
+    updatedAt: zod.iso.datetime({ offset: true }).describe('Date and time when the requirement was last updated.'),
+});
 
 /**
  * @summary Update a requirement.
  */
 export const UpdateRequirementParams = zod.object({
-  "projectId": zod.string().describe('Project identifier.'),
-  "requirementId": zod.string().describe('Requirement identifier.')
-})
+    projectId: zod.string().describe('Project identifier.'),
+    requirementId: zod.string().describe('Requirement identifier.'),
+});
 
 export const UpdateRequirementBody = zod.object({
-  "categoryId": zod.string().optional().describe('Owning category identifier.'),
-  "description": zod.looseObject({
-
-}).nullish(),
-  "priority": zod.enum(['p1', 'p2', 'p3']).nullish(),
-  "owner": zod.looseObject({
-
-}).nullish(),
-  "rationale": zod.looseObject({
-
-}).nullish(),
-  "source": zod.looseObject({
-
-}).nullish(),
-  "status": zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']).optional(),
-  "reviewer": zod.looseObject({
-
-}).nullish(),
-  "obsoletedBy": zod.looseObject({
-
-}).nullish(),
-  "rejectionReason": zod.looseObject({
-
-}).nullish(),
-  "obsolescenceReason": zod.looseObject({
-
-}).nullish()
-})
+    categoryId: zod.string().optional().describe('Owning category identifier.'),
+    description: zod.looseObject({}).nullish(),
+    priority: zod.enum(['p1', 'p2', 'p3']).nullish(),
+    owner: zod.looseObject({}).nullish(),
+    rationale: zod.looseObject({}).nullish(),
+    source: zod.looseObject({}).nullish(),
+    status: zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']).optional(),
+    reviewer: zod.looseObject({}).nullish(),
+    obsoletedBy: zod.looseObject({}).nullish(),
+    rejectionReason: zod.looseObject({}).nullish(),
+    obsolescenceReason: zod.looseObject({}).nullish(),
+});
 
 export const updateRequirementResponseVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-\\d{4}$');
 
-
 export const UpdateRequirementResponse = zod.object({
-  "id": zod.string().describe('Stable requirement identifier.'),
-  "projectId": zod.string().describe('Owning project identifier.'),
-  "categoryId": zod.string().describe('Owning category identifier.'),
-  "sequenceNumber": zod.number().describe('Sequential number within the category used to build the visible key.'),
-  "visibleKey": zod.string().regex(updateRequirementResponseVisibleKeyRegExp),
-  "revisionNumber": zod.number().describe('Current revision number of this requirement.'),
-  "status": zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
-  "description": zod.looseObject({
-
-}).nullish(),
-  "priority": zod.enum(['p1', 'p2', 'p3']).nullish(),
-  "owner": zod.looseObject({
-
-}).nullish(),
-  "rationale": zod.looseObject({
-
-}).nullish(),
-  "source": zod.looseObject({
-
-}).nullish(),
-  "rejectionReason": zod.looseObject({
-
-}).nullish(),
-  "reviewer": zod.looseObject({
-
-}).nullish(),
-  "obsoletedBy": zod.looseObject({
-
-}).nullish(),
-  "rejectedAt": zod.looseObject({
-
-}).nullish(),
-  "deletedAt": zod.looseObject({
-
-}).nullish(),
-  "approvedAt": zod.looseObject({
-
-}).nullish(),
-  "implementedAt": zod.looseObject({
-
-}).nullish(),
-  "obsolescenceReason": zod.looseObject({
-
-}).nullish(),
-  "obsoleteAt": zod.looseObject({
-
-}).nullish(),
-  "implementationTickets": zod.array(zod.object({
-  "ticketId": zod.string(),
-  "completedBy": zod.string(),
-  "completedAt": zod.iso.date(),
-  "id": zod.string(),
-  "requirementId": zod.string(),
-  "url": zod.looseObject({
-
-}).nullish(),
-  "createdAt": zod.iso.datetime({"offset":true}),
-  "updatedAt": zod.iso.datetime({"offset":true})
-})),
-  "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was created.'),
-  "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was last updated.')
-})
-
+    id: zod.string().describe('Stable requirement identifier.'),
+    projectId: zod.string().describe('Owning project identifier.'),
+    categoryId: zod.string().describe('Owning category identifier.'),
+    sequenceNumber: zod.number().describe('Sequential number within the category used to build the visible key.'),
+    visibleKey: zod.string().regex(updateRequirementResponseVisibleKeyRegExp),
+    revisionNumber: zod.number().describe('Current revision number of this requirement.'),
+    status: zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
+    description: zod.looseObject({}).nullish(),
+    priority: zod.enum(['p1', 'p2', 'p3']).nullish(),
+    owner: zod.looseObject({}).nullish(),
+    rationale: zod.looseObject({}).nullish(),
+    source: zod.looseObject({}).nullish(),
+    rejectionReason: zod.looseObject({}).nullish(),
+    reviewer: zod.looseObject({}).nullish(),
+    obsoletedBy: zod.looseObject({}).nullish(),
+    rejectedAt: zod.looseObject({}).nullish(),
+    deletedAt: zod.looseObject({}).nullish(),
+    approvedAt: zod.looseObject({}).nullish(),
+    implementedAt: zod.looseObject({}).nullish(),
+    obsolescenceReason: zod.looseObject({}).nullish(),
+    obsoleteAt: zod.looseObject({}).nullish(),
+    implementationTickets: zod.array(
+        zod.object({
+            ticketId: zod.string(),
+            completedBy: zod.string(),
+            completedAt: zod.iso.date(),
+            id: zod.string(),
+            requirementId: zod.string(),
+            url: zod.looseObject({}).nullish(),
+            createdAt: zod.iso.datetime({ offset: true }),
+            updatedAt: zod.iso.datetime({ offset: true }),
+        }),
+    ),
+    createdAt: zod.iso.datetime({ offset: true }).describe('Date and time when the requirement was created.'),
+    updatedAt: zod.iso.datetime({ offset: true }).describe('Date and time when the requirement was last updated.'),
+});
 
 /**
  * @summary Delete a requirement.
  */
 export const DeleteRequirementParams = zod.object({
-  "projectId": zod.string().describe('Project identifier.'),
-  "requirementId": zod.string().describe('Requirement identifier.')
-})
+    projectId: zod.string().describe('Project identifier.'),
+    requirementId: zod.string().describe('Requirement identifier.'),
+});
 
 export const DeleteRequirementQueryParams = zod.object({
-  "deleted": zod.string().optional().describe('Permanently remove a recycled requirement.')
-})
+    deleted: zod.string().optional().describe('Permanently remove a recycled requirement.'),
+});
 
-export const DeleteRequirementResponse = zod.void()
-
+export const DeleteRequirementResponse = zod.void();
 
 /**
  * @summary List implementation tickets.
  */
-export const ListImplementationTicketsParams = zod.object({
-  "projectId": zod.string(),
-  "requirementId": zod.string()
-})
+export const ListImplementationTicketsParams = zod.object({ projectId: zod.string(), requirementId: zod.string() });
 
 export const ListImplementationTicketsResponseItem = zod.object({
-  "ticketId": zod.string(),
-  "completedBy": zod.string(),
-  "completedAt": zod.iso.date(),
-  "id": zod.string(),
-  "requirementId": zod.string(),
-  "url": zod.looseObject({
-
-}).nullish(),
-  "createdAt": zod.iso.datetime({"offset":true}),
-  "updatedAt": zod.iso.datetime({"offset":true})
-})
-export const ListImplementationTicketsResponse = zod.array(ListImplementationTicketsResponseItem)
-
+    ticketId: zod.string(),
+    completedBy: zod.string(),
+    completedAt: zod.iso.date(),
+    id: zod.string(),
+    requirementId: zod.string(),
+    url: zod.looseObject({}).nullish(),
+    createdAt: zod.iso.datetime({ offset: true }),
+    updatedAt: zod.iso.datetime({ offset: true }),
+});
+export const ListImplementationTicketsResponse = zod.array(ListImplementationTicketsResponseItem);
 
 /**
  * @summary Add an implementation ticket.
  */
-export const CreateImplementationTicketParams = zod.object({
-  "projectId": zod.string(),
-  "requirementId": zod.string()
-})
+export const CreateImplementationTicketParams = zod.object({ projectId: zod.string(), requirementId: zod.string() });
 
 export const CreateImplementationTicketBody = zod.object({
-  "ticketId": zod.string(),
-  "completedBy": zod.string(),
-  "completedAt": zod.iso.date()
-})
+    ticketId: zod.string(),
+    completedBy: zod.string(),
+    completedAt: zod.iso.date(),
+});
 
 export const CreateImplementationTicketResponse = zod.object({
-  "ticketId": zod.string(),
-  "completedBy": zod.string(),
-  "completedAt": zod.iso.date(),
-  "id": zod.string(),
-  "requirementId": zod.string(),
-  "url": zod.looseObject({
-
-}).nullish(),
-  "createdAt": zod.iso.datetime({"offset":true}),
-  "updatedAt": zod.iso.datetime({"offset":true})
-})
-
+    ticketId: zod.string(),
+    completedBy: zod.string(),
+    completedAt: zod.iso.date(),
+    id: zod.string(),
+    requirementId: zod.string(),
+    url: zod.looseObject({}).nullish(),
+    createdAt: zod.iso.datetime({ offset: true }),
+    updatedAt: zod.iso.datetime({ offset: true }),
+});
 
 /**
  * @summary Update an implementation ticket.
  */
 export const UpdateImplementationTicketParams = zod.object({
-  "projectId": zod.string(),
-  "requirementId": zod.string(),
-  "ticketRecordId": zod.string()
-})
+    projectId: zod.string(),
+    requirementId: zod.string(),
+    ticketRecordId: zod.string(),
+});
 
 export const UpdateImplementationTicketBody = zod.object({
-  "ticketId": zod.string(),
-  "completedBy": zod.string(),
-  "completedAt": zod.iso.date()
-})
+    ticketId: zod.string(),
+    completedBy: zod.string(),
+    completedAt: zod.iso.date(),
+});
 
 export const UpdateImplementationTicketResponse = zod.object({
-  "ticketId": zod.string(),
-  "completedBy": zod.string(),
-  "completedAt": zod.iso.date(),
-  "id": zod.string(),
-  "requirementId": zod.string(),
-  "url": zod.looseObject({
-
-}).nullish(),
-  "createdAt": zod.iso.datetime({"offset":true}),
-  "updatedAt": zod.iso.datetime({"offset":true})
-})
-
+    ticketId: zod.string(),
+    completedBy: zod.string(),
+    completedAt: zod.iso.date(),
+    id: zod.string(),
+    requirementId: zod.string(),
+    url: zod.looseObject({}).nullish(),
+    createdAt: zod.iso.datetime({ offset: true }),
+    updatedAt: zod.iso.datetime({ offset: true }),
+});
 
 /**
  * @summary Remove an implementation ticket.
  */
 export const DeleteImplementationTicketParams = zod.object({
-  "projectId": zod.string(),
-  "requirementId": zod.string(),
-  "ticketRecordId": zod.string()
-})
+    projectId: zod.string(),
+    requirementId: zod.string(),
+    ticketRecordId: zod.string(),
+});
 
-export const DeleteImplementationTicketResponse = zod.void()
+export const DeleteImplementationTicketResponse = zod.void();
 
-
-export const AuthControllerLoginBody = zod.object({
-  "username": zod.string(),
-  "password": zod.string()
-})
+export const AuthControllerLoginBody = zod.object({ username: zod.string(), password: zod.string() });
 
 export const AuthControllerLoginResponse = zod.object({
-  "accessToken": zod.string().describe('Opaque bearer token. It is returned only once and must not be persisted by the SPA.'),
-  "user": zod.object({
-  "id": zod.uuid(),
-  "username": zod.string(),
-  "email": zod.email(),
-  "displayName": zod.string(),
-  "status": zod.enum(['pending', 'active', 'deactivated']),
-  "globalRoles": zod.array(zod.enum(['administrator']))
-})
-})
+    accessToken: zod
+        .string()
+        .describe('Opaque bearer token. It is returned only once and must not be persisted by the SPA.'),
+    user: zod.object({
+        id: zod.uuid(),
+        username: zod.string(),
+        email: zod.email(),
+        displayName: zod.string(),
+        status: zod.enum(['pending', 'active', 'deactivated']),
+        globalRoles: zod.array(zod.enum(['administrator'])),
+    }),
+});
 
-
-export const AuthControllerLogoutResponse = zod.void()
-
+export const AuthControllerLogoutResponse = zod.void();
 
 export const AuthControllerMeResponse = zod.object({
-  "id": zod.uuid(),
-  "username": zod.string(),
-  "email": zod.email(),
-  "displayName": zod.string(),
-  "status": zod.enum(['pending', 'active', 'deactivated']),
-  "globalRoles": zod.array(zod.enum(['administrator']))
-})
-
+    id: zod.uuid(),
+    username: zod.string(),
+    email: zod.email(),
+    displayName: zod.string(),
+    status: zod.enum(['pending', 'active', 'deactivated']),
+    globalRoles: zod.array(zod.enum(['administrator'])),
+});
 
 /**
  * @summary Check whether initial Administrator registration is available.
  */
-export const GetAuthenticationBootstrapStatusResponse = zod.object({
-  "registrationAvailable": zod.boolean()
-})
-
+export const GetAuthenticationBootstrapStatusResponse = zod.object({ registrationAvailable: zod.boolean() });
 
 /**
  * @summary Register the first local Administrator account.
@@ -700,41 +501,32 @@ export const GetAuthenticationBootstrapStatusResponse = zod.object({
 export const bootstrapAdministratorBodyPasswordMin = 15;
 export const bootstrapAdministratorBodyPasswordMax = 128;
 
-
-
-
 export const BootstrapAdministratorBody = zod.object({
-  "username": zod.string(),
-  "email": zod.string(),
-  "displayName": zod.string(),
-  "password": zod.string().min(bootstrapAdministratorBodyPasswordMin).max(bootstrapAdministratorBodyPasswordMax),
-  "bootstrapSecret": zod.string().min(1).optional()
-})
+    username: zod.string(),
+    email: zod.string(),
+    displayName: zod.string(),
+    password: zod.string().min(bootstrapAdministratorBodyPasswordMin).max(bootstrapAdministratorBodyPasswordMax),
+    bootstrapSecret: zod.string().min(1).optional(),
+});
 
-export const BootstrapAdministratorResponse = zod.object({
-  "message": zod.string()
-})
+export const BootstrapAdministratorResponse = zod.object({ message: zod.string() });
 
+export const PasswordResetControllerRequestPasswordResetBody = zod.object({ email: zod.email() });
 
-export const PasswordResetControllerRequestPasswordResetBody = zod.object({
-  "email": zod.email()
-})
-
-export const PasswordResetControllerRequestPasswordResetResponse = zod.void()
-
+export const PasswordResetControllerRequestPasswordResetResponse = zod.void();
 
 export const passwordResetControllerConfirmPasswordResetBodyPasswordMin = 15;
 export const passwordResetControllerConfirmPasswordResetBodyPasswordMax = 128;
 
-
-
 export const PasswordResetControllerConfirmPasswordResetBody = zod.object({
-  "token": zod.string(),
-  "password": zod.string().min(passwordResetControllerConfirmPasswordResetBodyPasswordMin).max(passwordResetControllerConfirmPasswordResetBodyPasswordMax)
-})
+    token: zod.string(),
+    password: zod
+        .string()
+        .min(passwordResetControllerConfirmPasswordResetBodyPasswordMin)
+        .max(passwordResetControllerConfirmPasswordResetBodyPasswordMax),
+});
 
-export const PasswordResetControllerConfirmPasswordResetResponse = zod.void()
-
+export const PasswordResetControllerConfirmPasswordResetResponse = zod.void();
 
 /**
  * @summary Register a pending local user account.
@@ -742,487 +534,357 @@ export const PasswordResetControllerConfirmPasswordResetResponse = zod.void()
 export const registerUserBodyPasswordMin = 15;
 export const registerUserBodyPasswordMax = 128;
 
-
-
 export const RegisterUserBody = zod.object({
-  "username": zod.string().describe('Unique, case-insensitive login name.'),
-  "email": zod.string().describe('Unique email address used for verification and recovery.'),
-  "displayName": zod.string().describe('Human-readable user name.'),
-  "password": zod.string().min(registerUserBodyPasswordMin).max(registerUserBodyPasswordMax)
-})
+    username: zod.string().describe('Unique, case-insensitive login name.'),
+    email: zod.string().describe('Unique email address used for verification and recovery.'),
+    displayName: zod.string().describe('Human-readable user name.'),
+    password: zod.string().min(registerUserBodyPasswordMin).max(registerUserBodyPasswordMax),
+});
 
-export const RegisterUserResponse = zod.object({
-  "message": zod.string()
-})
-
+export const RegisterUserResponse = zod.object({ message: zod.string() });
 
 /**
  * @summary Confirm a local account email address.
  */
 export const ConfirmEmailVerificationBody = zod.object({
-  "token": zod.string().describe('Single-use email verification token.')
-})
+    token: zod.string().describe('Single-use email verification token.'),
+});
 
-export const ConfirmEmailVerificationResponse = zod.void()
-
+export const ConfirmEmailVerificationResponse = zod.void();
 
 /**
  * @summary Request another verification email.
  */
 export const ResendEmailVerificationBody = zod.object({
-  "username": zod.string().describe('Case-insensitive local username.')
-})
+    username: zod.string().describe('Case-insensitive local username.'),
+});
 
-export const ResendEmailVerificationResponse = zod.object({
-  "message": zod.string()
-})
-
+export const ResendEmailVerificationResponse = zod.object({ message: zod.string() });
 
 export const UserAdministrationControllerListResponseItem = zod.object({
-  "id": zod.uuid(),
-  "username": zod.string(),
-  "email": zod.email(),
-  "displayName": zod.string(),
-  "status": zod.enum(['pending', 'active', 'deactivated']),
-  "emailVerifiedAt": zod.looseObject({
+    id: zod.uuid(),
+    username: zod.string(),
+    email: zod.email(),
+    displayName: zod.string(),
+    status: zod.enum(['pending', 'active', 'deactivated']),
+    emailVerifiedAt: zod.looseObject({}).nullable(),
+    globalRoles: zod.array(zod.enum(['administrator'])),
+    createdAt: zod.iso.datetime({ offset: true }),
+    updatedAt: zod.iso.datetime({ offset: true }),
+});
+export const UserAdministrationControllerListResponse = zod.array(UserAdministrationControllerListResponseItem);
 
-}).nullable(),
-  "globalRoles": zod.array(zod.enum(['administrator'])),
-  "createdAt": zod.iso.datetime({"offset":true}),
-  "updatedAt": zod.iso.datetime({"offset":true})
-})
-export const UserAdministrationControllerListResponse = zod.array(UserAdministrationControllerListResponseItem)
-
-
-export const UserAdministrationControllerFindParams = zod.object({
-  "userId": zod.string()
-})
+export const UserAdministrationControllerFindParams = zod.object({ userId: zod.string() });
 
 export const UserAdministrationControllerFindResponse = zod.object({
-  "id": zod.uuid(),
-  "username": zod.string(),
-  "email": zod.email(),
-  "displayName": zod.string(),
-  "status": zod.enum(['pending', 'active', 'deactivated']),
-  "emailVerifiedAt": zod.looseObject({
+    id: zod.uuid(),
+    username: zod.string(),
+    email: zod.email(),
+    displayName: zod.string(),
+    status: zod.enum(['pending', 'active', 'deactivated']),
+    emailVerifiedAt: zod.looseObject({}).nullable(),
+    globalRoles: zod.array(zod.enum(['administrator'])),
+    createdAt: zod.iso.datetime({ offset: true }),
+    updatedAt: zod.iso.datetime({ offset: true }),
+});
 
-}).nullable(),
-  "globalRoles": zod.array(zod.enum(['administrator'])),
-  "createdAt": zod.iso.datetime({"offset":true}),
-  "updatedAt": zod.iso.datetime({"offset":true})
-})
+export const UserAdministrationControllerUpdateStatusParams = zod.object({ userId: zod.string() });
 
-
-export const UserAdministrationControllerUpdateStatusParams = zod.object({
-  "userId": zod.string()
-})
-
-export const UserAdministrationControllerUpdateStatusBody = zod.object({
-  "status": zod.enum(['active', 'deactivated'])
-})
+export const UserAdministrationControllerUpdateStatusBody = zod.object({ status: zod.enum(['active', 'deactivated']) });
 
 export const UserAdministrationControllerUpdateStatusResponse = zod.object({
-  "id": zod.uuid(),
-  "username": zod.string(),
-  "email": zod.email(),
-  "displayName": zod.string(),
-  "status": zod.enum(['pending', 'active', 'deactivated']),
-  "emailVerifiedAt": zod.looseObject({
+    id: zod.uuid(),
+    username: zod.string(),
+    email: zod.email(),
+    displayName: zod.string(),
+    status: zod.enum(['pending', 'active', 'deactivated']),
+    emailVerifiedAt: zod.looseObject({}).nullable(),
+    globalRoles: zod.array(zod.enum(['administrator'])),
+    createdAt: zod.iso.datetime({ offset: true }),
+    updatedAt: zod.iso.datetime({ offset: true }),
+});
 
-}).nullable(),
-  "globalRoles": zod.array(zod.enum(['administrator'])),
-  "createdAt": zod.iso.datetime({"offset":true}),
-  "updatedAt": zod.iso.datetime({"offset":true})
-})
-
-
-export const UserAdministrationControllerListSessionsParams = zod.object({
-  "userId": zod.string()
-})
+export const UserAdministrationControllerListSessionsParams = zod.object({ userId: zod.string() });
 
 export const UserAdministrationControllerListSessionsResponseItem = zod.object({
-  "id": zod.uuid(),
-  "createdAt": zod.iso.datetime({"offset":true}),
-  "lastActivityAt": zod.iso.datetime({"offset":true}),
-  "revokedAt": zod.looseObject({
+    id: zod.uuid(),
+    createdAt: zod.iso.datetime({ offset: true }),
+    lastActivityAt: zod.iso.datetime({ offset: true }),
+    revokedAt: zod.looseObject({}).nullable(),
+});
+export const UserAdministrationControllerListSessionsResponse = zod.array(
+    UserAdministrationControllerListSessionsResponseItem,
+);
 
-}).nullable()
-})
-export const UserAdministrationControllerListSessionsResponse = zod.array(UserAdministrationControllerListSessionsResponseItem)
+export const UserAdministrationControllerRevokeAllParams = zod.object({ userId: zod.string() });
 
-
-export const UserAdministrationControllerRevokeAllParams = zod.object({
-  "userId": zod.string()
-})
-
-export const UserAdministrationControllerRevokeAllResponse = zod.void()
-
+export const UserAdministrationControllerRevokeAllResponse = zod.void();
 
 export const UserAdministrationControllerRevokeOneParams = zod.object({
-  "userId": zod.string(),
-  "sessionId": zod.string()
-})
+    userId: zod.string(),
+    sessionId: zod.string(),
+});
 
-export const UserAdministrationControllerRevokeOneResponse = zod.void()
+export const UserAdministrationControllerRevokeOneResponse = zod.void();
 
-
-export const ProjectMembershipControllerListParams = zod.object({
-  "projectId": zod.string()
-})
+export const ProjectMembershipControllerListParams = zod.object({ projectId: zod.string() });
 
 export const ProjectMembershipControllerListResponseItem = zod.object({
-  "userId": zod.uuid(),
-  "username": zod.string(),
-  "displayName": zod.string(),
-  "roles": zod.array(zod.enum(['requirements_engineer', 'developer', 'viewer']))
-})
-export const ProjectMembershipControllerListResponse = zod.array(ProjectMembershipControllerListResponseItem)
+    userId: zod.uuid(),
+    username: zod.string(),
+    displayName: zod.string(),
+    roles: zod.array(zod.enum(['requirements_engineer', 'developer', 'viewer'])),
+});
+export const ProjectMembershipControllerListResponse = zod.array(ProjectMembershipControllerListResponseItem);
 
-
-export const ProjectMembershipControllerSetParams = zod.object({
-  "projectId": zod.string(),
-  "userId": zod.string()
-})
+export const ProjectMembershipControllerSetParams = zod.object({ projectId: zod.string(), userId: zod.string() });
 
 export const ProjectMembershipControllerSetBody = zod.object({
-  "roles": zod.array(zod.enum(['requirements_engineer', 'developer', 'viewer']))
-})
+    roles: zod.array(zod.enum(['requirements_engineer', 'developer', 'viewer'])),
+});
 
 export const ProjectMembershipControllerSetResponse = zod.object({
-  "userId": zod.uuid(),
-  "username": zod.string(),
-  "displayName": zod.string(),
-  "roles": zod.array(zod.enum(['requirements_engineer', 'developer', 'viewer']))
-})
+    userId: zod.uuid(),
+    username: zod.string(),
+    displayName: zod.string(),
+    roles: zod.array(zod.enum(['requirements_engineer', 'developer', 'viewer'])),
+});
 
+export const ProjectMembershipControllerRemoveParams = zod.object({ projectId: zod.string(), userId: zod.string() });
 
-export const ProjectMembershipControllerRemoveParams = zod.object({
-  "projectId": zod.string(),
-  "userId": zod.string()
-})
-
-export const ProjectMembershipControllerRemoveResponse = zod.void()
-
+export const ProjectMembershipControllerRemoveResponse = zod.void();
 
 /**
  * @summary List review comments of a requirement.
  */
 export const ListRequirementReviewCommentsParams = zod.object({
-  "projectId": zod.string().describe('Project identifier.'),
-  "requirementId": zod.string().describe('Requirement identifier.')
-})
+    projectId: zod.string().describe('Project identifier.'),
+    requirementId: zod.string().describe('Requirement identifier.'),
+});
 
 export const ListRequirementReviewCommentsResponseItem = zod.object({
-  "id": zod.string(),
-  "projectId": zod.string(),
-  "requirementId": zod.string(),
-  "createdForRevisionNumber": zod.number().describe('Requirement revision number this comment was created against.'),
-  "text": zod.string(),
-  "status": zod.enum(['open', 'closed']),
-  "author": zod.string(),
-  "closedBy": zod.looseObject({
-
-}).nullish(),
-  "closeReason": zod.enum(['resolved', 'requirement_rejected']).nullish(),
-  "closedInRevisionNumber": zod.looseObject({
-
-}).nullish(),
-  "closedAt": zod.looseObject({
-
-}).nullish(),
-  "createdAt": zod.iso.datetime({"offset":true}),
-  "updatedAt": zod.iso.datetime({"offset":true}),
-  "replies": zod.array(zod.object({
-  "id": zod.string(),
-  "commentId": zod.string(),
-  "text": zod.string(),
-  "author": zod.string(),
-  "createdAt": zod.iso.datetime({"offset":true})
-}))
-})
-export const ListRequirementReviewCommentsResponse = zod.array(ListRequirementReviewCommentsResponseItem)
-
+    id: zod.string(),
+    projectId: zod.string(),
+    requirementId: zod.string(),
+    createdForRevisionNumber: zod.number().describe('Requirement revision number this comment was created against.'),
+    text: zod.string(),
+    status: zod.enum(['open', 'closed']),
+    author: zod.string(),
+    closedBy: zod.looseObject({}).nullish(),
+    closeReason: zod.enum(['resolved', 'requirement_rejected']).nullish(),
+    closedInRevisionNumber: zod.looseObject({}).nullish(),
+    closedAt: zod.looseObject({}).nullish(),
+    createdAt: zod.iso.datetime({ offset: true }),
+    updatedAt: zod.iso.datetime({ offset: true }),
+    replies: zod.array(
+        zod.object({
+            id: zod.string(),
+            commentId: zod.string(),
+            text: zod.string(),
+            author: zod.string(),
+            createdAt: zod.iso.datetime({ offset: true }),
+        }),
+    ),
+});
+export const ListRequirementReviewCommentsResponse = zod.array(ListRequirementReviewCommentsResponseItem);
 
 /**
  * @summary Create a review comment.
  */
 export const CreateRequirementReviewCommentParams = zod.object({
-  "projectId": zod.string().describe('Project identifier.'),
-  "requirementId": zod.string().describe('Requirement identifier.')
-})
+    projectId: zod.string().describe('Project identifier.'),
+    requirementId: zod.string().describe('Requirement identifier.'),
+});
 
-export const CreateRequirementReviewCommentBody = zod.object({
-  "text": zod.string(),
-  "author": zod.string()
-})
+export const CreateRequirementReviewCommentBody = zod.object({ text: zod.string(), author: zod.string() });
 
 export const CreateRequirementReviewCommentResponse = zod.object({
-  "id": zod.string(),
-  "projectId": zod.string(),
-  "requirementId": zod.string(),
-  "createdForRevisionNumber": zod.number().describe('Requirement revision number this comment was created against.'),
-  "text": zod.string(),
-  "status": zod.enum(['open', 'closed']),
-  "author": zod.string(),
-  "closedBy": zod.looseObject({
-
-}).nullish(),
-  "closeReason": zod.enum(['resolved', 'requirement_rejected']).nullish(),
-  "closedInRevisionNumber": zod.looseObject({
-
-}).nullish(),
-  "closedAt": zod.looseObject({
-
-}).nullish(),
-  "createdAt": zod.iso.datetime({"offset":true}),
-  "updatedAt": zod.iso.datetime({"offset":true}),
-  "replies": zod.array(zod.object({
-  "id": zod.string(),
-  "commentId": zod.string(),
-  "text": zod.string(),
-  "author": zod.string(),
-  "createdAt": zod.iso.datetime({"offset":true})
-}))
-})
-
+    id: zod.string(),
+    projectId: zod.string(),
+    requirementId: zod.string(),
+    createdForRevisionNumber: zod.number().describe('Requirement revision number this comment was created against.'),
+    text: zod.string(),
+    status: zod.enum(['open', 'closed']),
+    author: zod.string(),
+    closedBy: zod.looseObject({}).nullish(),
+    closeReason: zod.enum(['resolved', 'requirement_rejected']).nullish(),
+    closedInRevisionNumber: zod.looseObject({}).nullish(),
+    closedAt: zod.looseObject({}).nullish(),
+    createdAt: zod.iso.datetime({ offset: true }),
+    updatedAt: zod.iso.datetime({ offset: true }),
+    replies: zod.array(
+        zod.object({
+            id: zod.string(),
+            commentId: zod.string(),
+            text: zod.string(),
+            author: zod.string(),
+            createdAt: zod.iso.datetime({ offset: true }),
+        }),
+    ),
+});
 
 /**
  * @summary Get the derived review state and comment counts.
  */
-export const GetRequirementReviewSummaryParams = zod.object({
-  "projectId": zod.string(),
-  "requirementId": zod.string()
-})
+export const GetRequirementReviewSummaryParams = zod.object({ projectId: zod.string(), requirementId: zod.string() });
 
 export const GetRequirementReviewSummaryResponse = zod.object({
-  "commentCount": zod.number(),
-  "openCommentCount": zod.number(),
-  "state": zod.enum(['not_started', 'in_review', 'decision_pending'])
-})
-
+    commentCount: zod.number(),
+    openCommentCount: zod.number(),
+    state: zod.enum(['not_started', 'in_review', 'decision_pending']),
+});
 
 /**
  * @summary Reply to an open review comment.
  */
 export const CreateRequirementReviewCommentReplyParams = zod.object({
-  "projectId": zod.string(),
-  "requirementId": zod.string(),
-  "commentId": zod.string()
-})
+    projectId: zod.string(),
+    requirementId: zod.string(),
+    commentId: zod.string(),
+});
 
-export const CreateRequirementReviewCommentReplyBody = zod.object({
-  "text": zod.string(),
-  "author": zod.string()
-})
+export const CreateRequirementReviewCommentReplyBody = zod.object({ text: zod.string(), author: zod.string() });
 
 export const CreateRequirementReviewCommentReplyResponse = zod.object({
-  "id": zod.string(),
-  "commentId": zod.string(),
-  "text": zod.string(),
-  "author": zod.string(),
-  "createdAt": zod.iso.datetime({"offset":true})
-})
-
+    id: zod.string(),
+    commentId: zod.string(),
+    text: zod.string(),
+    author: zod.string(),
+    createdAt: zod.iso.datetime({ offset: true }),
+});
 
 /**
  * @summary Close a review comment.
  */
 export const CloseRequirementReviewCommentParams = zod.object({
-  "projectId": zod.string().describe('Project identifier.'),
-  "requirementId": zod.string().describe('Requirement identifier.'),
-  "commentId": zod.string().describe('Review comment identifier.')
-})
+    projectId: zod.string().describe('Project identifier.'),
+    requirementId: zod.string().describe('Requirement identifier.'),
+    commentId: zod.string().describe('Review comment identifier.'),
+});
 
-export const CloseRequirementReviewCommentBody = zod.object({
-  "closedBy": zod.string()
-})
+export const CloseRequirementReviewCommentBody = zod.object({ closedBy: zod.string() });
 
 export const CloseRequirementReviewCommentResponse = zod.object({
-  "id": zod.string(),
-  "projectId": zod.string(),
-  "requirementId": zod.string(),
-  "createdForRevisionNumber": zod.number().describe('Requirement revision number this comment was created against.'),
-  "text": zod.string(),
-  "status": zod.enum(['open', 'closed']),
-  "author": zod.string(),
-  "closedBy": zod.looseObject({
-
-}).nullish(),
-  "closeReason": zod.enum(['resolved', 'requirement_rejected']).nullish(),
-  "closedInRevisionNumber": zod.looseObject({
-
-}).nullish(),
-  "closedAt": zod.looseObject({
-
-}).nullish(),
-  "createdAt": zod.iso.datetime({"offset":true}),
-  "updatedAt": zod.iso.datetime({"offset":true}),
-  "replies": zod.array(zod.object({
-  "id": zod.string(),
-  "commentId": zod.string(),
-  "text": zod.string(),
-  "author": zod.string(),
-  "createdAt": zod.iso.datetime({"offset":true})
-}))
-})
-
+    id: zod.string(),
+    projectId: zod.string(),
+    requirementId: zod.string(),
+    createdForRevisionNumber: zod.number().describe('Requirement revision number this comment was created against.'),
+    text: zod.string(),
+    status: zod.enum(['open', 'closed']),
+    author: zod.string(),
+    closedBy: zod.looseObject({}).nullish(),
+    closeReason: zod.enum(['resolved', 'requirement_rejected']).nullish(),
+    closedInRevisionNumber: zod.looseObject({}).nullish(),
+    closedAt: zod.looseObject({}).nullish(),
+    createdAt: zod.iso.datetime({ offset: true }),
+    updatedAt: zod.iso.datetime({ offset: true }),
+    replies: zod.array(
+        zod.object({
+            id: zod.string(),
+            commentId: zod.string(),
+            text: zod.string(),
+            author: zod.string(),
+            createdAt: zod.iso.datetime({ offset: true }),
+        }),
+    ),
+});
 
 /**
  * @summary Approve a reviewed requirement.
  */
 export const ApproveRequirementReviewParams = zod.object({
-  "projectId": zod.string().describe('Project identifier.'),
-  "requirementId": zod.string().describe('Requirement identifier.')
-})
+    projectId: zod.string().describe('Project identifier.'),
+    requirementId: zod.string().describe('Requirement identifier.'),
+});
 
-export const ApproveRequirementReviewBody = zod.object({
-  "reviewer": zod.string()
-})
+export const ApproveRequirementReviewBody = zod.object({ reviewer: zod.string() });
 
 export const approveRequirementReviewResponseVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-\\d{4}$');
 
-
 export const ApproveRequirementReviewResponse = zod.object({
-  "id": zod.string().describe('Stable requirement identifier.'),
-  "projectId": zod.string().describe('Owning project identifier.'),
-  "categoryId": zod.string().describe('Owning category identifier.'),
-  "sequenceNumber": zod.number().describe('Sequential number within the category used to build the visible key.'),
-  "visibleKey": zod.string().regex(approveRequirementReviewResponseVisibleKeyRegExp),
-  "revisionNumber": zod.number().describe('Current revision number of this requirement.'),
-  "status": zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
-  "description": zod.looseObject({
-
-}).nullish(),
-  "priority": zod.enum(['p1', 'p2', 'p3']).nullish(),
-  "owner": zod.looseObject({
-
-}).nullish(),
-  "rationale": zod.looseObject({
-
-}).nullish(),
-  "source": zod.looseObject({
-
-}).nullish(),
-  "rejectionReason": zod.looseObject({
-
-}).nullish(),
-  "reviewer": zod.looseObject({
-
-}).nullish(),
-  "obsoletedBy": zod.looseObject({
-
-}).nullish(),
-  "rejectedAt": zod.looseObject({
-
-}).nullish(),
-  "deletedAt": zod.looseObject({
-
-}).nullish(),
-  "approvedAt": zod.looseObject({
-
-}).nullish(),
-  "implementedAt": zod.looseObject({
-
-}).nullish(),
-  "obsolescenceReason": zod.looseObject({
-
-}).nullish(),
-  "obsoleteAt": zod.looseObject({
-
-}).nullish(),
-  "implementationTickets": zod.array(zod.object({
-  "ticketId": zod.string(),
-  "completedBy": zod.string(),
-  "completedAt": zod.iso.date(),
-  "id": zod.string(),
-  "requirementId": zod.string(),
-  "url": zod.looseObject({
-
-}).nullish(),
-  "createdAt": zod.iso.datetime({"offset":true}),
-  "updatedAt": zod.iso.datetime({"offset":true})
-})),
-  "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was created.'),
-  "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was last updated.')
-})
-
+    id: zod.string().describe('Stable requirement identifier.'),
+    projectId: zod.string().describe('Owning project identifier.'),
+    categoryId: zod.string().describe('Owning category identifier.'),
+    sequenceNumber: zod.number().describe('Sequential number within the category used to build the visible key.'),
+    visibleKey: zod.string().regex(approveRequirementReviewResponseVisibleKeyRegExp),
+    revisionNumber: zod.number().describe('Current revision number of this requirement.'),
+    status: zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
+    description: zod.looseObject({}).nullish(),
+    priority: zod.enum(['p1', 'p2', 'p3']).nullish(),
+    owner: zod.looseObject({}).nullish(),
+    rationale: zod.looseObject({}).nullish(),
+    source: zod.looseObject({}).nullish(),
+    rejectionReason: zod.looseObject({}).nullish(),
+    reviewer: zod.looseObject({}).nullish(),
+    obsoletedBy: zod.looseObject({}).nullish(),
+    rejectedAt: zod.looseObject({}).nullish(),
+    deletedAt: zod.looseObject({}).nullish(),
+    approvedAt: zod.looseObject({}).nullish(),
+    implementedAt: zod.looseObject({}).nullish(),
+    obsolescenceReason: zod.looseObject({}).nullish(),
+    obsoleteAt: zod.looseObject({}).nullish(),
+    implementationTickets: zod.array(
+        zod.object({
+            ticketId: zod.string(),
+            completedBy: zod.string(),
+            completedAt: zod.iso.date(),
+            id: zod.string(),
+            requirementId: zod.string(),
+            url: zod.looseObject({}).nullish(),
+            createdAt: zod.iso.datetime({ offset: true }),
+            updatedAt: zod.iso.datetime({ offset: true }),
+        }),
+    ),
+    createdAt: zod.iso.datetime({ offset: true }).describe('Date and time when the requirement was created.'),
+    updatedAt: zod.iso.datetime({ offset: true }).describe('Date and time when the requirement was last updated.'),
+});
 
 /**
  * @summary Reject a reviewed requirement.
  */
 export const RejectRequirementReviewParams = zod.object({
-  "projectId": zod.string().describe('Project identifier.'),
-  "requirementId": zod.string().describe('Requirement identifier.')
-})
+    projectId: zod.string().describe('Project identifier.'),
+    requirementId: zod.string().describe('Requirement identifier.'),
+});
 
-export const RejectRequirementReviewBody = zod.object({
-  "reviewer": zod.string(),
-  "rejectionReason": zod.string()
-})
+export const RejectRequirementReviewBody = zod.object({ reviewer: zod.string(), rejectionReason: zod.string() });
 
 export const rejectRequirementReviewResponseVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-\\d{4}$');
 
-
 export const RejectRequirementReviewResponse = zod.object({
-  "id": zod.string().describe('Stable requirement identifier.'),
-  "projectId": zod.string().describe('Owning project identifier.'),
-  "categoryId": zod.string().describe('Owning category identifier.'),
-  "sequenceNumber": zod.number().describe('Sequential number within the category used to build the visible key.'),
-  "visibleKey": zod.string().regex(rejectRequirementReviewResponseVisibleKeyRegExp),
-  "revisionNumber": zod.number().describe('Current revision number of this requirement.'),
-  "status": zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
-  "description": zod.looseObject({
-
-}).nullish(),
-  "priority": zod.enum(['p1', 'p2', 'p3']).nullish(),
-  "owner": zod.looseObject({
-
-}).nullish(),
-  "rationale": zod.looseObject({
-
-}).nullish(),
-  "source": zod.looseObject({
-
-}).nullish(),
-  "rejectionReason": zod.looseObject({
-
-}).nullish(),
-  "reviewer": zod.looseObject({
-
-}).nullish(),
-  "obsoletedBy": zod.looseObject({
-
-}).nullish(),
-  "rejectedAt": zod.looseObject({
-
-}).nullish(),
-  "deletedAt": zod.looseObject({
-
-}).nullish(),
-  "approvedAt": zod.looseObject({
-
-}).nullish(),
-  "implementedAt": zod.looseObject({
-
-}).nullish(),
-  "obsolescenceReason": zod.looseObject({
-
-}).nullish(),
-  "obsoleteAt": zod.looseObject({
-
-}).nullish(),
-  "implementationTickets": zod.array(zod.object({
-  "ticketId": zod.string(),
-  "completedBy": zod.string(),
-  "completedAt": zod.iso.date(),
-  "id": zod.string(),
-  "requirementId": zod.string(),
-  "url": zod.looseObject({
-
-}).nullish(),
-  "createdAt": zod.iso.datetime({"offset":true}),
-  "updatedAt": zod.iso.datetime({"offset":true})
-})),
-  "createdAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was created.'),
-  "updatedAt": zod.iso.datetime({"offset":true}).describe('Date and time when the requirement was last updated.')
-})
+    id: zod.string().describe('Stable requirement identifier.'),
+    projectId: zod.string().describe('Owning project identifier.'),
+    categoryId: zod.string().describe('Owning category identifier.'),
+    sequenceNumber: zod.number().describe('Sequential number within the category used to build the visible key.'),
+    visibleKey: zod.string().regex(rejectRequirementReviewResponseVisibleKeyRegExp),
+    revisionNumber: zod.number().describe('Current revision number of this requirement.'),
+    status: zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
+    description: zod.looseObject({}).nullish(),
+    priority: zod.enum(['p1', 'p2', 'p3']).nullish(),
+    owner: zod.looseObject({}).nullish(),
+    rationale: zod.looseObject({}).nullish(),
+    source: zod.looseObject({}).nullish(),
+    rejectionReason: zod.looseObject({}).nullish(),
+    reviewer: zod.looseObject({}).nullish(),
+    obsoletedBy: zod.looseObject({}).nullish(),
+    rejectedAt: zod.looseObject({}).nullish(),
+    deletedAt: zod.looseObject({}).nullish(),
+    approvedAt: zod.looseObject({}).nullish(),
+    implementedAt: zod.looseObject({}).nullish(),
+    obsolescenceReason: zod.looseObject({}).nullish(),
+    obsoleteAt: zod.looseObject({}).nullish(),
+    implementationTickets: zod.array(
+        zod.object({
+            ticketId: zod.string(),
+            completedBy: zod.string(),
+            completedAt: zod.iso.date(),
+            id: zod.string(),
+            requirementId: zod.string(),
+            url: zod.looseObject({}).nullish(),
+            createdAt: zod.iso.datetime({ offset: true }),
+            updatedAt: zod.iso.datetime({ offset: true }),
+        }),
+    ),
+    createdAt: zod.iso.datetime({ offset: true }).describe('Date and time when the requirement was created.'),
+    updatedAt: zod.iso.datetime({ offset: true }).describe('Date and time when the requirement was last updated.'),
+});

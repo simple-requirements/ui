@@ -7,8 +7,8 @@
  */
 
 export type ClearDeletedRequirementsParams = {
-/**
- * Required to clear the recycle bin.
- */
-deleted?: string;
+    /**
+     * Required to clear the recycle bin.
+     */
+    deleted?: string;
 };

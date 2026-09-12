@@ -18,10 +18,5 @@ export function useRequirementFormRoute(): RequirementFormRoute {
     const [searchParams] = useSearchParams();
     const initialCategoryId = searchParams.get('categoryId') ?? undefined;
 
-    return {
-        projectId,
-        requirementId,
-        initialCategoryId,
-        mode: getRequirementFormMode(requirementId),
-    };
+    return { projectId, requirementId, initialCategoryId, mode: getRequirementFormMode(requirementId) };
 }

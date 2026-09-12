@@ -1,21 +1,15 @@
-import { Button } from "primereact/button";
+import { Button } from 'primereact/button';
 
-export type CreateActionButtonProps = Readonly<{
-    disabled: boolean;
-    onCreate: () => void;
-}>;
+export type CreateActionButtonProps = Readonly<{ disabled: boolean; onCreate: () => void }>;
 
-export function CreateActionButton({
-    disabled,
-    onCreate,
-}: CreateActionButtonProps) {
+export function CreateActionButton({ disabled, onCreate }: CreateActionButtonProps) {
     return (
         <Button
-            type="button"
-            label="Create"
+            type='button'
+            label='Create'
             disabled={disabled}
             onClick={onCreate}
-            pt={{ root: { className: "action-bar__button" } }}
+            pt={{ root: { className: 'action-bar__button' } }}
         />
     );
 }
@@ -47,38 +41,38 @@ export function RequirementRouteActionButtons({
         <>
             {canEdit && (
                 <Button
-                    type="button"
-                    label="Edit"
+                    type='button'
+                    label='Edit'
                     onClick={onEdit}
-                    pt={{ root: { className: "action-bar__button" } }}
+                    pt={{ root: { className: 'action-bar__button' } }}
                 />
             )}
 
             {canReview && (
                 <Button
-                    type="button"
-                    label="Review"
+                    type='button'
+                    label='Review'
                     onClick={onReview}
-                    pt={{ root: { className: "action-bar__button" } }}
+                    pt={{ root: { className: 'action-bar__button' } }}
                 />
             )}
 
             {canMarkObsolete && (
                 <Button
-                    type="button"
-                    label="Obsolete"
+                    type='button'
+                    label='Obsolete'
                     onClick={onMarkObsolete}
-                    pt={{ root: { className: "action-bar__button" } }}
+                    pt={{ root: { className: 'action-bar__button' } }}
                 />
             )}
 
             {canMarkImplemented && (
                 <Button
-                    type="button"
-                    label="Implemented"
+                    type='button'
+                    label='Implemented'
                     loading={implementPending}
                     onClick={onMarkImplemented}
-                    pt={{ root: { className: "action-bar__button" } }}
+                    pt={{ root: { className: 'action-bar__button' } }}
                 />
             )}
         </>
@@ -91,11 +85,7 @@ export type ReviewDecisionActionButtonsProps = Readonly<{
     onReject: () => void;
 }>;
 
-export function ReviewDecisionActionButtons({
-    canDecide,
-    onApprove,
-    onReject,
-}: ReviewDecisionActionButtonsProps) {
+export function ReviewDecisionActionButtons({ canDecide, onApprove, onReject }: ReviewDecisionActionButtonsProps) {
     if (!canDecide) {
         return null;
     }
@@ -103,26 +93,16 @@ export function ReviewDecisionActionButtons({
     return (
         <>
             <Button
-                type="button"
-                label="Approve"
-                pt={{
-                    root: {
-                        className:
-                            "action-bar__decision-button action-bar__decision-button--approve",
-                    },
-                }}
+                type='button'
+                label='Approve'
+                pt={{ root: { className: 'action-bar__decision-button action-bar__decision-button--approve' } }}
                 onClick={onApprove}
             />
             <Button
-                type="button"
-                label="Reject"
-                severity="danger"
-                pt={{
-                    root: {
-                        className:
-                            "action-bar__decision-button action-bar__decision-button--reject",
-                    },
-                }}
+                type='button'
+                label='Reject'
+                severity='danger'
+                pt={{ root: { className: 'action-bar__decision-button action-bar__decision-button--reject' } }}
                 onClick={onReject}
             />
         </>

@@ -29,10 +29,7 @@ export type UseRequirementFormActionOptions = Readonly<{
 export function useRequirementFormAction({ projectId, requirementId, mode, onSaved }: UseRequirementFormActionOptions) {
     return useActionState<RequirementFormState, FormData>(async (_previousState, formData) => {
         if (projectId === undefined) {
-            return {
-                fieldErrors: {},
-                formError: 'Project route is missing a project id.',
-            };
+            return { fieldErrors: {}, formError: 'Project route is missing a project id.' };
         }
 
         const rawValues = {
@@ -46,29 +43,20 @@ export function useRequirementFormAction({ projectId, requirementId, mode, onSav
         const parseResult = requirementFormSchema.safeParse(rawValues);
 
         if (!parseResult.success) {
-            return {
-                fieldErrors: getRequirementFormFieldErrors(parseResult.error),
-            };
+            return { fieldErrors: getRequirementFormFieldErrors(parseResult.error) };
         }
 
         try {
             const savedRequirement =
-                mode === 'create'
-                    ? await createProjectRequirementRequest(projectId, parseResult.data)
-                    : requirementId === undefined
-                      ? undefined
-                      : await updateProjectRequirementRequest(projectId, requirementId, parseResult.data);
+                mode === 'create' ? await createProjectRequirementRequest(projectId, parseResult.data)
+                : requirementId === undefined ? undefined
+                : await updateProjectRequirementRequest(projectId, requirementId, parseResult.data);
 
             if (savedRequirement === undefined) {
-                return {
-                    fieldErrors: {},
-                    formError: 'Requirement route is incomplete.',
-                };
+                return { fieldErrors: {}, formError: 'Requirement route is incomplete.' };
             }
 
-            await queryClient.invalidateQueries({
-                queryKey: getListProjectRequirementsQueryKey(projectId),
-            });
+            await queryClient.invalidateQueries({ queryKey: getListProjectRequirementsQueryKey(projectId) });
             onSaved(savedRequirement);
 
             return emptyRequirementFormState;

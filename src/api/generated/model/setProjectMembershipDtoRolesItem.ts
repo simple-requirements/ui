@@ -6,11 +6,11 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export type SetProjectMembershipDtoRolesItem = typeof SetProjectMembershipDtoRolesItem[keyof typeof SetProjectMembershipDtoRolesItem];
-
+export type SetProjectMembershipDtoRolesItem =
+    (typeof SetProjectMembershipDtoRolesItem)[keyof typeof SetProjectMembershipDtoRolesItem];
 
 export const SetProjectMembershipDtoRolesItem = {
-  requirements_engineer: 'requirements_engineer',
-  developer: 'developer',
-  viewer: 'viewer',
+    requirements_engineer: 'requirements_engineer',
+    developer: 'developer',
+    viewer: 'viewer',
 } as const;

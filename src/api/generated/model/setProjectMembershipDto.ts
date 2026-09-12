@@ -8,5 +8,5 @@
 import type { SetProjectMembershipDtoRolesItem } from './setProjectMembershipDtoRolesItem';
 
 export interface SetProjectMembershipDto {
-  roles: SetProjectMembershipDtoRolesItem[];
+    roles: SetProjectMembershipDtoRolesItem[];
 }

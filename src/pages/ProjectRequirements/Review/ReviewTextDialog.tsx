@@ -39,15 +39,13 @@ export function ReviewTextDialog({
                 header: { className: 'review-dialog__header' },
                 content: { className: 'review-dialog__content' },
             }}
-            onHide={onAbort}
-        >
+            onHide={onAbort}>
             <form
                 className='review-dialog__form'
                 onSubmit={(event) => {
                     event.preventDefault();
                     if (valid) void onConfirm(text.trim());
-                }}
-            >
+                }}>
                 <p>The backend records the author from the authenticated session.</p>
                 <label htmlFor='review-dialog-text'>{textLabel}</label>
                 <textarea

@@ -16,7 +16,9 @@ export type RequirementOwnerFieldProps = Readonly<{
 export function RequirementOwnerField({ formState, formValues, pending, onChange }: RequirementOwnerFieldProps) {
     return (
         <div className='project-requirements-form-page__field'>
-            <label className='project-requirements-form-page__label' htmlFor='requirement-owner'>
+            <label
+                className='project-requirements-form-page__label'
+                htmlFor='requirement-owner'>
                 Owner
             </label>
             <InputText
@@ -30,13 +32,14 @@ export function RequirementOwnerField({ formState, formValues, pending, onChange
                 onChange={(event) => onChange(event.currentTarget.value)}
                 pt={{ root: { className: 'project-requirements-form-page__input' } }}
             />
-            {formState.fieldErrors.owner === undefined ? (
+            {formState.fieldErrors.owner === undefined ?
                 <p className='project-requirements-form-page__hint'>{getRequirementFieldHint('owner', undefined)}</p>
-            ) : (
-                <p id='requirement-owner-error' className='project-requirements-form-page__error'>
+            :   <p
+                    id='requirement-owner-error'
+                    className='project-requirements-form-page__error'>
                     {formState.fieldErrors.owner}
                 </p>
-            )}
+            }
         </div>
     );
 }

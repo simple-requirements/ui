@@ -9,11 +9,8 @@
 /**
  * @nullable
  */
-export type CreateRequirementDtoPriority = typeof CreateRequirementDtoPriority[keyof typeof CreateRequirementDtoPriority] | null;
+export type CreateRequirementDtoPriority =
+    | (typeof CreateRequirementDtoPriority)[keyof typeof CreateRequirementDtoPriority]
+    | null;
 
-
-export const CreateRequirementDtoPriority = {
-  p1: 'p1',
-  p2: 'p2',
-  p3: 'p3',
-} as const;
+export const CreateRequirementDtoPriority = { p1: 'p1', p2: 'p2', p3: 'p3' } as const;

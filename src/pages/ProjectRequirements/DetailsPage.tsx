@@ -21,9 +21,9 @@ export function DetailsPage() {
     const navigate = useNavigate();
 
     const requirementDetailsRoute =
-        projectId === undefined || requirementId === undefined
-            ? undefined
-            : getProjectRequirementDetailsRoute(projectId, requirementId);
+        projectId === undefined || requirementId === undefined ?
+            undefined
+        :   getProjectRequirementDetailsRoute(projectId, requirementId);
 
     const requirementsCollection = useMemo(
         () => (projectId === undefined ? undefined : getProjectRequirementsCollection(projectId)),
@@ -72,11 +72,11 @@ export function DetailsPage() {
 
     useEffect(() => {
         if (
-            projectId !== undefined &&
-            requirementId !== undefined &&
-            requirement?.status === 'draft' &&
-            reviewSummaryQuery.data?.state !== undefined &&
-            reviewSummaryQuery.data.state !== 'not_started'
+            projectId !== undefined
+            && requirementId !== undefined
+            && requirement?.status === 'draft'
+            && reviewSummaryQuery.data?.state !== undefined
+            && reviewSummaryQuery.data.state !== 'not_started'
         ) {
             void navigate(getProjectRequirementReviewRoute(projectId, requirementId), { replace: true });
         }
@@ -101,16 +101,14 @@ export function DetailsPage() {
     return (
         <section
             className='project-requirements-details-page'
-            aria-labelledby='project-requirements-details-page-title'
-        >
+            aria-labelledby='project-requirements-details-page-title'>
             <LoadableContent
                 loading={requirementQuery.isLoading}
                 error={requirementQuery.isError}
                 empty={requirement === undefined}
                 loadingMessage='Loading requirement …'
                 errorMessage='Requirement could not be loaded.'
-                emptyMessage='Requirement could not be found in the project requirements list.'
-            >
+                emptyMessage='Requirement could not be found in the project requirements list.'>
                 <RequirementDetailsPanel
                     requirement={requirement}
                     title={requirement === undefined ? 'Requirement details' : requirement.visibleKey}

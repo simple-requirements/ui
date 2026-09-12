@@ -9,10 +9,11 @@
 /**
  * @nullable
  */
-export type RequirementReviewCommentResponseDtoCloseReason = typeof RequirementReviewCommentResponseDtoCloseReason[keyof typeof RequirementReviewCommentResponseDtoCloseReason] | null;
-
+export type RequirementReviewCommentResponseDtoCloseReason =
+    | (typeof RequirementReviewCommentResponseDtoCloseReason)[keyof typeof RequirementReviewCommentResponseDtoCloseReason]
+    | null;
 
 export const RequirementReviewCommentResponseDtoCloseReason = {
-  resolved: 'resolved',
-  requirement_rejected: 'requirement_rejected',
+    resolved: 'resolved',
+    requirement_rejected: 'requirement_rejected',
 } as const;

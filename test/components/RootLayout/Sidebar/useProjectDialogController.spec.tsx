@@ -73,7 +73,9 @@ function ProjectDialogControllerProbe() {
 }
 
 function renderProjectDialogControllerProbe(): ReturnType<typeof render> {
-    const reactQueryClient = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
+    const reactQueryClient = new QueryClient({
+        defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    });
 
     return render(
         <QueryClientProvider client={reactQueryClient}>

@@ -7,5 +7,5 @@
  */
 
 export interface BootstrapResponseDto {
-  message: string;
+    message: string;
 }

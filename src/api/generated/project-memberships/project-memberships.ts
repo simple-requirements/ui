@@ -5,384 +5,433 @@
  * HTTP API for the Requirements Management app.
  * OpenAPI spec version: 0.0.1
  */
-import {
-  useQuery
-} from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import type {
-  DataTag,
-  DefinedInitialDataOptions,
-  DefinedUseQueryResult,
-  QueryClient,
-  QueryFunction,
-  QueryKey,
-  UndefinedInitialDataOptions,
-  UseQueryOptions,
-  UseQueryResult
+    DataTag,
+    DefinedInitialDataOptions,
+    DefinedUseQueryResult,
+    QueryClient,
+    QueryFunction,
+    QueryKey,
+    UndefinedInitialDataOptions,
+    UseQueryOptions,
+    UseQueryResult,
 } from '@tanstack/react-query';
 
-import type {
-  ProjectMembershipResponseDto,
-  SetProjectMembershipDto
-} from '../model';
+import type { ProjectMembershipResponseDto, SetProjectMembershipDto } from '../model';
 
 import { apiFetch } from '../../fetch';
 
-
-
-
 const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKey: K } => {
-  const result = { queryKey } as T & { queryKey: K };
-  for (const key of Object.keys(query)) {
-    // The explicit queryKey always wins, matching the previous
-    // `{ ...query, queryKey }` spread where it was set last.
-    if (key === 'queryKey') continue;
-    Object.defineProperty(result, key, {
-      enumerable: true,
-      configurable: true,
-      get: () => (query as Record<string, unknown>)[key],
+    const result = { queryKey } as T & { queryKey: K };
+    for (const key of Object.keys(query)) {
+        // The explicit queryKey always wins, matching the previous
+        // `{ ...query, queryKey }` spread where it was set last.
+        if (key === 'queryKey') continue;
+        Object.defineProperty(result, key, {
+            enumerable: true,
+            configurable: true,
+            get: () => (query as Record<string, unknown>)[key],
+        });
+    }
+    return result;
+};
+
+export type projectMembershipControllerListResponse200 = { data: ProjectMembershipResponseDto[]; status: 200 };
+
+export type projectMembershipControllerListResponseSuccess = projectMembershipControllerListResponse200 & {
+    headers: Headers;
+};
+export type projectMembershipControllerListResponse = projectMembershipControllerListResponseSuccess;
+
+export const getProjectMembershipControllerListUrl = (projectId: string) => {
+    return `/admin/projects/${projectId}/memberships`;
+};
+
+export const projectMembershipControllerList = async (
+    projectId: string,
+    options?: RequestInit,
+): Promise<projectMembershipControllerListResponse> => {
+    return apiFetch<projectMembershipControllerListResponse>(getProjectMembershipControllerListUrl(projectId), {
+        ...options,
+        method: 'GET',
     });
-  }
-  return result;
 };
 
-export type projectMembershipControllerListResponse200 = {
-  data: ProjectMembershipResponseDto[]
-  status: 200
-}
-
-export type projectMembershipControllerListResponseSuccess = (projectMembershipControllerListResponse200) & {
-  headers: Headers;
+export const getProjectMembershipControllerListQueryKey = (projectId: string) => {
+    return [`/admin/projects/${projectId}/memberships`] as const;
 };
-;
 
-export type projectMembershipControllerListResponse = (projectMembershipControllerListResponseSuccess)
-
-export const getProjectMembershipControllerListUrl = (projectId: string,) => {
-
-
-
-
-  return `/admin/projects/${projectId}/memberships`
-}
-
-export const projectMembershipControllerList = async (projectId: string, options?: RequestInit): Promise<projectMembershipControllerListResponse> => {
-
-  return apiFetch<projectMembershipControllerListResponse>(getProjectMembershipControllerListUrl(projectId),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getProjectMembershipControllerListQueryKey = (projectId: string,) => {
-    return [
-    `/admin/projects/${projectId}/memberships`
-    ] as const;
-    }
-
-
-export const getProjectMembershipControllerListQueryOptions = <TData = Awaited<ReturnType<typeof projectMembershipControllerList>>, TError = unknown>(projectId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerList>>, TError, TData>>, }
+export const getProjectMembershipControllerListQueryOptions = <
+    TData = Awaited<ReturnType<typeof projectMembershipControllerList>>,
+    TError = unknown,
+>(
+    projectId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerList>>, TError, TData>>;
+    },
 ) => {
+    const { query: queryOptions } = options ?? {};
 
-const {query: queryOptions} = options ?? {};
+    const queryKey = queryOptions?.queryKey ?? getProjectMembershipControllerListQueryKey(projectId);
 
-  const queryKey =  queryOptions?.queryKey ?? getProjectMembershipControllerListQueryKey(projectId);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof projectMembershipControllerList>>> = ({ signal }) =>
+        projectMembershipControllerList(projectId, { signal });
 
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof projectMembershipControllerList>>> = ({ signal }) => projectMembershipControllerList(projectId, { signal });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: projectId !== null && projectId !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerList>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type ProjectMembershipControllerListQueryResult = NonNullable<Awaited<ReturnType<typeof projectMembershipControllerList>>>
-export type ProjectMembershipControllerListQueryError = unknown
-
-
-export function useProjectMembershipControllerList<TData = Awaited<ReturnType<typeof projectMembershipControllerList>>, TError = unknown>(
- projectId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerList>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof projectMembershipControllerList>>,
-          TError,
-          Awaited<ReturnType<typeof projectMembershipControllerList>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useProjectMembershipControllerList<TData = Awaited<ReturnType<typeof projectMembershipControllerList>>, TError = unknown>(
- projectId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerList>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof projectMembershipControllerList>>,
-          TError,
-          Awaited<ReturnType<typeof projectMembershipControllerList>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useProjectMembershipControllerList<TData = Awaited<ReturnType<typeof projectMembershipControllerList>>, TError = unknown>(
- projectId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerList>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-
-export function useProjectMembershipControllerList<TData = Awaited<ReturnType<typeof projectMembershipControllerList>>, TError = unknown>(
- projectId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerList>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getProjectMembershipControllerListQueryOptions(projectId,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-export type projectMembershipControllerSetResponse200 = {
-  data: ProjectMembershipResponseDto
-  status: 200
-}
-
-export type projectMembershipControllerSetResponseSuccess = (projectMembershipControllerSetResponse200) & {
-  headers: Headers;
+    return {
+        queryKey,
+        queryFn,
+        enabled: projectId !== null && projectId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerList>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
 };
-;
 
-export type projectMembershipControllerSetResponse = (projectMembershipControllerSetResponseSuccess)
+export type ProjectMembershipControllerListQueryResult = NonNullable<
+    Awaited<ReturnType<typeof projectMembershipControllerList>>
+>;
+export type ProjectMembershipControllerListQueryError = unknown;
 
-export const getProjectMembershipControllerSetUrl = (projectId: string,
-    userId: string,) => {
+export function useProjectMembershipControllerList<
+    TData = Awaited<ReturnType<typeof projectMembershipControllerList>>,
+    TError = unknown,
+>(
+    projectId: string,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerList>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof projectMembershipControllerList>>,
+                    TError,
+                    Awaited<ReturnType<typeof projectMembershipControllerList>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useProjectMembershipControllerList<
+    TData = Awaited<ReturnType<typeof projectMembershipControllerList>>,
+    TError = unknown,
+>(
+    projectId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerList>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof projectMembershipControllerList>>,
+                    TError,
+                    Awaited<ReturnType<typeof projectMembershipControllerList>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useProjectMembershipControllerList<
+    TData = Awaited<ReturnType<typeof projectMembershipControllerList>>,
+    TError = unknown,
+>(
+    projectId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerList>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
+export function useProjectMembershipControllerList<
+    TData = Awaited<ReturnType<typeof projectMembershipControllerList>>,
+    TError = unknown,
+>(
+    projectId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerList>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getProjectMembershipControllerListQueryOptions(projectId, options);
 
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
 
-
-  return `/admin/projects/${projectId}/memberships/${userId}`
+    return withQueryKey(query, queryOptions.queryKey);
 }
 
-export const projectMembershipControllerSet = async (projectId: string,
-    userId: string,
-    setProjectMembershipDto: SetProjectMembershipDto, options?: RequestInit): Promise<projectMembershipControllerSetResponse> => {
+export type projectMembershipControllerSetResponse200 = { data: ProjectMembershipResponseDto; status: 200 };
 
-  return apiFetch<projectMembershipControllerSetResponse>(getProjectMembershipControllerSetUrl(projectId,userId),
-  {
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(setProjectMembershipDto)
-  }
-);}
-
-
-
-
-
-export const getProjectMembershipControllerSetQueryKey = (projectId: string,
-    userId: string,
-    setProjectMembershipDto?: SetProjectMembershipDto,) => {
-    return [
-    'PUT', `/admin/projects/${projectId}/memberships/${userId}`, setProjectMembershipDto
-    ] as const;
-    }
-
-
-export const getProjectMembershipControllerSetQueryOptions = <TData = Awaited<ReturnType<typeof projectMembershipControllerSet>>, TError = unknown>(projectId: string,
-    userId: string,
-    setProjectMembershipDto: SetProjectMembershipDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerSet>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getProjectMembershipControllerSetQueryKey(projectId,userId,setProjectMembershipDto);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof projectMembershipControllerSet>>> = ({ signal }) => projectMembershipControllerSet(projectId,userId,setProjectMembershipDto, { signal });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: projectId !== null && projectId !== undefined && userId !== null && userId !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerSet>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type ProjectMembershipControllerSetQueryResult = NonNullable<Awaited<ReturnType<typeof projectMembershipControllerSet>>>
-export type ProjectMembershipControllerSetQueryError = unknown
-
-
-export function useProjectMembershipControllerSet<TData = Awaited<ReturnType<typeof projectMembershipControllerSet>>, TError = unknown>(
- projectId: string,
-    userId: string,
-    setProjectMembershipDto: SetProjectMembershipDto, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerSet>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof projectMembershipControllerSet>>,
-          TError,
-          Awaited<ReturnType<typeof projectMembershipControllerSet>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useProjectMembershipControllerSet<TData = Awaited<ReturnType<typeof projectMembershipControllerSet>>, TError = unknown>(
- projectId: string,
-    userId: string,
-    setProjectMembershipDto: SetProjectMembershipDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerSet>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof projectMembershipControllerSet>>,
-          TError,
-          Awaited<ReturnType<typeof projectMembershipControllerSet>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useProjectMembershipControllerSet<TData = Awaited<ReturnType<typeof projectMembershipControllerSet>>, TError = unknown>(
- projectId: string,
-    userId: string,
-    setProjectMembershipDto: SetProjectMembershipDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerSet>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-
-export function useProjectMembershipControllerSet<TData = Awaited<ReturnType<typeof projectMembershipControllerSet>>, TError = unknown>(
- projectId: string,
-    userId: string,
-    setProjectMembershipDto: SetProjectMembershipDto, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerSet>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getProjectMembershipControllerSetQueryOptions(projectId,userId,setProjectMembershipDto,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-export type projectMembershipControllerRemoveResponse204 = {
-  data: void
-  status: 204
-}
-
-export type projectMembershipControllerRemoveResponseSuccess = (projectMembershipControllerRemoveResponse204) & {
-  headers: Headers;
+export type projectMembershipControllerSetResponseSuccess = projectMembershipControllerSetResponse200 & {
+    headers: Headers;
 };
-;
+export type projectMembershipControllerSetResponse = projectMembershipControllerSetResponseSuccess;
 
-export type projectMembershipControllerRemoveResponse = (projectMembershipControllerRemoveResponseSuccess)
+export const getProjectMembershipControllerSetUrl = (projectId: string, userId: string) => {
+    return `/admin/projects/${projectId}/memberships/${userId}`;
+};
 
-export const getProjectMembershipControllerRemoveUrl = (projectId: string,
-    userId: string,) => {
+export const projectMembershipControllerSet = async (
+    projectId: string,
+    userId: string,
+    setProjectMembershipDto: SetProjectMembershipDto,
+    options?: RequestInit,
+): Promise<projectMembershipControllerSetResponse> => {
+    return apiFetch<projectMembershipControllerSetResponse>(getProjectMembershipControllerSetUrl(projectId, userId), {
+        ...options,
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', ...options?.headers },
+        body: JSON.stringify(setProjectMembershipDto),
+    });
+};
 
-
-
-
-  return `/admin/projects/${projectId}/memberships/${userId}`
-}
-
-export const projectMembershipControllerRemove = async (projectId: string,
-    userId: string, options?: RequestInit): Promise<projectMembershipControllerRemoveResponse> => {
-
-  return apiFetch<projectMembershipControllerRemoveResponse>(getProjectMembershipControllerRemoveUrl(projectId,userId),
-  {
-    ...options,
-    method: 'DELETE'
-
-
-  }
-);}
-
-
-
-
-
-export const getProjectMembershipControllerRemoveQueryKey = (projectId: string,
-    userId: string,) => {
-    return [
-    'DELETE', `/admin/projects/${projectId}/memberships/${userId}`
-    ] as const;
-    }
-
-
-export const getProjectMembershipControllerRemoveQueryOptions = <TData = Awaited<ReturnType<typeof projectMembershipControllerRemove>>, TError = unknown>(projectId: string,
-    userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerRemove>>, TError, TData>>, }
+export const getProjectMembershipControllerSetQueryKey = (
+    projectId: string,
+    userId: string,
+    setProjectMembershipDto?: SetProjectMembershipDto,
 ) => {
+    return ['PUT', `/admin/projects/${projectId}/memberships/${userId}`, setProjectMembershipDto] as const;
+};
 
-const {query: queryOptions} = options ?? {};
+export const getProjectMembershipControllerSetQueryOptions = <
+    TData = Awaited<ReturnType<typeof projectMembershipControllerSet>>,
+    TError = unknown,
+>(
+    projectId: string,
+    userId: string,
+    setProjectMembershipDto: SetProjectMembershipDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerSet>>, TError, TData>>;
+    },
+) => {
+    const { query: queryOptions } = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getProjectMembershipControllerRemoveQueryKey(projectId,userId);
+    const queryKey =
+        queryOptions?.queryKey ?? getProjectMembershipControllerSetQueryKey(projectId, userId, setProjectMembershipDto);
 
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof projectMembershipControllerSet>>> = ({ signal }) =>
+        projectMembershipControllerSet(projectId, userId, setProjectMembershipDto, { signal });
 
+    return {
+        queryKey,
+        queryFn,
+        enabled: projectId !== null && projectId !== undefined && userId !== null && userId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerSet>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof projectMembershipControllerRemove>>> = ({ signal }) => projectMembershipControllerRemove(projectId,userId, { signal });
+export type ProjectMembershipControllerSetQueryResult = NonNullable<
+    Awaited<ReturnType<typeof projectMembershipControllerSet>>
+>;
+export type ProjectMembershipControllerSetQueryError = unknown;
 
+export function useProjectMembershipControllerSet<
+    TData = Awaited<ReturnType<typeof projectMembershipControllerSet>>,
+    TError = unknown,
+>(
+    projectId: string,
+    userId: string,
+    setProjectMembershipDto: SetProjectMembershipDto,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerSet>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof projectMembershipControllerSet>>,
+                    TError,
+                    Awaited<ReturnType<typeof projectMembershipControllerSet>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useProjectMembershipControllerSet<
+    TData = Awaited<ReturnType<typeof projectMembershipControllerSet>>,
+    TError = unknown,
+>(
+    projectId: string,
+    userId: string,
+    setProjectMembershipDto: SetProjectMembershipDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerSet>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof projectMembershipControllerSet>>,
+                    TError,
+                    Awaited<ReturnType<typeof projectMembershipControllerSet>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useProjectMembershipControllerSet<
+    TData = Awaited<ReturnType<typeof projectMembershipControllerSet>>,
+    TError = unknown,
+>(
+    projectId: string,
+    userId: string,
+    setProjectMembershipDto: SetProjectMembershipDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerSet>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
+export function useProjectMembershipControllerSet<
+    TData = Awaited<ReturnType<typeof projectMembershipControllerSet>>,
+    TError = unknown,
+>(
+    projectId: string,
+    userId: string,
+    setProjectMembershipDto: SetProjectMembershipDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerSet>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getProjectMembershipControllerSetQueryOptions(
+        projectId,
+        userId,
+        setProjectMembershipDto,
+        options,
+    );
 
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
 
-
-   return  { queryKey, queryFn, enabled: projectId !== null && projectId !== undefined && userId !== null && userId !== undefined,  staleTime: 30000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerRemove>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+    return withQueryKey(query, queryOptions.queryKey);
 }
 
-export type ProjectMembershipControllerRemoveQueryResult = NonNullable<Awaited<ReturnType<typeof projectMembershipControllerRemove>>>
-export type ProjectMembershipControllerRemoveQueryError = unknown
+export type projectMembershipControllerRemoveResponse204 = { data: void; status: 204 };
 
+export type projectMembershipControllerRemoveResponseSuccess = projectMembershipControllerRemoveResponse204 & {
+    headers: Headers;
+};
+export type projectMembershipControllerRemoveResponse = projectMembershipControllerRemoveResponseSuccess;
 
-export function useProjectMembershipControllerRemove<TData = Awaited<ReturnType<typeof projectMembershipControllerRemove>>, TError = unknown>(
- projectId: string,
-    userId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerRemove>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof projectMembershipControllerRemove>>,
-          TError,
-          Awaited<ReturnType<typeof projectMembershipControllerRemove>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useProjectMembershipControllerRemove<TData = Awaited<ReturnType<typeof projectMembershipControllerRemove>>, TError = unknown>(
- projectId: string,
-    userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerRemove>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof projectMembershipControllerRemove>>,
-          TError,
-          Awaited<ReturnType<typeof projectMembershipControllerRemove>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useProjectMembershipControllerRemove<TData = Awaited<ReturnType<typeof projectMembershipControllerRemove>>, TError = unknown>(
- projectId: string,
-    userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerRemove>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export const getProjectMembershipControllerRemoveUrl = (projectId: string, userId: string) => {
+    return `/admin/projects/${projectId}/memberships/${userId}`;
+};
 
-export function useProjectMembershipControllerRemove<TData = Awaited<ReturnType<typeof projectMembershipControllerRemove>>, TError = unknown>(
- projectId: string,
-    userId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerRemove>>, TError, TData>>, }
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export const projectMembershipControllerRemove = async (
+    projectId: string,
+    userId: string,
+    options?: RequestInit,
+): Promise<projectMembershipControllerRemoveResponse> => {
+    return apiFetch<projectMembershipControllerRemoveResponse>(
+        getProjectMembershipControllerRemoveUrl(projectId, userId),
+        { ...options, method: 'DELETE' },
+    );
+};
 
-  const queryOptions = getProjectMembershipControllerRemoveQueryOptions(projectId,userId,options)
+export const getProjectMembershipControllerRemoveQueryKey = (projectId: string, userId: string) => {
+    return ['DELETE', `/admin/projects/${projectId}/memberships/${userId}`] as const;
+};
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export const getProjectMembershipControllerRemoveQueryOptions = <
+    TData = Awaited<ReturnType<typeof projectMembershipControllerRemove>>,
+    TError = unknown,
+>(
+    projectId: string,
+    userId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerRemove>>, TError, TData>>;
+    },
+) => {
+    const { query: queryOptions } = options ?? {};
 
-  return withQueryKey(query, queryOptions.queryKey);
+    const queryKey = queryOptions?.queryKey ?? getProjectMembershipControllerRemoveQueryKey(projectId, userId);
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof projectMembershipControllerRemove>>> = ({ signal }) =>
+        projectMembershipControllerRemove(projectId, userId, { signal });
+
+    return {
+        queryKey,
+        queryFn,
+        enabled: projectId !== null && projectId !== undefined && userId !== null && userId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerRemove>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
+
+export type ProjectMembershipControllerRemoveQueryResult = NonNullable<
+    Awaited<ReturnType<typeof projectMembershipControllerRemove>>
+>;
+export type ProjectMembershipControllerRemoveQueryError = unknown;
+
+export function useProjectMembershipControllerRemove<
+    TData = Awaited<ReturnType<typeof projectMembershipControllerRemove>>,
+    TError = unknown,
+>(
+    projectId: string,
+    userId: string,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerRemove>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof projectMembershipControllerRemove>>,
+                    TError,
+                    Awaited<ReturnType<typeof projectMembershipControllerRemove>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useProjectMembershipControllerRemove<
+    TData = Awaited<ReturnType<typeof projectMembershipControllerRemove>>,
+    TError = unknown,
+>(
+    projectId: string,
+    userId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerRemove>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof projectMembershipControllerRemove>>,
+                    TError,
+                    Awaited<ReturnType<typeof projectMembershipControllerRemove>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useProjectMembershipControllerRemove<
+    TData = Awaited<ReturnType<typeof projectMembershipControllerRemove>>,
+    TError = unknown,
+>(
+    projectId: string,
+    userId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerRemove>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+export function useProjectMembershipControllerRemove<
+    TData = Awaited<ReturnType<typeof projectMembershipControllerRemove>>,
+    TError = unknown,
+>(
+    projectId: string,
+    userId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerRemove>>, TError, TData>>;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getProjectMembershipControllerRemoveQueryOptions(projectId, userId, options);
+
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+
+    return withQueryKey(query, queryOptions.queryKey);
 }
-
-
-
-
-
-

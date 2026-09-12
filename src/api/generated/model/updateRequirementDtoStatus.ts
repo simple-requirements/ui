@@ -6,13 +6,12 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export type UpdateRequirementDtoStatus = typeof UpdateRequirementDtoStatus[keyof typeof UpdateRequirementDtoStatus];
-
+export type UpdateRequirementDtoStatus = (typeof UpdateRequirementDtoStatus)[keyof typeof UpdateRequirementDtoStatus];
 
 export const UpdateRequirementDtoStatus = {
-  draft: 'draft',
-  approved: 'approved',
-  implemented: 'implemented',
-  obsolete: 'obsolete',
-  rejected: 'rejected',
+    draft: 'draft',
+    approved: 'approved',
+    implemented: 'implemented',
+    obsolete: 'obsolete',
+    rejected: 'rejected',
 } as const;

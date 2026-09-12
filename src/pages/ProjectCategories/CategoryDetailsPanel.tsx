@@ -3,6 +3,7 @@ import type { ElementType } from 'react';
 
 import type { Category } from '@/api/categoriesApi';
 import { InlineStatus } from '@/components/Feedback/InlineStatus';
+import { formatDateTime } from '@/utils/displayFormatters';
 
 import '@/pages/ProjectCategories/CategoryDetailsPanel.scss';
 
@@ -15,9 +16,6 @@ export type CategoryDetailsPanelProps = Readonly<{
     onEditCategory?: (category: Category) => void;
 }>;
 
-function formatDateTime(value: string): string {
-    return new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value));
-}
 
 function getRequirementCountForCategory(category: Category): number {
     return category.requirementCount ?? 0;

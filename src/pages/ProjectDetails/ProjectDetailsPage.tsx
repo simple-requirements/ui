@@ -8,15 +8,10 @@ import { getProjectCategoriesRoute, getProjectRequirementsRoute } from '@/router
 import { ProjectStatistics } from '@/pages/ProjectDetails/ProjectStatistics';
 import { useProjectDetails } from '@/pages/ProjectDetails/useProjectDetails';
 import { TicketSystemSettings } from '@/pages/ProjectDetails/TicketSystemSettings';
+import { formatDateTime } from '@/utils/displayFormatters';
 
 import '@/pages/ProjectDetails/ProjectDetailsPage.scss';
 
-function formatDateTime(value: string): string {
-    return new Intl.DateTimeFormat(undefined, {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-    }).format(new Date(value));
-}
 
 export function ProjectDetailsPage() {
     const { projectId } = useParams();

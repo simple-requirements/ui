@@ -6,6 +6,7 @@ import type {
 } from "@/api/authApi";
 import type { UserStatus } from "@/auth/authTypes";
 import { LoadableContent } from "@/components/Feedback/LoadableContent";
+import { formatDateTime } from "@/utils/displayFormatters";
 
 export type UserDetailsProps = Readonly<{
   user: UserAdministrationResponse;
@@ -18,12 +19,6 @@ export type UserDetailsProps = Readonly<{
   onRevokeAllSessions: () => void;
 }>;
 
-function formatDateTime(value: string): string {
-  return new Intl.DateTimeFormat(undefined, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
-}
 
 export function UserDetails({
   user,

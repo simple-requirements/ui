@@ -20,6 +20,7 @@ import {
   getInitialRequirementFormValues,
   hasRequirementFormChanges,
 } from "@/pages/ProjectRequirements/Form/requirementFormValidation";
+import { getRequirementFormKey, getRequirementFormTitle } from "@/pages/ProjectRequirements/Form/requirementFormPresentation";
 import { useRequirementFormAction } from "@/pages/ProjectRequirements/Form/useRequirementFormAction";
 import { useRequirementFormNavigation } from "@/pages/ProjectRequirements/Form/useRequirementFormNavigation";
 
@@ -41,19 +42,6 @@ export type RequirementFormController = Readonly<{
   }>;
 }>;
 
-function getFormTitle(mode: RequirementFormMode): string {
-  return mode === "create" ? "Create requirement" : "Update requirement";
-}
-
-function getFormKey(
-  mode: RequirementFormMode,
-  projectId: string | undefined,
-  requirementId: string | undefined,
-  initialCategoryId: string | undefined,
-): string {
-  return `${mode}:${requirementId ?? projectId ?? "missing-project"}:${initialCategoryId ?? ""}`;
-}
-
 export function useRequirementFormController(
   projectId: string | undefined,
   requirementId: string | undefined,
@@ -72,13 +60,13 @@ export function useRequirementFormController(
       ),
     [data.requirement, initialCategoryId, mode],
   );
-  const formKey = getFormKey(
+  const formKey = getRequirementFormKey(
     mode,
     projectId,
     data.requirement?.id ?? requirementId,
     initialCategoryId,
   );
-  const formTitle = getFormTitle(mode);
+  const formTitle = getRequirementFormTitle(mode);
 
   const [formValues, setFormValues] =
     useState<RequirementFormValues>(initialValues);

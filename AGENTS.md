@@ -15,6 +15,70 @@
     - Just describe what purpose this store serves.
     - Do not use any TypeDoc tags
 
+### Code complexity metrics
+
+Use Cyclomatic Complexity and Halstead Volume as maintainability signals, not as absolute pass/fail quality scores.
+
+#### Cyclomatic Complexity
+
+For Cyclomatic Complexitiy these rules apply:
+
+- Prefer Cyclomatic Complexity below `10` for a single function.
+- A function above `10` should be reviewed for extraction.
+- A function above `15` should normally be refactored before adding more behavior.
+- A React component above `20` should be split unless there is a clear reason not to.
+- Do not add new branches to an already high-complexity function without first considering a helper, hook, or child component.
+
+
+Prefere these refactorings if the Cyclomatic Complexity is too high:
+
+- Extract validation logic into pure helper functions.
+- Extract permission checks into `src/auth/*`.
+- Extract mutation/query handling into hooks.
+- Extract repeated rendering branches into child components.
+- Replace repeated conditional UI rules with named predicates.
+
+#### Halstead Volum
+
+For the Halstead Volume these rules apply:
+
+- Below `1000`: usually fine.
+- `1000–3000`: acceptable, but review if the file changes often.
+- `3000–6000`: likely contains multiple responsibilities; consider extraction.
+- Above `6000`: strong refactoring candidate, especially if Cyclomatic Complexity is also high.
+- Do not chase a lower Halstead number by creating tiny artificial files.
+- Refactor only when extraction improves readability, testability, or separation of concerns.
+
+Prioritize refactoring when all three are true:
+
+1. Halstead Volume is high.
+2. Cyclomatic Complexity is high.
+3. The file is frequently changed or bug-prone.
+
+#### Preferred extraction patterns
+
+For page-level React components:
+
+- Keep route params, redirects, and page composition in the page component.
+- Move API query loading into `use*Queries` hooks.
+- Move mutations into `use*Mutation` or `use*MutationRunner` hooks.
+- Move forms into dedicated `*Form.tsx` components.
+- Move form state into `use*Form` hooks.
+- Move display-only sections into small presentational components.
+- Move formatting helpers into `src/utils/*`.
+- Move permission logic into `src/auth/*`.
+
+#### When not to refactor
+
+Do not refactor only to satisfy a metric when:
+
+- the code is clear and stable;
+- the file is generated;
+- the change would make navigation harder;
+- the extraction would create unnecessary indirection;
+- tests are missing and the refactor is not trivial;
+- the file is about to be replaced by planned feature work.
+
 ### Do not touch
 
 You should never change the files in one of these directories:

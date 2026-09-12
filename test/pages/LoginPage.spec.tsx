@@ -52,15 +52,18 @@ afterEach(() => {
 });
 
 describe('LoginPage', () => {
-    it('links to registration, email verification, and password recovery.', () => {
+    it('links to registration and password recovery.', () => {
         renderLogin();
 
-        expect(screen.getByRole('link', { name: 'Create account' })).toHaveAttribute('href', '/register');
-        expect(screen.getByRole('link', { name: 'Forgot password?' })).toHaveAttribute('href', '/forgot-password');
-        expect(screen.getByRole('link', { name: 'Resend verification email' })).toHaveAttribute(
+        expect(screen.getByRole('link', { name: 'Do not have an account? Register yourself.' })).toHaveAttribute(
             'href',
-            '/verify-email/resend',
+            '/register',
         );
+        expect(screen.getByRole('link', { name: 'Forgot your password? Reset it here.' })).toHaveAttribute(
+            'href',
+            '/forgot-password',
+        );
+        expect(screen.queryByRole('link', { name: 'Resend verification email' })).not.toBeInTheDocument();
     });
 
     it('signs in, stores the session, and returns to the requested route.', async () => {

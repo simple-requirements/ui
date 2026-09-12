@@ -13,6 +13,7 @@ const projects: readonly SidebarProject[] = [
         name: 'Alpha Project',
         createdAt: '2026-06-28T10:00:00.000Z',
         updatedAt: '2026-06-28T10:00:00.000Z',
+        ticketUrlTemplate: null,
         requirementCount: 4,
     },
     {
@@ -20,6 +21,7 @@ const projects: readonly SidebarProject[] = [
         name: 'Beta Project',
         createdAt: '2026-06-28T10:00:00.000Z',
         updatedAt: '2026-06-28T10:00:00.000Z',
+        ticketUrlTemplate: null,
         requirementCount: 7,
     },
 ];
@@ -33,7 +35,9 @@ interface WritableContextMenuRef {
 function ProjectContextMenuProbe() {
     const controller = useProjectContextMenu(projects);
 
-    (controller.contextMenuRef as WritableContextMenuRef).current = { show: mocks.show } as unknown as ContextMenu;
+    (controller.contextMenuRef as WritableContextMenuRef).current = {
+        show: mocks.show,
+    } as unknown as ContextMenu;
 
     return (
         <div>

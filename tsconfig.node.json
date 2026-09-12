@@ -1,39 +1,53 @@
 {
-    "compilerOptions": {
-        "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
-        "target": "es2023",
-        "lib": ["ES2023", "DOM", "DOM.Iterable"],
-        "module": "esnext",
-        "types": ["node", "vite/client", "vitest/globals"],
-        "paths": { "@/*": ["./src/*"] },
-        "skipLibCheck": true,
-        "moduleResolution": "bundler",
-        "allowImportingTsExtensions": true,
-        "verbatimModuleSyntax": true,
-        "moduleDetection": "force",
-        "noEmit": true,
-        "jsx": "react-jsx",
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "erasableSyntaxOnly": true,
-        "noFallthroughCasesInSwitch": true
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "target": "es2023",
+    "lib": [
+      "ES2023",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "module": "esnext",
+    "types": [
+      "node",
+      "vite/client",
+      "vitest/globals"
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
     },
-    "include": [
-        "vite.config.ts",
-        "eslint.config.ts",
-        "orval.config.ts",
-        "test/api/**/*.spec.ts",
-        "test/api/**/*.spec.tsx",
-        "test/components/**/*.spec.ts",
-        "test/components/**/*.spec.tsx",
-        "test/pages/**/*.spec.ts",
-        "test/pages/**/*.spec.tsx",
-        "test/router/**/*.spec.ts",
-        "test/router/**/*.spec.tsx",
-        "test/stores/**/*.spec.ts",
-        "test/stores/**/*.spec.tsx",
-        "src/**/*.ts",
-        "src/**/*.tsx",
-        "src/**/*.d.ts"
-    ]
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": [
+    "vite.config.ts",
+    "eslint.config.ts",
+    "orval.config.ts",
+    "test/auth/**/*.spec.tsx",
+    "test/auth/**/*.spec.ts",
+    "test/api/**/*.spec.ts",
+    "test/api/**/*.spec.tsx",
+    "test/components/**/*.spec.ts",
+    "test/components/**/*.spec.tsx",
+    "test/pages/**/*.spec.ts",
+    "test/pages/**/*.spec.tsx",
+    "test/router/**/*.spec.ts",
+    "test/router/**/*.spec.tsx",
+    "test/stores/**/*.spec.ts",
+    "test/stores/**/*.spec.tsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.d.ts"
+  ]
 }

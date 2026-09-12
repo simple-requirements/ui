@@ -22,6 +22,8 @@ export default defineConfig({
             include: ['src/**/*.{ts,tsx}'],
             exclude: ['test/**/*.spec.{ts,tsx}', 'src/main.tsx', 'src/**/*.d.ts', 'src/api/generated/**'],
         },
+        reporters: ['json', 'default'],
+        outputFile: { json: './vitest-json-report.json' },
     },
     server: { host: '127.0.0.1', port: 5173 },
 });

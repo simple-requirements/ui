@@ -14,6 +14,7 @@ const project: SidebarProject = {
     name: 'Alpha Project',
     createdAt: '2026-06-28T10:00:00.000Z',
     updatedAt: '2026-06-28T10:00:00.000Z',
+    ticketUrlTemplate: null,
     requirementCount: 4,
 };
 
@@ -73,9 +74,7 @@ function ProjectDialogControllerProbe() {
 }
 
 function renderProjectDialogControllerProbe(): ReturnType<typeof render> {
-    const reactQueryClient = new QueryClient({
-        defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
-    });
+    const reactQueryClient = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
 
     return render(
         <QueryClientProvider client={reactQueryClient}>

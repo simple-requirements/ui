@@ -19,7 +19,7 @@ const reactHooksRecommendedRules = reactHooks.configs.recommended.rules;
 
 export default defineConfig(
     includeIgnoreFile(gitignorePath),
-    { ignores: ['dist/**', 'coverage/**', 'playwright-report/**', 'test-results/**', 'src/api/generated/**'] },
+    { ignores: ['dist/**', 'coverage/**', 'playwright-report/**', 'test-results/**', 'test/e2e/.features-gen/**', 'src/api/generated/**'] },
     js.configs.recommended,
 
     ...tseslint.configs.strictTypeChecked,

@@ -87,14 +87,31 @@ You should never change the files in one of these directories:
 - ./src/api/generated
 - All directories listed in the .gitignore file
 
+## Creating and modfying E2E-tests (feature tests)
+
+1. E2E-test should always test the real backend.
+2. Mock the backend only if it is a severe simplification. Remove a backend mock as soon as the backend has the necessary ability.
+3. Keep the code coverage metric for E2E-tests at least above 75 %. If the metric is below that value check whether it is possible or necessary to create additional and meaningful tests. If this is not possible report this to me at the end of your work.
+
+## Creating unit-/component tests
+
+1. Unit-/component tests should always be isolated; use mocks where it is appropriate.
+2. If vitest reports a test as slow (execution time over 300 ms) analyse it and try to make it faster. Do this only if the necessary efford is reasonable.
+3. Keep the code coverage metric for unit-/component tests at least above 75 %. If the metric is below that value check whether it is possible or necessary to create additional and meaningful tests. If this is not possible report this to me at the end of your work.
+4. No component should go untested. Report to me if you think that a component is way to simple to justify the creation of tests.
+
 ## Creating React components
 
 When you create a React component you should:
 
 1. Always use the @ alias when importing files into the component.
-2. Remember the \*Single file responsibility`paradigm which means that each component should have one responsibility only.
+2. Remember the _Single file responsibility_ paradigm which means that each component should have one responsibility only.
     - If a component has more than one responsibility then thoroughly check whether a refactoring makes sense.
     - If a refactoring makes sense then do it.
+3. Always check whether there are unit / component tests for a component in the `./test/` directroy.
+    - If there is a spec that corresponds to a component check whether you have to fix stale expectations or stale locators.
+4. Always check whether there are feature tests (E2E-tests) for a component.
+    - If there are E2E-/feature-tests check whether you have to fix stale expectations or stale locators.
 
 ## Creating React hooks
 

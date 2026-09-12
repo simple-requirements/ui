@@ -208,7 +208,7 @@ describe('ProjectCategories ListPage', () => {
         fireEvent.contextMenu(getTableRowByCellText('Authentication'));
 
         await waitFor(() => {
-            expect(screen.getAllByText('Edit').length).toBeGreaterThan(1);
+            expect(screen.getByText('Edit')).toBeInTheDocument();
         });
         expect(screen.getByText('Delete')).toBeInTheDocument();
         expect(screen.getByText('Add requirement')).toBeInTheDocument();

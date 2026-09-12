@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/vitest';
 
-import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider, useLocation } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -27,6 +27,11 @@ const requirement: Requirement = {
     categoryId: category.id,
     sequenceNumber: 1,
     revisionNumber: 2,
+    changeType: 'content_changed',
+    changeReason: 'Requirement changed.',
+    changedAt: '2026-06-29T11:30:00.000Z',
+    changedByUserId: '66666666-6666-4666-8666-666666666666',
+    changedByDisplayName: 'Backend User',
     visibleKey: 'FR-AUTH-0001',
     status: 'draft',
     description: 'Users can sign in.',
@@ -37,7 +42,6 @@ const requirement: Requirement = {
     rejectionReason: null,
     reviewer: null,
     rejectedAt: null,
-    deletedAt: null,
     approvedAt: null,
     implementedAt: null,
     obsoletedBy: null,
@@ -186,6 +190,38 @@ describe('ProjectRequirements FormPage', () => {
         expect(screen.getByLabelText('Category')).toHaveValue(category.id);
         expect(screen.getByLabelText('Description')).toHaveValue('Users can sign in.');
         expect(screen.getByLabelText('Owner')).toHaveValue('Alice');
+        expect(screen.queryByLabelText('Change reason')).not.toBeInTheDocument();
         expect(screen.getByRole('button', { name: 'Update' })).toBeInTheDocument();
+    });
+
+    it('requires and submits a change reason when updating a requirement.', async () => {
+        const user = userEvent.setup();
+        mockQueries({ selectedRequirement: requirement });
+
+        renderRequirementFormPage('/projects/project-alpha/requirements/11111111-1111-4111-8111-111111111111/edit');
+
+        await user.clear(screen.getByLabelText('Description'));
+        await user.type(screen.getByLabelText('Description'), 'Users can sign in with MFA.');
+        await user.click(screen.getByRole('button', { name: 'Update' }));
+
+        const dialog = await screen.findByRole('dialog');
+        const reasonField = within(dialog).getByLabelText('Change reason');
+        expect(reasonField).toHaveValue('');
+        expect(within(dialog).getByRole('button', { name: 'Update' })).toBeDisabled();
+        expect(mocks.updateProjectRequirementRequest).not.toHaveBeenCalled();
+
+        await user.type(reasonField, 'Clarified the authentication requirement.');
+        await user.click(within(dialog).getByRole('button', { name: 'Update' }));
+
+        await waitFor(() => {
+            expect(mocks.updateProjectRequirementRequest).toHaveBeenCalledWith(
+                'project-alpha',
+                '11111111-1111-4111-8111-111111111111',
+                expect.objectContaining({
+                    description: 'Users can sign in with MFA.',
+                    changeReason: 'Clarified the authentication requirement.',
+                }),
+            );
+        });
     });
 });

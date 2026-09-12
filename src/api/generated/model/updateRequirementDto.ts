@@ -29,6 +29,8 @@ export interface UpdateRequirementDto {
     rationale?: UpdateRequirementDtoRationale;
     /** @nullable */
     source?: UpdateRequirementDtoSource;
+    /** Required non-empty reason for content, metadata, owner, or category changes. */
+    changeReason?: string;
     status?: UpdateRequirementDtoStatus;
     /** @nullable */
     reviewer?: UpdateRequirementDtoReviewer;

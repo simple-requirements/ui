@@ -52,6 +52,17 @@ afterEach(() => {
 });
 
 describe('LoginPage', () => {
+    it('styles the password field like the username field while preserving password input behavior.', () => {
+        renderLogin();
+
+        const username = screen.getByLabelText('Username');
+        const password = screen.getByLabelText('Password');
+
+        expect(username).toHaveClass('p-inputtext');
+        expect(password).toHaveClass('p-inputtext');
+        expect(password).toHaveAttribute('type', 'password');
+    });
+
     it('links to registration and password recovery.', () => {
         renderLogin();
 
@@ -71,7 +82,7 @@ describe('LoginPage', () => {
         renderLogin({ returnTo: '/projects/one/requirements?filter=open#details' });
 
         await user.type(screen.getByLabelText('Username'), '  alice  ');
-        await user.type(screen.getByLabelText('Password'), 'correct horse battery staple');
+        await user.type(screen.getByLabelText('Password'), 'password');
         await user.click(screen.getByRole('button', { name: 'Sign in' }));
 
         await waitFor(() =>
@@ -79,7 +90,7 @@ describe('LoginPage', () => {
                 '/projects/one/requirements?filter=open#details',
             ),
         );
-        expect(mocks.login).toHaveBeenCalledWith({ username: 'alice', password: 'correct horse battery staple' });
+        expect(mocks.login).toHaveBeenCalledWith({ username: 'alice', password: 'password' });
         expect(mocks.getAuthenticatedUser).toHaveBeenCalledWith('opaque-token');
         expect(authStore.state).toEqual({
             status: 'authenticated',

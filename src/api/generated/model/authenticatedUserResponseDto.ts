@@ -5,6 +5,7 @@
  * HTTP API for the Requirements Management app.
  * OpenAPI spec version: 0.0.1
  */
+import type { AuthenticatedProjectMembershipDto } from './authenticatedProjectMembershipDto';
 import type { AuthenticatedUserResponseDtoGlobalRolesItem } from './authenticatedUserResponseDtoGlobalRolesItem';
 import type { AuthenticatedUserResponseDtoStatus } from './authenticatedUserResponseDtoStatus';
 
@@ -15,4 +16,5 @@ export interface AuthenticatedUserResponseDto {
     displayName: string;
     status: AuthenticatedUserResponseDtoStatus;
     globalRoles: AuthenticatedUserResponseDtoGlobalRolesItem[];
+    projectMemberships?: AuthenticatedProjectMembershipDto[];
 }

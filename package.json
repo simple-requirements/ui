@@ -13,6 +13,7 @@
         "docs": "typedoc",
         "format": "prettier --write .",
         "lint": "eslint .",
+        "typecheck": "tsc --noEmit -p tsconfig.node.json --composite false > output.txt",
         "preview": "vite preview",
         "test:unit": "vitest",
         "test:unit:coverage": "vitest run --coverage",

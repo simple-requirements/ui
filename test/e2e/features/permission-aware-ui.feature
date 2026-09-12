@@ -22,9 +22,8 @@ Feature: Permission-aware frontend
     And requirement mutation actions should be visible
     And implementation ticket mutation actions should be visible
 
-  Scenario: Administrator without project membership has global project administration but read-only requirement access
+  Scenario: Administrator without project membership has global project administration but no requirement-content access
     Given the permission-aware frontend signs me in as "Administrator"
-    When I open the permission test requirement details
+    When I try to open the permission test requirement details
     Then project creation should be visible
-    And requirement mutation actions should not be visible
-    And implementation ticket mutation actions should not be visible
+    And requirement contents should not be visible

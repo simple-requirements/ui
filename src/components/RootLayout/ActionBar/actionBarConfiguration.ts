@@ -9,12 +9,19 @@ export type ActionBarConfiguration = Readonly<{
     disabled: boolean;
     showRequirementLookup: boolean;
     showEditRequirement?: boolean;
+    showEditCategory?: boolean;
+    showImplementationTickets?: boolean;
     showObsoleteRequirement?: boolean;
     showImplementedRequirement?: boolean;
     showReview?: boolean;
     showReviewDecisions?: boolean;
 }>;
 
+/**
+ * Returns ActionBar behavior for the active route kind.
+ * @param actionBarKind Route-specific ActionBar kind.
+ * @returns ActionBar configuration.
+ */
 export function getActionBarConfiguration(actionBarKind: ActionBarKind): ActionBarConfiguration {
     switch (actionBarKind) {
         case 'categories':
@@ -23,6 +30,7 @@ export function getActionBarConfiguration(actionBarKind: ActionBarKind): ActionB
                 createActionKind: 'category',
                 disabled: false,
                 showRequirementLookup: false,
+                showEditCategory: true,
             };
         case 'categoryForm':
             return {
@@ -38,6 +46,7 @@ export function getActionBarConfiguration(actionBarKind: ActionBarKind): ActionB
                 disabled: false,
                 showRequirementLookup: false,
                 showEditRequirement: true,
+                showImplementationTickets: true,
                 showObsoleteRequirement: true,
                 showImplementedRequirement: true,
                 showReview: true,
@@ -75,6 +84,12 @@ export function getActionBarConfiguration(actionBarKind: ActionBarKind): ActionB
     }
 }
 
+/**
+ * Builds the configured create route for a project.
+ * @param projectId Project identifier.
+ * @param createActionKind Resource kind being created.
+ * @returns Resource create route.
+ */
 export function getCreateRoute(projectId: string, createActionKind: CreateActionKind): string {
     return createActionKind === 'category' ?
             getProjectCategoryCreateRoute(projectId)

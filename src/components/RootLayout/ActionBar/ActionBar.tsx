@@ -1,39 +1,33 @@
-import { useSelector } from "@tanstack/react-store";
-import { useNavigate, useParams } from "react-router";
+import { useSelector } from '@tanstack/react-store';
+import { useNavigate, useParams } from 'react-router';
 
-import "@/components/RootLayout/ActionBar/ActionBar.scss";
+import '@/components/RootLayout/ActionBar/ActionBar.scss';
 
+import { getActionBarAvailability } from '@/components/RootLayout/ActionBar/actionBarAvailability';
 import {
-    canBecomeObsolete,
-    isDraftRequirementStatus,
-} from "@/components/RootLayout/ActionBar/actionBarRequirementStatus";
-import {
+    CategoryRouteActionButtons,
     CreateActionButton,
     RequirementRouteActionButtons,
     ReviewDecisionActionButtons,
-} from "@/components/RootLayout/ActionBar/ActionBarButtons";
+} from '@/components/RootLayout/ActionBar/ActionBarButtons';
+import { getActionBarConfiguration, getCreateRoute } from '@/components/RootLayout/ActionBar/actionBarConfiguration';
+import { RequirementKeyLookup } from '@/components/RootLayout/ActionBar/RequirementKeyLookup';
+import { AccountMenu } from '@/components/RootLayout/AccountMenu/AccountMenu';
+import { useImplementRequirementAction } from '@/components/RootLayout/ActionBar/useImplementRequirementAction';
+import { useObsoleteRequirementAction } from '@/components/RootLayout/ActionBar/useObsoleteRequirementAction';
+import { useProjectPermissions } from '@/auth/projectPermissions';
+import { RequirementLifecycleDialog } from '@/pages/ProjectRequirements/RequirementLifecycleDialog';
 import {
-    getActionBarConfiguration,
-    getCreateRoute,
-} from "@/components/RootLayout/ActionBar/actionBarConfiguration";
-import { RequirementKeyLookup } from "@/components/RootLayout/ActionBar/RequirementKeyLookup";
-import { AccountMenu } from "@/components/RootLayout/AccountMenu/AccountMenu";
-import { useImplementRequirementAction } from "@/components/RootLayout/ActionBar/useImplementRequirementAction";
-import { useObsoleteRequirementAction } from "@/components/RootLayout/ActionBar/useObsoleteRequirementAction";
-import { useProjectPermissions } from "@/auth/projectPermissions";
-import { RequirementLifecycleDialog } from "@/pages/ProjectRequirements/RequirementLifecycleDialog";
-import {
+    getProjectCategoryEditRoute,
     getProjectRequirementDetailsRoute,
     getProjectRequirementEditRoute,
     getProjectRequirementReviewRoute,
-} from "@/router/projectRoutes";
-import { useRouteUiMetadata } from "@/router/routeUiMetadata";
-import { actionBarStore, requestReviewDecision } from "@/stores/actionBarStore";
-import { openTab } from "@/stores/tabBarStore";
+} from '@/router/projectRoutes';
+import { useRouteUiMetadata } from '@/router/routeUiMetadata';
+import { actionBarStore, openImplementationTicketsDialog, requestReviewDecision } from '@/stores/actionBarStore';
+import { openTab } from '@/stores/tabBarStore';
 
-export type ActionBarProps = Readonly<{
-    onFindRequirementKey?: (requirementKey: string) => void;
-}>;
+export type ActionBarProps = Readonly<{ onFindRequirementKey?: (requirementKey: string) => void }>;
 
 /**
  * Renders route-specific actions and the authenticated account menu.
@@ -42,56 +36,28 @@ export type ActionBarProps = Readonly<{
  */
 export function ActionBar({ onFindRequirementKey }: ActionBarProps) {
     const navigate = useNavigate();
-    const { projectId } = useParams();
+    const { projectId, categoryId } = useParams();
     const { actionBar: actionBarKind } = useRouteUiMetadata();
     const configuration = getActionBarConfiguration(actionBarKind);
     const permissions = useProjectPermissions(projectId);
-    const reviewActionRequirement = useSelector(
-        actionBarStore,
-        (state) => state.reviewActionRequirement,
-    );
+    const reviewActionRequirement = useSelector(actionBarStore, (state) => state.reviewActionRequirement);
     const obsoleteAction = useObsoleteRequirementAction(reviewActionRequirement);
     const implementAction = useImplementRequirementAction(reviewActionRequirement);
 
-    const showCreate =
-        configuration.createActionKind !== undefined &&
-        permissions.canManageRequirements;
-    const canCreate =
-        showCreate && !configuration.disabled && projectId !== undefined;
-    const isDraftRequirement = isDraftRequirementStatus(
-        reviewActionRequirement?.status,
+    const availability = getActionBarAvailability(
+        configuration,
+        permissions,
+        reviewActionRequirement,
+        projectId,
+        categoryId,
     );
-    const canEditRequirement =
-        (configuration.showEditRequirement ?? false) &&
-        permissions.canManageRequirements &&
-        reviewActionRequirement !== undefined &&
-        reviewActionRequirement.status !== "rejected";
-    const canMarkObsolete =
-        (configuration.showObsoleteRequirement ?? false) &&
-        permissions.canManageRequirements &&
-        canBecomeObsolete(reviewActionRequirement?.status);
-    const canMarkImplemented =
-        (configuration.showImplementedRequirement ?? false) &&
-        permissions.canManageRequirements &&
-        reviewActionRequirement?.status === "approved" &&
-        (reviewActionRequirement.implementationTicketCount ?? 0) > 0;
-    const canReview =
-        (configuration.showReview ?? false) &&
-        permissions.canManageRequirements &&
-        isDraftRequirement;
-    const canDecideReview =
-        (configuration.showReviewDecisions ?? false) &&
-        permissions.canManageRequirements &&
-        isDraftRequirement;
 
     /**
      * Navigates to the configured create route for the active project.
+     * @returns Nothing.
      */
     function handleCreate(): void {
-        if (
-            projectId === undefined ||
-            configuration.createActionKind === undefined
-        ) {
+        if (projectId === undefined || configuration.createActionKind === undefined) {
             return;
         }
 
@@ -100,6 +66,7 @@ export function ActionBar({ onFindRequirementKey }: ActionBarProps) {
 
     /**
      * Opens the selected requirement in edit mode.
+     * @returns Nothing.
      */
     function handleEditRequirement(): void {
         if (reviewActionRequirement === undefined) {
@@ -113,35 +80,39 @@ export function ActionBar({ onFindRequirementKey }: ActionBarProps) {
             reviewActionRequirement.projectId,
             reviewActionRequirement.requirementId,
         );
-        openTab({
-            id: detailsRoute,
-            label: reviewActionRequirement.visibleKey,
-            closable: true,
-        });
-        void navigate(
-            (configuration.showReviewDecisions ?? false)
-                ? `${editRoute}?returnTo=review`
-                : editRoute,
-        );
+        openTab({ id: detailsRoute, label: reviewActionRequirement.visibleKey, closable: true });
+        void navigate((configuration.showReviewDecisions ?? false) ? `${editRoute}?returnTo=review` : editRoute);
+    }
+
+    /**
+     * Opens the active category in edit mode.
+     * @returns Nothing.
+     */
+    function handleEditCategory(): void {
+        if (projectId === undefined || categoryId === undefined) {
+            return;
+        }
+
+        void navigate(getProjectCategoryEditRoute(projectId, categoryId));
     }
 
     /**
      * Opens the selected draft requirement in review mode.
+     * @returns Nothing.
      */
     function handleReview(): void {
         if (reviewActionRequirement === undefined) {
             return;
         }
         void navigate(
-            getProjectRequirementReviewRoute(
-                reviewActionRequirement.projectId,
-                reviewActionRequirement.requirementId,
-            ),
+            getProjectRequirementReviewRoute(reviewActionRequirement.projectId, reviewActionRequirement.requirementId),
         );
     }
 
     return (
-        <section className="action-bar" aria-label={configuration.ariaLabel}>
+        <section
+            className='action-bar'
+            aria-label={configuration.ariaLabel}>
             {configuration.showRequirementLookup && (
                 <RequirementKeyLookup
                     disabled={configuration.disabled}
@@ -149,40 +120,46 @@ export function ActionBar({ onFindRequirementKey }: ActionBarProps) {
                 />
             )}
 
-            {showCreate && (
-                <CreateActionButton disabled={!canCreate} onCreate={handleCreate} />
+            {availability.showCreate && (
+                <CreateActionButton
+                    disabled={!availability.canCreate}
+                    onCreate={handleCreate}
+                />
             )}
 
+            <CategoryRouteActionButtons
+                canEdit={availability.canEditCategory}
+                onEdit={handleEditCategory}
+            />
+
             <RequirementRouteActionButtons
-                canEdit={canEditRequirement}
-                canReview={canReview}
-                canMarkObsolete={canMarkObsolete}
-                canMarkImplemented={canMarkImplemented}
+                canEdit={availability.canEditRequirement}
+                canReview={availability.canReview}
+                canManageTickets={availability.canManageTickets}
+                canMarkObsolete={availability.canMarkObsolete}
+                canMarkImplemented={availability.canMarkImplemented}
                 implementPending={implementAction.pending}
                 onEdit={handleEditRequirement}
                 onReview={handleReview}
+                onManageTickets={openImplementationTicketsDialog}
                 onMarkObsolete={obsoleteAction.open}
                 onMarkImplemented={() => void implementAction.implement()}
             />
 
             <ReviewDecisionActionButtons
-                canDecide={canDecideReview}
-                onApprove={() => requestReviewDecision("approve")}
-                onReject={() => requestReviewDecision("reject")}
+                canDecide={availability.canDecideReview}
+                onApprove={() => requestReviewDecision('approve')}
+                onReject={() => requestReviewDecision('reject')}
             />
 
-            <div className="action-bar__account">
+            <div className='action-bar__account'>
                 <AccountMenu />
             </div>
 
             <RequirementLifecycleDialog
-                key={
-                    obsoleteAction.visible
-                        ? reviewActionRequirement?.requirementId
-                        : "closed"
-                }
+                key={obsoleteAction.visible ? reviewActionRequirement?.requirementId : 'closed'}
                 visible={obsoleteAction.visible}
-                title="Mark requirement obsolete"
+                title='Mark requirement obsolete'
                 reasonRequired
                 pending={obsoleteAction.pending}
                 onAbort={obsoleteAction.abort}

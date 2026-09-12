@@ -1,4 +1,5 @@
 import { Button } from 'primereact/button';
+import { InputText } from 'primereact/inputtext';
 import { useState } from 'react';
 import { Link } from 'react-router';
 
@@ -67,7 +68,7 @@ export function PasswordResetRequestPage() {
                             void submit();
                         }}>
                         <label htmlFor='password-reset-email'>Email address</label>
-                        <input
+                        <InputText
                             id='password-reset-email'
                             name='email'
                             type='email'

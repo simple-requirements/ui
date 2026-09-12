@@ -38,7 +38,7 @@ export async function createImplementationTicket(
 ): Promise<ImplementationTicket> {
     return requestJson<ImplementationTicket>(
         `/projects/${encodeURIComponent(projectId)}/requirements/${encodeURIComponent(requirementId)}/implementation-tickets`,
-        jsonRequest('POST', { ticketId, completedAt: '2026-09-02', completedBy: 'E2E Requirements Engineer' }),
+        jsonRequest('POST', { ticketId, completedAt: '2026-09-02', completedBy: 'Requirements Engineer' }),
         201,
     );
 }

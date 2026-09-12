@@ -1,6 +1,11 @@
 import { z, type ZodError } from 'zod';
 
-import { createRequirementRequestSchema, requirementPrioritySchema, type Requirement } from '@/api/requirementsApi';
+import {
+    createRequirementRequestSchema,
+    requirementPrioritySchema,
+    updateRequirementRequestSchema,
+    type Requirement,
+} from '@/api/requirementsApi';
 
 import type {
     RequirementFormFieldName,
@@ -8,9 +13,20 @@ import type {
     RequirementFormValues,
 } from '@/pages/ProjectRequirements/Form/requirementFormTypes';
 
-export const requirementFormSchema = createRequirementRequestSchema.extend({
-    priority: z.union([requirementPrioritySchema, z.literal('')]).transform((value) => (value === '' ? null : value)),
-});
+const priorityFormSchema = z
+    .union([requirementPrioritySchema, z.literal('')])
+    .transform((value) => (value === '' ? null : value));
+
+export const createRequirementFormSchema = createRequirementRequestSchema.extend({ priority: priorityFormSchema });
+export const updateRequirementFormSchema = updateRequirementRequestSchema.extend({ priority: priorityFormSchema });
+
+/** Returns the validation schema for the selected requirement form mode.
+ * @param mode Requirement form mode.
+ * @returns The corresponding create or update schema.
+ */
+export function getRequirementFormSchema(mode: 'create' | 'update') {
+    return mode === 'create' ? createRequirementFormSchema : updateRequirementFormSchema;
+}
 
 export function getRequirementFormDataString(formData: FormData, fieldName: string): string {
     const value = formData.get(fieldName);
@@ -31,6 +47,7 @@ export function getRequirementFormFieldErrors(error: ZodError): RequirementFormS
             || fieldName === 'owner'
             || fieldName === 'rationale'
             || fieldName === 'source'
+            || fieldName === 'changeReason'
         ) {
             fieldErrors[fieldName] ??= issue.message;
         }
@@ -52,6 +69,7 @@ export function getInitialRequirementFormValues(
             owner: requirement.owner ?? '',
             rationale: requirement.rationale ?? '',
             source: requirement.source ?? '',
+            changeReason: '',
         };
     }
 
@@ -62,6 +80,7 @@ export function getInitialRequirementFormValues(
         owner: '',
         rationale: '',
         source: '',
+        changeReason: '',
     };
 }
 

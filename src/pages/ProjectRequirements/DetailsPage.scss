@@ -4,27 +4,94 @@
     @include ui.page-shell;
 }
 
-.implementation-tickets-panel {
-    margin-top: var(--space-4);
-    padding: var(--space-4);
-    border: 1px solid var(--color-border);
-    background: var(--color-surface);
+.implementation-tickets-dialog {
+    @include ui.dialog-shell(56rem);
 
-    &__form {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
-        gap: var(--space-3);
-        align-items: end;
-
-        label {
-            display: grid;
-            gap: var(--space-1);
-        }
+    &__header {
+        @include ui.dialog-header;
     }
 
-    li {
+    &__content {
+        @include ui.dialog-content;
         display: flex;
-        gap: var(--space-2);
-        align-items: center;
+        flex-direction: column;
+        gap: var(--ui-space-lg);
+    }
+
+    &__heading {
+        @include ui.dialog-heading;
+    }
+
+    .implementation-tickets-panel__form {
+        display: flex;
+        flex-direction: column;
+        gap: var(--ui-space-sm);
+    }
+
+    .implementation-tickets-panel__form label {
+        @include ui.form-label;
+    }
+
+    .implementation-tickets-panel__form .p-inputtext,
+    .implementation-tickets-panel__form input[type='date'] {
+        @include ui.form-line-control(100%);
+
+        font-size: var(--font-size-paragraph);
+        line-height: var(--line-height-paragraph);
+    }
+
+    .implementation-tickets-panel__form-actions {
+        @include ui.dialog-actions;
+    }
+
+    .implementation-tickets-panel__button {
+        @include ui.dialog-button;
+    }
+
+    .implementation-tickets-panel__button--abort {
+        @include ui.outline-button;
+    }
+
+    .implementation-tickets-panel__button--submit {
+        @include ui.primary-button;
+    }
+
+    .implementation-tickets-panel__empty {
+        @include ui.dialog-message;
+    }
+
+    .implementation-tickets-panel__table-wrapper {
+        overflow-x: auto;
+        border: var(--ui-border);
+    }
+
+    .implementation-tickets-panel__table {
+        inline-size: 100%;
+        border-collapse: collapse;
+        font-size: var(--font-size-paragraph);
+    }
+
+    .implementation-tickets-panel__table th,
+    .implementation-tickets-panel__table td {
+        padding: var(--ui-space-sm) var(--ui-space-md);
+        text-align: start;
+        vertical-align: middle;
+        border-block-end: var(--ui-border);
+    }
+
+    .implementation-tickets-panel__table th {
+        font-weight: 600;
+        background: var(--color-app-surface-muted);
+    }
+
+    .implementation-tickets-panel__table tbody tr:last-child td {
+        border-block-end: 0;
+    }
+
+    .implementation-tickets-panel__table-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: var(--ui-space-xs);
+        white-space: nowrap;
     }
 }

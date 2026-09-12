@@ -39,6 +39,22 @@ afterEach(() => {
 });
 
 describe('RegistrationPage', () => {
+    it('uses the standard text-field styling for email and password inputs.', () => {
+        renderPage();
+
+        const email = screen.getByLabelText('Email address');
+        expect(email).toHaveClass('p-inputtext');
+        expect(email).toHaveAttribute('type', 'email');
+
+        for (const field of [
+            screen.getByLabelText('Password', { exact: true }),
+            screen.getByLabelText('Confirm password'),
+        ]) {
+            expect(field).toHaveClass('p-inputtext');
+            expect(field).toHaveAttribute('type', 'password');
+        }
+    });
+
     it('submits normalized local-account data and explains the activation steps', async () => {
         const user = userEvent.setup();
         renderPage();

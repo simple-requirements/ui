@@ -98,7 +98,7 @@ export function useImplementationTicketEditor({
     function edit(ticket: ImplementationTicket): void {
         if (!editable) return;
         setEditing(ticket);
-        setForm({ ticketId: ticket.ticketId, completedAt: ticket.completedAt });
+        setForm({ ticketId: ticket.ticketId, completedBy: ticket.completedBy, completedAt: ticket.completedAt });
     }
 
     return { form, editing, pending, valid, updateFormField, submit, remove, edit, abortEditing: resetForm };

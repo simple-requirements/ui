@@ -5,7 +5,10 @@ import type {
     RequirementFormValues,
 } from '@/pages/ProjectRequirements/Form/requirementFormTypes';
 
-type RequirementTextAreaFieldName = Extract<RequirementFormFieldName, 'description' | 'rationale' | 'source'>;
+type RequirementTextAreaFieldName = Extract<
+    RequirementFormFieldName,
+    'description' | 'rationale' | 'source' | 'changeReason'
+>;
 
 export type RequirementTextAreaFieldProps = Readonly<{
     fieldName: RequirementTextAreaFieldName;
@@ -21,6 +24,7 @@ const textAreaIds: Record<RequirementTextAreaFieldName, string> = {
     description: 'requirement-description',
     rationale: 'requirement-rationale',
     source: 'requirement-source',
+    changeReason: 'requirement-change-reason',
 };
 
 export function RequirementTextAreaField({
@@ -48,11 +52,18 @@ export function RequirementTextAreaField({
                 value={formValues[fieldName]}
                 disabled={pending}
                 rows={rows}
+                aria-invalid={formState.fieldErrors[fieldName] === undefined ? undefined : true}
+                aria-describedby={formState.fieldErrors[fieldName] === undefined ? undefined : `${fieldId}-error`}
                 onChange={(event) => onChange(fieldName, event.currentTarget.value)}
             />
-            <p className='project-requirements-form-page__hint'>
-                {getRequirementFieldHint(fieldName, formState.fieldErrors[fieldName])}
-            </p>
+            {formState.fieldErrors[fieldName] === undefined ?
+                <p className='project-requirements-form-page__hint'>{getRequirementFieldHint(fieldName, undefined)}</p>
+            :   <p
+                    id={`${fieldId}-error`}
+                    className='project-requirements-form-page__error'>
+                    {formState.fieldErrors[fieldName]}
+                </p>
+            }
         </div>
     );
 }

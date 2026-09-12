@@ -44,7 +44,6 @@ function renderAccountMenu() {
     );
 }
 
-
 /**
  * Opens the account menu popup for assertions that target menu content.
  * @param interaction User-event driver used to click the cog wheel button.

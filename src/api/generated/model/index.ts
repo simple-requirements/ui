@@ -7,6 +7,8 @@
  */
 
 export * from './approveRequirementDto';
+export * from './authenticatedProjectMembershipDto';
+export * from './authenticatedProjectMembershipDtoRolesItem';
 export * from './authenticatedUserResponseDto';
 export * from './authenticatedUserResponseDtoGlobalRolesItem';
 export * from './authenticatedUserResponseDtoStatus';
@@ -15,8 +17,8 @@ export * from './bootstrapResponseDto';
 export * from './bootstrapStatusResponseDto';
 export * from './categoryResponseDto';
 export * from './categoryResponseDtoType';
-export * from './clearDeletedRequirementsParams';
 export * from './closeRequirementReviewCommentDto';
+export * from './compareRequirementRevisionsParams';
 export * from './confirmEmailVerificationDto';
 export * from './confirmPasswordResetDto';
 export * from './createCategoryDto';
@@ -30,11 +32,8 @@ export * from './createRequirementDtoRationale';
 export * from './createRequirementDtoSource';
 export * from './createRequirementReviewCommentDto';
 export * from './createRequirementReviewCommentReplyDto';
-export * from './deleteRequirementParams';
-export * from './getRequirementParams';
 export * from './implementationTicketResponseDto';
 export * from './implementationTicketResponseDtoUrl';
-export * from './listRequirementsParams';
 export * from './loginDto';
 export * from './loginResponseDto';
 export * from './projectMembershipResponseDto';
@@ -47,6 +46,7 @@ export * from './rejectRequirementDto';
 export * from './requestPasswordResetDto';
 export * from './requirementResponseDto';
 export * from './requirementResponseDtoApprovedAt';
+export * from './requirementResponseDtoChangedByUserId';
 export * from './requirementResponseDtoDeletedAt';
 export * from './requirementResponseDtoDescription';
 export * from './requirementResponseDtoImplementedAt';

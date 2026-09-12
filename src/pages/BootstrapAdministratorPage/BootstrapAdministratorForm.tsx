@@ -16,6 +16,11 @@ type Props = Readonly<{
     onSubmit: () => Promise<void>;
 }>;
 
+/**
+ * Renders the initial Administrator registration form.
+ * @param props Bootstrap registration state and callbacks.
+ * @returns Bootstrap Administrator form.
+ */
 export function BootstrapAdministratorForm({
     form,
     pending,
@@ -61,7 +66,7 @@ export function BootstrapAdministratorForm({
                 />
 
                 <label htmlFor='bootstrap-email'>Email address</label>
-                <input
+                <InputText
                     id='bootstrap-email'
                     name='email'
                     type='email'
@@ -83,7 +88,7 @@ export function BootstrapAdministratorForm({
                 />
 
                 <label htmlFor='bootstrap-password'>Password</label>
-                <input
+                <InputText
                     id='bootstrap-password'
                     name='new-password'
                     type='password'
@@ -98,7 +103,7 @@ export function BootstrapAdministratorForm({
                 <small id='bootstrap-password-help'>Use between 15 and 128 characters.</small>
 
                 <label htmlFor='bootstrap-confirm-password'>Confirm password</label>
-                <input
+                <InputText
                     id='bootstrap-confirm-password'
                     name='confirm-password'
                     type='password'
@@ -113,7 +118,7 @@ export function BootstrapAdministratorForm({
                 )}
 
                 <label htmlFor='bootstrap-secret'>Bootstrap secret</label>
-                <input
+                <InputText
                     id='bootstrap-secret'
                     name='bootstrap-secret'
                     type='password'

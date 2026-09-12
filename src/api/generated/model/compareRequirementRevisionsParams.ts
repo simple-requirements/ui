@@ -6,9 +6,4 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export type DeleteRequirementParams = {
-    /**
-     * Permanently remove a recycled requirement.
-     */
-    deleted?: string;
-};
+export type CompareRequirementRevisionsParams = { from: string; to: string };

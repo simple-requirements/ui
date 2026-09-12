@@ -12,6 +12,11 @@ const rejectedRequirement: Requirement = {
     categoryId: '33333333-3333-4333-8333-333333333333',
     sequenceNumber: 1,
     revisionNumber: 2,
+    changeType: 'content_changed',
+    changeReason: 'Requirement changed.',
+    changedAt: '2026-06-29T11:30:00.000Z',
+    changedByUserId: '66666666-6666-4666-8666-666666666666',
+    changedByDisplayName: 'Backend User',
     visibleKey: 'FR-AUTH-0001',
     status: 'rejected',
     description: 'Users can sign in.',
@@ -22,7 +27,6 @@ const rejectedRequirement: Requirement = {
     rejectionReason: 'The acceptance criterion is ambiguous.',
     reviewer: 'Bob Reviewer',
     rejectedAt: '2026-08-24T12:00:00.000Z',
-    deletedAt: null,
     approvedAt: null,
     implementedAt: null,
     obsoletedBy: null,
@@ -70,5 +74,37 @@ describe('RequirementDetailsPanel', () => {
         expect(screen.getByText('Olivia Owner')).toBeInTheDocument();
         expect(screen.getByText('Superseded by FR-AUTH-0002.')).toBeInTheDocument();
         expect(screen.getAllByText('Obsolete')).toHaveLength(2);
+    });
+    it('renders implementation tickets as a table for approved requirements.', () => {
+        render(
+            <RequirementDetailsPanel
+                requirement={{
+                    ...rejectedRequirement,
+                    status: 'approved',
+                    rejectionReason: null,
+                    rejectedAt: null,
+                    approvedAt: '2026-08-24T11:00:00.000Z',
+                    implementationTickets: [
+                        {
+                            id: '44444444-4444-4444-8444-444444444444',
+                            requirementId: rejectedRequirement.id,
+                            ticketId: 'AUTH-42',
+                            completedBy: 'Dev Example',
+                            completedAt: '2026-09-02',
+                            url: null,
+                            createdAt: '2026-09-02T10:00:00.000Z',
+                            updatedAt: '2026-09-02T10:00:00.000Z',
+                        },
+                    ],
+                }}
+                title='FR-AUTH-0001'
+            />,
+        );
+
+        const table = screen.getByRole('table');
+        expect(table).toHaveTextContent('Ticket ID');
+        expect(table).toHaveTextContent('AUTH-42');
+        expect(table).toHaveTextContent('Dev Example');
+        expect(table).toHaveTextContent('2026-09-02');
     });
 });

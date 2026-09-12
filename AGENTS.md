@@ -29,7 +29,6 @@ For Cyclomatic Complexitiy these rules apply:
 - A React component above `20` should be split unless there is a clear reason not to.
 - Do not add new branches to an already high-complexity function without first considering a helper, hook, or child component.
 
-
 Prefere these refactorings if the Cyclomatic Complexity is too high:
 
 - Extract validation logic into pure helper functions.

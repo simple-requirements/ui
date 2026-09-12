@@ -15,6 +15,11 @@ const requirements: readonly Requirement[] = [
         categoryId: '33333333-3333-4333-8333-333333333333',
         sequenceNumber: 1,
         revisionNumber: 2,
+        changeType: 'content_changed',
+        changeReason: 'Requirement changed.',
+        changedAt: '2026-06-29T11:30:00.000Z',
+        changedByUserId: '66666666-6666-4666-8666-666666666666',
+        changedByDisplayName: 'Backend User',
         visibleKey: 'FR-AUTH-0001',
         status: 'approved',
         description: 'Users can sign in.',
@@ -25,7 +30,6 @@ const requirements: readonly Requirement[] = [
         rejectionReason: null,
         reviewer: 'Bob',
         rejectedAt: null,
-        deletedAt: null,
         approvedAt: '2026-06-29T11:00:00.000Z',
         implementedAt: null,
         obsoletedBy: null,
@@ -41,6 +45,11 @@ const requirements: readonly Requirement[] = [
         categoryId: '55555555-5555-4555-8555-555555555555',
         sequenceNumber: 1,
         revisionNumber: 1,
+        changeType: 'content_changed',
+        changeReason: 'Requirement changed.',
+        changedAt: '2026-06-29T11:30:00.000Z',
+        changedByUserId: '66666666-6666-4666-8666-666666666666',
+        changedByDisplayName: 'Backend User',
         visibleKey: 'NFR-PERF-0001',
         status: 'draft',
         description: 'The dashboard opens within one second.',
@@ -51,7 +60,6 @@ const requirements: readonly Requirement[] = [
         rejectionReason: null,
         reviewer: null,
         rejectedAt: null,
-        deletedAt: null,
         approvedAt: null,
         implementedAt: null,
         obsoletedBy: null,
@@ -87,6 +95,17 @@ function LocationProbe() {
     const location = useLocation();
 
     return <output aria-label='Current route'>{location.pathname}</output>;
+}
+
+/**
+ * Returns the requirements list table instead of the implementation-ticket table in the details panel.
+ * @returns Requirements data table.
+ */
+function getRequirementsTable(): HTMLTableElement {
+    const keyHeader = screen.getByRole('columnheader', { name: 'Key' });
+    const table = keyHeader.closest('table');
+    if (!(table instanceof HTMLTableElement)) throw new Error('Requirements table was not rendered.');
+    return table;
 }
 
 beforeEach(() => {
@@ -136,7 +155,7 @@ describe('ProjectRequirements ListPage', () => {
 
         expect(screen.getByRole('heading', { name: 'Requirements' })).toBeInTheDocument();
 
-        const table = screen.getByRole('table');
+        const table = getRequirementsTable();
         expect(within(table).getByText('FR-AUTH-0001')).toBeInTheDocument();
         expect(within(table).getByText('NFR-PERF-0001')).toBeInTheDocument();
         expect(within(table).getByText('Users can sign in.')).toBeInTheDocument();
@@ -157,7 +176,7 @@ describe('ProjectRequirements ListPage', () => {
 
         renderRequirementsListPage({ data: requirements });
 
-        await user.click(within(screen.getByRole('table')).getByText('The dashboard opens within one second.'));
+        await user.click(within(getRequirementsTable()).getByText('The dashboard opens within one second.'));
 
         await waitFor(() => {
             expect(screen.getAllByText('NFR-PERF-0001')).toHaveLength(2);
@@ -174,7 +193,7 @@ describe('ProjectRequirements ListPage', () => {
             expect(screen.getByText('Security policy')).toBeInTheDocument();
         });
 
-        await user.click(within(screen.getByRole('table')).getByText('Users can sign in.'));
+        await user.click(within(getRequirementsTable()).getByText('Users can sign in.'));
 
         await waitFor(() => {
             expect(screen.getByText('Security policy')).toBeInTheDocument();
@@ -187,7 +206,7 @@ describe('ProjectRequirements ListPage', () => {
 
         renderRequirementsListPage({ data: requirements });
 
-        await user.dblClick(within(screen.getByRole('table')).getByText('Users can sign in.'));
+        await user.dblClick(within(getRequirementsTable()).getByText('Users can sign in.'));
 
         await waitFor(() => {
             expect(screen.getByLabelText('Current route')).toHaveTextContent(

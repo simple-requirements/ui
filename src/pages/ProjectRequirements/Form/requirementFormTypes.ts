@@ -2,7 +2,14 @@ import type { Category } from '@/api/categoriesApi';
 import type { Requirement } from '@/api/requirementsApi';
 
 export type RequirementFormMode = 'create' | 'update';
-export type RequirementFormFieldName = 'categoryId' | 'description' | 'priority' | 'owner' | 'rationale' | 'source';
+export type RequirementFormFieldName =
+    | 'categoryId'
+    | 'description'
+    | 'priority'
+    | 'owner'
+    | 'rationale'
+    | 'source'
+    | 'changeReason';
 export type RequirementFormValues = Readonly<Record<RequirementFormFieldName, string>>;
 export type RequirementFormState = Readonly<{
     fieldErrors: Partial<Record<RequirementFormFieldName, string>>;
@@ -24,4 +31,5 @@ export const createRequirementInitialValues: RequirementFormValues = {
     owner: '',
     rationale: '',
     source: '',
+    changeReason: '',
 };

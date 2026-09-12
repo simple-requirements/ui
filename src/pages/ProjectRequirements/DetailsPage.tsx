@@ -1,4 +1,5 @@
 import { eq, useLiveQuery } from '@tanstack/react-db';
+import { useSelector } from '@tanstack/react-store';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router';
@@ -8,7 +9,12 @@ import { getReviewSummary } from '@/api/reviewApi';
 import { InlineStatus } from '@/components/Feedback/InlineStatus';
 import { LoadableContent } from '@/components/Feedback/LoadableContent';
 import { getProjectRequirementDetailsRoute, getProjectRequirementReviewRoute } from '@/router/projectRoutes';
-import { clearReviewActionRequirement, setReviewActionRequirement } from '@/stores/actionBarStore';
+import {
+    actionBarStore,
+    clearReviewActionRequirement,
+    closeImplementationTicketsDialog,
+    setReviewActionRequirement,
+} from '@/stores/actionBarStore';
 import { openTab } from '@/stores/tabBarStore';
 
 import { RequirementDetailsPanel } from '@/pages/ProjectRequirements/RequirementDetailsPanel';
@@ -16,6 +22,10 @@ import { ImplementationTicketsPanel } from '@/pages/ProjectRequirements/Implemen
 
 import '@/pages/ProjectRequirements/DetailsPage.scss';
 
+/**
+ * Renders requirement details and the ActionBar-controlled implementation-ticket dialog.
+ * @returns Requirement details page.
+ */
 export function DetailsPage() {
     const { projectId, requirementId } = useParams();
     const navigate = useNavigate();
@@ -45,6 +55,14 @@ export function DetailsPage() {
     );
 
     const requirement = requirementQuery.data;
+    const ticketsDialogOpen = useSelector(actionBarStore, (state) => state.implementationTicketsDialogOpen ?? false);
+    useEffect(
+        () => () => {
+            closeImplementationTicketsDialog();
+        },
+        [],
+    );
+
     const reviewSummaryQuery = useQuery({
         queryKey: ['review-summary', projectId, requirementId],
         queryFn: () => {
@@ -115,7 +133,13 @@ export function DetailsPage() {
                     titleElement='h1'
                     titleId='project-requirements-details-page-title'
                 />
-                {requirement !== undefined && <ImplementationTicketsPanel requirement={requirement} />}
+                {requirement !== undefined && (
+                    <ImplementationTicketsPanel
+                        requirement={requirement}
+                        visible={ticketsDialogOpen}
+                        onHide={closeImplementationTicketsDialog}
+                    />
+                )}
             </LoadableContent>
         </section>
     );

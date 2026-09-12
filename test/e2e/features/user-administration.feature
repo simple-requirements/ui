@@ -5,5 +5,5 @@ Feature: User and session administration
   Scenario: Open user and session administration
     Given a real frontend Administrator session is available
     When I open frontend user administration as a real Administrator
-    And I select the E2E Administrator user
+    And I select the Administrator user
     Then the selected user sessions should be visible

@@ -19,11 +19,8 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
-    ClearDeletedRequirementsParams,
+    CompareRequirementRevisionsParams,
     CreateRequirementDto,
-    DeleteRequirementParams,
-    GetRequirementParams,
-    ListRequirementsParams,
     RequirementResponseDto,
     UpdateRequirementDto,
 } from '../model';
@@ -54,48 +51,31 @@ export type listRequirementsResponseError = listRequirementsResponse404 & { head
 
 export type listRequirementsResponse = listRequirementsResponseSuccess | listRequirementsResponseError;
 
-export const getListRequirementsUrl = (projectId: string, params?: ListRequirementsParams) => {
-    const normalizedParams = new URLSearchParams();
-
-    Object.entries(params || {}).forEach(([key, value]) => {
-        if (value !== undefined) {
-            normalizedParams.append(key, value === null ? 'null' : String(value));
-        }
-    });
-
-    const stringifiedParams = normalizedParams.toString();
-
-    return stringifiedParams.length > 0 ?
-            `/projects/${projectId}/requirements?${stringifiedParams}`
-        :   `/projects/${projectId}/requirements`;
+export const getListRequirementsUrl = (projectId: string) => {
+    return `/projects/${projectId}/requirements`;
 };
 
 /**
  * @summary List all requirements of a project.
  */
-export const listRequirements = async (
-    projectId: string,
-    params?: ListRequirementsParams,
-    options?: RequestInit,
-): Promise<listRequirementsResponse> => {
-    return apiFetch<listRequirementsResponse>(getListRequirementsUrl(projectId, params), { ...options, method: 'GET' });
+export const listRequirements = async (projectId: string, options?: RequestInit): Promise<listRequirementsResponse> => {
+    return apiFetch<listRequirementsResponse>(getListRequirementsUrl(projectId), { ...options, method: 'GET' });
 };
 
-export const getListRequirementsQueryKey = (projectId: string, params?: ListRequirementsParams) => {
-    return [`/projects/${projectId}/requirements`, ...(params ? [params] : [])] as const;
+export const getListRequirementsQueryKey = (projectId: string) => {
+    return [`/projects/${projectId}/requirements`] as const;
 };
 
 export const getListRequirementsQueryOptions = <TData = Awaited<ReturnType<typeof listRequirements>>, TError = void>(
     projectId: string,
-    params?: ListRequirementsParams,
     options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listRequirements>>, TError, TData>> },
 ) => {
     const { query: queryOptions } = options ?? {};
 
-    const queryKey = queryOptions?.queryKey ?? getListRequirementsQueryKey(projectId, params);
+    const queryKey = queryOptions?.queryKey ?? getListRequirementsQueryKey(projectId);
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof listRequirements>>> = ({ signal }) =>
-        listRequirements(projectId, params, { signal });
+        listRequirements(projectId, { signal });
 
     return {
         queryKey,
@@ -113,7 +93,6 @@ export type ListRequirementsQueryError = void;
 
 export function useListRequirements<TData = Awaited<ReturnType<typeof listRequirements>>, TError = void>(
     projectId: string,
-    params: undefined | ListRequirementsParams,
     options: {
         query: Partial<UseQueryOptions<Awaited<ReturnType<typeof listRequirements>>, TError, TData>>
             & Pick<
@@ -129,7 +108,6 @@ export function useListRequirements<TData = Awaited<ReturnType<typeof listRequir
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useListRequirements<TData = Awaited<ReturnType<typeof listRequirements>>, TError = void>(
     projectId: string,
-    params?: ListRequirementsParams,
     options?: {
         query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listRequirements>>, TError, TData>>
             & Pick<
@@ -145,7 +123,6 @@ export function useListRequirements<TData = Awaited<ReturnType<typeof listRequir
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useListRequirements<TData = Awaited<ReturnType<typeof listRequirements>>, TError = void>(
     projectId: string,
-    params?: ListRequirementsParams,
     options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listRequirements>>, TError, TData>> },
     queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
@@ -155,11 +132,10 @@ export function useListRequirements<TData = Awaited<ReturnType<typeof listRequir
 
 export function useListRequirements<TData = Awaited<ReturnType<typeof listRequirements>>, TError = void>(
     projectId: string,
-    params?: ListRequirementsParams,
     options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listRequirements>>, TError, TData>> },
     queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-    const queryOptions = getListRequirementsQueryOptions(projectId, params, options);
+    const queryOptions = getListRequirementsQueryOptions(projectId, options);
 
     const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
         queryKey: DataTag<QueryKey, TData, TError>;
@@ -288,23 +264,141 @@ export function useCreateRequirement<TData = Awaited<ReturnType<typeof createReq
     return withQueryKey(query, queryOptions.queryKey);
 }
 
-export type clearDeletedRequirementsResponse204 = { data: void; status: 204 };
+export type listRequirementRevisionsResponse200 = { data: RequirementResponseDto[]; status: 200 };
 
-export type clearDeletedRequirementsResponse400 = { data: void; status: 400 };
+export type listRequirementRevisionsResponseSuccess = listRequirementRevisionsResponse200 & { headers: Headers };
+export type listRequirementRevisionsResponse = listRequirementRevisionsResponseSuccess;
 
-export type clearDeletedRequirementsResponse404 = { data: void; status: 404 };
+export const getListRequirementRevisionsUrl = (projectId: string, requirementId: string) => {
+    return `/projects/${projectId}/requirements/${requirementId}/revisions`;
+};
 
-export type clearDeletedRequirementsResponseSuccess = clearDeletedRequirementsResponse204 & { headers: Headers };
-export type clearDeletedRequirementsResponseError = (
-    | clearDeletedRequirementsResponse400
-    | clearDeletedRequirementsResponse404
-) & { headers: Headers };
+/**
+ * @summary List immutable requirement revisions including the current revision.
+ */
+export const listRequirementRevisions = async (
+    projectId: string,
+    requirementId: string,
+    options?: RequestInit,
+): Promise<listRequirementRevisionsResponse> => {
+    return apiFetch<listRequirementRevisionsResponse>(getListRequirementRevisionsUrl(projectId, requirementId), {
+        ...options,
+        method: 'GET',
+    });
+};
 
-export type clearDeletedRequirementsResponse =
-    | clearDeletedRequirementsResponseSuccess
-    | clearDeletedRequirementsResponseError;
+export const getListRequirementRevisionsQueryKey = (projectId: string, requirementId: string) => {
+    return [`/projects/${projectId}/requirements/${requirementId}/revisions`] as const;
+};
 
-export const getClearDeletedRequirementsUrl = (projectId: string, params?: ClearDeletedRequirementsParams) => {
+export const getListRequirementRevisionsQueryOptions = <
+    TData = Awaited<ReturnType<typeof listRequirementRevisions>>,
+    TError = unknown,
+>(
+    projectId: string,
+    requirementId: string,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listRequirementRevisions>>, TError, TData>> },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey = queryOptions?.queryKey ?? getListRequirementRevisionsQueryKey(projectId, requirementId);
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listRequirementRevisions>>> = ({ signal }) =>
+        listRequirementRevisions(projectId, requirementId, { signal });
+
+    return {
+        queryKey,
+        queryFn,
+        enabled: projectId !== null && projectId !== undefined && requirementId !== null && requirementId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof listRequirementRevisions>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
+
+export type ListRequirementRevisionsQueryResult = NonNullable<Awaited<ReturnType<typeof listRequirementRevisions>>>;
+export type ListRequirementRevisionsQueryError = unknown;
+
+export function useListRequirementRevisions<
+    TData = Awaited<ReturnType<typeof listRequirementRevisions>>,
+    TError = unknown,
+>(
+    projectId: string,
+    requirementId: string,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof listRequirementRevisions>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof listRequirementRevisions>>,
+                    TError,
+                    Awaited<ReturnType<typeof listRequirementRevisions>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useListRequirementRevisions<
+    TData = Awaited<ReturnType<typeof listRequirementRevisions>>,
+    TError = unknown,
+>(
+    projectId: string,
+    requirementId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listRequirementRevisions>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof listRequirementRevisions>>,
+                    TError,
+                    Awaited<ReturnType<typeof listRequirementRevisions>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useListRequirementRevisions<
+    TData = Awaited<ReturnType<typeof listRequirementRevisions>>,
+    TError = unknown,
+>(
+    projectId: string,
+    requirementId: string,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listRequirementRevisions>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary List immutable requirement revisions including the current revision.
+ */
+
+export function useListRequirementRevisions<
+    TData = Awaited<ReturnType<typeof listRequirementRevisions>>,
+    TError = unknown,
+>(
+    projectId: string,
+    requirementId: string,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listRequirementRevisions>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getListRequirementRevisionsQueryOptions(projectId, requirementId, options);
+
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+
+    return withQueryKey(query, queryOptions.queryKey);
+}
+
+export type compareRequirementRevisionsResponse200 = { data: void; status: 200 };
+
+export type compareRequirementRevisionsResponseSuccess = compareRequirementRevisionsResponse200 & { headers: Headers };
+export type compareRequirementRevisionsResponse = compareRequirementRevisionsResponseSuccess;
+
+export const getCompareRequirementRevisionsUrl = (
+    projectId: string,
+    requirementId: string,
+    params: CompareRequirementRevisionsParams,
+) => {
     const normalizedParams = new URLSearchParams();
 
     Object.entries(params || {}).forEach(([key, value]) => {
@@ -316,118 +410,139 @@ export const getClearDeletedRequirementsUrl = (projectId: string, params?: Clear
     const stringifiedParams = normalizedParams.toString();
 
     return stringifiedParams.length > 0 ?
-            `/projects/${projectId}/requirements?${stringifiedParams}`
-        :   `/projects/${projectId}/requirements`;
+            `/projects/${projectId}/requirements/${requirementId}/revisions/compare?${stringifiedParams}`
+        :   `/projects/${projectId}/requirements/${requirementId}/revisions/compare`;
 };
 
 /**
- * @summary Clear the requirement recycle bin.
+ * @summary Compare two requirement revisions.
  */
-export const clearDeletedRequirements = async (
+export const compareRequirementRevisions = async (
     projectId: string,
-    params?: ClearDeletedRequirementsParams,
+    requirementId: string,
+    params: CompareRequirementRevisionsParams,
     options?: RequestInit,
-): Promise<clearDeletedRequirementsResponse> => {
-    return apiFetch<clearDeletedRequirementsResponse>(getClearDeletedRequirementsUrl(projectId, params), {
-        ...options,
-        method: 'DELETE',
-    });
+): Promise<compareRequirementRevisionsResponse> => {
+    return apiFetch<compareRequirementRevisionsResponse>(
+        getCompareRequirementRevisionsUrl(projectId, requirementId, params),
+        { ...options, method: 'GET' },
+    );
 };
 
-export const getClearDeletedRequirementsQueryKey = (projectId: string, params?: ClearDeletedRequirementsParams) => {
-    return ['DELETE', `/projects/${projectId}/requirements`, ...(params ? [params] : [])] as const;
+export const getCompareRequirementRevisionsQueryKey = (
+    projectId: string,
+    requirementId: string,
+    params?: CompareRequirementRevisionsParams,
+) => {
+    return [
+        `/projects/${projectId}/requirements/${requirementId}/revisions/compare`,
+        ...(params ? [params] : []),
+    ] as const;
 };
 
-export const getClearDeletedRequirementsQueryOptions = <
-    TData = Awaited<ReturnType<typeof clearDeletedRequirements>>,
-    TError = void,
+export const getCompareRequirementRevisionsQueryOptions = <
+    TData = Awaited<ReturnType<typeof compareRequirementRevisions>>,
+    TError = unknown,
 >(
     projectId: string,
-    params?: ClearDeletedRequirementsParams,
-    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof clearDeletedRequirements>>, TError, TData>> },
+    requirementId: string,
+    params: CompareRequirementRevisionsParams,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof compareRequirementRevisions>>, TError, TData>>;
+    },
 ) => {
     const { query: queryOptions } = options ?? {};
 
-    const queryKey = queryOptions?.queryKey ?? getClearDeletedRequirementsQueryKey(projectId, params);
+    const queryKey = queryOptions?.queryKey ?? getCompareRequirementRevisionsQueryKey(projectId, requirementId, params);
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof clearDeletedRequirements>>> = ({ signal }) =>
-        clearDeletedRequirements(projectId, params, { signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof compareRequirementRevisions>>> = ({ signal }) =>
+        compareRequirementRevisions(projectId, requirementId, params, { signal });
 
     return {
         queryKey,
         queryFn,
-        enabled: projectId !== null && projectId !== undefined,
+        enabled: projectId !== null && projectId !== undefined && requirementId !== null && requirementId !== undefined,
         staleTime: 30000,
         ...queryOptions,
-    } as UseQueryOptions<Awaited<ReturnType<typeof clearDeletedRequirements>>, TError, TData> & {
+    } as UseQueryOptions<Awaited<ReturnType<typeof compareRequirementRevisions>>, TError, TData> & {
         queryKey: DataTag<QueryKey, TData, TError>;
     };
 };
 
-export type ClearDeletedRequirementsQueryResult = NonNullable<Awaited<ReturnType<typeof clearDeletedRequirements>>>;
-export type ClearDeletedRequirementsQueryError = void;
+export type CompareRequirementRevisionsQueryResult = NonNullable<
+    Awaited<ReturnType<typeof compareRequirementRevisions>>
+>;
+export type CompareRequirementRevisionsQueryError = unknown;
 
-export function useClearDeletedRequirements<
-    TData = Awaited<ReturnType<typeof clearDeletedRequirements>>,
-    TError = void,
+export function useCompareRequirementRevisions<
+    TData = Awaited<ReturnType<typeof compareRequirementRevisions>>,
+    TError = unknown,
 >(
     projectId: string,
-    params: undefined | ClearDeletedRequirementsParams,
+    requirementId: string,
+    params: CompareRequirementRevisionsParams,
     options: {
-        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof clearDeletedRequirements>>, TError, TData>>
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof compareRequirementRevisions>>, TError, TData>>
             & Pick<
                 DefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof clearDeletedRequirements>>,
+                    Awaited<ReturnType<typeof compareRequirementRevisions>>,
                     TError,
-                    Awaited<ReturnType<typeof clearDeletedRequirements>>
+                    Awaited<ReturnType<typeof compareRequirementRevisions>>
                 >,
                 'initialData'
             >;
     },
     queryClient?: QueryClient,
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useClearDeletedRequirements<
-    TData = Awaited<ReturnType<typeof clearDeletedRequirements>>,
-    TError = void,
+export function useCompareRequirementRevisions<
+    TData = Awaited<ReturnType<typeof compareRequirementRevisions>>,
+    TError = unknown,
 >(
     projectId: string,
-    params?: ClearDeletedRequirementsParams,
+    requirementId: string,
+    params: CompareRequirementRevisionsParams,
     options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof clearDeletedRequirements>>, TError, TData>>
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof compareRequirementRevisions>>, TError, TData>>
             & Pick<
                 UndefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof clearDeletedRequirements>>,
+                    Awaited<ReturnType<typeof compareRequirementRevisions>>,
                     TError,
-                    Awaited<ReturnType<typeof clearDeletedRequirements>>
+                    Awaited<ReturnType<typeof compareRequirementRevisions>>
                 >,
                 'initialData'
             >;
     },
     queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useClearDeletedRequirements<
-    TData = Awaited<ReturnType<typeof clearDeletedRequirements>>,
-    TError = void,
+export function useCompareRequirementRevisions<
+    TData = Awaited<ReturnType<typeof compareRequirementRevisions>>,
+    TError = unknown,
 >(
     projectId: string,
-    params?: ClearDeletedRequirementsParams,
-    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof clearDeletedRequirements>>, TError, TData>> },
+    requirementId: string,
+    params: CompareRequirementRevisionsParams,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof compareRequirementRevisions>>, TError, TData>>;
+    },
     queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
- * @summary Clear the requirement recycle bin.
+ * @summary Compare two requirement revisions.
  */
 
-export function useClearDeletedRequirements<
-    TData = Awaited<ReturnType<typeof clearDeletedRequirements>>,
-    TError = void,
+export function useCompareRequirementRevisions<
+    TData = Awaited<ReturnType<typeof compareRequirementRevisions>>,
+    TError = unknown,
 >(
     projectId: string,
-    params?: ClearDeletedRequirementsParams,
-    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof clearDeletedRequirements>>, TError, TData>> },
+    requirementId: string,
+    params: CompareRequirementRevisionsParams,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof compareRequirementRevisions>>, TError, TData>>;
+    },
     queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-    const queryOptions = getClearDeletedRequirementsQueryOptions(projectId, params, options);
+    const queryOptions = getCompareRequirementRevisionsQueryOptions(projectId, requirementId, params, options);
 
     const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
         queryKey: DataTag<QueryKey, TData, TError>;
@@ -438,64 +553,46 @@ export function useClearDeletedRequirements<
 
 export type getRequirementResponse200 = { data: RequirementResponseDto; status: 200 };
 
-export type getRequirementResponse400 = { data: void; status: 400 };
-
 export type getRequirementResponse404 = { data: void; status: 404 };
 
 export type getRequirementResponseSuccess = getRequirementResponse200 & { headers: Headers };
-export type getRequirementResponseError = (getRequirementResponse400 | getRequirementResponse404) & {
-    headers: Headers;
-};
+export type getRequirementResponseError = getRequirementResponse404 & { headers: Headers };
 
 export type getRequirementResponse = getRequirementResponseSuccess | getRequirementResponseError;
 
-export const getGetRequirementUrl = (projectId: string, requirementId: string, params?: GetRequirementParams) => {
-    const normalizedParams = new URLSearchParams();
-
-    Object.entries(params || {}).forEach(([key, value]) => {
-        if (value !== undefined) {
-            normalizedParams.append(key, value === null ? 'null' : String(value));
-        }
-    });
-
-    const stringifiedParams = normalizedParams.toString();
-
-    return stringifiedParams.length > 0 ?
-            `/projects/${projectId}/requirements/${requirementId}?${stringifiedParams}`
-        :   `/projects/${projectId}/requirements/${requirementId}`;
+export const getGetRequirementUrl = (projectId: string, requirementId: string) => {
+    return `/projects/${projectId}/requirements/${requirementId}`;
 };
 
 /**
- * @summary Get one requirement or one/all stored revisions.
+ * @summary Get one requirement.
  */
 export const getRequirement = async (
     projectId: string,
     requirementId: string,
-    params?: GetRequirementParams,
     options?: RequestInit,
 ): Promise<getRequirementResponse> => {
-    return apiFetch<getRequirementResponse>(getGetRequirementUrl(projectId, requirementId, params), {
+    return apiFetch<getRequirementResponse>(getGetRequirementUrl(projectId, requirementId), {
         ...options,
         method: 'GET',
     });
 };
 
-export const getGetRequirementQueryKey = (projectId: string, requirementId: string, params?: GetRequirementParams) => {
-    return [`/projects/${projectId}/requirements/${requirementId}`, ...(params ? [params] : [])] as const;
+export const getGetRequirementQueryKey = (projectId: string, requirementId: string) => {
+    return [`/projects/${projectId}/requirements/${requirementId}`] as const;
 };
 
 export const getGetRequirementQueryOptions = <TData = Awaited<ReturnType<typeof getRequirement>>, TError = void>(
     projectId: string,
     requirementId: string,
-    params?: GetRequirementParams,
     options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getRequirement>>, TError, TData>> },
 ) => {
     const { query: queryOptions } = options ?? {};
 
-    const queryKey = queryOptions?.queryKey ?? getGetRequirementQueryKey(projectId, requirementId, params);
+    const queryKey = queryOptions?.queryKey ?? getGetRequirementQueryKey(projectId, requirementId);
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof getRequirement>>> = ({ signal }) =>
-        getRequirement(projectId, requirementId, params, { signal });
+        getRequirement(projectId, requirementId, { signal });
 
     return {
         queryKey,
@@ -514,7 +611,6 @@ export type GetRequirementQueryError = void;
 export function useGetRequirement<TData = Awaited<ReturnType<typeof getRequirement>>, TError = void>(
     projectId: string,
     requirementId: string,
-    params: undefined | GetRequirementParams,
     options: {
         query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getRequirement>>, TError, TData>>
             & Pick<
@@ -531,7 +627,6 @@ export function useGetRequirement<TData = Awaited<ReturnType<typeof getRequireme
 export function useGetRequirement<TData = Awaited<ReturnType<typeof getRequirement>>, TError = void>(
     projectId: string,
     requirementId: string,
-    params?: GetRequirementParams,
     options?: {
         query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getRequirement>>, TError, TData>>
             & Pick<
@@ -548,22 +643,20 @@ export function useGetRequirement<TData = Awaited<ReturnType<typeof getRequireme
 export function useGetRequirement<TData = Awaited<ReturnType<typeof getRequirement>>, TError = void>(
     projectId: string,
     requirementId: string,
-    params?: GetRequirementParams,
     options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getRequirement>>, TError, TData>> },
     queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
- * @summary Get one requirement or one/all stored revisions.
+ * @summary Get one requirement.
  */
 
 export function useGetRequirement<TData = Awaited<ReturnType<typeof getRequirement>>, TError = void>(
     projectId: string,
     requirementId: string,
-    params?: GetRequirementParams,
     options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getRequirement>>, TError, TData>> },
     queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-    const queryOptions = getGetRequirementQueryOptions(projectId, requirementId, params, options);
+    const queryOptions = getGetRequirementQueryOptions(projectId, requirementId, options);
 
     const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
         queryKey: DataTag<QueryKey, TData, TError>;
@@ -695,146 +788,6 @@ export function useUpdateRequirement<TData = Awaited<ReturnType<typeof updateReq
     queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
     const queryOptions = getUpdateRequirementQueryOptions(projectId, requirementId, updateRequirementDto, options);
-
-    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
-        queryKey: DataTag<QueryKey, TData, TError>;
-    };
-
-    return withQueryKey(query, queryOptions.queryKey);
-}
-
-export type deleteRequirementResponse204 = { data: void; status: 204 };
-
-export type deleteRequirementResponse400 = { data: void; status: 400 };
-
-export type deleteRequirementResponse404 = { data: void; status: 404 };
-
-export type deleteRequirementResponseSuccess = deleteRequirementResponse204 & { headers: Headers };
-export type deleteRequirementResponseError = (deleteRequirementResponse400 | deleteRequirementResponse404) & {
-    headers: Headers;
-};
-
-export type deleteRequirementResponse = deleteRequirementResponseSuccess | deleteRequirementResponseError;
-
-export const getDeleteRequirementUrl = (projectId: string, requirementId: string, params?: DeleteRequirementParams) => {
-    const normalizedParams = new URLSearchParams();
-
-    Object.entries(params || {}).forEach(([key, value]) => {
-        if (value !== undefined) {
-            normalizedParams.append(key, value === null ? 'null' : String(value));
-        }
-    });
-
-    const stringifiedParams = normalizedParams.toString();
-
-    return stringifiedParams.length > 0 ?
-            `/projects/${projectId}/requirements/${requirementId}?${stringifiedParams}`
-        :   `/projects/${projectId}/requirements/${requirementId}`;
-};
-
-/**
- * @summary Delete a requirement.
- */
-export const deleteRequirement = async (
-    projectId: string,
-    requirementId: string,
-    params?: DeleteRequirementParams,
-    options?: RequestInit,
-): Promise<deleteRequirementResponse> => {
-    return apiFetch<deleteRequirementResponse>(getDeleteRequirementUrl(projectId, requirementId, params), {
-        ...options,
-        method: 'DELETE',
-    });
-};
-
-export const getDeleteRequirementQueryKey = (
-    projectId: string,
-    requirementId: string,
-    params?: DeleteRequirementParams,
-) => {
-    return ['DELETE', `/projects/${projectId}/requirements/${requirementId}`, ...(params ? [params] : [])] as const;
-};
-
-export const getDeleteRequirementQueryOptions = <TData = Awaited<ReturnType<typeof deleteRequirement>>, TError = void>(
-    projectId: string,
-    requirementId: string,
-    params?: DeleteRequirementParams,
-    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteRequirement>>, TError, TData>> },
-) => {
-    const { query: queryOptions } = options ?? {};
-
-    const queryKey = queryOptions?.queryKey ?? getDeleteRequirementQueryKey(projectId, requirementId, params);
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof deleteRequirement>>> = ({ signal }) =>
-        deleteRequirement(projectId, requirementId, params, { signal });
-
-    return {
-        queryKey,
-        queryFn,
-        enabled: projectId !== null && projectId !== undefined && requirementId !== null && requirementId !== undefined,
-        staleTime: 30000,
-        ...queryOptions,
-    } as UseQueryOptions<Awaited<ReturnType<typeof deleteRequirement>>, TError, TData> & {
-        queryKey: DataTag<QueryKey, TData, TError>;
-    };
-};
-
-export type DeleteRequirementQueryResult = NonNullable<Awaited<ReturnType<typeof deleteRequirement>>>;
-export type DeleteRequirementQueryError = void;
-
-export function useDeleteRequirement<TData = Awaited<ReturnType<typeof deleteRequirement>>, TError = void>(
-    projectId: string,
-    requirementId: string,
-    params: undefined | DeleteRequirementParams,
-    options: {
-        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteRequirement>>, TError, TData>>
-            & Pick<
-                DefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof deleteRequirement>>,
-                    TError,
-                    Awaited<ReturnType<typeof deleteRequirement>>
-                >,
-                'initialData'
-            >;
-    },
-    queryClient?: QueryClient,
-): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useDeleteRequirement<TData = Awaited<ReturnType<typeof deleteRequirement>>, TError = void>(
-    projectId: string,
-    requirementId: string,
-    params?: DeleteRequirementParams,
-    options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteRequirement>>, TError, TData>>
-            & Pick<
-                UndefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof deleteRequirement>>,
-                    TError,
-                    Awaited<ReturnType<typeof deleteRequirement>>
-                >,
-                'initialData'
-            >;
-    },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useDeleteRequirement<TData = Awaited<ReturnType<typeof deleteRequirement>>, TError = void>(
-    projectId: string,
-    requirementId: string,
-    params?: DeleteRequirementParams,
-    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteRequirement>>, TError, TData>> },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-/**
- * @summary Delete a requirement.
- */
-
-export function useDeleteRequirement<TData = Awaited<ReturnType<typeof deleteRequirement>>, TError = void>(
-    projectId: string,
-    requirementId: string,
-    params?: DeleteRequirementParams,
-    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deleteRequirement>>, TError, TData>> },
-    queryClient?: QueryClient,
-): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-    const queryOptions = getDeleteRequirementQueryOptions(projectId, requirementId, params, options);
 
     const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
         queryKey: DataTag<QueryKey, TData, TError>;

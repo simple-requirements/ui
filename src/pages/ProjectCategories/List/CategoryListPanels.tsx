@@ -17,9 +17,13 @@ type CategoryListPanelsProps = Readonly<{
     selectedCategoryId: string | undefined;
     setSelectedCategoryId: ProjectCategoriesListState['setSelectedCategoryId'];
     controller: CategoryListController;
-    canManageRequirements: boolean;
 }>;
 
+/**
+ * Renders the category list and selected category detail panels.
+ * @param props Category list state, controller and selection data.
+ * @returns Category list/detail splitter layout.
+ */
 export function CategoryListPanels({
     categories,
     categoriesQuery,
@@ -27,7 +31,6 @@ export function CategoryListPanels({
     selectedCategoryId,
     setSelectedCategoryId,
     controller,
-    canManageRequirements,
 }: CategoryListPanelsProps) {
     return (
         <Splitter
@@ -75,7 +78,6 @@ export function CategoryListPanels({
                 <CategoryDetailsPanel
                     category={selectedCategory}
                     title='Category details'
-                    onEditCategory={canManageRequirements ? controller.editCategory : undefined}
                 />
             </SplitterPanel>
         </Splitter>

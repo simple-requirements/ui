@@ -45,5 +45,9 @@ export function getRequirementFieldHint(
         return 'Enter an optional owner name.';
     }
 
+    if (fieldName === 'changeReason') {
+        return 'Explain why this requirement is being changed.';
+    }
+
     return 'Optional requirement text.';
 }

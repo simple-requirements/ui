@@ -1,24 +1,45 @@
+import { Dialog } from 'primereact/dialog';
+
 import type { Requirement } from '@/api/requirementsApi';
 import { useProjectPermissions } from '@/auth/projectPermissions';
 import { ImplementationTicketForm } from '@/pages/ProjectRequirements/ImplementationTicketsPanel/ImplementationTicketForm';
 import { ImplementationTicketList } from '@/pages/ProjectRequirements/ImplementationTicketsPanel/ImplementationTicketList';
 import { useImplementationTicketEditor } from '@/pages/ProjectRequirements/ImplementationTicketsPanel/useImplementationTicketEditor';
 
-const visibleRequirementStatuses = ['approved', 'implemented', 'obsolete'];
+export type ImplementationTicketsPanelProps = Readonly<{
+    requirement: Requirement;
+    visible: boolean;
+    onHide: () => void;
+}>;
 
-export function ImplementationTicketsPanel({ requirement }: Readonly<{ requirement: Requirement }>) {
+/**
+ * Renders the modal editor for implementation tickets of an approved requirement.
+ * @param requirement Requirement whose tickets are managed.
+ * @param visible Whether the ticket dialog is open.
+ * @param onHide Callback used to close the dialog.
+ * @returns Implementation-ticket management dialog.
+ */
+export function ImplementationTicketsPanel({ requirement, visible, onHide }: ImplementationTicketsPanelProps) {
     const permissions = useProjectPermissions(requirement.projectId);
     const editable = requirement.status === 'approved' && permissions.canManageTickets;
     const editor = useImplementationTicketEditor({ requirement, editable });
 
-    if (!visibleRequirementStatuses.includes(requirement.status)) return null;
-
     return (
-        <section
-            className='implementation-tickets-panel'
-            aria-labelledby='implementation-tickets-title'>
-            <h2 id='implementation-tickets-title'>Implementation tickets</h2>
-
+        <Dialog
+            visible={visible}
+            modal
+            dismissableMask={false}
+            closable={!editor.pending}
+            closeOnEscape={!editor.pending}
+            draggable={false}
+            resizable={false}
+            header={<h2 className='implementation-tickets-dialog__heading'>Implementation tickets</h2>}
+            pt={{
+                root: { className: 'implementation-tickets-dialog' },
+                header: { className: 'implementation-tickets-dialog__header' },
+                content: { className: 'implementation-tickets-dialog__content' },
+            }}
+            onHide={onHide}>
             {editable && (
                 <ImplementationTicketForm
                     form={editor.form}
@@ -38,6 +59,6 @@ export function ImplementationTicketsPanel({ requirement }: Readonly<{ requireme
                 onEdit={editor.edit}
                 onRemove={editor.remove}
             />
-        </section>
+        </Dialog>
     );
 }

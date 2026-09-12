@@ -46,6 +46,20 @@ afterEach(() => {
 });
 
 describe('BootstrapAdministratorPage', () => {
+    it('uses standard text-field styling for email and every password input.', () => {
+        renderPage();
+
+        const email = screen.getByLabelText('Email address');
+        expect(email).toHaveClass('p-inputtext');
+        expect(email).toHaveAttribute('type', 'email');
+
+        for (const name of ['Password', 'Confirm password', 'Bootstrap secret']) {
+            const field = screen.getByLabelText(name, { exact: true });
+            expect(field).toHaveClass('p-inputtext');
+            expect(field).toHaveAttribute('type', 'password');
+        }
+    });
+
     it('validates matching passwords before enabling registration.', async () => {
         const user = userEvent.setup();
         renderPage();

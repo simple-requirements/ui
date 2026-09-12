@@ -11,6 +11,10 @@ import { useProjectCategoriesList } from '@/pages/ProjectCategories/List/useProj
 
 import '@/pages/ProjectCategories/List/ListPage.scss';
 
+/**
+ * Renders the project category list route.
+ * @returns Project category list page.
+ */
 export function ListPage() {
     const { projectId } = useParams();
     const navigate = useNavigate();
@@ -56,7 +60,6 @@ export function ListPage() {
                 selectedCategoryId={selectedCategoryId}
                 setSelectedCategoryId={setSelectedCategoryId}
                 controller={controller}
-                canManageRequirements={permissions.canManageRequirements}
             />
         </section>
     );

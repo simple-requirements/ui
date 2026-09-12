@@ -26,6 +26,11 @@ export type Requirement = Readonly<{
     categoryId: string;
     sequenceNumber: number;
     revisionNumber: number;
+    changeType: string;
+    changeReason: string;
+    changedAt: string;
+    changedByUserId: string | null;
+    changedByDisplayName: string;
     visibleKey: string;
     status: 'draft' | 'approved' | 'implemented' | 'obsolete' | 'rejected';
     description: string | null;
@@ -37,7 +42,6 @@ export type Requirement = Readonly<{
     reviewer: string | null;
     obsoletedBy: string | null;
     rejectedAt: string | null;
-    deletedAt: string | null;
     approvedAt: string | null;
     implementedAt: string | null;
     obsolescenceReason: string | null;

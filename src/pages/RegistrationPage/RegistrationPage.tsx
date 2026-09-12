@@ -124,7 +124,7 @@ export function RegistrationPage() {
                         onChange={(event) => update('username', event.currentTarget.value)}
                     />
                     <label htmlFor='registration-email'>Email address</label>
-                    <input
+                    <InputText
                         id='registration-email'
                         name='email'
                         type='email'
@@ -144,7 +144,7 @@ export function RegistrationPage() {
                         onChange={(event) => update('displayName', event.currentTarget.value)}
                     />
                     <label htmlFor='registration-password'>Password</label>
-                    <input
+                    <InputText
                         id='registration-password'
                         name='new-password'
                         type='password'
@@ -157,7 +157,7 @@ export function RegistrationPage() {
                     />
                     <small>Use between 15 and 128 characters.</small>
                     <label htmlFor='registration-confirm-password'>Confirm password</label>
-                    <input
+                    <InputText
                         id='registration-confirm-password'
                         name='confirm-password'
                         type='password'

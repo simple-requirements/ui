@@ -5,7 +5,9 @@ import {
     createProjectRequirementRequest,
     getListProjectRequirementsQueryKey,
     updateProjectRequirementRequest,
+    type CreateRequirementRequest,
     type Requirement,
+    type UpdateRequirementRequest,
 } from '@/api/requirementsApi';
 
 import {
@@ -16,7 +18,7 @@ import {
 import {
     getRequirementFormDataString,
     getRequirementFormFieldErrors,
-    requirementFormSchema,
+    getRequirementFormSchema,
 } from '@/pages/ProjectRequirements/Form/requirementFormValidation';
 
 export type UseRequirementFormActionOptions = Readonly<{
@@ -39,8 +41,9 @@ export function useRequirementFormAction({ projectId, requirementId, mode, onSav
             owner: getRequirementFormDataString(formData, 'owner'),
             rationale: getRequirementFormDataString(formData, 'rationale'),
             source: getRequirementFormDataString(formData, 'source'),
+            changeReason: getRequirementFormDataString(formData, 'changeReason'),
         };
-        const parseResult = requirementFormSchema.safeParse(rawValues);
+        const parseResult = getRequirementFormSchema(mode).safeParse(rawValues);
 
         if (!parseResult.success) {
             return { fieldErrors: getRequirementFormFieldErrors(parseResult.error) };
@@ -48,9 +51,14 @@ export function useRequirementFormAction({ projectId, requirementId, mode, onSav
 
         try {
             const savedRequirement =
-                mode === 'create' ? await createProjectRequirementRequest(projectId, parseResult.data)
+                mode === 'create' ?
+                    await createProjectRequirementRequest(projectId, parseResult.data as CreateRequirementRequest)
                 : requirementId === undefined ? undefined
-                : await updateProjectRequirementRequest(projectId, requirementId, parseResult.data);
+                : await updateProjectRequirementRequest(
+                        projectId,
+                        requirementId,
+                        parseResult.data as UpdateRequirementRequest,
+                    );
 
             if (savedRequirement === undefined) {
                 return { fieldErrors: {}, formError: 'Requirement route is incomplete.' };

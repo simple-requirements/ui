@@ -98,7 +98,7 @@ Given('the permission-aware frontend signs me in as {string}', async ({ page }, 
     });
     const requirement = await updateRequirementStatus(project.id, draft.id, {
         status: 'approved',
-        reviewer: 'E2E Requirements Engineer',
+        reviewer: 'Requirements Engineer',
     });
     await createImplementationTicket(project.id, requirement.id, 'AUTH-42');
 
@@ -120,6 +120,19 @@ When('I open the permission test requirement details', async ({ page }) => {
     await page.goto(`/projects/${projectId}/requirements/${requirement.id}`);
     await signInToRealBackend(page, configuredPrincipal(role).username);
     await expect(page.getByRole('heading', { name: requirement.visibleKey })).toBeVisible();
+});
+
+When('I try to open the permission test requirement details', async ({ page }) => {
+    const { projectId, requirement, role } = requireContext();
+    await page.goto(`/projects/${projectId}/requirements/${requirement.id}`);
+    await signInToRealBackend(page, configuredPrincipal(role).username);
+});
+
+Then('requirement contents should not be visible', async ({ page }) => {
+    const { requirement } = requireContext();
+
+    await expect(page.getByRole('heading', { name: requirement.visibleKey })).toHaveCount(0);
+    await expect(page.getByText('Requirement could not be found in the project requirements list.')).toBeVisible();
 });
 
 Then('only the assigned permission test project should be visible', async ({ page }) => {
@@ -148,16 +161,21 @@ Then('requirement mutation actions should be visible', async ({ page }) => {
 });
 
 Then('implementation ticket mutation actions should not be visible', async ({ page }) => {
-    const ticketPanel = page.getByRole('region', { name: 'Implementation tickets', exact: true });
+    const ticketTable = page.getByRole('table');
 
-    await expect(ticketPanel.getByText(/AUTH-42/u)).toBeVisible();
+    await expect(ticketTable.getByText(/AUTH-42/u)).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Tickets' })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Add ticket' })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Edit ticket' })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Delete ticket' })).toHaveCount(0);
 });
 
 Then('implementation ticket mutation actions should be visible', async ({ page }) => {
-    await expect(page.getByRole('button', { name: 'Add ticket' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Edit ticket' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Delete ticket' })).toBeVisible();
+    await page.getByRole('button', { name: 'Tickets' }).click();
+    const dialog = page.getByRole('dialog');
+
+    await expect(dialog.getByRole('textbox', { name: 'Completed by' })).toBeVisible();
+    await expect(dialog.getByRole('button', { name: 'Add ticket' })).toBeVisible();
+    await expect(dialog.getByRole('button', { name: 'Edit ticket' })).toBeVisible();
+    await expect(dialog.getByRole('button', { name: 'Delete ticket' })).toBeVisible();
 });

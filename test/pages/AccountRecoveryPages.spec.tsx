@@ -65,7 +65,10 @@ describe('public account recovery pages', () => {
         const user = userEvent.setup();
         renderAt('/forgot-password', <PasswordResetRequestPage />);
 
-        await user.type(screen.getByLabelText('Email address'), '  ALICE@Example.org  ');
+        const email = screen.getByLabelText('Email address');
+        expect(email).toHaveClass('p-inputtext');
+        expect(email).toHaveAttribute('type', 'email');
+        await user.type(email, '  ALICE@Example.org  ');
         await user.click(screen.getByRole('button', { name: 'Send reset email' }));
 
         expect(mocks.requestPasswordReset).toHaveBeenCalledWith('alice@example.org');
@@ -76,8 +79,15 @@ describe('public account recovery pages', () => {
         const user = userEvent.setup();
         renderAt('/reset-password?token=reset-token', <PasswordResetConfirmationPage />);
 
-        await user.type(screen.getByLabelText('New password'), 'new correct horse battery staple');
-        await user.type(screen.getByLabelText('Confirm new password'), 'new correct horse battery staple');
+        const newPassword = screen.getByLabelText('New password');
+        const confirmPassword = screen.getByLabelText('Confirm new password');
+        expect(newPassword).toHaveClass('p-inputtext');
+        expect(confirmPassword).toHaveClass('p-inputtext');
+        expect(newPassword).toHaveAttribute('type', 'password');
+        expect(confirmPassword).toHaveAttribute('type', 'password');
+
+        await user.type(newPassword, 'new correct horse battery staple');
+        await user.type(confirmPassword, 'new correct horse battery staple');
         await user.click(screen.getByRole('button', { name: 'Change password' }));
 
         expect(mocks.confirmPasswordReset).toHaveBeenCalledWith('reset-token', 'new correct horse battery staple');

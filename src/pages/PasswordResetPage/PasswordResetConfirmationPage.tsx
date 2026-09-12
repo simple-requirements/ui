@@ -1,4 +1,5 @@
 import { Button } from 'primereact/button';
+import { InputText } from 'primereact/inputtext';
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 
@@ -8,6 +9,10 @@ import { LOGIN_ROUTE } from '@/auth/authRoutes';
 
 import '@/pages/PublicAccountPage/PublicAccountPage.scss';
 
+/**
+ * Renders the password-reset confirmation form for a reset token.
+ * @returns Password-reset confirmation page.
+ */
 export function PasswordResetConfirmationPage() {
     const [searchParams] = useSearchParams();
     const token = searchParams.get('token')?.trim() ?? '';
@@ -73,7 +78,7 @@ export function PasswordResetConfirmationPage() {
                                 void submit();
                             }}>
                             <label htmlFor='new-password'>New password</label>
-                            <input
+                            <InputText
                                 id='new-password'
                                 name='new-password'
                                 type='password'
@@ -87,7 +92,7 @@ export function PasswordResetConfirmationPage() {
                             />
                             <small>Use between 15 and 128 characters.</small>
                             <label htmlFor='confirm-new-password'>Confirm new password</label>
-                            <input
+                            <InputText
                                 id='confirm-new-password'
                                 name='confirm-password'
                                 type='password'

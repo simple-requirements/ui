@@ -47,5 +47,6 @@ describe('CategoryDetailsPanel', () => {
         expect(screen.getByText('AUTH')).toBeInTheDocument();
         expect(screen.getByText('FR')).toBeInTheDocument();
         expect(screen.getByText('3')).toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'Edit' })).not.toBeInTheDocument();
     });
 });

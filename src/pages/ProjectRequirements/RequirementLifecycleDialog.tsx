@@ -8,6 +8,8 @@ export type RequirementLifecycleDialogProps = Readonly<{
     visible: boolean;
     title: string;
     reasonRequired?: boolean;
+    reasonLabel?: string;
+    confirmLabel?: string;
     warning?: string;
     confirmationBlocked?: boolean;
     pending?: boolean;
@@ -15,10 +17,17 @@ export type RequirementLifecycleDialogProps = Readonly<{
     onConfirm: (reason?: string) => void | Promise<void>;
 }>;
 
+/**
+ * Renders a modal confirmation dialog for requirement-changing actions.
+ * @param props Dialog labels, state and callbacks.
+ * @returns Requirement confirmation dialog.
+ */
 export function RequirementLifecycleDialog({
     visible,
     title,
     reasonRequired = false,
+    reasonLabel = 'Reason',
+    confirmLabel = 'OK',
     warning,
     confirmationBlocked = false,
     pending = false,
@@ -56,10 +65,11 @@ export function RequirementLifecycleDialog({
                 {warning !== undefined && <p className='requirement-lifecycle-dialog__warning'>{warning}</p>}
                 {reasonRequired && (
                     <>
-                        <label htmlFor={`${fieldPrefix}-reason`}>Reason</label>
+                        <label htmlFor={`${fieldPrefix}-reason`}>{reasonLabel}</label>
                         <textarea
                             id={`${fieldPrefix}-reason`}
                             rows={5}
+                            maxLength={500}
                             value={reason}
                             disabled={pending}
                             onChange={(event) => setReason(event.currentTarget.value)}
@@ -82,7 +92,7 @@ export function RequirementLifecycleDialog({
                     />
                     <Button
                         type='submit'
-                        label='OK'
+                        label={confirmLabel}
                         disabled={!valid || pending || confirmationBlocked}
                         pt={{
                             root: {

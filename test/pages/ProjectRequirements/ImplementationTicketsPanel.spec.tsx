@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom/vitest';
 
 import { cleanup, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import type { Requirement } from '@/api/requirementsApi';
@@ -15,6 +16,11 @@ const approvedRequirement = {
     categoryId: '33333333-3333-4333-8333-333333333333',
     sequenceNumber: 1,
     revisionNumber: 2,
+    changeType: 'content_changed',
+    changeReason: 'Requirement changed.',
+    changedAt: '2026-06-29T11:30:00.000Z',
+    changedByUserId: '66666666-6666-4666-8666-666666666666',
+    changedByDisplayName: 'Backend User',
     visibleKey: 'FR-AUTH-0001',
     status: 'approved',
     description: 'Users can sign in.',
@@ -26,7 +32,6 @@ const approvedRequirement = {
     reviewer: 'Rita Reviewer',
     obsoletedBy: null,
     rejectedAt: null,
-    deletedAt: null,
     approvedAt: '2026-09-01T10:00:00.000Z',
     implementedAt: null,
     obsolescenceReason: null,
@@ -68,19 +73,37 @@ afterEach(() => {
 });
 
 describe('ImplementationTicketsPanel permissions', () => {
-    it('lets a Developer manage tickets on an approved requirement.', () => {
+    it('lets a Developer manage tickets on an approved requirement.', async () => {
         authenticate('developer');
-        render(<ImplementationTicketsPanel requirement={approvedRequirement} />);
+        render(
+            <ImplementationTicketsPanel
+                requirement={approvedRequirement}
+                visible
+                onHide={() => undefined}
+            />,
+        );
 
-        expect(screen.queryByRole('textbox', { name: 'Completed by' })).not.toBeInTheDocument();
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+        expect(screen.getByRole('textbox', { name: 'Completed by' })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: 'Add ticket' })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: 'Edit ticket' })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: 'Delete ticket' })).toBeInTheDocument();
+        expect(screen.getByRole('columnheader', { name: 'Completed by' })).toBeInTheDocument();
+        expect(screen.getByText('Dev Example')).toBeInTheDocument();
+
+        await userEvent.click(screen.getByRole('button', { name: 'Edit ticket' }));
+        expect(screen.getByRole('textbox', { name: 'Completed by' })).toHaveValue('Dev Example');
     });
 
     it('keeps tickets visible but read-only for a Viewer.', () => {
         authenticate('viewer');
-        render(<ImplementationTicketsPanel requirement={approvedRequirement} />);
+        render(
+            <ImplementationTicketsPanel
+                requirement={approvedRequirement}
+                visible
+                onHide={() => undefined}
+            />,
+        );
 
         expect(screen.getByText(/AUTH-42/u)).toBeInTheDocument();
         expect(screen.queryByRole('button', { name: 'Add ticket' })).not.toBeInTheDocument();
@@ -90,7 +113,13 @@ describe('ImplementationTicketsPanel permissions', () => {
 
     it('keeps implemented requirement tickets read-only even for a Developer.', () => {
         authenticate('developer');
-        render(<ImplementationTicketsPanel requirement={{ ...approvedRequirement, status: 'implemented' }} />);
+        render(
+            <ImplementationTicketsPanel
+                requirement={{ ...approvedRequirement, status: 'implemented' }}
+                visible
+                onHide={() => undefined}
+            />,
+        );
 
         expect(screen.getByText(/AUTH-42/u)).toBeInTheDocument();
         expect(screen.queryByRole('button', { name: 'Add ticket' })).not.toBeInTheDocument();

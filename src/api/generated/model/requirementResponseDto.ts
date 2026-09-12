@@ -7,6 +7,7 @@
  */
 import type { ImplementationTicketResponseDto } from './implementationTicketResponseDto';
 import type { RequirementResponseDtoApprovedAt } from './requirementResponseDtoApprovedAt';
+import type { RequirementResponseDtoChangedByUserId } from './requirementResponseDtoChangedByUserId';
 import type { RequirementResponseDtoDeletedAt } from './requirementResponseDtoDeletedAt';
 import type { RequirementResponseDtoDescription } from './requirementResponseDtoDescription';
 import type { RequirementResponseDtoImplementedAt } from './requirementResponseDtoImplementedAt';
@@ -35,6 +36,15 @@ export interface RequirementResponseDto {
     visibleKey: string;
     /** Current revision number of this requirement. */
     revisionNumber: number;
+    /** Reason category for the current revision. */
+    changeType: string;
+    /** Human-readable reason for the current revision. */
+    changeReason: string;
+    /** Date and time when the current revision was created. */
+    changedAt: string;
+    /** @nullable */
+    changedByUserId?: RequirementResponseDtoChangedByUserId;
+    changedByDisplayName: string;
     status: RequirementResponseDtoStatus;
     /** @nullable */
     description?: RequirementResponseDtoDescription;

@@ -83,6 +83,8 @@ function renderActionBar(initialRoute = '/'): ReturnType<typeof render> {
                 handle: { actionBar: 'review' },
             },
             { path: '/projects/:projectId/categories', element, handle: { actionBar: 'categories' } },
+            { path: '/projects/:projectId/categories/:categoryId', element, handle: { actionBar: 'categories' } },
+            { path: '/projects/:projectId/categories/:categoryId/edit', element },
             {
                 path: '/projects/:projectId/categories/new',
                 element,
@@ -96,13 +98,13 @@ function renderActionBar(initialRoute = '/'): ReturnType<typeof render> {
 }
 
 beforeEach(() => {
-    actionBarStore.setState({ requirementKey: '' });
+    actionBarStore.setState(() => ({ requirementKey: '' }));
     mocks.setRequirementKey.mockClear();
 });
 
 afterEach(() => {
     cleanup();
-    actionBarStore.setState({ requirementKey: '' });
+    actionBarStore.setState(() => ({ requirementKey: '' }));
     vi.clearAllMocks();
     clearAuthenticatedSession();
 });
@@ -201,6 +203,14 @@ describe('ActionBar', () => {
             expect(screen.queryByRole('button', { name: 'Obsolete' })).not.toBeInTheDocument();
         });
 
+        it('does not show Obsolete for draft requirements.', () => {
+            setMockReviewActionRequirement('draft');
+
+            renderActionBar('/projects/project-alpha/requirements/requirement-alpha');
+
+            expect(screen.queryByRole('button', { name: 'Obsolete' })).not.toBeInTheDocument();
+        });
+
         it.each<RequirementStatus>(['approved', 'implemented'])(
             'shows Obsolete on detail routes for %s requirements.',
             (status) => {
@@ -228,6 +238,19 @@ describe('ActionBar', () => {
             renderActionBar('/projects/project-alpha/categories');
 
             expect(screen.getByRole('button', { name: 'Create' })).toBeInTheDocument();
+        });
+
+        it('shows Edit in the ActionBar on category detail routes.', () => {
+            renderActionBar('/projects/project-alpha/categories/category-alpha');
+
+            expect(screen.getByRole('button', { name: 'Edit' })).toBeInTheDocument();
+        });
+
+        it('shows Tickets for an approved requirement when ticket management is permitted.', () => {
+            setMockReviewActionRequirement('approved');
+            renderActionBar('/projects/project-alpha/requirements/requirement-alpha');
+
+            expect(screen.getByRole('button', { name: 'Tickets' })).toBeInTheDocument();
         });
 
         it('hides requirement lookup on category routes.', () => {
@@ -272,6 +295,17 @@ describe('ActionBar', () => {
         await user.click(screen.getByRole('button', { name: 'Create' }));
 
         expect(screen.getByLabelText('Current route')).toHaveTextContent('/projects/project-alpha/categories/new');
+    });
+
+    it('navigates from a category detail route to category edit mode.', async () => {
+        const user = userEvent.setup();
+
+        renderActionBar('/projects/project-alpha/categories/category-alpha');
+        await user.click(screen.getByRole('button', { name: 'Edit' }));
+
+        expect(screen.getByLabelText('Current route')).toHaveTextContent(
+            '/projects/project-alpha/categories/category-alpha/edit',
+        );
     });
 
     it('hides requirement mutation actions for a Viewer while preserving lookup.', () => {

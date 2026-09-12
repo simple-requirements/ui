@@ -6,9 +6,7 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export type ClearDeletedRequirementsParams = {
-    /**
-     * Required to clear the recycle bin.
-     */
-    deleted?: string;
-};
+/**
+ * @nullable
+ */
+export type RequirementResponseDtoChangedByUserId = { [key: string]: unknown } | null;

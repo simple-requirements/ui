@@ -8,6 +8,7 @@ import type { AccountRole, UserStatus } from "@/auth/authTypes";
 import { LoadableContent } from "@/components/Feedback/LoadableContent";
 import { UserRoleControl } from "@/pages/Administration/UserRoleControl";
 import { UserStatusControl } from "@/pages/Administration/UserStatusControl";
+import { isSessionActive } from "@/pages/Administration/sessionStatus";
 import { formatDateTime } from "@/utils/displayFormatters";
 
 export type UserDetailsProps = Readonly<{
@@ -38,9 +39,7 @@ export function UserDetails({
   onRevokeSession,
   onRevokeAllSessions,
 }: UserDetailsProps) {
-  const activeSessions = sessions.filter(
-    (session) => session.revokedAt === null,
-  );
+  const activeSessions = sessions.filter((session) => isSessionActive(session));
   return (
     <section
       className="user-administration__details"
@@ -101,10 +100,10 @@ export function UserDetails({
       <LoadableContent
         loading={sessionsLoading}
         error={sessionsError}
-        empty={sessions.length === 0}
+        empty={activeSessions.length === 0}
         loadingMessage="Loading sessions …"
         errorMessage="Sessions could not be loaded."
-        emptyMessage="No sessions have been recorded for this user."
+        emptyMessage="This user is not currently logged in."
       >
         <table className="user-administration__table">
           <caption>Sessions for {user.displayName}</caption>
@@ -117,22 +116,18 @@ export function UserDetails({
             </tr>
           </thead>
           <tbody>
-            {sessions.map((session) => (
+            {activeSessions.map((session) => (
               <tr key={session.id}>
                 <td>{formatDateTime(session.createdAt)}</td>
                 <td>{formatDateTime(session.lastActivityAt)}</td>
-                <td>
-                  {session.revokedAt === null
-                    ? "Active"
-                    : `Revoked ${formatDateTime(session.revokedAt)}`}
-                </td>
+                <td>Logged in</td>
                 <td>
                   <Button
                     type="button"
                     text
                     severity="danger"
                     label="Revoke"
-                    disabled={pending || session.revokedAt !== null}
+                    disabled={pending}
                     onClick={() => onRevokeSession(session.id)}
                   />
                 </td>

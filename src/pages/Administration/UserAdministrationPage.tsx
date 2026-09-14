@@ -1,22 +1,19 @@
-import { useState } from "react";
+import { useParams } from "react-router";
 
 import { LoadableContent } from "@/components/Feedback/LoadableContent";
 import { UserDetails } from "@/pages/Administration/UserDetails";
 import { UserList } from "@/pages/Administration/UserList";
 import { useUserAdministration } from "@/pages/Administration/useUserAdministration";
+import { useUserPresence } from "@/pages/Administration/useUserPresence";
 
 import "@/pages/Administration/UserAdministrationPage.scss";
 
-/**
- * Renders user, role, account-status, and session administration in the Administrator workspace.
- * @returns User and session administration page.
- */
+/** Renders the Administrator user overview or one selected user's account/session details. */
 export function UserAdministrationPage() {
-  const [selectedUserId, setSelectedUserId] = useState<string>();
-  const administration = useUserAdministration(selectedUserId);
-  const selectedUser = administration.users.find(
-    (user) => user.id === selectedUserId,
-  );
+  const { userId } = useParams<{ userId?: string }>();
+  const administration = useUserAdministration(userId);
+  const presenceByUserId = useUserPresence(administration.users);
+  const selectedUser = administration.users.find((user) => user.id === userId);
 
   return (
     <section
@@ -27,6 +24,7 @@ export function UserAdministrationPage() {
         <p className="user-administration__eyebrow">Administration</p>
         <h1 id="user-administration-title">Users &amp; Sessions</h1>
       </header>
+
       <LoadableContent
         loading={administration.usersLoading}
         error={administration.usersError}
@@ -35,41 +33,47 @@ export function UserAdministrationPage() {
         errorMessage="Users could not be loaded."
         emptyMessage="No users are available."
       >
-        <div className="user-administration__layout">
+        {userId === undefined ? (
           <UserList
             users={administration.users}
-            selectedUserId={selectedUserId}
-            onSelect={setSelectedUserId}
+            presenceByUserId={presenceByUserId}
+            pending={administration.mutationPending}
+            onChangeRole={(user, role) =>
+              administration.changeRole({ user, role })
+            }
+            onChangeStatus={(user, status) =>
+              administration.changeStatus({ user, status })
+            }
+            onRevokeAllSessions={administration.revokeAllSessions}
           />
-          {selectedUser === undefined ? (
-            <p className="user-administration__selection">
-              Select a user to manage the account and sessions.
-            </p>
-          ) : (
-            <UserDetails
-              user={selectedUser}
-              sessions={administration.sessions}
-              sessionsLoading={administration.sessionsLoading}
-              sessionsError={administration.sessionsError}
-              pending={administration.mutationPending}
-              onChangeRole={(role) =>
-                administration.changeRole({ user: selectedUser, role })
-              }
-              onChangeStatus={(status) =>
-                administration.changeStatus({ user: selectedUser, status })
-              }
-              onRevokeSession={(sessionId) =>
-                administration.revokeSession({
-                  userId: selectedUser.id,
-                  sessionId,
-                })
-              }
-              onRevokeAllSessions={() =>
-                administration.revokeAllSessions(selectedUser.id)
-              }
-            />
-          )}
-        </div>
+        ) : selectedUser === undefined ? (
+          <p role="alert" className="user-administration__selection">
+            The selected user could not be found.
+          </p>
+        ) : (
+          <UserDetails
+            user={selectedUser}
+            sessions={administration.sessions}
+            sessionsLoading={administration.sessionsLoading}
+            sessionsError={administration.sessionsError}
+            pending={administration.mutationPending}
+            onChangeRole={(role) =>
+              administration.changeRole({ user: selectedUser, role })
+            }
+            onChangeStatus={(status) =>
+              administration.changeStatus({ user: selectedUser, status })
+            }
+            onRevokeSession={(sessionId) =>
+              administration.revokeSession({
+                userId: selectedUser.id,
+                sessionId,
+              })
+            }
+            onRevokeAllSessions={() =>
+              administration.revokeAllSessions(selectedUser.id)
+            }
+          />
+        )}
       </LoadableContent>
     </section>
   );

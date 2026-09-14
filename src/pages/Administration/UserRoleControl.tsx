@@ -24,9 +24,7 @@ export function UserRoleControl({
   pending,
   onChangeRole,
 }: UserRoleControlProps) {
-  const roleLocked =
-    user.status === "active" ||
-    (user.status === "deactivated" && user.role !== null);
+  const roleLocked = user.status === "active";
 
   return (
     <label

@@ -22,7 +22,7 @@ When(
 );
 
 When("I select the Administrator user", async ({ page }) => {
-  await page.getByRole("button", { name: /Administrator/iu }).click();
+  await page.getByRole("link", { name: "Administrator", exact: true }).click();
 });
 
 Then("the selected user sessions should be visible", async ({ page }) => {

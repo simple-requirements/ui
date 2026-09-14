@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 
 import { cleanup, render, screen } from "@testing-library/react";
+import { MemoryRouter, Route, Routes } from "react-router";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -61,21 +62,28 @@ function administrationState() {
   };
 }
 
+function renderPage(initialEntry = "/admin/projects") {
+  return render(
+    <MemoryRouter initialEntries={[initialEntry]}>
+      <Routes>
+        <Route
+          path="/admin/projects/:projectId?"
+          element={<AdministratorProjectsPage />}
+        />
+      </Routes>
+    </MemoryRouter>,
+  );
+}
+
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
 });
 
 describe("AdministratorProjectsPage", () => {
-  it("shows only administrative project summary data and settings", async () => {
+  it("shows only administrative project summary data and settings", () => {
     mocks.useAdministratorProjects.mockReturnValue(administrationState());
-    const interaction = userEvent.setup();
-
-    render(<AdministratorProjectsPage />);
-
-    await interaction.click(
-      screen.getByRole("button", { name: /Project Alpha/u }),
-    );
+    renderPage(`/admin/projects/${project.id}`);
 
     expect(
       screen.getByRole("heading", { name: "Project Alpha" }),
@@ -93,10 +101,7 @@ describe("AdministratorProjectsPage", () => {
     mocks.useAdministratorProjects.mockReturnValue(state);
     const interaction = userEvent.setup();
 
-    render(<AdministratorProjectsPage />);
-    await interaction.click(
-      screen.getByRole("button", { name: /Project Alpha/u }),
-    );
+    renderPage(`/admin/projects/${project.id}`);
     await interaction.selectOptions(
       screen.getByLabelText("User"),
       "33333333-3333-4333-8333-333333333333",
@@ -115,7 +120,7 @@ describe("AdministratorProjectsPage", () => {
     mocks.useAdministratorProjects.mockReturnValue(administrationState());
     const interaction = userEvent.setup();
 
-    render(<AdministratorProjectsPage />);
+    renderPage();
     await interaction.click(
       screen.getByRole("button", { name: "New project" }),
     );

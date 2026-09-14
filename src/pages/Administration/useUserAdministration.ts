@@ -20,7 +20,7 @@ import { showToastMessage } from "@/stores/toastStore";
  * @param userId Selected user identifier, when available.
  * @returns Stable React Query key for the user's sessions.
  */
-function userSessionsQueryKey(userId: string | undefined) {
+export function userSessionsQueryKey(userId: string | undefined) {
   return ["administration", "users", userId, "sessions"] as const;
 }
 

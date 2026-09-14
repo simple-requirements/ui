@@ -2,6 +2,14 @@ export const LOGIN_ROUTE = "/login";
 export const ADMINISTRATOR_USERS_ROUTE = "/admin/users";
 export const ADMINISTRATOR_PROJECTS_ROUTE = "/admin/projects";
 
+export function getAdministratorUserRoute(userId: string): string {
+  return `${ADMINISTRATOR_USERS_ROUTE}/${encodeURIComponent(userId)}`;
+}
+
+export function getAdministratorProjectRoute(projectId: string): string {
+  return `${ADMINISTRATOR_PROJECTS_ROUTE}/${encodeURIComponent(projectId)}`;
+}
+
 export type LoginLocationState = Readonly<{
   returnTo?: string;
   reason?: "session-expired";

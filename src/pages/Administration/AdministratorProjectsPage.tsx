@@ -1,10 +1,15 @@
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router";
 
 import type { AdministratorProjectSummary } from "@/api/adminProjectsApi";
 import type { UserAdministrationResponse } from "@/api/authApi";
 import { ProjectDialog } from "@/components/RootLayout/Sidebar/ProjectDialog";
+import {
+  ADMINISTRATOR_PROJECTS_ROUTE,
+  getAdministratorProjectRoute,
+} from "@/auth/authRoutes";
 import { projectRoleLabel } from "@/auth/projectRoleMetadata";
 import { useAdministratorProjects } from "@/pages/Administration/useAdministratorProjects";
 
@@ -98,29 +103,34 @@ function MembershipAdministration({
       {usersLoading ? (
         <p>Loading users …</p>
       ) : (
-      <div className="administrator-projects__membership-form">
-        <label htmlFor="administrator-project-member">User</label>
-        <select
-          id="administrator-project-member"
-          value={selectedUserId}
-          disabled={pending || availableUsers.length === 0}
-          onChange={(event) => setSelectedUserId(event.currentTarget.value)}
-        >
-          <option value="">Select a user</option>
-          {availableUsers.map((user) => (
-            <option key={user.id} value={user.id}>
-              {user.displayName} (@{user.username}) —{" "}
-              {projectRoleLabel(user.role as Exclude<typeof user.role, null | "administrator">)}
-            </option>
-          ))}
-        </select>
-        <Button
-          type="button"
-          label="Add membership"
-          disabled={pending || selectedUserId.length === 0}
-          onClick={() => void addSelectedMembership()}
-        />
-      </div>
+        <div className="administrator-projects__membership-form">
+          <label htmlFor="administrator-project-member">User</label>
+          <select
+            id="administrator-project-member"
+            value={selectedUserId}
+            disabled={pending || availableUsers.length === 0}
+            onChange={(event) => setSelectedUserId(event.currentTarget.value)}
+          >
+            <option value="">Select a user</option>
+            {availableUsers.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.displayName} (@{user.username}) —{" "}
+                {projectRoleLabel(
+                  user.role as Exclude<
+                    typeof user.role,
+                    null | "administrator"
+                  >,
+                )}
+              </option>
+            ))}
+          </select>
+          <Button
+            type="button"
+            label="Add membership"
+            disabled={pending || selectedUserId.length === 0}
+            onClick={() => void addSelectedMembership()}
+          />
+        </div>
       )}
 
       {project.memberships.length === 0 ? (
@@ -169,7 +179,8 @@ function MembershipAdministration({
  */
 export function AdministratorProjectsPage() {
   const administration = useAdministratorProjects();
-  const [selectedProjectId, setSelectedProjectId] = useState<string>();
+  const { projectId: selectedProjectId } = useParams<{ projectId?: string }>();
+  const navigate = useNavigate();
   const [projectDialog, setProjectDialog] = useState<ProjectDialogState>();
   const [deleteProject, setDeleteProject] =
     useState<AdministratorProjectSummary>();
@@ -177,20 +188,6 @@ export function AdministratorProjectsPage() {
     (project) => project.id === selectedProjectId,
   );
   const [ticketUrlTemplate, setTicketUrlTemplate] = useState("");
-
-  useEffect(() => {
-    if (
-      selectedProjectId !== undefined &&
-      selectedProject === undefined &&
-      !administration.projectsLoading
-    ) {
-      setSelectedProjectId(undefined);
-    }
-  }, [
-    administration.projectsLoading,
-    selectedProject,
-    selectedProjectId,
-  ]);
 
   useEffect(() => {
     setTicketUrlTemplate(selectedProject?.ticketUrlTemplate ?? "");
@@ -207,17 +204,15 @@ export function AdministratorProjectsPage() {
     }
 
     const created = await administration.createProject(name);
-    setSelectedProjectId(created.id);
     setProjectDialog(undefined);
+    void navigate(getAdministratorProjectRoute(created.id));
   }
 
   async function confirmDelete(): Promise<void> {
     if (deleteProject === undefined) return;
     await administration.deleteProject(deleteProject.id);
-    if (selectedProjectId === deleteProject.id) {
-      setSelectedProjectId(undefined);
-    }
     setDeleteProject(undefined);
+    void navigate(ADMINISTRATOR_PROJECTS_ROUTE);
   }
 
   async function saveTicketUrlTemplate(): Promise<void> {
@@ -259,39 +254,17 @@ export function AdministratorProjectsPage() {
       ) : administration.projectsLoading ? (
         <p>Loading projects …</p>
       ) : (
-        <div className="administrator-projects__layout">
-          <section
-            className="administrator-projects__list"
-            aria-label="Administrative project list"
-          >
-            <h2>All projects</h2>
-            {administration.projects.length === 0 ? (
-              <p>No projects are available.</p>
-            ) : (
-              administration.projects.map((project) => (
-                <button
-                  key={project.id}
-                  type="button"
-                  className={[
-                    "administrator-projects__project-button",
-                    project.id === selectedProjectId
-                      ? "administrator-projects__project-button--selected"
-                      : "",
-                  ]
-                    .filter(Boolean)
-                    .join(" ")}
-                  onClick={() => setSelectedProjectId(project.id)}
-                >
-                  <span>{project.name}</span>
-                  <span>{project.requirementCount} requirements</span>
-                </button>
-              ))
-            )}
-          </section>
-
-          {selectedProject === undefined ? (
+        <div className="administrator-projects__workspace">
+          {selectedProjectId === undefined ? (
             <section className="administrator-projects__details">
-              <p>Select a project to manage its administration settings.</p>
+              <p>
+                Select a project from the sidebar to view and manage its
+                administrative metadata.
+              </p>
+            </section>
+          ) : selectedProject === undefined ? (
+            <section className="administrator-projects__details">
+              <p role="alert">The selected project could not be found.</p>
             </section>
           ) : (
             <div>

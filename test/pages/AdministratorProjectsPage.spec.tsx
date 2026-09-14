@@ -29,8 +29,6 @@ const project = {
     },
   ],
   ticketUrlTemplate: null,
-  createdAt: "2026-09-01T09:00:00.000Z",
-  updatedAt: "2026-09-01T09:00:00.000Z",
 };
 
 function administrationState() {
@@ -84,9 +82,7 @@ describe("AdministratorProjectsPage", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("Authentication")).toBeInTheDocument();
     expect(screen.getByText("3")).toBeInTheDocument();
-    expect(
-      screen.getByLabelText("Ticket URL template"),
-    ).toBeInTheDocument();
+    expect(screen.getByLabelText("Ticket URL template")).toBeInTheDocument();
     expect(
       screen.getByRole("table", { name: "Memberships for Project Alpha" }),
     ).toBeInTheDocument();

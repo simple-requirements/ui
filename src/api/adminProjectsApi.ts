@@ -33,8 +33,6 @@ export const administratorProjectSummarySchema = z.object({
     .nullable()
     .optional()
     .transform((value) => value ?? null),
-  createdAt: z.iso.datetime(),
-  updatedAt: z.iso.datetime(),
 });
 
 const administratorProjectSummariesSchema = z.array(
@@ -56,8 +54,6 @@ export type AdministratorProjectSummary = Readonly<{
   requirementCount: number;
   memberships: readonly AdministratorProjectMembership[];
   ticketUrlTemplate: string | null;
-  createdAt: string;
-  updatedAt: string;
 }>;
 
 function parseProject(data: unknown): AdministratorProjectSummary {

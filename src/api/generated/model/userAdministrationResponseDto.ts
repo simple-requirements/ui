@@ -6,7 +6,7 @@
  * OpenAPI spec version: 0.0.1
  */
 import type { UserAdministrationResponseDtoEmailVerifiedAt } from './userAdministrationResponseDtoEmailVerifiedAt';
-import type { UserAdministrationResponseDtoGlobalRolesItem } from './userAdministrationResponseDtoGlobalRolesItem';
+import type { UserAdministrationResponseDtoRole } from './userAdministrationResponseDtoRole';
 import type { UserAdministrationResponseDtoStatus } from './userAdministrationResponseDtoStatus';
 
 export interface UserAdministrationResponseDto {
@@ -16,8 +16,9 @@ export interface UserAdministrationResponseDto {
     displayName: string;
     status: UserAdministrationResponseDtoStatus;
     /** @nullable */
+    role: UserAdministrationResponseDtoRole;
+    /** @nullable */
     emailVerifiedAt: UserAdministrationResponseDtoEmailVerifiedAt;
-    globalRoles: UserAdministrationResponseDtoGlobalRolesItem[];
     createdAt: string;
     updatedAt: string;
 }

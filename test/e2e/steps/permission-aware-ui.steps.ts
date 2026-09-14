@@ -22,7 +22,6 @@ import {
     setProjectMembership,
     updateRequirementStatus,
     signInToRealBackend,
-    type ProjectRole,
     type Requirement,
 } from './authenticated-test-backend';
 
@@ -65,18 +64,6 @@ function configuredPrincipal(role: TestRole): Readonly<{ token: string; userId: 
     }
 }
 
-function roleMembership(role: TestRole): readonly ProjectRole[] {
-    switch (role) {
-        case 'Viewer':
-            return ['viewer'];
-        case 'Developer':
-            return ['developer'];
-        case 'Requirements Engineer':
-            return ['requirements_engineer'];
-        case 'Administrator':
-            return [];
-    }
-}
 
 Given('the permission-aware frontend signs me in as {string}', async ({ page }, roleName: string) => {
     const roles: readonly TestRole[] = ['Viewer', 'Developer', 'Requirements Engineer', 'Administrator'];
@@ -106,7 +93,7 @@ Given('the permission-aware frontend signs me in as {string}', async ({ page }, 
     await removeProjectMembership(hiddenProject.id, E2E_ADMIN_USER_ID);
 
     if (role !== 'Administrator') {
-        await setProjectMembership(project.id, principal.userId, roleMembership(role));
+        await setProjectMembership(project.id, principal.userId);
         await removeProjectMembership(hiddenProject.id, principal.userId);
     }
 
@@ -132,7 +119,7 @@ Then('requirement contents should not be visible', async ({ page }) => {
     const { requirement } = requireContext();
 
     await expect(page.getByRole('heading', { name: requirement.visibleKey })).toHaveCount(0);
-    await expect(page.getByText('Requirement could not be found in the project requirements list.')).toBeVisible();
+    await expect(page).toHaveURL(/\/admin\/(users|projects)$/u);
 });
 
 Then('only the assigned permission test project should be visible', async ({ page }) => {
@@ -144,8 +131,8 @@ Then('project creation should not be visible', async ({ page }) => {
     await expect(page.getByRole('button', { name: 'New project' })).toHaveCount(0);
 });
 
-Then('project creation should be visible', async ({ page }) => {
-    await expect(page.getByRole('button', { name: 'New project' })).toBeVisible();
+Then('Administrator project administration navigation should be visible', async ({ page }) => {
+    await expect(page.getByRole('link', { name: 'Projects' })).toBeVisible();
 });
 
 Then('requirement mutation actions should not be visible', async ({ page }) => {

@@ -127,7 +127,7 @@ export const toastMessages = {
     projectMembershipSaved: (displayName: string): AppToastMessage => ({
         severity: 'success',
         summary: 'Project membership saved',
-        detail: `Project roles for ${displayName} have been saved.`,
+        detail: `${displayName} has been added to the project using the account role.`,
         life: successLife,
     }),
     projectMembershipRemoved: (displayName: string): AppToastMessage => ({

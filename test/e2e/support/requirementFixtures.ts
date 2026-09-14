@@ -1,5 +1,6 @@
+import { E2E_REQUIREMENTS_ENGINEER_ACCESS_TOKEN } from './e2eEnv';
 import type { ImplementationTicket, Requirement } from './e2eTypes';
-import { jsonRequest, requestJson } from './realBackendClient';
+import { jsonRequestForToken, requestJson } from './realBackendClient';
 
 export async function createTestRequirement(
     projectId: string,
@@ -14,7 +15,7 @@ export async function createTestRequirement(
 ): Promise<Requirement> {
     return requestJson<Requirement>(
         `/projects/${encodeURIComponent(projectId)}/requirements`,
-        jsonRequest('POST', requirementData),
+        jsonRequestForToken(E2E_REQUIREMENTS_ENGINEER_ACCESS_TOKEN, 'POST', requirementData),
         201,
     );
 }
@@ -26,7 +27,7 @@ export async function updateRequirementStatus(
 ): Promise<Requirement> {
     return requestJson<Requirement>(
         `/projects/${encodeURIComponent(projectId)}/requirements/${encodeURIComponent(requirementId)}`,
-        jsonRequest('PATCH', data),
+        jsonRequestForToken(E2E_REQUIREMENTS_ENGINEER_ACCESS_TOKEN, 'PATCH', data),
         200,
     );
 }
@@ -38,7 +39,11 @@ export async function createImplementationTicket(
 ): Promise<ImplementationTicket> {
     return requestJson<ImplementationTicket>(
         `/projects/${encodeURIComponent(projectId)}/requirements/${encodeURIComponent(requirementId)}/implementation-tickets`,
-        jsonRequest('POST', { ticketId, completedAt: '2026-09-02', completedBy: 'Requirements Engineer' }),
+        jsonRequestForToken(E2E_REQUIREMENTS_ENGINEER_ACCESS_TOKEN, 'POST', {
+            ticketId,
+            completedAt: '2026-09-02',
+            completedBy: 'Requirements Engineer',
+        }),
         201,
     );
 }

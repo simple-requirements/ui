@@ -5,11 +5,11 @@
  * HTTP API for the Requirements Management app.
  * OpenAPI spec version: 0.0.1
  */
-import type { ProjectMembershipResponseDtoRolesItem } from './projectMembershipResponseDtoRolesItem';
+import type { ProjectMembershipResponseDtoRole } from './projectMembershipResponseDtoRole';
 
 export interface ProjectMembershipResponseDto {
     userId: string;
     username: string;
     displayName: string;
-    roles: ProjectMembershipResponseDtoRolesItem[];
+    role: ProjectMembershipResponseDtoRole;
 }

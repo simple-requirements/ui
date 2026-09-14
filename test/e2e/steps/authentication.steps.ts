@@ -1,27 +1,44 @@
 import { expect } from '@playwright/test';
 import { createBdd, test } from 'playwright-bdd';
-import { openAuthenticatedRoute, requireBackendAvailable, signInToRealBackend } from './authenticated-test-backend';
+import {
+    createTestProject,
+    E2E_REQUIREMENTS_ENGINEER_LOGIN_USERNAME,
+    openAuthenticatedRoute,
+    requireBackendAvailable,
+    resetTestBackend,
+    signInToRealBackend,
+} from './authenticated-test-backend';
 
 const { Given, When, Then } = createBdd(test);
 
-const PROTECTED_ROUTE = '/projects/11111111-1111-4111-8111-111111111111';
+const DEFAULT_PROTECTED_ROUTE = '/projects/11111111-1111-4111-8111-111111111111';
+let protectedRoute = DEFAULT_PROTECTED_ROUTE;
 let authenticatedRequestObserved = false;
 let logoutRequestObserved = false;
 
 function protectedRouteExpression(): RegExp {
-    return new RegExp(`${PROTECTED_ROUTE.replaceAll('/', '\\/')}$`, 'u');
+    return new RegExp(`${protectedRoute.replaceAll('/', '\\/')}$`, 'u');
+}
+
+async function prepareProjectScopedProtectedRoute(): Promise<void> {
+    await resetTestBackend();
+    const project = await createTestProject('Authentication Route Project');
+    protectedRoute = `/projects/${project.id}`;
 }
 
 Given('the frontend authentication API accepts valid credentials', async () => {
     await requireBackendAvailable();
+    await prepareProjectScopedProtectedRoute();
 });
 
 Given('initial Administrator bootstrap is complete for frontend authentication', async () => {
+    protectedRoute = DEFAULT_PROTECTED_ROUTE;
     await requireBackendAvailable();
 });
 
 Given('I am signed in through the frontend', async ({ page }) => {
-    await openAuthenticatedRoute(page, PROTECTED_ROUTE);
+    await prepareProjectScopedProtectedRoute();
+    await openAuthenticatedRoute(page, protectedRoute, E2E_REQUIREMENTS_ENGINEER_LOGIN_USERNAME);
     authenticatedRequestObserved = true;
     logoutRequestObserved = false;
 });
@@ -29,11 +46,11 @@ Given('I am signed in through the frontend', async ({ page }) => {
 When('I navigate to a protected frontend route', async ({ page }) => {
     authenticatedRequestObserved = false;
     logoutRequestObserved = false;
-    await page.goto(PROTECTED_ROUTE);
+    await page.goto(protectedRoute);
 });
 
 When('I sign in through the frontend', async ({ page }) => {
-    await signInToRealBackend(page);
+    await signInToRealBackend(page, E2E_REQUIREMENTS_ENGINEER_LOGIN_USERNAME);
     authenticatedRequestObserved = true;
 });
 

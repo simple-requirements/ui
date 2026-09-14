@@ -6,10 +6,15 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export type SetProjectMembershipDtoRolesItem =
-    (typeof SetProjectMembershipDtoRolesItem)[keyof typeof SetProjectMembershipDtoRolesItem];
+/**
+ * @nullable
+ */
+export type UserAdministrationResponseDtoRole =
+    | (typeof UserAdministrationResponseDtoRole)[keyof typeof UserAdministrationResponseDtoRole]
+    | null;
 
-export const SetProjectMembershipDtoRolesItem = {
+export const UserAdministrationResponseDtoRole = {
+    administrator: 'administrator',
     requirements_engineer: 'requirements_engineer',
     developer: 'developer',
     viewer: 'viewer',

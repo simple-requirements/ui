@@ -1,66 +1,53 @@
-import '@testing-library/jest-dom/vitest';
+import "@testing-library/jest-dom/vitest";
 
-import { cleanup, render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
 
-import { ActionButton } from '@/components/RootLayout/Sidebar/ActionButton';
+import { ActionButton } from "@/components/RootLayout/Sidebar/ActionButton";
 
-afterEach(() => {
-    cleanup();
-    vi.clearAllMocks();
-});
+describe("ActionButton", () => {
+  it("renders the synchronize action.", () => {
+    render(<ActionButton />);
 
-describe('ActionButton', () => {
-    describe('renders', () => {
-        it('the synchronize and New project buttons.', () => {
-            render(<ActionButton />);
+    expect(
+      screen.getByRole("button", { name: /synchronize projects/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /new project/i }),
+    ).not.toBeInTheDocument();
+  });
 
-            expect(screen.getByRole('button', { name: /synchronize projects/i })).toBeInTheDocument();
-            expect(screen.getByRole('button', { name: /new project/i })).toBeInTheDocument();
-        });
+  it("disables synchronization when requested.", () => {
+    render(<ActionButton disabled />);
 
-        it('disabled action buttons.', () => {
-            render(<ActionButton disabled />);
+    expect(
+      screen.getByRole("button", { name: /synchronize projects/i }),
+    ).toBeDisabled();
+  });
 
-            expect(screen.getByRole('button', { name: /synchronize projects/i })).toBeDisabled();
-            expect(screen.getByRole('button', { name: /new project/i })).toBeDisabled();
-        });
-    });
+  it("calls onSynchronize when the synchronize button is clicked.", async () => {
+    const onSynchronize = vi.fn();
+    const user = userEvent.setup();
+    render(<ActionButton onSynchronize={onSynchronize} />);
 
-    describe('calls', () => {
-        it('onSynchronize when the synchronize button is clicked.', async () => {
-            const user = userEvent.setup();
-            const onSynchronize = vi.fn();
+    await user.click(
+      screen.getByRole("button", { name: /synchronize projects/i }),
+    );
 
-            render(<ActionButton onSynchronize={onSynchronize} />);
+    expect(onSynchronize).toHaveBeenCalledTimes(1);
+  });
 
-            await user.click(screen.getByRole('button', { name: /synchronize projects/i }));
+  it("can be clicked without a callback.", async () => {
+    const user = userEvent.setup();
+    render(<ActionButton />);
 
-            expect(onSynchronize).toHaveBeenCalledTimes(1);
-        });
+    await user.click(
+      screen.getByRole("button", { name: /synchronize projects/i }),
+    );
 
-        it('onNewProject when the New project button is clicked.', async () => {
-            const user = userEvent.setup();
-            const onNewProject = vi.fn();
-
-            render(<ActionButton onNewProject={onNewProject} />);
-
-            await user.click(screen.getByRole('button', { name: /new project/i }));
-
-            expect(onNewProject).toHaveBeenCalledTimes(1);
-        });
-    });
-
-    it('can be clicked without callbacks.', async () => {
-        const user = userEvent.setup();
-
-        render(<ActionButton />);
-
-        await user.click(screen.getByRole('button', { name: /synchronize projects/i }));
-        await user.click(screen.getByRole('button', { name: /new project/i }));
-
-        expect(screen.getByRole('button', { name: /synchronize projects/i })).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /new project/i })).toBeInTheDocument();
-    });
+    expect(
+      screen.getByRole("button", { name: /synchronize projects/i }),
+    ).toBeEnabled();
+  });
 });

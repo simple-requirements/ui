@@ -16,7 +16,9 @@ type UseQueryMockResult = Readonly<{
     refetch: () => Promise<unknown>;
 }>;
 
-const mocks = vi.hoisted(() => ({ useQuery: vi.fn(), refetch: vi.fn() }));
+const mocks = vi.hoisted(() => ({ useQuery: vi.fn(), refetch: vi.fn(), useIsAdministrator: vi.fn() }));
+
+vi.mock('@/auth/projectPermissions', () => ({ useIsAdministrator: mocks.useIsAdministrator }));
 
 vi.mock('@tanstack/react-query', async (importOriginal) => {
     const actual = await importOriginal<typeof ReactQueryModule>();
@@ -25,6 +27,7 @@ vi.mock('@tanstack/react-query', async (importOriginal) => {
 });
 
 function mockUseQuery(result: Partial<UseQueryMockResult>): void {
+    mocks.useIsAdministrator.mockReturnValue(false);
     mocks.refetch.mockResolvedValue(undefined);
 
     mocks.useQuery.mockReturnValue({
@@ -93,6 +96,17 @@ describe('LoadingOverlay', () => {
             expect(screen.queryByText('SRM is loading ...')).not.toBeInTheDocument();
             expect(screen.queryByText('A network error has occured. Try again.')).not.toBeInTheDocument();
             expect(screen.queryByRole('button', { name: /reload/i })).not.toBeInTheDocument();
+        });
+
+        it('for an Administrator without loading the project-workspace list.', () => {
+            mockUseQuery({ data: undefined, isError: false, isFetching: false });
+            mocks.useIsAdministrator.mockReturnValue(true);
+
+            render(<LoadingOverlay />);
+
+            expect(mocks.useQuery).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }));
+            expect(screen.queryByText('SRM is loading ...')).not.toBeInTheDocument();
+            expect(screen.queryByText('A network error has occured. Try again.')).not.toBeInTheDocument();
         });
     });
 

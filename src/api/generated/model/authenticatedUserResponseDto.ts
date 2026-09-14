@@ -6,7 +6,7 @@
  * OpenAPI spec version: 0.0.1
  */
 import type { AuthenticatedProjectMembershipDto } from './authenticatedProjectMembershipDto';
-import type { AuthenticatedUserResponseDtoGlobalRolesItem } from './authenticatedUserResponseDtoGlobalRolesItem';
+import type { AuthenticatedUserResponseDtoRole } from './authenticatedUserResponseDtoRole';
 import type { AuthenticatedUserResponseDtoStatus } from './authenticatedUserResponseDtoStatus';
 
 export interface AuthenticatedUserResponseDto {
@@ -15,6 +15,6 @@ export interface AuthenticatedUserResponseDto {
     email: string;
     displayName: string;
     status: AuthenticatedUserResponseDtoStatus;
-    globalRoles: AuthenticatedUserResponseDtoGlobalRolesItem[];
+    role: AuthenticatedUserResponseDtoRole;
     projectMemberships?: AuthenticatedProjectMembershipDto[];
 }

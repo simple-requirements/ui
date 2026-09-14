@@ -1,4 +1,4 @@
-import type { ProjectMembership, ProjectRole, Session, UserAdministration } from './e2eTypes';
+import type { ProjectMembership, Session, UserAdministration } from './e2eTypes';
 import {
     authenticatedHeaders,
     jsonRequest,
@@ -72,11 +72,10 @@ export async function listProjectMemberships(projectId: string): Promise<Project
 export async function setProjectMembership(
     projectId: string,
     userId: string,
-    roles: readonly ProjectRole[],
 ): Promise<ProjectMembership> {
     return requestJson<ProjectMembership>(
         `/admin/projects/${encodeURIComponent(projectId)}/memberships/${encodeURIComponent(userId)}`,
-        jsonRequest('PUT', { roles }),
+        { method: 'PUT', headers: authenticatedHeaders() },
         200,
     );
 }

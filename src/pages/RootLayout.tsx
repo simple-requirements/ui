@@ -1,41 +1,47 @@
-import { Outlet } from 'react-router';
+import { useSelector } from "@tanstack/react-store";
+import { Outlet } from "react-router";
 
-import { AppToast } from '@/components/Feedback/AppToast/AppToast';
-import { ActionBar } from '@/components/RootLayout/ActionBar/ActionBar';
-import { LoadingOverlay } from '@/components/RootLayout/LoadingOverlay';
-import { Sidebar } from '@/components/RootLayout/Sidebar/Sidebar';
-import { TabBar } from '@/components/RootLayout/TabBar/TabBar';
+import { isAdministrator } from "@/auth/globalPermissions";
+import { AppToast } from "@/components/Feedback/AppToast/AppToast";
+import { ActionBar } from "@/components/RootLayout/ActionBar/ActionBar";
+import { AdministratorSidebar } from "@/components/RootLayout/AdministratorSidebar/AdministratorSidebar";
+import { LoadingOverlay } from "@/components/RootLayout/LoadingOverlay";
+import { Sidebar } from "@/components/RootLayout/Sidebar/Sidebar";
+import { TabBar } from "@/components/RootLayout/TabBar/TabBar";
+import { authStore } from "@/stores/authStore";
 
-import '@/pages/RootLayout.scss';
+import "@/pages/RootLayout.scss";
 
 /**
- * Renders the authenticated application shell with navigation, actions and content.
+ * Renders the authenticated application shell with role-appropriate navigation and content.
  * @returns Main authenticated application layout.
  */
 export function RootLayout() {
-    return (
-        <main className='root-layout'>
-            <div className='root-layout__tabbar'>
-                <TabBar />
-            </div>
+  const administrator = useSelector(authStore, (state) =>
+    isAdministrator(state.user),
+  );
 
-            <div className='root-layout__sidebar'>
-                <Sidebar />
-            </div>
+  return (
+    <main className="root-layout">
+      <div className="root-layout__tabbar">
+        <TabBar />
+      </div>
 
-            <div className='root-layout__actionbar'>
-                <ActionBar />
-            </div>
+      <div className="root-layout__sidebar">
+        {administrator ? <AdministratorSidebar /> : <Sidebar />}
+      </div>
 
-            <section
-                className='root-layout__content'
-                aria-label='Workspace content'>
-                <Outlet />
-            </section>
+      <div className="root-layout__actionbar">
+        <ActionBar />
+      </div>
 
-            <AppToast />
+      <section className="root-layout__content" aria-label="Workspace content">
+        <Outlet />
+      </section>
 
-            <LoadingOverlay />
-        </main>
-    );
+      <AppToast />
+
+      <LoadingOverlay />
+    </main>
+  );
 }

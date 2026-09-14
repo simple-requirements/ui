@@ -4,6 +4,7 @@ import {
     createTestCategory,
     createTestProject,
     createTestRequirement,
+    E2E_REQUIREMENTS_ENGINEER_LOGIN_USERNAME,
     openAuthenticatedRoute,
     resetTestBackend,
 } from './authenticated-test-backend';
@@ -110,7 +111,7 @@ async function createBackendRequirement(
 }
 
 async function openAuthenticatedApplicationRoute(page: Page, route: string): Promise<void> {
-    await openAuthenticatedRoute(page, route);
+    await openAuthenticatedRoute(page, route, E2E_REQUIREMENTS_ENGINEER_LOGIN_USERNAME);
 }
 
 async function waitUntilApplicationHasLoaded(page: Page): Promise<void> {

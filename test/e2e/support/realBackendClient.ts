@@ -3,14 +3,18 @@ import { expect } from '@playwright/test';
 import { apiUrl, E2E_ACCESS_TOKEN } from './e2eEnv';
 
 export function authenticatedHeaders(headers?: HeadersInit): Headers {
+    return authenticatedHeadersForToken(E2E_ACCESS_TOKEN, headers);
+}
+
+export function authenticatedHeadersForToken(accessToken: string, headers?: HeadersInit): Headers {
     const result = new Headers(headers);
     result.set('Accept', 'application/json');
-    result.set('Authorization', `Bearer ${E2E_ACCESS_TOKEN}`);
+    result.set('Authorization', `Bearer ${accessToken}`);
     return result;
 }
 
-function jsonHeaders(headers?: HeadersInit): Headers {
-    const result = authenticatedHeaders(headers);
+function jsonHeaders(headers?: HeadersInit, accessToken = E2E_ACCESS_TOKEN): Headers {
+    const result = authenticatedHeadersForToken(accessToken, headers);
     result.set('Content-Type', 'application/json');
     return result;
 }
@@ -82,7 +86,15 @@ export async function publicRequestEmpty(
 }
 
 export function jsonRequest(method: 'POST' | 'PATCH' | 'PUT', data: unknown): RequestInit {
-    return { method, headers: jsonHeaders(), body: JSON.stringify(data) };
+    return jsonRequestForToken(E2E_ACCESS_TOKEN, method, data);
+}
+
+export function jsonRequestForToken(
+    accessToken: string,
+    method: 'POST' | 'PATCH' | 'PUT',
+    data: unknown,
+): RequestInit {
+    return { method, headers: jsonHeaders(undefined, accessToken), body: JSON.stringify(data) };
 }
 
 export function publicJsonRequest(method: 'POST' | 'PATCH' | 'PUT', data: unknown): RequestInit {

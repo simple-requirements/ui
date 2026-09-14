@@ -5,8 +5,8 @@
  * HTTP API for the Requirements Management app.
  * OpenAPI spec version: 0.0.1
  */
+import type { UpdateUserRoleDtoRole } from './updateUserRoleDtoRole';
 
-/**
- * @nullable
- */
-export type RequirementResponseDtoDeletedAt = { [key: string]: unknown } | null;
+export interface UpdateUserRoleDto {
+    role: UpdateUserRoleDtoRole;
+}

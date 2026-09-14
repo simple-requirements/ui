@@ -22,6 +22,7 @@ import type {
     CompareRequirementRevisionsParams,
     CreateRequirementDto,
     RequirementResponseDto,
+    RequirementRevisionComparisonDto,
     UpdateRequirementDto,
 } from '../model';
 
@@ -389,10 +390,21 @@ export function useListRequirementRevisions<
     return withQueryKey(query, queryOptions.queryKey);
 }
 
-export type compareRequirementRevisionsResponse200 = { data: void; status: 200 };
+export type compareRequirementRevisionsResponse200 = { data: RequirementRevisionComparisonDto; status: 200 };
+
+export type compareRequirementRevisionsResponse400 = { data: void; status: 400 };
+
+export type compareRequirementRevisionsResponse404 = { data: void; status: 404 };
 
 export type compareRequirementRevisionsResponseSuccess = compareRequirementRevisionsResponse200 & { headers: Headers };
-export type compareRequirementRevisionsResponse = compareRequirementRevisionsResponseSuccess;
+export type compareRequirementRevisionsResponseError = (
+    | compareRequirementRevisionsResponse400
+    | compareRequirementRevisionsResponse404
+) & { headers: Headers };
+
+export type compareRequirementRevisionsResponse =
+    | compareRequirementRevisionsResponseSuccess
+    | compareRequirementRevisionsResponseError;
 
 export const getCompareRequirementRevisionsUrl = (
     projectId: string,
@@ -442,7 +454,7 @@ export const getCompareRequirementRevisionsQueryKey = (
 
 export const getCompareRequirementRevisionsQueryOptions = <
     TData = Awaited<ReturnType<typeof compareRequirementRevisions>>,
-    TError = unknown,
+    TError = void,
 >(
     projectId: string,
     requirementId: string,
@@ -472,11 +484,11 @@ export const getCompareRequirementRevisionsQueryOptions = <
 export type CompareRequirementRevisionsQueryResult = NonNullable<
     Awaited<ReturnType<typeof compareRequirementRevisions>>
 >;
-export type CompareRequirementRevisionsQueryError = unknown;
+export type CompareRequirementRevisionsQueryError = void;
 
 export function useCompareRequirementRevisions<
     TData = Awaited<ReturnType<typeof compareRequirementRevisions>>,
-    TError = unknown,
+    TError = void,
 >(
     projectId: string,
     requirementId: string,
@@ -496,7 +508,7 @@ export function useCompareRequirementRevisions<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useCompareRequirementRevisions<
     TData = Awaited<ReturnType<typeof compareRequirementRevisions>>,
-    TError = unknown,
+    TError = void,
 >(
     projectId: string,
     requirementId: string,
@@ -516,7 +528,7 @@ export function useCompareRequirementRevisions<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useCompareRequirementRevisions<
     TData = Awaited<ReturnType<typeof compareRequirementRevisions>>,
-    TError = unknown,
+    TError = void,
 >(
     projectId: string,
     requirementId: string,
@@ -532,7 +544,7 @@ export function useCompareRequirementRevisions<
 
 export function useCompareRequirementRevisions<
     TData = Awaited<ReturnType<typeof compareRequirementRevisions>>,
-    TError = unknown,
+    TError = void,
 >(
     projectId: string,
     requirementId: string,

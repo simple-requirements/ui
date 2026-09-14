@@ -7,7 +7,6 @@ import {
     getUserById,
     listProjectMemberships,
     openAuthenticatedRoute,
-    removeProjectMembership,
     resetTestBackend,
     setProjectMembership,
     type Project,
@@ -24,8 +23,6 @@ interface MembershipContext {
 
 let context: MembershipContext | undefined;
 
-const projectRoleOrder: readonly ProjectRole[] = ['requirements_engineer', 'developer', 'viewer'];
-
 function requireContext(): MembershipContext {
     if (context === undefined) {
         throw new Error('Project membership test context was not created.');
@@ -33,107 +30,41 @@ function requireContext(): MembershipContext {
     return context;
 }
 
-function roleValue(label: string): ProjectRole {
-    switch (label.trim()) {
-        case 'Requirements Engineer':
-            return 'requirements_engineer';
-        case 'Developer':
-            return 'developer';
-        case 'Viewer':
-            return 'viewer';
-        default:
-            throw new Error(`Unknown project role: ${label}`);
+function userByDisplayName(displayName: string): UserAdministration {
+    const user = requireContext().usersByDisplayName.get(displayName);
+    if (user === undefined) throw new Error(`Unknown user: ${displayName}`);
+    return user;
+}
+
+function expectedProjectRole(user: UserAdministration): ProjectRole {
+    if (user.role === null || user.role === 'administrator') {
+        throw new Error(`${user.displayName} does not have a project-scoped role.`);
     }
-}
-
-function roleLabels(value: string): string[] {
-    return value.split(',').map((label) => label.trim());
-}
-
-function normalizeProjectRoles(roles: readonly ProjectRole[]): ProjectRole[] {
-    return projectRoleOrder.filter((role) => roles.includes(role));
-}
-
-function expectedRoleValues(roles: string): ProjectRole[] {
-    return normalizeProjectRoles(roleLabels(roles).map(roleValue));
-}
-
-function escapeRegExp(value: string): string {
-    return value.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&');
+    return user.role;
 }
 
 function membershipRow(page: Page, displayName: string) {
-    return page
-        .getByRole('row')
-        .filter({ has: page.getByRole('rowheader', { name: new RegExp(`^${escapeRegExp(displayName)}\\s+@`, 'u') }) });
+    return page.getByRole('row').filter({ hasText: displayName });
 }
 
-function currentRolesCell(page: Page, displayName: string) {
-    return membershipRow(page, displayName).getByRole('cell').first();
-}
-
-async function selectMembershipAdministrationProject(page: Page): Promise<void> {
-    const projectSelect = page.getByRole('combobox', { name: 'Project', exact: true });
-
-    await expect(projectSelect).toBeVisible({ timeout: 10_000 });
-    await projectSelect.selectOption(requireContext().project.id);
-    await expect(projectSelect).toHaveValue(requireContext().project.id);
-    await expect(page.getByRole('region', { name: requireContext().project.name })).toBeVisible({ timeout: 10_000 });
-}
-
-async function reopenMembershipAdministration(page: Page): Promise<void> {
-    await openAuthenticatedRoute(page, '/administration/project-memberships');
-    await expect(page).toHaveURL(/\/administration\/project-memberships$/u);
-    await selectMembershipAdministrationProject(page);
-}
-
-async function expectBackendMembershipRoles(displayName: string, roles: readonly ProjectRole[]): Promise<void> {
+async function expectBackendMembershipRole(displayName: string, role: ProjectRole): Promise<void> {
     const user = userByDisplayName(displayName);
-    const expectedRoles = normalizeProjectRoles(roles);
-
+    expect(expectedProjectRole(user)).toBe(role);
     await expect
-        .poll(
-            async () => {
-                const memberships = await listProjectMemberships(requireContext().project.id);
-                return normalizeProjectRoles(
-                    memberships.find((membership) => membership.userId === user.id)?.roles ?? [],
-                );
-            },
-            { message: `${displayName} should have project roles ${expectedRoles.join(', ')}`, timeout: 10_000 },
-        )
-        .toEqual(expectedRoles);
+        .poll(async () => {
+            const memberships = await listProjectMemberships(requireContext().project.id);
+            return memberships.some((membership) => membership.userId === user.id);
+        })
+        .toBe(true);
 }
 
-async function expectBackendMembershipRemoved(displayName: string): Promise<void> {
-    const user = userByDisplayName(displayName);
-
-    await expect
-        .poll(
-            async () => {
-                const memberships = await listProjectMemberships(requireContext().project.id);
-                return memberships.some((membership) => membership.userId === user.id);
-            },
-            { message: `${displayName} should no longer have a project membership`, timeout: 10_000 },
-        )
-        .toBe(false);
-}
-
-async function expectVisibleMembershipRoles(page: Page, displayName: string, roles: readonly string[]): Promise<void> {
-    const row = membershipRow(page, displayName);
-    await expect(row).toBeVisible({ timeout: 10_000 });
-    const currentRoles = currentRolesCell(page, displayName);
-
-    for (const role of roles) {
-        await expect(currentRoles).toContainText(role);
-    }
-}
-
-function userByDisplayName(displayName: string): UserAdministration {
-    const user = requireContext().usersByDisplayName.get(displayName);
-    if (user === undefined) {
-        throw new Error(`Unknown user: ${displayName}`);
-    }
-    return user;
+async function openAdministrationProject(page: Page): Promise<void> {
+    await openAuthenticatedRoute(page, '/admin/projects');
+    await page
+        .getByRole('region', { name: 'Administrative project list' })
+        .getByRole('button', { name: new RegExp(requireContext().project.name, 'u') })
+        .click();
+    await expect(page.getByRole('heading', { name: requireContext().project.name })).toBeVisible();
 }
 
 Given('the frontend project-membership administration API is available', async () => {
@@ -141,7 +72,7 @@ Given('the frontend project-membership administration API is available', async (
     const project = await createTestProject('Project Alpha');
     const viewer = await getUserById(E2E_VIEWER_USER_ID);
     const developer = await getUserById(E2E_DEVELOPER_USER_ID);
-    await setProjectMembership(project.id, viewer.id, ['viewer']);
+    await setProjectMembership(project.id, viewer.id);
 
     context = {
         project,
@@ -157,58 +88,46 @@ When('I sign in as a frontend Administrator', async ({ page }) => {
 });
 
 When('I open frontend project membership administration', async ({ page }) => {
-    await reopenMembershipAdministration(page);
+    await openAdministrationProject(page);
 });
 
 When('I select the administration project {string}', async ({ page }, projectName: string) => {
     if (projectName !== requireContext().project.name) {
         throw new Error(`Expected project "${requireContext().project.name}" but got "${projectName}".`);
     }
-
-    await selectMembershipAdministrationProject(page);
+    await expect(page.getByRole('heading', { name: projectName })).toBeVisible();
 });
 
-Then('{string} should have the project role {string}', async ({ page }, displayName: string, role: string) => {
-    await expectBackendMembershipRoles(displayName, [roleValue(role)]);
-    await expectVisibleMembershipRoles(page, displayName, [role]);
+Then('{string} should have the project role {string}', async ({ page }, displayName: string, roleLabel: string) => {
+    const role = expectedProjectRole(userByDisplayName(displayName));
+    await expectBackendMembershipRole(displayName, role);
+    const row = membershipRow(page, displayName);
+    await expect(row).toBeVisible();
+    await expect(row).toContainText(roleLabel);
 });
 
-Then('{string} should have the project roles {string}', async ({ page }, displayName: string, roles: string) => {
-    await expectBackendMembershipRoles(displayName, expectedRoleValues(roles));
-    await expectVisibleMembershipRoles(page, displayName, roleLabels(roles));
-});
-
-When('I assign {string} the project roles {string}', async ({ page }, displayName: string, roles: string) => {
+When('I assign {string} to the project', async ({ page }, displayName: string) => {
     const user = userByDisplayName(displayName);
-    const expectedRoles = expectedRoleValues(roles);
-
-    const membership = await setProjectMembership(requireContext().project.id, user.id, expectedRoles);
-    expect(normalizeProjectRoles(membership.roles)).toEqual(expectedRoles);
-
-    await reopenMembershipAdministration(page);
-    await expectBackendMembershipRoles(displayName, expectedRoles);
-    await expectVisibleMembershipRoles(page, displayName, roleLabels(roles));
-});
-
-When('I change {string} to the project role {string}', async ({ page }, displayName: string, role: string) => {
-    const user = userByDisplayName(displayName);
-    const selectedRole = roleValue(role);
-
-    const membership = await setProjectMembership(requireContext().project.id, user.id, [selectedRole]);
-    expect(normalizeProjectRoles(membership.roles)).toEqual([selectedRole]);
-
-    await reopenMembershipAdministration(page);
-    await expectBackendMembershipRoles(displayName, [selectedRole]);
-    await expectVisibleMembershipRoles(page, displayName, [role]);
+    await page
+        .getByRole('region', { name: 'Project memberships' })
+        .getByLabel('User', { exact: true })
+        .selectOption(user.id);
+    await page.getByRole('button', { name: 'Add membership' }).click();
+    await expectBackendMembershipRole(displayName, expectedProjectRole(user));
+    await expect(membershipRow(page, displayName)).toBeVisible();
 });
 
 When('I remove {string} from the project', async ({ page }, displayName: string) => {
-    await removeProjectMembership(requireContext().project.id, userByDisplayName(displayName).id);
-    await reopenMembershipAdministration(page);
-    await expectBackendMembershipRemoved(displayName);
+    await membershipRow(page, displayName).getByRole('button', { name: 'Remove membership' }).click();
 });
 
 Then('{string} should no longer have a project membership', async ({ page }, displayName: string) => {
-    await expectBackendMembershipRemoved(displayName);
+    const user = userByDisplayName(displayName);
+    await expect
+        .poll(async () => {
+            const memberships = await listProjectMemberships(requireContext().project.id);
+            return memberships.some((membership) => membership.userId === user.id);
+        })
+        .toBe(false);
     await expect(membershipRow(page, displayName)).toHaveCount(0);
 });

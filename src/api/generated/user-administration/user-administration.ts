@@ -18,7 +18,12 @@ import type {
     UseQueryResult,
 } from '@tanstack/react-query';
 
-import type { SessionResponseDto, UpdateUserStatusDto, UserAdministrationResponseDto } from '../model';
+import type {
+    SessionResponseDto,
+    UpdateUserRoleDto,
+    UpdateUserStatusDto,
+    UserAdministrationResponseDto,
+} from '../model';
 
 import { apiFetch } from '../../fetch';
 
@@ -263,6 +268,153 @@ export function useUserAdministrationControllerFind<
     queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
     const queryOptions = getUserAdministrationControllerFindQueryOptions(userId, options);
+
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+
+    return withQueryKey(query, queryOptions.queryKey);
+}
+
+export type userAdministrationControllerUpdateRoleResponse200 = { data: UserAdministrationResponseDto; status: 200 };
+
+export type userAdministrationControllerUpdateRoleResponseSuccess =
+    userAdministrationControllerUpdateRoleResponse200 & { headers: Headers };
+export type userAdministrationControllerUpdateRoleResponse = userAdministrationControllerUpdateRoleResponseSuccess;
+
+export const getUserAdministrationControllerUpdateRoleUrl = (userId: string) => {
+    return `/admin/users/${userId}/role`;
+};
+
+export const userAdministrationControllerUpdateRole = async (
+    userId: string,
+    updateUserRoleDto: UpdateUserRoleDto,
+    options?: RequestInit,
+): Promise<userAdministrationControllerUpdateRoleResponse> => {
+    return apiFetch<userAdministrationControllerUpdateRoleResponse>(
+        getUserAdministrationControllerUpdateRoleUrl(userId),
+        {
+            ...options,
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', ...options?.headers },
+            body: JSON.stringify(updateUserRoleDto),
+        },
+    );
+};
+
+export const getUserAdministrationControllerUpdateRoleQueryKey = (
+    userId: string,
+    updateUserRoleDto?: UpdateUserRoleDto,
+) => {
+    return ['PATCH', `/admin/users/${userId}/role`, updateUserRoleDto] as const;
+};
+
+export const getUserAdministrationControllerUpdateRoleQueryOptions = <
+    TData = Awaited<ReturnType<typeof userAdministrationControllerUpdateRole>>,
+    TError = unknown,
+>(
+    userId: string,
+    updateUserRoleDto: UpdateUserRoleDto,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerUpdateRole>>, TError, TData>
+        >;
+    },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey =
+        queryOptions?.queryKey ?? getUserAdministrationControllerUpdateRoleQueryKey(userId, updateUserRoleDto);
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof userAdministrationControllerUpdateRole>>> = ({ signal }) =>
+        userAdministrationControllerUpdateRole(userId, updateUserRoleDto, { signal });
+
+    return {
+        queryKey,
+        queryFn,
+        enabled: userId !== null && userId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerUpdateRole>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
+
+export type UserAdministrationControllerUpdateRoleQueryResult = NonNullable<
+    Awaited<ReturnType<typeof userAdministrationControllerUpdateRole>>
+>;
+export type UserAdministrationControllerUpdateRoleQueryError = unknown;
+
+export function useUserAdministrationControllerUpdateRole<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerUpdateRole>>,
+    TError = unknown,
+>(
+    userId: string,
+    updateUserRoleDto: UpdateUserRoleDto,
+    options: {
+        query: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerUpdateRole>>, TError, TData>
+        >
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof userAdministrationControllerUpdateRole>>,
+                    TError,
+                    Awaited<ReturnType<typeof userAdministrationControllerUpdateRole>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useUserAdministrationControllerUpdateRole<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerUpdateRole>>,
+    TError = unknown,
+>(
+    userId: string,
+    updateUserRoleDto: UpdateUserRoleDto,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerUpdateRole>>, TError, TData>
+        >
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof userAdministrationControllerUpdateRole>>,
+                    TError,
+                    Awaited<ReturnType<typeof userAdministrationControllerUpdateRole>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useUserAdministrationControllerUpdateRole<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerUpdateRole>>,
+    TError = unknown,
+>(
+    userId: string,
+    updateUserRoleDto: UpdateUserRoleDto,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerUpdateRole>>, TError, TData>
+        >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+export function useUserAdministrationControllerUpdateRole<
+    TData = Awaited<ReturnType<typeof userAdministrationControllerUpdateRole>>,
+    TError = unknown,
+>(
+    userId: string,
+    updateUserRoleDto: UpdateUserRoleDto,
+    options?: {
+        query?: Partial<
+            UseQueryOptions<Awaited<ReturnType<typeof userAdministrationControllerUpdateRole>>, TError, TData>
+        >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getUserAdministrationControllerUpdateRoleQueryOptions(userId, updateUserRoleDto, options);
 
     const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
         queryKey: DataTag<QueryKey, TData, TError>;

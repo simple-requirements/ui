@@ -6,4 +6,13 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export type CompareRequirementRevisionsParams = { from: string; to: string };
+export type CompareRequirementRevisionsParams = {
+    /**
+     * Source revision number.
+     */
+    from: number;
+    /**
+     * Target revision number.
+     */
+    to: number;
+};

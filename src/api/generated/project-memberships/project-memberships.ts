@@ -18,7 +18,7 @@ import type {
     UseQueryResult,
 } from '@tanstack/react-query';
 
-import type { ProjectMembershipResponseDto, SetProjectMembershipDto } from '../model';
+import type { ProjectMembershipResponseDto } from '../model';
 
 import { apiFetch } from '../../fetch';
 
@@ -37,46 +37,61 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
     return result;
 };
 
-export type projectMembershipControllerListResponse200 = { data: ProjectMembershipResponseDto[]; status: 200 };
+export type adminListProjectMembershipsResponse200 = { data: ProjectMembershipResponseDto[]; status: 200 };
 
-export type projectMembershipControllerListResponseSuccess = projectMembershipControllerListResponse200 & {
-    headers: Headers;
-};
-export type projectMembershipControllerListResponse = projectMembershipControllerListResponseSuccess;
+export type adminListProjectMembershipsResponse401 = { data: void; status: 401 };
 
-export const getProjectMembershipControllerListUrl = (projectId: string) => {
+export type adminListProjectMembershipsResponse403 = { data: void; status: 403 };
+
+export type adminListProjectMembershipsResponse404 = { data: void; status: 404 };
+
+export type adminListProjectMembershipsResponseSuccess = adminListProjectMembershipsResponse200 & { headers: Headers };
+export type adminListProjectMembershipsResponseError = (
+    | adminListProjectMembershipsResponse401
+    | adminListProjectMembershipsResponse403
+    | adminListProjectMembershipsResponse404
+) & { headers: Headers };
+
+export type adminListProjectMembershipsResponse =
+    | adminListProjectMembershipsResponseSuccess
+    | adminListProjectMembershipsResponseError;
+
+export const getAdminListProjectMembershipsUrl = (projectId: string) => {
     return `/admin/projects/${projectId}/memberships`;
 };
 
-export const projectMembershipControllerList = async (
+/**
+ * @summary List project memberships for administration.
+ */
+export const adminListProjectMemberships = async (
     projectId: string,
     options?: RequestInit,
-): Promise<projectMembershipControllerListResponse> => {
-    return apiFetch<projectMembershipControllerListResponse>(getProjectMembershipControllerListUrl(projectId), {
+): Promise<adminListProjectMembershipsResponse> => {
+    return apiFetch<adminListProjectMembershipsResponse>(getAdminListProjectMembershipsUrl(projectId), {
         ...options,
         method: 'GET',
     });
 };
 
-export const getProjectMembershipControllerListQueryKey = (projectId: string) => {
+export const getAdminListProjectMembershipsQueryKey = (projectId: string) => {
     return [`/admin/projects/${projectId}/memberships`] as const;
 };
 
-export const getProjectMembershipControllerListQueryOptions = <
-    TData = Awaited<ReturnType<typeof projectMembershipControllerList>>,
-    TError = unknown,
+export const getAdminListProjectMembershipsQueryOptions = <
+    TData = Awaited<ReturnType<typeof adminListProjectMemberships>>,
+    TError = void,
 >(
     projectId: string,
     options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerList>>, TError, TData>>;
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListProjectMemberships>>, TError, TData>>;
     },
 ) => {
     const { query: queryOptions } = options ?? {};
 
-    const queryKey = queryOptions?.queryKey ?? getProjectMembershipControllerListQueryKey(projectId);
+    const queryKey = queryOptions?.queryKey ?? getAdminListProjectMembershipsQueryKey(projectId);
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof projectMembershipControllerList>>> = ({ signal }) =>
-        projectMembershipControllerList(projectId, { signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof adminListProjectMemberships>>> = ({ signal }) =>
+        adminListProjectMemberships(projectId, { signal });
 
     return {
         queryKey,
@@ -84,74 +99,77 @@ export const getProjectMembershipControllerListQueryOptions = <
         enabled: projectId !== null && projectId !== undefined,
         staleTime: 30000,
         ...queryOptions,
-    } as UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerList>>, TError, TData> & {
+    } as UseQueryOptions<Awaited<ReturnType<typeof adminListProjectMemberships>>, TError, TData> & {
         queryKey: DataTag<QueryKey, TData, TError>;
     };
 };
 
-export type ProjectMembershipControllerListQueryResult = NonNullable<
-    Awaited<ReturnType<typeof projectMembershipControllerList>>
+export type AdminListProjectMembershipsQueryResult = NonNullable<
+    Awaited<ReturnType<typeof adminListProjectMemberships>>
 >;
-export type ProjectMembershipControllerListQueryError = unknown;
+export type AdminListProjectMembershipsQueryError = void;
 
-export function useProjectMembershipControllerList<
-    TData = Awaited<ReturnType<typeof projectMembershipControllerList>>,
-    TError = unknown,
+export function useAdminListProjectMemberships<
+    TData = Awaited<ReturnType<typeof adminListProjectMemberships>>,
+    TError = void,
 >(
     projectId: string,
     options: {
-        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerList>>, TError, TData>>
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListProjectMemberships>>, TError, TData>>
             & Pick<
                 DefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof projectMembershipControllerList>>,
+                    Awaited<ReturnType<typeof adminListProjectMemberships>>,
                     TError,
-                    Awaited<ReturnType<typeof projectMembershipControllerList>>
+                    Awaited<ReturnType<typeof adminListProjectMemberships>>
                 >,
                 'initialData'
             >;
     },
     queryClient?: QueryClient,
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useProjectMembershipControllerList<
-    TData = Awaited<ReturnType<typeof projectMembershipControllerList>>,
-    TError = unknown,
+export function useAdminListProjectMemberships<
+    TData = Awaited<ReturnType<typeof adminListProjectMemberships>>,
+    TError = void,
 >(
     projectId: string,
     options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerList>>, TError, TData>>
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListProjectMemberships>>, TError, TData>>
             & Pick<
                 UndefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof projectMembershipControllerList>>,
+                    Awaited<ReturnType<typeof adminListProjectMemberships>>,
                     TError,
-                    Awaited<ReturnType<typeof projectMembershipControllerList>>
+                    Awaited<ReturnType<typeof adminListProjectMemberships>>
                 >,
                 'initialData'
             >;
     },
     queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useProjectMembershipControllerList<
-    TData = Awaited<ReturnType<typeof projectMembershipControllerList>>,
-    TError = unknown,
+export function useAdminListProjectMemberships<
+    TData = Awaited<ReturnType<typeof adminListProjectMemberships>>,
+    TError = void,
 >(
     projectId: string,
     options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerList>>, TError, TData>>;
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListProjectMemberships>>, TError, TData>>;
     },
     queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary List project memberships for administration.
+ */
 
-export function useProjectMembershipControllerList<
-    TData = Awaited<ReturnType<typeof projectMembershipControllerList>>,
-    TError = unknown,
+export function useAdminListProjectMemberships<
+    TData = Awaited<ReturnType<typeof adminListProjectMemberships>>,
+    TError = void,
 >(
     projectId: string,
     options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerList>>, TError, TData>>;
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminListProjectMemberships>>, TError, TData>>;
     },
     queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-    const queryOptions = getProjectMembershipControllerListQueryOptions(projectId, options);
+    const queryOptions = getAdminListProjectMembershipsQueryOptions(projectId, options);
 
     const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
         queryKey: DataTag<QueryKey, TData, TError>;
@@ -160,57 +178,66 @@ export function useProjectMembershipControllerList<
     return withQueryKey(query, queryOptions.queryKey);
 }
 
-export type projectMembershipControllerSetResponse200 = { data: ProjectMembershipResponseDto; status: 200 };
+export type adminSetProjectMembershipResponse200 = { data: ProjectMembershipResponseDto; status: 200 };
 
-export type projectMembershipControllerSetResponseSuccess = projectMembershipControllerSetResponse200 & {
-    headers: Headers;
-};
-export type projectMembershipControllerSetResponse = projectMembershipControllerSetResponseSuccess;
+export type adminSetProjectMembershipResponse400 = { data: void; status: 400 };
 
-export const getProjectMembershipControllerSetUrl = (projectId: string, userId: string) => {
+export type adminSetProjectMembershipResponse401 = { data: void; status: 401 };
+
+export type adminSetProjectMembershipResponse403 = { data: void; status: 403 };
+
+export type adminSetProjectMembershipResponse404 = { data: void; status: 404 };
+
+export type adminSetProjectMembershipResponseSuccess = adminSetProjectMembershipResponse200 & { headers: Headers };
+export type adminSetProjectMembershipResponseError = (
+    | adminSetProjectMembershipResponse400
+    | adminSetProjectMembershipResponse401
+    | adminSetProjectMembershipResponse403
+    | adminSetProjectMembershipResponse404
+) & { headers: Headers };
+
+export type adminSetProjectMembershipResponse =
+    | adminSetProjectMembershipResponseSuccess
+    | adminSetProjectMembershipResponseError;
+
+export const getAdminSetProjectMembershipUrl = (projectId: string, userId: string) => {
     return `/admin/projects/${projectId}/memberships/${userId}`;
 };
 
-export const projectMembershipControllerSet = async (
+/**
+ * @summary Add an active project-scoped account to a project.
+ */
+export const adminSetProjectMembership = async (
     projectId: string,
     userId: string,
-    setProjectMembershipDto: SetProjectMembershipDto,
     options?: RequestInit,
-): Promise<projectMembershipControllerSetResponse> => {
-    return apiFetch<projectMembershipControllerSetResponse>(getProjectMembershipControllerSetUrl(projectId, userId), {
+): Promise<adminSetProjectMembershipResponse> => {
+    return apiFetch<adminSetProjectMembershipResponse>(getAdminSetProjectMembershipUrl(projectId, userId), {
         ...options,
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', ...options?.headers },
-        body: JSON.stringify(setProjectMembershipDto),
     });
 };
 
-export const getProjectMembershipControllerSetQueryKey = (
-    projectId: string,
-    userId: string,
-    setProjectMembershipDto?: SetProjectMembershipDto,
-) => {
-    return ['PUT', `/admin/projects/${projectId}/memberships/${userId}`, setProjectMembershipDto] as const;
+export const getAdminSetProjectMembershipQueryKey = (projectId: string, userId: string) => {
+    return ['PUT', `/admin/projects/${projectId}/memberships/${userId}`] as const;
 };
 
-export const getProjectMembershipControllerSetQueryOptions = <
-    TData = Awaited<ReturnType<typeof projectMembershipControllerSet>>,
-    TError = unknown,
+export const getAdminSetProjectMembershipQueryOptions = <
+    TData = Awaited<ReturnType<typeof adminSetProjectMembership>>,
+    TError = void,
 >(
     projectId: string,
     userId: string,
-    setProjectMembershipDto: SetProjectMembershipDto,
     options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerSet>>, TError, TData>>;
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminSetProjectMembership>>, TError, TData>>;
     },
 ) => {
     const { query: queryOptions } = options ?? {};
 
-    const queryKey =
-        queryOptions?.queryKey ?? getProjectMembershipControllerSetQueryKey(projectId, userId, setProjectMembershipDto);
+    const queryKey = queryOptions?.queryKey ?? getAdminSetProjectMembershipQueryKey(projectId, userId);
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof projectMembershipControllerSet>>> = ({ signal }) =>
-        projectMembershipControllerSet(projectId, userId, setProjectMembershipDto, { signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof adminSetProjectMembership>>> = ({ signal }) =>
+        adminSetProjectMembership(projectId, userId, { signal });
 
     return {
         queryKey,
@@ -218,87 +245,79 @@ export const getProjectMembershipControllerSetQueryOptions = <
         enabled: projectId !== null && projectId !== undefined && userId !== null && userId !== undefined,
         staleTime: 30000,
         ...queryOptions,
-    } as UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerSet>>, TError, TData> & {
+    } as UseQueryOptions<Awaited<ReturnType<typeof adminSetProjectMembership>>, TError, TData> & {
         queryKey: DataTag<QueryKey, TData, TError>;
     };
 };
 
-export type ProjectMembershipControllerSetQueryResult = NonNullable<
-    Awaited<ReturnType<typeof projectMembershipControllerSet>>
->;
-export type ProjectMembershipControllerSetQueryError = unknown;
+export type AdminSetProjectMembershipQueryResult = NonNullable<Awaited<ReturnType<typeof adminSetProjectMembership>>>;
+export type AdminSetProjectMembershipQueryError = void;
 
-export function useProjectMembershipControllerSet<
-    TData = Awaited<ReturnType<typeof projectMembershipControllerSet>>,
-    TError = unknown,
+export function useAdminSetProjectMembership<
+    TData = Awaited<ReturnType<typeof adminSetProjectMembership>>,
+    TError = void,
 >(
     projectId: string,
     userId: string,
-    setProjectMembershipDto: SetProjectMembershipDto,
     options: {
-        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerSet>>, TError, TData>>
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminSetProjectMembership>>, TError, TData>>
             & Pick<
                 DefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof projectMembershipControllerSet>>,
+                    Awaited<ReturnType<typeof adminSetProjectMembership>>,
                     TError,
-                    Awaited<ReturnType<typeof projectMembershipControllerSet>>
+                    Awaited<ReturnType<typeof adminSetProjectMembership>>
                 >,
                 'initialData'
             >;
     },
     queryClient?: QueryClient,
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useProjectMembershipControllerSet<
-    TData = Awaited<ReturnType<typeof projectMembershipControllerSet>>,
-    TError = unknown,
+export function useAdminSetProjectMembership<
+    TData = Awaited<ReturnType<typeof adminSetProjectMembership>>,
+    TError = void,
 >(
     projectId: string,
     userId: string,
-    setProjectMembershipDto: SetProjectMembershipDto,
     options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerSet>>, TError, TData>>
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminSetProjectMembership>>, TError, TData>>
             & Pick<
                 UndefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof projectMembershipControllerSet>>,
+                    Awaited<ReturnType<typeof adminSetProjectMembership>>,
                     TError,
-                    Awaited<ReturnType<typeof projectMembershipControllerSet>>
+                    Awaited<ReturnType<typeof adminSetProjectMembership>>
                 >,
                 'initialData'
             >;
     },
     queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useProjectMembershipControllerSet<
-    TData = Awaited<ReturnType<typeof projectMembershipControllerSet>>,
-    TError = unknown,
+export function useAdminSetProjectMembership<
+    TData = Awaited<ReturnType<typeof adminSetProjectMembership>>,
+    TError = void,
 >(
     projectId: string,
     userId: string,
-    setProjectMembershipDto: SetProjectMembershipDto,
     options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerSet>>, TError, TData>>;
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminSetProjectMembership>>, TError, TData>>;
     },
     queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Add an active project-scoped account to a project.
+ */
 
-export function useProjectMembershipControllerSet<
-    TData = Awaited<ReturnType<typeof projectMembershipControllerSet>>,
-    TError = unknown,
+export function useAdminSetProjectMembership<
+    TData = Awaited<ReturnType<typeof adminSetProjectMembership>>,
+    TError = void,
 >(
     projectId: string,
     userId: string,
-    setProjectMembershipDto: SetProjectMembershipDto,
     options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerSet>>, TError, TData>>;
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminSetProjectMembership>>, TError, TData>>;
     },
     queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-    const queryOptions = getProjectMembershipControllerSetQueryOptions(
-        projectId,
-        userId,
-        setProjectMembershipDto,
-        options,
-    );
+    const queryOptions = getAdminSetProjectMembershipQueryOptions(projectId, userId, options);
 
     const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
         queryKey: DataTag<QueryKey, TData, TError>;
@@ -307,48 +326,65 @@ export function useProjectMembershipControllerSet<
     return withQueryKey(query, queryOptions.queryKey);
 }
 
-export type projectMembershipControllerRemoveResponse204 = { data: void; status: 204 };
+export type adminRemoveProjectMembershipResponse204 = { data: void; status: 204 };
 
-export type projectMembershipControllerRemoveResponseSuccess = projectMembershipControllerRemoveResponse204 & {
+export type adminRemoveProjectMembershipResponse401 = { data: void; status: 401 };
+
+export type adminRemoveProjectMembershipResponse403 = { data: void; status: 403 };
+
+export type adminRemoveProjectMembershipResponse404 = { data: void; status: 404 };
+
+export type adminRemoveProjectMembershipResponseSuccess = adminRemoveProjectMembershipResponse204 & {
     headers: Headers;
 };
-export type projectMembershipControllerRemoveResponse = projectMembershipControllerRemoveResponseSuccess;
+export type adminRemoveProjectMembershipResponseError = (
+    | adminRemoveProjectMembershipResponse401
+    | adminRemoveProjectMembershipResponse403
+    | adminRemoveProjectMembershipResponse404
+) & { headers: Headers };
 
-export const getProjectMembershipControllerRemoveUrl = (projectId: string, userId: string) => {
+export type adminRemoveProjectMembershipResponse =
+    | adminRemoveProjectMembershipResponseSuccess
+    | adminRemoveProjectMembershipResponseError;
+
+export const getAdminRemoveProjectMembershipUrl = (projectId: string, userId: string) => {
     return `/admin/projects/${projectId}/memberships/${userId}`;
 };
 
-export const projectMembershipControllerRemove = async (
+/**
+ * @summary Remove an account from a project.
+ */
+export const adminRemoveProjectMembership = async (
     projectId: string,
     userId: string,
     options?: RequestInit,
-): Promise<projectMembershipControllerRemoveResponse> => {
-    return apiFetch<projectMembershipControllerRemoveResponse>(
-        getProjectMembershipControllerRemoveUrl(projectId, userId),
-        { ...options, method: 'DELETE' },
-    );
+): Promise<adminRemoveProjectMembershipResponse> => {
+    return apiFetch<adminRemoveProjectMembershipResponse>(getAdminRemoveProjectMembershipUrl(projectId, userId), {
+        ...options,
+        method: 'DELETE',
+    });
 };
 
-export const getProjectMembershipControllerRemoveQueryKey = (projectId: string, userId: string) => {
+export const getAdminRemoveProjectMembershipQueryKey = (projectId: string, userId: string) => {
     return ['DELETE', `/admin/projects/${projectId}/memberships/${userId}`] as const;
 };
 
-export const getProjectMembershipControllerRemoveQueryOptions = <
-    TData = Awaited<ReturnType<typeof projectMembershipControllerRemove>>,
-    TError = unknown,
+export const getAdminRemoveProjectMembershipQueryOptions = <
+    TData = Awaited<ReturnType<typeof adminRemoveProjectMembership>>,
+    TError = void,
 >(
     projectId: string,
     userId: string,
     options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerRemove>>, TError, TData>>;
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminRemoveProjectMembership>>, TError, TData>>;
     },
 ) => {
     const { query: queryOptions } = options ?? {};
 
-    const queryKey = queryOptions?.queryKey ?? getProjectMembershipControllerRemoveQueryKey(projectId, userId);
+    const queryKey = queryOptions?.queryKey ?? getAdminRemoveProjectMembershipQueryKey(projectId, userId);
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof projectMembershipControllerRemove>>> = ({ signal }) =>
-        projectMembershipControllerRemove(projectId, userId, { signal });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof adminRemoveProjectMembership>>> = ({ signal }) =>
+        adminRemoveProjectMembership(projectId, userId, { signal });
 
     return {
         queryKey,
@@ -356,78 +392,81 @@ export const getProjectMembershipControllerRemoveQueryOptions = <
         enabled: projectId !== null && projectId !== undefined && userId !== null && userId !== undefined,
         staleTime: 30000,
         ...queryOptions,
-    } as UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerRemove>>, TError, TData> & {
+    } as UseQueryOptions<Awaited<ReturnType<typeof adminRemoveProjectMembership>>, TError, TData> & {
         queryKey: DataTag<QueryKey, TData, TError>;
     };
 };
 
-export type ProjectMembershipControllerRemoveQueryResult = NonNullable<
-    Awaited<ReturnType<typeof projectMembershipControllerRemove>>
+export type AdminRemoveProjectMembershipQueryResult = NonNullable<
+    Awaited<ReturnType<typeof adminRemoveProjectMembership>>
 >;
-export type ProjectMembershipControllerRemoveQueryError = unknown;
+export type AdminRemoveProjectMembershipQueryError = void;
 
-export function useProjectMembershipControllerRemove<
-    TData = Awaited<ReturnType<typeof projectMembershipControllerRemove>>,
-    TError = unknown,
+export function useAdminRemoveProjectMembership<
+    TData = Awaited<ReturnType<typeof adminRemoveProjectMembership>>,
+    TError = void,
 >(
     projectId: string,
     userId: string,
     options: {
-        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerRemove>>, TError, TData>>
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminRemoveProjectMembership>>, TError, TData>>
             & Pick<
                 DefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof projectMembershipControllerRemove>>,
+                    Awaited<ReturnType<typeof adminRemoveProjectMembership>>,
                     TError,
-                    Awaited<ReturnType<typeof projectMembershipControllerRemove>>
+                    Awaited<ReturnType<typeof adminRemoveProjectMembership>>
                 >,
                 'initialData'
             >;
     },
     queryClient?: QueryClient,
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useProjectMembershipControllerRemove<
-    TData = Awaited<ReturnType<typeof projectMembershipControllerRemove>>,
-    TError = unknown,
+export function useAdminRemoveProjectMembership<
+    TData = Awaited<ReturnType<typeof adminRemoveProjectMembership>>,
+    TError = void,
 >(
     projectId: string,
     userId: string,
     options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerRemove>>, TError, TData>>
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminRemoveProjectMembership>>, TError, TData>>
             & Pick<
                 UndefinedInitialDataOptions<
-                    Awaited<ReturnType<typeof projectMembershipControllerRemove>>,
+                    Awaited<ReturnType<typeof adminRemoveProjectMembership>>,
                     TError,
-                    Awaited<ReturnType<typeof projectMembershipControllerRemove>>
+                    Awaited<ReturnType<typeof adminRemoveProjectMembership>>
                 >,
                 'initialData'
             >;
     },
     queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-export function useProjectMembershipControllerRemove<
-    TData = Awaited<ReturnType<typeof projectMembershipControllerRemove>>,
-    TError = unknown,
+export function useAdminRemoveProjectMembership<
+    TData = Awaited<ReturnType<typeof adminRemoveProjectMembership>>,
+    TError = void,
 >(
     projectId: string,
     userId: string,
     options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerRemove>>, TError, TData>>;
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminRemoveProjectMembership>>, TError, TData>>;
     },
     queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Remove an account from a project.
+ */
 
-export function useProjectMembershipControllerRemove<
-    TData = Awaited<ReturnType<typeof projectMembershipControllerRemove>>,
-    TError = unknown,
+export function useAdminRemoveProjectMembership<
+    TData = Awaited<ReturnType<typeof adminRemoveProjectMembership>>,
+    TError = void,
 >(
     projectId: string,
     userId: string,
     options?: {
-        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof projectMembershipControllerRemove>>, TError, TData>>;
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof adminRemoveProjectMembership>>, TError, TData>>;
     },
     queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-    const queryOptions = getProjectMembershipControllerRemoveQueryOptions(projectId, userId, options);
+    const queryOptions = getAdminRemoveProjectMembershipQueryOptions(projectId, userId, options);
 
     const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
         queryKey: DataTag<QueryKey, TData, TError>;

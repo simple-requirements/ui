@@ -5,9 +5,7 @@
  * HTTP API for the Requirements Management app.
  * OpenAPI spec version: 0.0.1
  */
-import type { AuthenticatedProjectMembershipDtoRolesItem } from './authenticatedProjectMembershipDtoRolesItem';
 
 export interface AuthenticatedProjectMembershipDto {
     projectId: string;
-    roles: AuthenticatedProjectMembershipDtoRolesItem[];
 }

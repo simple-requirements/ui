@@ -3,6 +3,7 @@ import { Button } from 'primereact/button';
 
 import { getListProjectsQueryKey } from '@/api/generated/projects/projects';
 import { listProjectsRequest } from '@/api/projectsApi';
+import { useIsAdministrator } from '@/auth/projectPermissions';
 import { useLoadingTimeout } from '@/hooks/useLoadingTimeout';
 
 import '@/components/RootLayout/LoadingOverlay.scss';
@@ -10,14 +11,16 @@ import '@/components/RootLayout/LoadingOverlay.scss';
 const LOADING_TIMEOUT_MS = 10_000;
 
 export function LoadingOverlay() {
+    const administrator = useIsAdministrator();
     const projectsQuery = useQuery({
         queryKey: getListProjectsQueryKey(),
         queryFn: listProjectsRequest,
         retry: false,
         refetchOnWindowFocus: false,
+        enabled: !administrator,
     });
 
-    const projectsLoaded = projectsQuery.data !== undefined;
+    const projectsLoaded = administrator || projectsQuery.data !== undefined;
     const loadingTimeout = useLoadingTimeout({ active: !projectsLoaded, timeoutMs: LOADING_TIMEOUT_MS });
 
     const networkErrorVisible = !projectsLoaded && (projectsQuery.isError || loadingTimeout.timedOut);

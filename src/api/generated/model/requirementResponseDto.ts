@@ -8,7 +8,6 @@
 import type { ImplementationTicketResponseDto } from './implementationTicketResponseDto';
 import type { RequirementResponseDtoApprovedAt } from './requirementResponseDtoApprovedAt';
 import type { RequirementResponseDtoChangedByUserId } from './requirementResponseDtoChangedByUserId';
-import type { RequirementResponseDtoDeletedAt } from './requirementResponseDtoDeletedAt';
 import type { RequirementResponseDtoDescription } from './requirementResponseDtoDescription';
 import type { RequirementResponseDtoImplementedAt } from './requirementResponseDtoImplementedAt';
 import type { RequirementResponseDtoObsolescenceReason } from './requirementResponseDtoObsolescenceReason';
@@ -64,8 +63,6 @@ export interface RequirementResponseDto {
     obsoletedBy?: RequirementResponseDtoObsoletedBy;
     /** @nullable */
     rejectedAt?: RequirementResponseDtoRejectedAt;
-    /** @nullable */
-    deletedAt?: RequirementResponseDtoDeletedAt;
     /** @nullable */
     approvedAt?: RequirementResponseDtoApprovedAt;
     /** @nullable */

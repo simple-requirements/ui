@@ -57,7 +57,7 @@ export type UserAdministration = Readonly<{
     email: string;
     displayName: string;
     status: 'pending' | 'active' | 'deactivated';
-    globalRoles: readonly string[];
+    role: 'administrator' | ProjectRole | null;
     emailVerifiedAt: string | null;
     createdAt: string;
     updatedAt: string;
@@ -69,7 +69,7 @@ export type ProjectMembership = Readonly<{
     userId: string;
     username: string;
     displayName: string;
-    roles: readonly ProjectRole[];
+    role: ProjectRole;
 }>;
 
 export type ImplementationTicket = Readonly<{

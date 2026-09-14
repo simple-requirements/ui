@@ -13,25 +13,25 @@ Feature: Projects
       | Beta Project  |
       | Zeta Project  |
 
-  Scenario: User creates a project
+  Scenario: Administrator creates a project
     Given the backend contains no projects
-    And I open the application
+    And I open Administrator project administration
     When I create a project named "BDD Created Project"
-    Then the sidebar should contain the project "BDD Created Project"
+    Then project administration should contain the project "BDD Created Project"
 
-  Scenario: User renames a project from the sidebar context menu
+  Scenario: Administrator renames a project
     Given the backend contains a project named "Old BDD Project"
-    And I open the application
-    When I open the context menu for project "Old BDD Project"
+    And I open Administrator project administration
+    When I select administrative project "Old BDD Project"
     And I choose "Rename project"
     And I rename the project to "Renamed BDD Project"
-    Then the sidebar should contain the project "Renamed BDD Project"
-    And the sidebar should not contain the project "Old BDD Project"
+    Then project administration should contain the project "Renamed BDD Project"
+    And project administration should not contain the project "Old BDD Project"
 
-  Scenario: User cannot rename a project to an empty name
+  Scenario: Administrator cannot rename a project to an empty name
     Given the backend contains a project named "Rename Validation Project"
-    And I open the application
-    When I open the context menu for project "Rename Validation Project"
+    And I open Administrator project administration
+    When I select administrative project "Rename Validation Project"
     And I choose "Rename project"
     And I submit the project dialog with an empty name
     Then the project dialog should show "Project name is required."

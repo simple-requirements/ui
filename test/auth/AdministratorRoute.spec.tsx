@@ -1,83 +1,78 @@
-import '@testing-library/jest-dom/vitest';
+import "@testing-library/jest-dom/vitest";
 
-import { cleanup, render, screen } from '@testing-library/react';
-import { createMemoryRouter, RouterProvider } from 'react-router';
-import { afterEach, describe, expect, it } from 'vitest';
+import { cleanup, render, screen } from "@testing-library/react";
+import { createMemoryRouter, RouterProvider } from "react-router";
+import { afterEach, describe, expect, it } from "vitest";
 
-import { AdministratorRoute } from '@/auth/AdministratorRoute';
-import type { AuthenticatedUser } from '@/auth/authTypes';
-import { clearAuthenticatedSession, setAuthenticatedSession } from '@/stores/authStore';
+import { AdministratorRoute } from "@/auth/AdministratorRoute";
+import type { AccountRole, AuthenticatedUser } from "@/auth/authTypes";
+import {
+  clearAuthenticatedSession,
+  setAuthenticatedSession,
+} from "@/stores/authStore";
 
-function user(globalRoles: AuthenticatedUser['globalRoles']): AuthenticatedUser {
-    return {
-        id: 'user-1',
-        username: 'alice',
-        email: 'alice@example.org',
-        displayName: 'Alice',
-        status: 'active',
-        globalRoles,
-    };
+/**
+ * Builds an authenticated user for Administrator route tests.
+ * @param role Account role assigned to the user.
+ * @returns Authenticated user fixture.
+ */
+function user(role: AccountRole): AuthenticatedUser {
+  return {
+    id: "user-1",
+    username: "alice",
+    email: "alice@example.org",
+    displayName: "Alice",
+    status: "active",
+    role,
+    projectMemberships: [],
+  };
 }
 
+/**
+ * Renders the Administrator route test harness at the users page.
+ * @returns Nothing.
+ */
 function renderRoute(): void {
-    const router = createMemoryRouter(
-        [
-            { path: '/', element: <h1>Workspace</h1> },
-            {
-                element: <AdministratorRoute />,
-                children: [
-                    { path: '/administration/users', element: <h1>User administration</h1> },
-                    {
-                        path: '/administration/project-memberships',
-                        element: <h1>Project membership administration</h1>,
-                    },
-                ],
-            },
+  const router = createMemoryRouter(
+    [
+      { path: "/", element: <h1>Workspace</h1> },
+      {
+        element: <AdministratorRoute />,
+        children: [
+          { path: "/admin/users", element: <h1>Users &amp; Sessions</h1> },
+          { path: "/admin/projects", element: <h1>Projects</h1> },
         ],
-        { initialEntries: ['/administration/users'] },
-    );
-    render(<RouterProvider router={router} />);
+      },
+    ],
+    { initialEntries: ["/admin/users"] },
+  );
+  render(<RouterProvider router={router} />);
 }
 
 afterEach(() => {
-    cleanup();
-    clearAuthenticatedSession();
+  cleanup();
+  clearAuthenticatedSession();
 });
 
-describe('AdministratorRoute', () => {
-    it('renders administration for an Administrator', async () => {
-        setAuthenticatedSession({ accessToken: 'token', user: user(['administrator']) });
-        renderRoute();
-
-        expect(await screen.findByRole('heading', { name: 'User administration' })).toBeInTheDocument();
+describe("AdministratorRoute", () => {
+  it("renders the dedicated Administrator workspace for an Administrator", async () => {
+    setAuthenticatedSession({
+      accessToken: "token",
+      user: user("administrator"),
     });
+    renderRoute();
 
-    it('renders project membership administration for an Administrator', async () => {
-        setAuthenticatedSession({ accessToken: 'token', user: user(['administrator']) });
-        const router = createMemoryRouter(
-            [
-                { path: '/', element: <h1>Workspace</h1> },
-                {
-                    element: <AdministratorRoute />,
-                    children: [
-                        {
-                            path: '/administration/project-memberships',
-                            element: <h1>Project membership administration</h1>,
-                        },
-                    ],
-                },
-            ],
-            { initialEntries: ['/administration/project-memberships'] },
-        );
-        render(<RouterProvider router={router} />);
+    expect(
+      await screen.findByRole("heading", { name: "Users & Sessions" }),
+    ).toBeInTheDocument();
+  });
 
-        expect(await screen.findByRole('heading', { name: 'Project membership administration' })).toBeInTheDocument();
-    });
+  it("redirects a project-scoped account to the project workspace", async () => {
+    setAuthenticatedSession({ accessToken: "token", user: user("viewer") });
+    renderRoute();
 
-    it('redirects a non-Administrator to the workspace', async () => {
-        setAuthenticatedSession({ accessToken: 'token', user: user([]) });
-        renderRoute();
-
-        expect(await screen.findByRole('heading', { name: 'Workspace' })).toBeInTheDocument();
-    });
+    expect(
+      await screen.findByRole("heading", { name: "Workspace" }),
+    ).toBeInTheDocument();
+  });
 });

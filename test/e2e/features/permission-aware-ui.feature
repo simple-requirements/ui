@@ -25,5 +25,5 @@ Feature: Permission-aware frontend
   Scenario: Administrator without project membership has global project administration but no requirement-content access
     Given the permission-aware frontend signs me in as "Administrator"
     When I try to open the permission test requirement details
-    Then project creation should be visible
+    Then Administrator project administration navigation should be visible
     And requirement contents should not be visible

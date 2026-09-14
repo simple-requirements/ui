@@ -1,30 +1,45 @@
-export const LOGIN_ROUTE = '/login';
-export const USER_ADMINISTRATION_ROUTE = '/administration/users';
-export const PROJECT_MEMBERSHIP_ADMINISTRATION_ROUTE = '/administration/project-memberships';
+export const LOGIN_ROUTE = "/login";
+export const ADMINISTRATOR_USERS_ROUTE = "/admin/users";
+export const ADMINISTRATOR_PROJECTS_ROUTE = "/admin/projects";
 
-export type LoginLocationState = Readonly<{ returnTo?: string; reason?: 'session-expired' }>;
+export type LoginLocationState = Readonly<{
+  returnTo?: string;
+  reason?: "session-expired";
+}>;
 
+/**
+ * Resolves a safe internal destination after authentication.
+ * @param state Router state supplied by the login redirect.
+ * @returns Internal return path, or the workspace root when unsafe or absent.
+ */
 export function getSafeReturnTo(state: unknown): string {
-    if (typeof state !== 'object' || state === null) {
-        return '/';
-    }
+  if (typeof state !== "object" || state === null) {
+    return "/";
+  }
 
-    const returnTo = (state as LoginLocationState).returnTo;
+  const returnTo = (state as LoginLocationState).returnTo;
 
-    if (
-        typeof returnTo !== 'string'
-        || !returnTo.startsWith('/')
-        || returnTo.startsWith('//')
-        || returnTo === LOGIN_ROUTE
-        || returnTo.startsWith(`${LOGIN_ROUTE}?`)
-        || returnTo.startsWith(`${LOGIN_ROUTE}#`)
-    ) {
-        return '/';
-    }
+  if (
+    typeof returnTo !== "string" ||
+    !returnTo.startsWith("/") ||
+    returnTo.startsWith("//") ||
+    returnTo === LOGIN_ROUTE ||
+    returnTo.startsWith(`${LOGIN_ROUTE}?`) ||
+    returnTo.startsWith(`${LOGIN_ROUTE}#`)
+  ) {
+    return "/";
+  }
 
-    return returnTo;
+  return returnTo;
 }
 
-export function getCurrentRelativeUrl(location: Readonly<{ pathname: string; search: string; hash: string }>): string {
-    return `${location.pathname}${location.search}${location.hash}`;
+/**
+ * Serializes the current router location into an application-relative URL.
+ * @param location Current pathname, query string, and hash.
+ * @returns Relative URL suitable for login return state.
+ */
+export function getCurrentRelativeUrl(
+  location: Readonly<{ pathname: string; search: string; hash: string }>,
+): string {
+  return `${location.pathname}${location.search}${location.hash}`;
 }

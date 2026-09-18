@@ -136,7 +136,7 @@ Then('project creation should not be visible', async ({ page }) => {
 });
 
 Then('Administrator project administration navigation should be visible', async ({ page }) => {
-    await expect(page.getByRole('link', { name: 'Projects' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Projects', exact: true })).toBeVisible();
 });
 
 Then('requirement mutation actions should not be visible', async ({ page }) => {

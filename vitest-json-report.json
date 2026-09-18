@@ -24,7 +24,7 @@
         "updated": 0,
         "didUpdate": false
     },
-    "startTime": 1789728142483,
+    "startTime": 1789732779754,
     "success": true,
     "testResults": [
         {
@@ -34,7 +34,7 @@
                     "fullName": "public account recovery pages confirms an email token only once under React Strict Mode",
                     "status": "passed",
                     "title": "confirms an email token only once under React Strict Mode",
-                    "duration": 39.837328999999954,
+                    "duration": 34.63179100000002,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -44,7 +44,7 @@
                     "fullName": "public account recovery pages resends verification without revealing whether the account exists",
                     "status": "passed",
                     "title": "resends verification without revealing whether the account exists",
-                    "duration": 185.45641899999998,
+                    "duration": 180.49723800000004,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -54,7 +54,7 @@
                     "fullName": "public account recovery pages requests a password reset with a normalized email and a generic response",
                     "status": "passed",
                     "title": "requests a password reset with a normalized email and a generic response",
-                    "duration": 110.37795199999994,
+                    "duration": 128.18093099999987,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -64,7 +64,7 @@
                     "fullName": "public account recovery pages sets a new password using the reset token",
                     "status": "passed",
                     "title": "sets a new password using the reset token",
-                    "duration": 264.6467359999999,
+                    "duration": 260.07680700000014,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -74,14 +74,14 @@
                     "fullName": "public account recovery pages does not render a password form without a reset token",
                     "status": "passed",
                     "title": "does not render a password form without a reset token",
-                    "duration": 5.942922000000181,
+                    "duration": 3.40595600000006,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789728147085,
-            "endTime": 1789728147691.9429,
+            "startTime": 1789732784432,
+            "endTime": 1789732785039.406,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/AccountRecoveryPages.spec.tsx"
@@ -93,7 +93,7 @@
                     "fullName": "AdministratorProjectsPage shows a compact overview of every project on the projects root",
                     "status": "passed",
                     "title": "shows a compact overview of every project on the projects root",
-                    "duration": 163.99364000000003,
+                    "duration": 198.26080100000001,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -103,7 +103,7 @@
                     "fullName": "AdministratorProjectsPage shows only administrative project summary data and settings",
                     "status": "passed",
                     "title": "shows only administrative project summary data and settings",
-                    "duration": 105.64415599999984,
+                    "duration": 84.56099599999993,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -113,7 +113,7 @@
                     "fullName": "AdministratorProjectsPage adds membership through the ActionBar-triggered dialog",
                     "status": "passed",
                     "title": "adds membership through the ActionBar-triggered dialog",
-                    "duration": 164.59828599999992,
+                    "duration": 178.50036,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -123,14 +123,14 @@
                     "fullName": "AdministratorProjectsPage opens the shared project dialog when the ActionBar requests project creation",
                     "status": "passed",
                     "title": "opens the shared project dialog when the ActionBar requests project creation",
-                    "duration": 40.827968000000055,
+                    "duration": 44.51607400000012,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789728148645,
-            "endTime": 1789728149120.828,
+            "startTime": 1789732785881,
+            "endTime": 1789732786386.516,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/AdministratorProjectsPage.spec.tsx"
@@ -142,7 +142,7 @@
                     "fullName": "AuthenticationEntryPage shows login after confirming that bootstrap is complete.",
                     "status": "passed",
                     "title": "shows login after confirming that bootstrap is complete.",
-                    "duration": 162.74013200000002,
+                    "duration": 181.86511700000005,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -152,7 +152,7 @@
                     "fullName": "AuthenticationEntryPage shows initial Administrator registration while bootstrap is available.",
                     "status": "passed",
                     "title": "shows initial Administrator registration while bootstrap is available.",
-                    "duration": 48.78636800000004,
+                    "duration": 29.647175999999945,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -162,7 +162,7 @@
                     "fullName": "AuthenticationEntryPage does not expose login when bootstrap status cannot be established and supports retry.",
                     "status": "passed",
                     "title": "does not expose login when bootstrap status cannot be established and supports retry.",
-                    "duration": 63.44004200000006,
+                    "duration": 49.06797199999983,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -172,14 +172,14 @@
                     "fullName": "AuthenticationEntryPage rejects malformed bootstrap status responses.",
                     "status": "passed",
                     "title": "rejects malformed bootstrap status responses.",
-                    "duration": 10.515202999999929,
+                    "duration": 15.095211999999947,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789728149778,
-            "endTime": 1789728150063.5151,
+            "startTime": 1789732786972,
+            "endTime": 1789732787247.0952,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/AuthenticationEntryPage.spec.tsx"
@@ -191,7 +191,7 @@
                     "fullName": "BootstrapAdministratorPage uses standard text-field styling for email and every password input.",
                     "status": "passed",
                     "title": "uses standard text-field styling for email and every password input.",
-                    "duration": 111.71007700000007,
+                    "duration": 121.21156599999995,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -201,7 +201,7 @@
                     "fullName": "BootstrapAdministratorPage validates matching passwords before enabling registration.",
                     "status": "passed",
                     "title": "validates matching passwords before enabling registration.",
-                    "duration": 198.52582099999995,
+                    "duration": 162.50637299999994,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -211,7 +211,7 @@
                     "fullName": "BootstrapAdministratorPage submits normalized account data and explains the email-verification step.",
                     "status": "passed",
                     "title": "submits normalized account data and explains the email-verification step.",
-                    "duration": 580.716073,
+                    "duration": 588.810058,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -221,7 +221,7 @@
                     "fullName": "BootstrapAdministratorPage switches to normal login when another request completed bootstrap first.",
                     "status": "passed",
                     "title": "switches to normal login when another request completed bootstrap first.",
-                    "duration": 572.33779,
+                    "duration": 513.618389,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -231,14 +231,14 @@
                     "fullName": "BootstrapAdministratorPage shows a specific retry-later message for rate limiting.",
                     "status": "passed",
                     "title": "shows a specific retry-later message for rate limiting.",
-                    "duration": 543.871646,
+                    "duration": 529.5601539999998,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789728143454,
-            "endTime": 1789728145464.8716,
+            "startTime": 1789732780690,
+            "endTime": 1789732782606.56,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/BootstrapAdministratorPage.spec.tsx"
@@ -250,7 +250,7 @@
                     "fullName": "LoginPage styles the password field like the username field while preserving password input behavior.",
                     "status": "passed",
                     "title": "styles the password field like the username field while preserving password input behavior.",
-                    "duration": 84.52918699999998,
+                    "duration": 87.16738599999996,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -260,7 +260,7 @@
                     "fullName": "LoginPage links to registration and password recovery.",
                     "status": "passed",
                     "title": "links to registration and password recovery.",
-                    "duration": 59.333302,
+                    "duration": 61.29473200000007,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -270,7 +270,7 @@
                     "fullName": "LoginPage signs in, stores the session, and returns to the requested route.",
                     "status": "passed",
                     "title": "signs in, stores the session, and returns to the requested route.",
-                    "duration": 202.89090399999998,
+                    "duration": 146.2037029999999,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -280,7 +280,7 @@
                     "fullName": "LoginPage shows a generic error without disclosing the account state.",
                     "status": "passed",
                     "title": "shows a generic error without disclosing the account state.",
-                    "duration": 130.51405599999998,
+                    "duration": 105.10153500000001,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -290,7 +290,7 @@
                     "fullName": "LoginPage explains when the previous session expired.",
                     "status": "passed",
                     "title": "explains when the previous session expired.",
-                    "duration": 18.557634000000007,
+                    "duration": 12.531135999999833,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -300,14 +300,14 @@
                     "fullName": "LoginPage redirects an already authenticated user without showing the login form.",
                     "status": "passed",
                     "title": "redirects an already authenticated user without showing the login form.",
-                    "duration": 5.038398000000143,
+                    "duration": 6.414702999999918,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789728148091,
-            "endTime": 1789728148592.0383,
+            "startTime": 1789732785046,
+            "endTime": 1789732785465.4148,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/LoginPage.spec.tsx"
@@ -319,14 +319,14 @@
                     "fullName": "ProjectDetailsPage links to requirements for a project-scoped user.",
                     "status": "passed",
                     "title": "links to requirements for a project-scoped user.",
-                    "duration": 128.40382599999998,
+                    "duration": 126.388641,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789728150729,
-            "endTime": 1789728150857.4038,
+            "startTime": 1789732787942,
+            "endTime": 1789732788068.3887,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectDetailsPage.spec.tsx"
@@ -338,7 +338,7 @@
                     "fullName": "RegistrationPage uses the standard text-field styling for email and password inputs.",
                     "status": "passed",
                     "title": "uses the standard text-field styling for email and password inputs.",
-                    "duration": 111.043994,
+                    "duration": 126.58055800000011,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -348,7 +348,7 @@
                     "fullName": "RegistrationPage submits normalized local-account data and explains the activation steps",
                     "status": "passed",
                     "title": "submits normalized local-account data and explains the activation steps",
-                    "duration": 594.601976,
+                    "duration": 585.706124,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -358,14 +358,14 @@
                     "fullName": "RegistrationPage does not expose backend account details when registration fails",
                     "status": "passed",
                     "title": "does not expose backend account details when registration fails",
-                    "duration": 509.6548620000001,
+                    "duration": 458.20606099999986,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789728143370,
-            "endTime": 1789728144585.6548,
+            "startTime": 1789732780668,
+            "endTime": 1789732781838.206,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/RegistrationPage.spec.tsx"
@@ -377,7 +377,7 @@
                     "fullName": "RootLayout uses the dedicated Administrator sidebar for Administrator accounts",
                     "status": "passed",
                     "title": "uses the dedicated Administrator sidebar for Administrator accounts",
-                    "duration": 89.98791699999992,
+                    "duration": 87.19197999999994,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -387,14 +387,14 @@
                     "fullName": "RootLayout uses project navigation for project-scoped accounts",
                     "status": "passed",
                     "title": "uses project navigation for project-scoped accounts",
-                    "duration": 6.407830999999987,
+                    "duration": 6.44422499999996,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789728152156,
-            "endTime": 1789728152252.4077,
+            "startTime": 1789732789048,
+            "endTime": 1789732789141.4443,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/RootLayout.spec.tsx"
@@ -406,7 +406,7 @@
                     "fullName": "UserAdministrationPage renders the expanded full-width user table with login presence and actions",
                     "status": "passed",
                     "title": "renders the expanded full-width user table with login presence and actions",
-                    "duration": 209.33283900000004,
+                    "duration": 201.52609299999995,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -416,7 +416,7 @@
                     "fullName": "UserAdministrationPage disables self-deactivation and self-session revocation in the user table",
                     "status": "passed",
                     "title": "disables self-deactivation and self-session revocation in the user table",
-                    "duration": 24.034460999999965,
+                    "duration": 34.09040099999993,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -426,7 +426,7 @@
                     "fullName": "UserAdministrationPage blocks the role dialog while the selected user is logged in",
                     "status": "passed",
                     "title": "blocks the role dialog while the selected user is logged in",
-                    "duration": 34.317724999999996,
+                    "duration": 37.82216900000003,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -436,7 +436,7 @@
                     "fullName": "UserAdministrationPage temporarily deactivates an active logged-out user before opening the role dialog and reactivates on cancel",
                     "status": "passed",
                     "title": "temporarily deactivates an active logged-out user before opening the role dialog and reactivates on cancel",
-                    "duration": 266.9339459999999,
+                    "duration": 285.6243840000002,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -446,7 +446,7 @@
                     "fullName": "UserAdministrationPage saves a role change and restores the temporarily deactivated account",
                     "status": "passed",
                     "title": "saves a role change and restores the temporarily deactivated account",
-                    "duration": 130.58225600000014,
+                    "duration": 140.9457719999998,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -456,7 +456,7 @@
                     "fullName": "UserAdministrationPage moves selected-user account status administration into the ActionBar",
                     "status": "passed",
                     "title": "moves selected-user account status administration into the ActionBar",
-                    "duration": 15.636285000000044,
+                    "duration": 12.941029000000071,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -466,14 +466,14 @@
                     "fullName": "UserAdministrationPage shows user metadata without the old sessions section or account-role dropdown",
                     "status": "passed",
                     "title": "shows user metadata without the old sessions section or account-role dropdown",
-                    "duration": 31.43096199999991,
+                    "duration": 13.48094100000003,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789728145406,
-            "endTime": 1789728146118.431,
+            "startTime": 1789732783434,
+            "endTime": 1789732784161.481,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/UserAdministrationPage.spec.tsx"
@@ -485,7 +485,7 @@
                     "fullName": "UserDetails shows account metadata without the redundant username or local account-state control",
                     "status": "passed",
                     "title": "shows account metadata without the redundant username or local account-state control",
-                    "duration": 119.206684,
+                    "duration": 127.37534700000003,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -495,14 +495,14 @@
                     "fullName": "UserDetails opens role administration from the role metadata link",
                     "status": "passed",
                     "title": "opens role administration from the role metadata link",
-                    "duration": 30.090485000000058,
+                    "duration": 28.95876499999997,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789728150791,
-            "endTime": 1789728150940.0906,
+            "startTime": 1789732788089,
+            "endTime": 1789732788245.9587,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/UserDetails.spec.tsx"
@@ -514,7 +514,7 @@
                     "fullName": "WorkspacePage redirects Administrators directly to the dedicated Administrator workspace",
                     "status": "passed",
                     "title": "redirects Administrators directly to the dedicated Administrator workspace",
-                    "duration": 114.66301699999997,
+                    "duration": 118.01755800000001,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -524,14 +524,14 @@
                     "fullName": "WorkspacePage keeps project-scoped accounts in the project workspace",
                     "status": "passed",
                     "title": "keeps project-scoped accounts in the project workspace",
-                    "duration": 7.889174000000025,
+                    "duration": 7.614981000000057,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789728151565,
-            "endTime": 1789728151687.8892,
+            "startTime": 1789732788820,
+            "endTime": 1789732788945.615,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/WorkspacePage.spec.tsx"
@@ -543,7 +543,7 @@
                     "fullName": "CategoryDetailsPanel renders the empty message when no category is selected.",
                     "status": "passed",
                     "title": "renders the empty message when no category is selected.",
-                    "duration": 139.02952599999992,
+                    "duration": 113.60429199999999,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -553,14 +553,14 @@
                     "fullName": "CategoryDetailsPanel renders the category fields.",
                     "status": "passed",
                     "title": "renders the category fields.",
-                    "duration": 25.31763699999999,
+                    "duration": 26.337949000000094,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789728151287,
-            "endTime": 1789728151451.3176,
+            "startTime": 1789732788190,
+            "endTime": 1789732788330.338,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectCategories/CategoryDetailsPanel.spec.tsx"
@@ -572,14 +572,14 @@
                     "fullName": "ProjectCategories DetailsPage keeps route actions out of the category detail panel.",
                     "status": "passed",
                     "title": "keeps route actions out of the category detail panel.",
-                    "duration": 109.41262600000005,
+                    "duration": 114.06524000000002,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789728151708,
-            "endTime": 1789728151817.4126,
+            "startTime": 1789732788968,
+            "endTime": 1789732789082.0652,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectCategories/DetailsPage.spec.tsx"
@@ -591,7 +591,7 @@
                     "fullName": "ProjectCategories FormPage renders the create form with editable category fields.",
                     "status": "passed",
                     "title": "renders the create form with editable category fields.",
-                    "duration": 219.5802000000001,
+                    "duration": 183.50803700000006,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -601,7 +601,7 @@
                     "fullName": "ProjectCategories FormPage creates a category, opens a details tab, navigates to details, and shows a Toast message.",
                     "status": "passed",
                     "title": "creates a category, opens a details tab, navigates to details, and shows a Toast message.",
-                    "duration": 192.43856600000004,
+                    "duration": 189.16378499999996,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -611,7 +611,7 @@
                     "fullName": "ProjectCategories FormPage validates required and unique create fields.",
                     "status": "passed",
                     "title": "validates required and unique create fields.",
-                    "duration": 175.654045,
+                    "duration": 152.17866200000003,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -621,7 +621,7 @@
                     "fullName": "ProjectCategories FormPage renders the update form with read-only key and locked type.",
                     "status": "passed",
                     "title": "renders the update form with read-only key and locked type.",
-                    "duration": 29.15700300000003,
+                    "duration": 25.85377299999982,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -631,7 +631,7 @@
                     "fullName": "ProjectCategories FormPage uses the category details tab while editing a category.",
                     "status": "passed",
                     "title": "uses the category details tab while editing a category.",
-                    "duration": 17.3858009999999,
+                    "duration": 15.77204299999994,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -641,7 +641,7 @@
                     "fullName": "ProjectCategories FormPage updates only the category name.",
                     "status": "passed",
                     "title": "updates only the category name.",
-                    "duration": 92.72884599999998,
+                    "duration": 69.28066599999988,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -651,7 +651,7 @@
                     "fullName": "ProjectCategories FormPage asks for confirmation before aborting a dirty form.",
                     "status": "passed",
                     "title": "asks for confirmation before aborting a dirty form.",
-                    "duration": 147.34148600000003,
+                    "duration": 147.098884,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -661,14 +661,14 @@
                     "fullName": "ProjectCategories FormPage blocks route changes from a dirty form until the user confirms.",
                     "status": "passed",
                     "title": "blocks route changes from a dirty form until the user confirms.",
-                    "duration": 222.96249000000012,
+                    "duration": 157.59344699999997,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789728143558,
-            "endTime": 1789728144655.9624,
+            "startTime": 1789732780876,
+            "endTime": 1789732781816.5935,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectCategories/FormPage.spec.tsx"
@@ -680,7 +680,7 @@
                     "fullName": "ProjectCategories ListPage renders category keys as copy links.",
                     "status": "passed",
                     "title": "renders category keys as copy links.",
-                    "duration": 272.201094,
+                    "duration": 239.48084300000005,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -690,7 +690,7 @@
                     "fullName": "ProjectCategories ListPage renders requirement counts calculated from loaded project requirements.",
                     "status": "passed",
                     "title": "renders requirement counts calculated from loaded project requirements.",
-                    "duration": 66.30795200000011,
+                    "duration": 50.37457100000006,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -700,7 +700,7 @@
                     "fullName": "ProjectCategories ListPage copies the category key when the key cell is clicked.",
                     "status": "passed",
                     "title": "copies the category key when the key cell is clicked.",
-                    "duration": 74.36789799999997,
+                    "duration": 52.83363699999995,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -710,7 +710,7 @@
                     "fullName": "ProjectCategories ListPage shows the category context menu actions on right click.",
                     "status": "passed",
                     "title": "shows the category context menu actions on right click.",
-                    "duration": 107.10805700000014,
+                    "duration": 71.224021,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -720,7 +720,7 @@
                     "fullName": "ProjectCategories ListPage deletes the selected category from the context menu when it has no requirements.",
                     "status": "passed",
                     "title": "deletes the selected category from the context menu when it has no requirements.",
-                    "duration": 145.769004,
+                    "duration": 160.80717500000014,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -730,7 +730,7 @@
                     "fullName": "ProjectCategories ListPage does not delete a category with requirements from the context menu.",
                     "status": "passed",
                     "title": "does not delete a category with requirements from the context menu.",
-                    "duration": 60.8921170000001,
+                    "duration": 51.56732499999998,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -740,14 +740,14 @@
                     "fullName": "ProjectCategories ListPage navigates to the requirement creation placeholder from the context menu.",
                     "status": "passed",
                     "title": "navigates to the requirement creation placeholder from the context menu.",
-                    "duration": 59.122206000000006,
+                    "duration": 87.24882600000001,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789728146513,
-            "endTime": 1789728147299.1223,
+            "startTime": 1789732782727,
+            "endTime": 1789732783441.2488,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectCategories/ListPage.spec.tsx"
@@ -759,7 +759,7 @@
                     "fullName": "ProjectRequirements FormPage renders the create requirement form with the selected category preselected.",
                     "status": "passed",
                     "title": "renders the create requirement form with the selected category preselected.",
-                    "duration": 178.7068280000001,
+                    "duration": 155.95729999999992,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -769,7 +769,7 @@
                     "fullName": "ProjectRequirements FormPage creates a requirement and navigates to the details route.",
                     "status": "passed",
                     "title": "creates a requirement and navigates to the details route.",
-                    "duration": 195.969386,
+                    "duration": 186.09676200000013,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -779,7 +779,7 @@
                     "fullName": "ProjectRequirements FormPage renders the update requirement form with the current values.",
                     "status": "passed",
                     "title": "renders the update requirement form with the current values.",
-                    "duration": 29.247064000000137,
+                    "duration": 35.170118,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -789,14 +789,14 @@
                     "fullName": "ProjectRequirements FormPage requires and submits a change reason when updating a requirement.",
                     "status": "passed",
                     "title": "requires and submits a change reason when updating a requirement.",
-                    "duration": 411.64622499999996,
+                    "duration": 413.1198689999999,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789728145473,
-            "endTime": 1789728146288.6462,
+            "startTime": 1789732782802,
+            "endTime": 1789732783593.1199,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectRequirements/FormPage.spec.tsx"
@@ -808,7 +808,7 @@
                     "fullName": "ImplementationTicketsPanel permissions lets a Developer manage tickets on an approved requirement.",
                     "status": "passed",
                     "title": "lets a Developer manage tickets on an approved requirement.",
-                    "duration": 251.58193700000004,
+                    "duration": 237.74892799999998,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -818,7 +818,7 @@
                     "fullName": "ImplementationTicketsPanel permissions keeps tickets visible but read-only for a Viewer.",
                     "status": "passed",
                     "title": "keeps tickets visible but read-only for a Viewer.",
-                    "duration": 21.16622600000005,
+                    "duration": 22.30827700000009,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -828,14 +828,14 @@
                     "fullName": "ImplementationTicketsPanel permissions keeps implemented requirement tickets read-only even for a Developer.",
                     "status": "passed",
                     "title": "keeps implemented requirement tickets read-only even for a Developer.",
-                    "duration": 18.809500999999955,
+                    "duration": 20.016190999999935,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789728148708,
-            "endTime": 1789728148999.8096,
+            "startTime": 1789732785862,
+            "endTime": 1789732786142.016,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectRequirements/ImplementationTicketsPanel.spec.tsx"
@@ -847,7 +847,7 @@
                     "fullName": "ProjectRequirements ListPage loads the requirements collection for the route project.",
                     "status": "passed",
                     "title": "loads the requirements collection for the route project.",
-                    "duration": 83.39683100000002,
+                    "duration": 105.24759100000006,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -857,7 +857,7 @@
                     "fullName": "ProjectRequirements ListPage renders the current requirements table and details panel.",
                     "status": "passed",
                     "title": "renders the current requirements table and details panel.",
-                    "duration": 210.9455119999999,
+                    "duration": 197.05495599999995,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -867,7 +867,7 @@
                     "fullName": "ProjectRequirements ListPage shows the selected requirement in the details panel when a row is clicked.",
                     "status": "passed",
                     "title": "shows the selected requirement in the details panel when a row is clicked.",
-                    "duration": 110.65745500000003,
+                    "duration": 91.75433999999996,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -877,7 +877,7 @@
                     "fullName": "ProjectRequirements ListPage keeps the selected requirement visible when the selected row is clicked again.",
                     "status": "passed",
                     "title": "keeps the selected requirement visible when the selected row is clicked again.",
-                    "duration": 87.07977000000005,
+                    "duration": 87.98853499999996,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -887,7 +887,7 @@
                     "fullName": "ProjectRequirements ListPage opens a requirement details tab and navigates when a row is double clicked.",
                     "status": "passed",
                     "title": "opens a requirement details tab and navigates when a row is double clicked.",
-                    "duration": 63.94016999999985,
+                    "duration": 91.89135300000021,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -897,7 +897,7 @@
                     "fullName": "ProjectRequirements ListPage copies the requirement key when the key cell is clicked.",
                     "status": "passed",
                     "title": "copies the requirement key when the key cell is clicked.",
-                    "duration": 52.155633999999964,
+                    "duration": 67.35190699999998,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -907,7 +907,7 @@
                     "fullName": "ProjectRequirements ListPage renders the loading state.",
                     "status": "passed",
                     "title": "renders the loading state.",
-                    "duration": 5.554802999999993,
+                    "duration": 5.659806000000117,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -917,7 +917,7 @@
                     "fullName": "ProjectRequirements ListPage renders the error state.",
                     "status": "passed",
                     "title": "renders the error state.",
-                    "duration": 7.652410000000145,
+                    "duration": 7.09661600000004,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -927,14 +927,14 @@
                     "fullName": "ProjectRequirements ListPage renders the empty state.",
                     "status": "passed",
                     "title": "renders the empty state.",
-                    "duration": 5.19901300000015,
+                    "duration": 5.167014999999992,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789728147058,
-            "endTime": 1789728147685.199,
+            "startTime": 1789732784321,
+            "endTime": 1789732784980.167,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectRequirements/ListPage.spec.tsx"
@@ -946,7 +946,7 @@
                     "fullName": "RequirementDetailsPanel shows reviewer, rejection reason, and rejection date for rejected requirements.",
                     "status": "passed",
                     "title": "shows reviewer, rejection reason, and rejection date for rejected requirements.",
-                    "duration": 88.39618900000005,
+                    "duration": 84.58464299999991,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -956,7 +956,7 @@
                     "fullName": "RequirementDetailsPanel shows the actor, reason, and timestamp for obsolete requirements while retaining the reviewer.",
                     "status": "passed",
                     "title": "shows the actor, reason, and timestamp for obsolete requirements while retaining the reviewer.",
-                    "duration": 15.772643000000016,
+                    "duration": 26.343628999999964,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -966,14 +966,14 @@
                     "fullName": "RequirementDetailsPanel renders implementation tickets as a table for approved requirements.",
                     "status": "passed",
                     "title": "renders implementation tickets as a table for approved requirements.",
-                    "duration": 75.33829800000001,
+                    "duration": 74.36950200000001,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789728150398,
-            "endTime": 1789728150578.3384,
+            "startTime": 1789732787271,
+            "endTime": 1789732787456.3694,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectRequirements/RequirementDetailsPanel.spec.tsx"
@@ -985,7 +985,7 @@
                     "fullName": "RequirementLifecycleDialog requires a reason when configured for rejection or obsolescence.",
                     "status": "passed",
                     "title": "requires a reason when configured for rejection or obsolescence.",
-                    "duration": 259.358063,
+                    "duration": 247.51764400000002,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -995,14 +995,14 @@
                     "fullName": "RequirementLifecycleDialog supports approval without collecting a reviewer name.",
                     "status": "passed",
                     "title": "supports approval without collecting a reviewer name.",
-                    "duration": 37.16645500000004,
+                    "duration": 38.43515400000001,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789728149359,
-            "endTime": 1789728149656.1665,
+            "startTime": 1789732786246,
+            "endTime": 1789732786531.435,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectRequirements/RequirementLifecycleDialog.spec.tsx"
@@ -1014,7 +1014,7 @@
                     "fullName": "ReviewCommentsPanel expands comments longer than 200 characters and exposes review actions for open comments.",
                     "status": "passed",
                     "title": "expands comments longer than 200 characters and exposes review actions for open comments.",
-                    "duration": 189.10184300000003,
+                    "duration": 183.5450840000001,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1024,14 +1024,14 @@
                     "fullName": "ReviewCommentsPanel renders existing comments without mutation controls in read-only mode.",
                     "status": "passed",
                     "title": "renders existing comments without mutation controls in read-only mode.",
-                    "duration": 13.641493999999966,
+                    "duration": 10.147813999999926,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789728149824,
-            "endTime": 1789728150026.6416,
+            "startTime": 1789732787173,
+            "endTime": 1789732787366.1477,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectRequirements/ReviewCommentsPanel.spec.tsx"

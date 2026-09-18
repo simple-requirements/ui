@@ -48,7 +48,7 @@ function getVisibleProjectDialog(page: Page) {
 }
 
 function getAdministrativeProjectList(page: Page) {
-    return page.getByRole('region', { name: 'Administrative project list' });
+    return page.getByRole('table', { name: 'All projects' });
 }
 
 async function waitUntilApplicationHasLoaded(page: Page): Promise<void> {
@@ -107,9 +107,7 @@ When('I create a project named {string}', async ({ page }, projectName: string) 
 
 When('I select administrative project {string}', async ({ page }, projectName: string) => {
     const resolvedProjectName = resolveProjectName(projectName);
-    await getAdministrativeProjectList(page)
-        .getByRole('link', { name: resolvedProjectName, exact: true })
-        .click();
+    await getAdministrativeProjectList(page).getByRole('link', { name: resolvedProjectName, exact: true }).click();
     await expect(page.getByRole('heading', { name: resolvedProjectName })).toBeVisible();
 });
 
@@ -141,7 +139,7 @@ Then('the sidebar should show the projects in this order', async ({ page }, data
 Then('project administration should contain the project {string}', async ({ page }, projectName: string) => {
     const resolvedProjectName = resolveProjectName(projectName);
     const detailsHeading = page.getByRole('heading', { name: resolvedProjectName, exact: true });
-    if (await detailsHeading.count() > 0) {
+    if ((await detailsHeading.count()) > 0) {
         await expect(detailsHeading).toBeVisible();
         return;
     }

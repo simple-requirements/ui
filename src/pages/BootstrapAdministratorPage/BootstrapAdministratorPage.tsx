@@ -2,8 +2,6 @@ import { BootstrapAdministratorForm } from '@/pages/BootstrapAdministratorPage/B
 import { BootstrapAdministratorSuccessPanel } from '@/pages/BootstrapAdministratorPage/BootstrapAdministratorSuccessPanel';
 import { useBootstrapAdministratorForm } from '@/pages/BootstrapAdministratorPage/useBootstrapAdministratorForm';
 
-import '@/pages/BootstrapAdministratorPage/BootstrapAdministratorPage.scss';
-
 type Props = Readonly<{ onContinueToLogin: () => void; onBootstrapUnavailable: () => void }>;
 
 export function BootstrapAdministratorPage({ onContinueToLogin, onBootstrapUnavailable }: Props) {
@@ -11,7 +9,7 @@ export function BootstrapAdministratorPage({ onContinueToLogin, onBootstrapUnava
         useBootstrapAdministratorForm({ onBootstrapUnavailable });
 
     return (
-        <main className='bootstrap-page'>
+        <main className='ui-public-account'>
             {submitted ?
                 <BootstrapAdministratorSuccessPanel onContinueToLogin={onContinueToLogin} />
             :   <BootstrapAdministratorForm

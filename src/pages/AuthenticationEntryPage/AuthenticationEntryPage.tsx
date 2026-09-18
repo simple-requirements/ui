@@ -5,8 +5,6 @@ import { getAuthenticationBootstrapStatus } from '@/api/authApi';
 import { BootstrapAdministratorPage } from '@/pages/BootstrapAdministratorPage/BootstrapAdministratorPage';
 import { LoginPage } from '@/pages/LoginPage/LoginPage';
 
-import '@/pages/LoginPage/LoginPage.scss';
-
 type BootstrapAvailability = 'loading' | 'available' | 'unavailable' | 'error';
 
 function readRegistrationAvailability(value: unknown): boolean {
@@ -63,20 +61,25 @@ export function AuthenticationEntryPage() {
     }
 
     return (
-        <main className='login-page'>
+        <main className='ui-public-account'>
             <section
-                className='login-page__panel'
+                className='ui-panel ui-panel--rounded ui-public-account__card ui-public-account__card--compact'
                 aria-labelledby='authentication-entry-title'>
                 <h1 id='authentication-entry-title'>Authentication</h1>
                 {availability === 'loading' ?
-                    <p role='status'>Checking application setup…</p>
+                    <p
+                        className='ui-public-account__intro'
+                        role='status'>
+                        Checking application setup…
+                    </p>
                 :   <>
                         <p
-                            className='login-page__error'
+                            className='ui-public-account__message ui-public-account__message--error'
                             role='alert'>
                             The application setup status could not be loaded.
                         </p>
                         <Button
+                            className='ui-button ui-button--primary ui-button--public-account'
                             type='button'
                             label='Try again'
                             onClick={() => {

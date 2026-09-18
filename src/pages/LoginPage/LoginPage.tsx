@@ -8,8 +8,6 @@ import { getAuthenticatedUser, login } from '@/api/authApi';
 import { getSafeReturnTo } from '@/auth/authRoutes';
 import { authStore, setAuthenticatedSession } from '@/stores/authStore';
 
-import '@/pages/LoginPage/LoginPage.scss';
-
 const LOGIN_ERROR_MESSAGE = 'The username or password is invalid, or the account is unavailable.';
 
 type LoginPageProps = Readonly<{ notice?: string }>;
@@ -74,16 +72,16 @@ export function LoginPage({ notice }: LoginPageProps) {
     }
 
     return (
-        <main className='login-page'>
+        <main className='ui-public-account'>
             <section
-                className='login-page__panel'
+                className='ui-panel ui-panel--rounded ui-public-account__card ui-public-account__card--compact'
                 aria-labelledby='login-title'>
                 <h1 id='login-title'>Sign in</h1>
-                <p>Sign in with your local account.</p>
+                <p className='ui-public-account__intro'>Sign in with your local account.</p>
 
                 {(notice !== undefined || sessionExpired) && (
                     <p
-                        className='login-page__notice'
+                        className='ui-public-account__message ui-public-account__message--info'
                         role='status'>
                         {notice ?? 'Your session has ended. Sign in again to continue.'}
                     </p>
@@ -91,14 +89,14 @@ export function LoginPage({ notice }: LoginPageProps) {
 
                 {errorMessage !== undefined && (
                     <p
-                        className='login-page__error'
+                        className='ui-public-account__message ui-public-account__message--error'
                         role='alert'>
                         {errorMessage}
                     </p>
                 )}
 
                 <form
-                    className='login-page__form'
+                    className='ui-form ui-form--flush ui-form--compact ui-public-account__form ui-public-account__form--separated'
                     onSubmit={(event) => {
                         event.preventDefault();
                         void handleSubmit();
@@ -126,13 +124,14 @@ export function LoginPage({ notice }: LoginPageProps) {
                     />
 
                     <Button
+                        className='ui-button ui-button--primary ui-button--public-account'
                         type='submit'
                         label='Sign in'
                         loading={pending}
                         disabled={!valid || pending}
                     />
                 </form>
-                <div className='login-page__links'>
+                <div className='ui-public-account__actions'>
                     <Link to='/register'>Do not have an account? Register yourself.</Link>
                     <Link to='/forgot-password'>Forgot your password? Reset it here.</Link>
                 </div>

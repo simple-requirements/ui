@@ -7,8 +7,6 @@ import { registerUser } from '@/api/authApi';
 import { isValidEmail, isValidPassword, isValidUsername } from '@/auth/accountValidation';
 import { LOGIN_ROUTE } from '@/auth/authRoutes';
 
-import '@/pages/PublicAccountPage/PublicAccountPage.scss';
-
 type FormState = Readonly<{
     username: string;
     email: string;
@@ -73,18 +71,18 @@ export function RegistrationPage() {
 
     if (submitted) {
         return (
-            <main className='public-account-page'>
+            <main className='ui-public-account'>
                 <section
-                    className='public-account-page__panel'
+                    className='ui-panel ui-panel--rounded ui-public-account__card'
                     aria-labelledby='registration-received-title'>
                     <h1 id='registration-received-title'>Registration received</h1>
                     <p
-                        className='public-account-page__status'
+                        className='ui-public-account__message ui-public-account__message--success'
                         role='status'>
                         Check your email and verify the address. An Administrator must activate the account before you
                         can sign in.
                     </p>
-                    <div className='public-account-page__actions'>
+                    <div className='ui-public-account__actions'>
                         <Link to='/verify-email/resend'>Resend verification email</Link>
                         <Link to={LOGIN_ROUTE}>Return to sign in</Link>
                     </div>
@@ -94,21 +92,23 @@ export function RegistrationPage() {
     }
 
     return (
-        <main className='public-account-page'>
+        <main className='ui-public-account'>
             <section
-                className='public-account-page__panel'
+                className='ui-panel ui-panel--rounded ui-public-account__card'
                 aria-labelledby='registration-title'>
                 <h1 id='registration-title'>Create account</h1>
-                <p>Register a local account. Email verification and Administrator activation are required.</p>
+                <p className='ui-public-account__intro'>
+                    Register a local account. Email verification and Administrator activation are required.
+                </p>
                 {errorMessage !== undefined && (
                     <p
-                        className='public-account-page__error'
+                        className='ui-public-account__message ui-public-account__message--error'
                         role='alert'>
                         {errorMessage}
                     </p>
                 )}
                 <form
-                    className='public-account-page__form'
+                    className='ui-form ui-form--flush ui-form--compact ui-public-account__form'
                     onSubmit={(event) => {
                         event.preventDefault();
                         void submit();
@@ -168,16 +168,17 @@ export function RegistrationPage() {
                         onChange={(event) => update('confirmPassword', event.currentTarget.value)}
                     />
                     {form.confirmPassword.length > 0 && !passwordsMatch && (
-                        <small className='public-account-page__validation-error'>Passwords must match.</small>
+                        <small className='ui-public-account__validation-error'>Passwords must match.</small>
                     )}
                     <Button
+                        className='ui-button ui-button--primary ui-button--public-account'
                         type='submit'
                         label='Register'
                         loading={pending}
                         disabled={!valid || pending}
                     />
                 </form>
-                <div className='public-account-page__actions'>
+                <div className='ui-public-account__actions'>
                     <Link to={LOGIN_ROUTE}>Return to sign in</Link>
                 </div>
             </section>

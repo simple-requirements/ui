@@ -7,8 +7,6 @@ import { confirmPasswordReset } from '@/api/authApi';
 import { isValidPassword } from '@/auth/accountValidation';
 import { LOGIN_ROUTE } from '@/auth/authRoutes';
 
-import '@/pages/PublicAccountPage/PublicAccountPage.scss';
-
 /**
  * Renders the password-reset confirmation form for a reset token.
  * @returns Password-reset confirmation page.
@@ -39,14 +37,14 @@ export function PasswordResetConfirmationPage() {
     }
 
     return (
-        <main className='public-account-page'>
+        <main className='ui-public-account'>
             <section
-                className='public-account-page__panel'
+                className='ui-panel ui-panel--rounded ui-public-account__card'
                 aria-labelledby='password-reset-title'>
                 <h1 id='password-reset-title'>Choose a new password</h1>
                 {token.length === 0 && (
                     <p
-                        className='public-account-page__error'
+                        className='ui-public-account__message ui-public-account__message--error'
                         role='alert'>
                         The password-reset link is invalid or incomplete.
                     </p>
@@ -54,11 +52,11 @@ export function PasswordResetConfirmationPage() {
                 {completed ?
                     <>
                         <p
-                            className='public-account-page__status'
+                            className='ui-public-account__message ui-public-account__message--success'
                             role='status'>
                             Your password has been changed. Existing sessions have been revoked.
                         </p>
-                        <div className='public-account-page__actions'>
+                        <div className='ui-public-account__actions'>
                             <Link to={LOGIN_ROUTE}>Continue to sign in</Link>
                         </div>
                     </>
@@ -66,13 +64,13 @@ export function PasswordResetConfirmationPage() {
                     <>
                         {errorMessage !== undefined && (
                             <p
-                                className='public-account-page__error'
+                                className='ui-public-account__message ui-public-account__message--error'
                                 role='alert'>
                                 {errorMessage}
                             </p>
                         )}
                         <form
-                            className='public-account-page__form'
+                            className='ui-form ui-form--flush ui-form--compact ui-public-account__form'
                             onSubmit={(event) => {
                                 event.preventDefault();
                                 void submit();
@@ -103,9 +101,10 @@ export function PasswordResetConfirmationPage() {
                                 onChange={(event) => setConfirmation(event.currentTarget.value)}
                             />
                             {confirmation.length > 0 && !passwordsMatch && (
-                                <small className='public-account-page__validation-error'>Passwords must match.</small>
+                                <small className='ui-public-account__validation-error'>Passwords must match.</small>
                             )}
                             <Button
+                                className='ui-button ui-button--primary ui-button--public-account'
                                 type='submit'
                                 label='Change password'
                                 loading={pending}
@@ -113,7 +112,7 @@ export function PasswordResetConfirmationPage() {
                             />
                         </form>
                     </>
-                :   <div className='public-account-page__actions'>
+                :   <div className='ui-public-account__actions'>
                         <Link to='/forgot-password'>Request a new reset link</Link>
                     </div>
                 }

@@ -4,8 +4,6 @@ import { Link, useSearchParams } from 'react-router';
 import { confirmEmailVerification } from '@/api/authApi';
 import { LOGIN_ROUTE } from '@/auth/authRoutes';
 
-import '@/pages/PublicAccountPage/PublicAccountPage.scss';
-
 type ConfirmationState = 'confirming' | 'confirmed' | 'invalid';
 
 const confirmationRequests = new Map<string, Promise<ConfirmationState>>();
@@ -50,21 +48,27 @@ export function EmailVerificationPage() {
     }, [token]);
 
     return (
-        <main className='public-account-page'>
+        <main className='ui-public-account'>
             <section
-                className='public-account-page__panel'
+                className='ui-panel ui-panel--rounded ui-public-account__card'
                 aria-labelledby='email-verification-title'>
                 <h1 id='email-verification-title'>Verify email address</h1>
-                {state === 'confirming' && <p role='status'>Verifying your email address…</p>}
+                {state === 'confirming' && (
+                    <p
+                        className='ui-public-account__intro'
+                        role='status'>
+                        Verifying your email address…
+                    </p>
+                )}
                 {state === 'confirmed' && (
                     <>
                         <p
-                            className='public-account-page__status'
+                            className='ui-public-account__message ui-public-account__message--success'
                             role='status'>
                             Your email address has been verified. Regular accounts can sign in after an Administrator
                             has activated them.
                         </p>
-                        <div className='public-account-page__actions'>
+                        <div className='ui-public-account__actions'>
                             <Link to={LOGIN_ROUTE}>Continue to sign in</Link>
                         </div>
                     </>
@@ -72,11 +76,11 @@ export function EmailVerificationPage() {
                 {state === 'invalid' && (
                     <>
                         <p
-                            className='public-account-page__error'
+                            className='ui-public-account__message ui-public-account__message--error'
                             role='alert'>
                             The verification link is invalid or has expired.
                         </p>
-                        <div className='public-account-page__actions'>
+                        <div className='ui-public-account__actions'>
                             <Link to='/verify-email/resend'>Request another verification email</Link>
                             <Link to={LOGIN_ROUTE}>Return to sign in</Link>
                         </div>

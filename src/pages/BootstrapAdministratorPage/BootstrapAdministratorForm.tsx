@@ -32,21 +32,23 @@ export function BootstrapAdministratorForm({
 }: Props) {
     return (
         <section
-            className='bootstrap-page__panel'
+            className='ui-panel ui-panel--rounded ui-public-account__card ui-public-account__card--wide'
             aria-labelledby='bootstrap-title'>
             <h1 id='bootstrap-title'>Create initial Administrator</h1>
-            <p>No Administrator exists yet. Create the first local administration account.</p>
+            <p className='ui-public-account__intro'>
+                No Administrator exists yet. Create the first local administration account.
+            </p>
 
             {errorMessage !== undefined && (
                 <p
-                    className='bootstrap-page__error'
+                    className='ui-public-account__message ui-public-account__message--error'
                     role='alert'>
                     {errorMessage}
                 </p>
             )}
 
             <form
-                className='bootstrap-page__form'
+                className='ui-form ui-form--flush ui-form--compact ui-public-account__form'
                 onSubmit={(event) => {
                     event.preventDefault();
                     void onSubmit();
@@ -114,7 +116,7 @@ export function BootstrapAdministratorForm({
                     onChange={(event) => onUpdate('confirmPassword', event.currentTarget.value)}
                 />
                 {form.confirmPassword.length > 0 && !passwordsMatch && (
-                    <small className='bootstrap-page__validation-error'>Passwords must match.</small>
+                    <small className='ui-public-account__validation-error'>Passwords must match.</small>
                 )}
 
                 <label htmlFor='bootstrap-secret'>Bootstrap secret</label>
@@ -129,6 +131,7 @@ export function BootstrapAdministratorForm({
                 />
 
                 <Button
+                    className='ui-button ui-button--primary ui-button--public-account'
                     type='submit'
                     label='Create Administrator'
                     loading={pending}

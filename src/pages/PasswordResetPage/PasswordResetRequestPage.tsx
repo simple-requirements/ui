@@ -7,8 +7,6 @@ import { requestPasswordReset } from '@/api/authApi';
 import { isValidEmail } from '@/auth/accountValidation';
 import { LOGIN_ROUTE } from '@/auth/authRoutes';
 
-import '@/pages/PublicAccountPage/PublicAccountPage.scss';
-
 const GENERIC_RESPONSE = 'If the account is eligible, a password-reset email will be sent.';
 
 /**
@@ -40,29 +38,29 @@ export function PasswordResetRequestPage() {
     }
 
     return (
-        <main className='public-account-page'>
+        <main className='ui-public-account'>
             <section
-                className='public-account-page__panel'
+                className='ui-panel ui-panel--rounded ui-public-account__card'
                 aria-labelledby='password-reset-request-title'>
                 <h1 id='password-reset-request-title'>Reset password</h1>
-                <p>Enter the email address associated with your local account.</p>
+                <p className='ui-public-account__intro'>Enter the email address associated with your local account.</p>
                 {completed && (
                     <p
-                        className='public-account-page__status'
+                        className='ui-public-account__message ui-public-account__message--success'
                         role='status'>
                         {GENERIC_RESPONSE}
                     </p>
                 )}
                 {error && (
                     <p
-                        className='public-account-page__error'
+                        className='ui-public-account__message ui-public-account__message--error'
                         role='alert'>
                         The request could not be submitted. Try again later.
                     </p>
                 )}
                 {!completed && (
                     <form
-                        className='public-account-page__form'
+                        className='ui-form ui-form--flush ui-form--compact ui-public-account__form'
                         onSubmit={(event) => {
                             event.preventDefault();
                             void submit();
@@ -79,6 +77,7 @@ export function PasswordResetRequestPage() {
                             onChange={(event) => setEmail(event.currentTarget.value)}
                         />
                         <Button
+                            className='ui-button ui-button--primary ui-button--public-account'
                             type='submit'
                             label='Send reset email'
                             loading={pending}
@@ -86,7 +85,7 @@ export function PasswordResetRequestPage() {
                         />
                     </form>
                 )}
-                <div className='public-account-page__actions'>
+                <div className='ui-public-account__actions'>
                     <Link to={LOGIN_ROUTE}>Return to sign in</Link>
                 </div>
             </section>

@@ -65,12 +65,7 @@ export function ImplementationTicketForm({
                         outlined
                         label='Abort'
                         disabled={pending}
-                        pt={{
-                            root: {
-                                className:
-                                    'implementation-tickets-panel__button implementation-tickets-panel__button--abort',
-                            },
-                        }}
+                        pt={{ root: { className: 'ui-button ui-button--outline ui-button--dialog' } }}
                         onClick={onAbortEditing}
                     />
                 )}
@@ -79,12 +74,7 @@ export function ImplementationTicketForm({
                     label={editing === undefined ? 'Add ticket' : 'Save ticket'}
                     disabled={!valid || pending}
                     loading={pending}
-                    pt={{
-                        root: {
-                            className:
-                                'implementation-tickets-panel__button implementation-tickets-panel__button--submit',
-                        },
-                    }}
+                    pt={{ root: { className: 'ui-button ui-button--primary ui-button--dialog' } }}
                     onClick={() => void onSubmit()}
                 />
             </div>

@@ -30,19 +30,6 @@
     gap: 1.6rem;
 }
 
-.review-comments-panel__button {
-    @include ui.dialog-button;
-}
-
-.review-comments-panel__button--comment,
-.review-comments-panel__button--resolve {
-    @include ui.primary-button;
-}
-
-.review-comments-panel__button--reply {
-    @include ui.outline-button;
-}
-
 .review-comments-panel__list {
     display: flex;
     flex-direction: column;
@@ -158,16 +145,4 @@
 
 .review-dialog__warning {
     @include ui.form-message(var(--color-feedback-warning-text));
-}
-
-.review-dialog__button {
-    @include ui.dialog-button;
-}
-
-.review-dialog__button--abort {
-    @include ui.outline-button;
-}
-
-.review-dialog__button--confirm {
-    @include ui.primary-button;
 }

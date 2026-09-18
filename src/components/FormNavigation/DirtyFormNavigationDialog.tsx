@@ -33,23 +33,13 @@ export function DirtyFormNavigationDialog({ visible, message, onStay, onDiscard 
                     label='Stay on page'
                     outlined
                     onClick={onStay}
-                    pt={{
-                        root: {
-                            className:
-                                'dirty-form-navigation-dialog__button dirty-form-navigation-dialog__button--stay',
-                        },
-                    }}
+                    pt={{ root: { className: 'ui-button ui-button--outline ui-button--dialog' } }}
                 />
                 <Button
                     type='button'
                     label='Discard changes'
                     onClick={onDiscard}
-                    pt={{
-                        root: {
-                            className:
-                                'dirty-form-navigation-dialog__button dirty-form-navigation-dialog__button--discard',
-                        },
-                    }}
+                    pt={{ root: { className: 'ui-button ui-button--primary ui-button--dialog' } }}
                 />
             </div>
         </Dialog>

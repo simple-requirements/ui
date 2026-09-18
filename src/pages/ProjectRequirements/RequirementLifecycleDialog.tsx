@@ -82,24 +82,14 @@ export function RequirementLifecycleDialog({
                         outlined
                         label='Abort'
                         disabled={pending}
-                        pt={{
-                            root: {
-                                className:
-                                    'requirement-lifecycle-dialog__button requirement-lifecycle-dialog__button--abort',
-                            },
-                        }}
+                        pt={{ root: { className: 'ui-button ui-button--outline ui-button--dialog' } }}
                         onClick={onAbort}
                     />
                     <Button
                         type='submit'
                         label={confirmLabel}
                         disabled={!valid || pending || confirmationBlocked}
-                        pt={{
-                            root: {
-                                className:
-                                    'requirement-lifecycle-dialog__button requirement-lifecycle-dialog__button--confirm',
-                            },
-                        }}
+                        pt={{ root: { className: 'ui-button ui-button--primary ui-button--dialog' } }}
                     />
                 </div>
             </form>

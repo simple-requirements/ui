@@ -50,13 +50,3 @@
 .project-requirements-form-page__actions {
     @include ui.form-actions;
 }
-
-.project-requirements-form-page__primary-button {
-    @include ui.primary-button;
-    @include ui.form-button;
-}
-
-.project-requirements-form-page__secondary-button {
-    @include ui.outline-button;
-    @include ui.form-button;
-}

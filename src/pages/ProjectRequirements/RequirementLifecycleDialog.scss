@@ -51,16 +51,4 @@
     &__actions {
         @include ui.dialog-actions(0);
     }
-
-    &__button {
-        @include ui.dialog-button;
-    }
-
-    &__button--abort {
-        @include ui.outline-button;
-    }
-
-    &__button--confirm {
-        @include ui.primary-button;
-    }
 }

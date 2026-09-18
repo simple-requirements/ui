@@ -7,11 +7,6 @@
     justify-content: flex-end;
 
     &__button {
-        @include ui.primary-ghost-button;
-
-        inline-size: var(--ui-control-height);
-        block-size: var(--ui-control-height);
-        padding: 0;
         border: 0;
 
         .p-button-icon {

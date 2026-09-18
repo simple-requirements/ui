@@ -29,8 +29,6 @@
     }
 
     &__button {
-        @include ui.primary-button;
-
         block-size: var(--ui-control-height-large);
         padding-inline: 1.6rem;
         font-size: var(--font-size-small);

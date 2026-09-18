@@ -51,7 +51,7 @@ export function LoadingOverlay() {
                             type='button'
                             label='Reload'
                             onClick={handleReload}
-                            pt={{ root: { className: 'loading-overlay__button' } }}
+                            pt={{ root: { className: 'ui-button ui-button--primary loading-overlay__button' } }}
                         />
                     </>
                 :   <p className='loading-overlay__message'>SRM is loading ...</p>}

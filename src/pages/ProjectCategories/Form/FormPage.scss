@@ -46,13 +46,3 @@
 .project-categories-form-page__actions {
     @include ui.form-actions;
 }
-
-.project-categories-form-page__primary-button {
-    @include ui.primary-button;
-    @include ui.form-button;
-}
-
-.project-categories-form-page__secondary-button {
-    @include ui.outline-button;
-    @include ui.form-button;
-}

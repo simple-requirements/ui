@@ -51,9 +51,7 @@ export function ReviewCommentsPanel({ comments, pending, readOnly = false, onCom
                         type='button'
                         label='Comment'
                         disabled={pending}
-                        pt={{
-                            root: { className: 'review-comments-panel__button review-comments-panel__button--comment' },
-                        }}
+                        pt={{ root: { className: 'ui-button ui-button--primary ui-button--dialog' } }}
                         onClick={onComment}
                     />
                 )}
@@ -104,24 +102,14 @@ export function ReviewCommentsPanel({ comments, pending, readOnly = false, onCom
                                     outlined
                                     label='Reply'
                                     disabled={pending}
-                                    pt={{
-                                        root: {
-                                            className:
-                                                'review-comments-panel__button review-comments-panel__button--reply',
-                                        },
-                                    }}
+                                    pt={{ root: { className: 'ui-button ui-button--outline ui-button--dialog' } }}
                                     onClick={() => onReply(comment)}
                                 />
                                 <Button
                                     type='button'
                                     label='Resolve'
                                     disabled={pending}
-                                    pt={{
-                                        root: {
-                                            className:
-                                                'review-comments-panel__button review-comments-panel__button--resolve',
-                                        },
-                                    }}
+                                    pt={{ root: { className: 'ui-button ui-button--primary ui-button--dialog' } }}
                                     onClick={() => onResolve(comment)}
                                 />
                             </div>

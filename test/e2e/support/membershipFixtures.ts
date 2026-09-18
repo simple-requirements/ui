@@ -69,10 +69,7 @@ export async function listProjectMemberships(projectId: string): Promise<Project
     return requestJson<ProjectMembership[]>(`/admin/projects/${encodeURIComponent(projectId)}/memberships`, {}, 200);
 }
 
-export async function setProjectMembership(
-    projectId: string,
-    userId: string,
-): Promise<ProjectMembership> {
+export async function setProjectMembership(projectId: string, userId: string): Promise<ProjectMembership> {
     return requestJson<ProjectMembership>(
         `/admin/projects/${encodeURIComponent(projectId)}/memberships/${encodeURIComponent(userId)}`,
         { method: 'PUT', headers: authenticatedHeaders() },

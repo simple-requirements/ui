@@ -1,6 +1,6 @@
-import type { AccountRole } from "@/auth/authTypes";
+import type { AccountRole } from '@/auth/authTypes';
 
-export const ADMINISTRATOR_ROLE: AccountRole = "administrator";
+export const ADMINISTRATOR_ROLE: AccountRole = 'administrator';
 
 /**
  * Checks whether the authenticated account has the requested account role.
@@ -8,11 +8,8 @@ export const ADMINISTRATOR_ROLE: AccountRole = "administrator";
  * @param role Account role to compare with the user's single role.
  * @returns True when the authenticated account has the requested role.
  */
-export function hasAccountRole(
-  user: Readonly<{ role: AccountRole | null }> | undefined,
-  role: AccountRole,
-): boolean {
-  return user?.role === role;
+export function hasAccountRole(user: Readonly<{ role: AccountRole | null }> | undefined, role: AccountRole): boolean {
+    return user?.role === role;
 }
 
 /**
@@ -20,8 +17,6 @@ export function hasAccountRole(
  * @param user Authenticated account, when available.
  * @returns True only for the dedicated Administrator account role.
  */
-export function isAdministrator(
-  user: Readonly<{ role: AccountRole | null }> | undefined,
-): boolean {
-  return hasAccountRole(user, ADMINISTRATOR_ROLE);
+export function isAdministrator(user: Readonly<{ role: AccountRole | null }> | undefined): boolean {
+    return hasAccountRole(user, ADMINISTRATOR_ROLE);
 }

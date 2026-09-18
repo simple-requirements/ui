@@ -21,7 +21,11 @@ export async function createTestProject(projectName: string): Promise<Project> {
 }
 
 export async function updateTestProject(projectId: string, name: string): Promise<Project> {
-    return requestJson<Project>(`/admin/projects/${encodeURIComponent(projectId)}`, jsonRequest('PATCH', { name }), 200);
+    return requestJson<Project>(
+        `/admin/projects/${encodeURIComponent(projectId)}`,
+        jsonRequest('PATCH', { name }),
+        200,
+    );
 }
 
 export async function deleteTestProject(projectId: string): Promise<void> {

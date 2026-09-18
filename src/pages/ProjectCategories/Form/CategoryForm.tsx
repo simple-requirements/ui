@@ -149,7 +149,7 @@ export function CategoryForm({ mode, controller }: CategoryFormProps) {
                     type='submit'
                     label={mode === 'create' ? 'Create' : 'Update'}
                     disabled={pending}
-                    pt={{ root: { className: 'project-categories-form-page__primary-button' } }}
+                    pt={{ root: { className: 'ui-button ui-button--primary ui-button--form' } }}
                 />
                 <Button
                     type='button'
@@ -157,7 +157,7 @@ export function CategoryForm({ mode, controller }: CategoryFormProps) {
                     outlined
                     disabled={pending}
                     onClick={handleAbort}
-                    pt={{ root: { className: 'project-categories-form-page__secondary-button' } }}
+                    pt={{ root: { className: 'ui-button ui-button--outline ui-button--form' } }}
                 />
             </div>
         </form>

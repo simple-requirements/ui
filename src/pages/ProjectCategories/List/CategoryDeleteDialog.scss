@@ -22,16 +22,4 @@
     &__actions {
         @include ui.dialog-actions;
     }
-
-    &__button {
-        @include ui.dialog-button;
-    }
-
-    &__button--abort {
-        @include ui.outline-button;
-    }
-
-    &__button--ok {
-        @include ui.primary-button;
-    }
 }

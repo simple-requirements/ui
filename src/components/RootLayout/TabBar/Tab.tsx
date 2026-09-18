@@ -42,7 +42,10 @@ export function Tab({ label, active = false, fixed = false, closable = true, onC
                 label={label}
                 aria-current={active ? 'page' : undefined}
                 onClick={onClick}
-                pt={{ root: { className: 'tab__select-button' }, label: { className: 'tab__label' } }}
+                pt={{
+                    root: { className: 'ui-button ui-button--transparent tab__select-button' },
+                    label: { className: 'tab__label' },
+                }}
             />
 
             {closable && (
@@ -51,7 +54,10 @@ export function Tab({ label, active = false, fixed = false, closable = true, onC
                     icon='pi pi-times'
                     aria-label={`Close ${label} tab`}
                     onClick={handleCloseClick}
-                    pt={{ root: { className: 'tab__close-button' }, icon: { className: 'tab__close-icon' } }}
+                    pt={{
+                        root: { className: 'ui-button ui-button--transparent tab__close-button' },
+                        icon: { className: 'tab__close-icon' },
+                    }}
                 />
             )}
         </div>

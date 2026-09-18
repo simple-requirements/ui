@@ -1,126 +1,112 @@
-@use "styles/UiMixins" as ui;
+@use 'styles/UiMixins' as ui;
 
 .administrator-projects {
-  display: grid;
-  gap: var(--ui-space-lg);
-  padding: var(--ui-space-xl);
-
-  &__workspace {
     display: grid;
     gap: var(--ui-space-lg);
-    min-inline-size: 0;
-  }
+    padding: var(--ui-space-xl);
 
-  &__details,
-  &__categories-panel,
-  &__ticket-settings,
-  &__memberships {
-    padding: var(--ui-space-lg);
-    border: var(--ui-border);
-    border-radius: var(--ui-border-radius-small);
-    background: var(--color-app-surface);
-  }
+    &__workspace {
+        display: grid;
+        gap: var(--ui-space-lg);
+        min-inline-size: 0;
+    }
 
-  &__details > h2,
-  &__categories-panel > h3,
-  &__ticket-settings > h3,
-  &__memberships > h3 {
-    margin-block-start: 0;
-  }
+    &__details,
+    &__categories-panel,
+    &__ticket-settings,
+    &__memberships {
+        padding: var(--ui-space-lg);
+        border: var(--ui-border);
+        border-radius: var(--ui-border-radius-small);
+        background: var(--color-app-surface);
+    }
 
-  &__table-wrapper {
-    inline-size: 100%;
-    overflow-x: auto;
-  }
+    &__details > h2,
+    &__categories-panel > h3,
+    &__ticket-settings > h3,
+    &__memberships > h3 {
+        margin-block-start: 0;
+    }
 
-  &__table,
-  &__categories-table,
-  &__memberships-table {
-    inline-size: 100%;
-    border-collapse: collapse;
-    background: var(--color-app-surface);
-  }
+    &__table-wrapper {
+        inline-size: 100%;
+        overflow-x: auto;
+    }
 
-  &__table caption {
-    text-align: start;
-    font-weight: 700;
-    padding-block-end: var(--ui-space-sm);
-  }
+    &__table,
+    &__categories-table,
+    &__memberships-table {
+        inline-size: 100%;
+        border-collapse: collapse;
+        background: var(--color-app-surface);
+    }
 
-  &__table th,
-  &__table td,
-  &__categories-table th,
-  &__categories-table td,
-  &__memberships-table th,
-  &__memberships-table td {
-    padding: var(--ui-space-sm);
-    border-block-end: var(--ui-border);
-    text-align: start;
-    vertical-align: middle;
-  }
+    &__table caption {
+        text-align: start;
+        font-weight: 700;
+        padding-block-end: var(--ui-space-sm);
+    }
 
-  &__project-link {
-    color: var(--color-app-active-border);
-    text-decoration: underline;
-  }
+    &__table th,
+    &__table td,
+    &__categories-table th,
+    &__categories-table td,
+    &__memberships-table th,
+    &__memberships-table td {
+        padding: var(--ui-space-sm);
+        border-block-end: var(--ui-border);
+        text-align: start;
+        vertical-align: middle;
+    }
 
-  &__actions-column {
-    inline-size: 1%;
-  }
+    &__project-link {
+        color: var(--color-app-active-border);
+        text-decoration: underline;
+    }
 
-  &__memberships-table .p-button {
-    inline-size: var(--ui-control-height);
-    block-size: var(--ui-control-height);
-  }
+    &__actions-column {
+        inline-size: 1%;
+    }
 
-  &__memberships-table .p-button-icon {
-    font-size: var(--ui-icon-size);
-  }
+    &__summary {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--ui-space-md);
+        margin-block: var(--ui-space-lg) 0;
+    }
 
-  &__summary {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--ui-space-md);
-    margin-block: var(--ui-space-lg) 0;
-  }
+    &__summary dt {
+        font-weight: 700;
+    }
 
-  &__summary dt {
-    font-weight: 700;
-  }
+    &__summary dd {
+        margin: var(--ui-space-xs) 0 0;
+    }
 
-  &__summary dd {
-    margin: var(--ui-space-xs) 0 0;
-  }
+    &__ticket-settings-form {
+        @include ui.form-layout(64rem);
 
-  &__ticket-settings-form {
-    @include ui.form-layout(64rem);
+        padding: 0;
+        gap: var(--ui-space-sm);
+    }
 
-    padding: 0;
-    gap: var(--ui-space-sm);
-  }
+    &__ticket-settings-form label {
+        @include ui.form-label;
+    }
 
-  &__ticket-settings-form label {
-    @include ui.form-label;
-  }
+    &__ticket-settings-form .p-inputtext {
+        @include ui.form-line-control(64rem);
+    }
 
-  &__ticket-settings-form .p-inputtext {
-    @include ui.form-line-control(64rem);
-  }
+    &__ticket-settings-actions {
+        @include ui.form-actions;
+    }
 
-  &__ticket-settings-actions {
-    @include ui.form-actions;
-  }
+    &__dialog-actions {
+        @include ui.dialog-actions(0);
+    }
 
-  &__ticket-settings-actions .p-button {
-    @include ui.primary-button;
-    @include ui.form-button;
-  }
-
-  &__dialog-actions {
-    @include ui.dialog-actions(0);
-  }
-
-  &__error {
-    color: var(--color-feedback-error-text);
-  }
+    &__error {
+        color: var(--color-feedback-error-text);
+    }
 }

@@ -61,14 +61,14 @@ export function ReviewTextDialog({
                         outlined
                         label='Abort'
                         disabled={pending}
-                        pt={{ root: { className: 'review-dialog__button review-dialog__button--abort' } }}
+                        pt={{ root: { className: 'ui-button ui-button--outline ui-button--dialog' } }}
                         onClick={onAbort}
                     />
                     <Button
                         type='submit'
                         label={confirmLabel}
                         disabled={!valid || pending}
-                        pt={{ root: { className: 'review-dialog__button review-dialog__button--confirm' } }}
+                        pt={{ root: { className: 'ui-button ui-button--primary ui-button--dialog' } }}
                     />
                 </div>
             </form>

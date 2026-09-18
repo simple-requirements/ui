@@ -36,11 +36,7 @@ export async function signInToRealBackend(
     await expect(page.getByRole('heading', { name: 'Sign in' })).toHaveCount(0, { timeout: 10_000 });
 }
 
-export async function openAuthenticatedRoute(
-    page: Page,
-    route = '/',
-    username = E2E_LOGIN_USERNAME,
-): Promise<void> {
+export async function openAuthenticatedRoute(page: Page, route = '/', username = E2E_LOGIN_USERNAME): Promise<void> {
     await requireRealBackendAvailable();
     await page.goto(route);
     await signInToRealBackend(page, username);

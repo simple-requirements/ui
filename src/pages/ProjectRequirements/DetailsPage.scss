@@ -44,18 +44,6 @@
         @include ui.dialog-actions;
     }
 
-    .implementation-tickets-panel__button {
-        @include ui.dialog-button;
-    }
-
-    .implementation-tickets-panel__button--abort {
-        @include ui.outline-button;
-    }
-
-    .implementation-tickets-panel__button--submit {
-        @include ui.primary-button;
-    }
-
     .implementation-tickets-panel__empty {
         @include ui.dialog-message;
     }

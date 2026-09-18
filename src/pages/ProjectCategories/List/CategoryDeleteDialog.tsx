@@ -40,7 +40,7 @@ export function CategoryDeleteDialog({ category, pending, onAbort, onConfirm }: 
                     type='button'
                     label='Abort'
                     disabled={pending}
-                    pt={{ root: { className: 'category-delete-dialog__button category-delete-dialog__button--abort' } }}
+                    pt={{ root: { className: 'ui-button ui-button--outline ui-button--dialog' } }}
                     onClick={onAbort}
                 />
 
@@ -48,7 +48,7 @@ export function CategoryDeleteDialog({ category, pending, onAbort, onConfirm }: 
                     type='button'
                     label='OK'
                     disabled={pending}
-                    pt={{ root: { className: 'category-delete-dialog__button category-delete-dialog__button--ok' } }}
+                    pt={{ root: { className: 'ui-button ui-button--primary ui-button--dialog' } }}
                     onClick={onConfirm}
                 />
             </div>

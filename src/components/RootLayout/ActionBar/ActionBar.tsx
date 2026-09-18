@@ -48,10 +48,7 @@ export function ActionBar({ onFindRequirementKey }: ActionBarProps) {
     const configuration = getActionBarConfiguration(actionBarKind);
     const permissions = useProjectPermissions(projectId);
     const reviewActionRequirement = useSelector(actionBarStore, (state) => state.reviewActionRequirement);
-    const administratorUserActionContext = useSelector(
-        actionBarStore,
-        (state) => state.administratorUserActionContext,
-    );
+    const administratorUserActionContext = useSelector(actionBarStore, (state) => state.administratorUserActionContext);
     const administratorProjectActionContext = useSelector(
         actionBarStore,
         (state) => state.administratorProjectActionContext,
@@ -141,8 +138,6 @@ export function ActionBar({ onFindRequirementKey }: ActionBarProps) {
                     onCreate={handleCreate}
                 />
             )}
-
-
 
             {configuration.administratorActions === 'users' && (
                 <AdministratorUserActionButtons

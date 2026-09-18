@@ -65,12 +65,7 @@ export type UserAdministration = Readonly<{
 
 export type Session = Readonly<{ id: string; createdAt: string; lastActivityAt: string; revokedAt: string | null }>;
 
-export type ProjectMembership = Readonly<{
-    userId: string;
-    username: string;
-    displayName: string;
-    role: ProjectRole;
-}>;
+export type ProjectMembership = Readonly<{ userId: string; username: string; displayName: string; role: ProjectRole }>;
 
 export type ImplementationTicket = Readonly<{
     id: string;

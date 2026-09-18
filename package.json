@@ -16,6 +16,7 @@
         "typecheck": "tsc --noEmit -p tsconfig.node.json --composite false > output.txt",
         "preview": "vite preview",
         "test:unit": "vitest",
+        "test:pages": "vitest run test/pages",
         "test:unit:coverage": "vitest run --coverage",
         "test:e2e": "pnpm run build:e2e && bddgen && playwright test",
         "test:e2e:ui": "pnpm run build:e2e && bddgen && playwright test --ui",

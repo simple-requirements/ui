@@ -35,7 +35,6 @@ export function projectRolesFromValues(values: readonly unknown[]): ProjectRole[
     );
 }
 
-
 export function projectRoleLabel(role: ProjectRole): string {
     return projectRoleOptions.find((option) => option.value === role)?.label ?? role;
 }

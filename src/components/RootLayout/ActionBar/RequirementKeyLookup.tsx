@@ -37,7 +37,7 @@ export function RequirementKeyLookup({ disabled = false, onFindKey }: Requiremen
                 type='submit'
                 label='Find requirement'
                 disabled={disabled}
-                pt={{ root: { className: 'action-bar__button' } }}
+                pt={{ root: { className: 'ui-button ui-button--outline ui-button--action' } }}
             />
         </form>
     );

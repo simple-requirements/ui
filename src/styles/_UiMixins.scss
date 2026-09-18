@@ -170,11 +170,6 @@
     align-items: center;
 }
 
-@mixin form-button {
-    block-size: var(--ui-control-height);
-    padding-inline: var(--ui-space-md);
-}
-
 @mixin dialog-shell($max-inline-size) {
     inline-size: min($max-inline-size, calc(100vw - var(--ui-dialog-inline-margin)));
 }
@@ -206,13 +201,6 @@
     justify-content: flex-end;
     gap: var(--ui-dialog-actions-gap);
     margin-block-start: $margin-block-start;
-}
-
-@mixin dialog-button {
-    block-size: var(--ui-control-height-large);
-    padding-inline: 1.4rem;
-    font-size: var(--font-size-small);
-    white-space: nowrap;
 }
 
 @mixin prime-data-table {
@@ -307,88 +295,6 @@
         background: var(--color-app-hover-background);
         border-color: var(--color-app-border);
         color: var(--color-app-text);
-        box-shadow: none;
-    }
-}
-
-@mixin primary-button {
-    @include prime-button-reset;
-
-    border: 0;
-    background: var(--color-primary-400);
-    color: var(--color-app-text-inverse);
-
-    &:enabled:hover {
-        border: 0;
-        background: var(--color-primary-500);
-        color: var(--color-app-text-inverse);
-        box-shadow: none;
-    }
-
-    &:enabled:active {
-        background: var(--color-primary-600);
-        color: var(--color-app-text-inverse);
-        transform: translateY(0.1rem);
-        box-shadow: none;
-    }
-}
-
-@mixin outline-button {
-    @include prime-button-reset;
-
-    color: var(--color-primary-500);
-    border-color: var(--color-primary-400);
-    background: transparent;
-
-    &:enabled:hover {
-        background: var(--color-primary-100);
-        border-color: var(--color-primary-500);
-        color: var(--color-primary-600);
-        box-shadow: none;
-    }
-
-    &:enabled:active {
-        background: var(--color-primary-200);
-        border-color: var(--color-primary-600);
-        color: var(--color-primary-600);
-        transform: translateY(0.1rem);
-        box-shadow: none;
-    }
-}
-
-@mixin primary-ghost-button {
-    @include prime-button-reset;
-
-    border: 0;
-    background: transparent;
-    color: var(--color-primary-400);
-
-    &:enabled:hover {
-        border: 0;
-        background: var(--color-primary-100);
-        color: var(--color-primary-500);
-        box-shadow: none;
-    }
-
-    &:enabled:active {
-        background: var(--color-primary-200);
-        color: var(--color-primary-600);
-        box-shadow: none;
-    }
-}
-
-@mixin transparent-button {
-    @include prime-button-reset;
-
-    border: 0;
-    background: transparent;
-    color: inherit;
-
-    &:enabled:hover,
-    &:enabled:active {
-        border: 0;
-        background: transparent;
-        color: inherit;
         box-shadow: none;
     }
 }

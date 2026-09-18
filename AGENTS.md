@@ -5,14 +5,14 @@
 1. Inspect the repository and all applicable `AGENTS.md` files before making changes.
 2. Follow the existing architecture and conventions before introducing a new pattern.
 3. Use `pnpm` for package scripts and dependency operations.
+    - Do not use `npm`.
+    - Do not use `npx`; use `pnpm exec` when a binary must be invoked directly.
 
-   * Do not use `npm`.
-   * Do not use `npx`; use `pnpm exec` when a binary must be invoked directly.
 4. Use the `@/` alias for imports from `src`.
 5. Implement only the requested scope.
+    - Do not implement later backlog items pre-emptively.
+    - Do not add abstractions solely for hypothetical future requirements.
 
-   * Do not implement later backlog items pre-emptively.
-   * Do not add abstractions solely for hypothetical future requirements.
 6. Preserve existing behavior unless changing that behavior is part of the task.
 7. Prefer focused changes over unrelated repository-wide refactorings.
 8. Before creating a new component, hook, helper, store, API abstraction, style, or test fixture, check whether an equivalent already exists.
@@ -22,18 +22,18 @@
 
 Use these boundaries when deciding where new code belongs:
 
-* `src/api/generated`: Orval-generated API clients and generated Zod schemas.
-* `src/api/*.ts`: hand-written API wrappers, domain-facing schemas/types, and API-specific helpers.
-* `src/api/collections`: TanStack DB collections for long-lived reactive domain data.
-* `src/auth`: authentication, authorization, permission predicates, and protected-route behavior.
-* `src/components`: reusable application UI and application-shell components.
-* `src/pages`: route-level features and feature-specific components/hooks.
-* `src/router`: route definitions, route helpers, and route UI metadata.
-* `src/stores`: client-only cross-cutting state using `@tanstack/react-store`.
-* `src/styles`: shared design tokens, mixins, typography, colors, resets, and common styles.
-* `src/utils`: reusable pure utilities that do not belong to a specific feature.
-* `test`: unit/component tests.
-* `test/e2e`: Playwright BDD feature tests and real-backend test support.
+- `src/api/generated`: Orval-generated API clients and generated Zod schemas.
+- `src/api/*.ts`: hand-written API wrappers, domain-facing schemas/types, and API-specific helpers.
+- `src/api/collections`: TanStack DB collections for long-lived reactive domain data.
+- `src/auth`: authentication, authorization, permission predicates, and protected-route behavior.
+- `src/components`: reusable application UI and application-shell components.
+- `src/pages`: route-level features and feature-specific components/hooks.
+- `src/router`: route definitions, route helpers, and route UI metadata.
+- `src/stores`: client-only cross-cutting state using `@tanstack/react-store`.
+- `src/styles`: shared design tokens, mixins, typography, colors, resets, and common styles.
+- `src/utils`: reusable pure utilities that do not belong to a specific feature.
+- `test`: unit/component tests.
+- `test/e2e`: Playwright BDD feature tests and real-backend test support.
 
 Do not move responsibilities between these layers merely because doing so makes one file shorter.
 
@@ -42,14 +42,14 @@ Do not move responsibilities between these layers merely because doing so makes 
 Keep documentation concise and useful.
 
 1. Document non-obvious:
+    - business rules;
+    - permission behavior;
+    - state transitions;
+    - lifecycle behavior;
+    - workarounds;
+    - synchronization requirements;
+    - algorithms.
 
-   * business rules;
-   * permission behavior;
-   * state transitions;
-   * lifecycle behavior;
-   * workarounds;
-   * synchronization requirements;
-   * algorithms.
 2. Add TypeDoc to exported helpers, hooks, components, or APIs when their purpose or contract is not obvious from their name and TypeScript signature.
 3. Stores under `src/stores` should have a concise description when their ownership or lifecycle is not immediately obvious.
 4. Use `@param`, `@returns`, and examples only when they add useful information.
@@ -65,34 +65,34 @@ Use Cyclomatic Complexity and Halstead Volume as maintainability signals, not ab
 
 Prefer:
 
-* below `10` for a function or hook;
-* review for extraction above `10`;
-* refactor before adding more branching above `15`;
-* review a React component above `20` for decomposition.
+- below `10` for a function or hook;
+- review for extraction above `10`;
+- refactor before adding more branching above `15`;
+- review a React component above `20` for decomposition.
 
 Do not add substantial branching to an already complex function without considering extraction.
 
 Prefer these extraction patterns:
 
-* validation logic -> pure validation helpers or Zod schemas;
-* permission decisions -> `src/auth`;
-* collection-backed data selection -> focused hooks using `useLiveQuery`;
-* mutation workflows -> feature hooks;
-* form state/orchestration -> form hooks;
-* substantial forms -> dedicated `*Form.tsx` components;
-* repeated rendering branches -> child components;
-* formatting -> `src/utils` or feature-local pure helpers;
-* route construction -> `src/router`;
-* reusable route-dependent UI behavior -> route metadata or route helpers.
+- validation logic -> pure validation helpers or Zod schemas;
+- permission decisions -> `src/auth`;
+- collection-backed data selection -> focused hooks using `useLiveQuery`;
+- mutation workflows -> feature hooks;
+- form state/orchestration -> form hooks;
+- substantial forms -> dedicated `*Form.tsx` components;
+- repeated rendering branches -> child components;
+- formatting -> `src/utils` or feature-local pure helpers;
+- route construction -> `src/router`;
+- reusable route-dependent UI behavior -> route metadata or route helpers.
 
 ### Halstead Volume
 
 Use these values as guidance:
 
-* below `1000`: usually fine;
-* `1000–3000`: acceptable;
-* `3000–6000`: review for multiple responsibilities;
-* above `6000`: strong refactoring candidate, particularly when Cyclomatic Complexity is also high.
+- below `1000`: usually fine;
+- `1000–3000`: acceptable;
+- `3000–6000`: review for multiple responsibilities;
+- above `6000`: strong refactoring candidate, particularly when Cyclomatic Complexity is also high.
 
 Do not create excessive indirection or tiny artificial files purely to reduce a metric.
 
@@ -106,13 +106,13 @@ Prioritize refactoring when:
 
 Do not refactor solely for a metric when:
 
-* the code is clear and stable;
-* the file is generated;
-* the code is outside the requested scope;
-* extraction makes navigation worse;
-* extraction introduces meaningless wrappers;
-* tests are insufficient and the refactor would be risky;
-* planned work will replace the code shortly.
+- the code is clear and stable;
+- the file is generated;
+- the code is outside the requested scope;
+- extraction makes navigation worse;
+- extraction introduces meaningless wrappers;
+- tests are insufficient and the refactor would be risky;
+- planned work will replace the code shortly.
 
 ## React components
 
@@ -123,25 +123,25 @@ When creating or modifying a component:
 3. Reuse existing application components and PrimeReact patterns before introducing new UI abstractions.
 4. Keep domain logic out of purely presentational components.
 5. Do not store values in state when they can be derived from:
+    - props;
+    - route state;
+    - collection data;
+    - another existing state value.
 
-   * props;
-   * route state;
-   * collection data;
-   * another existing state value.
 6. Do not use an effect for work that can be expressed declaratively.
 7. Keep effects narrow and dependencies correct.
 8. Do not add `useMemo`, `useCallback`, or `memo` automatically.
+    - Use them when they provide a concrete correctness, identity-stability, or performance benefit.
 
-   * Use them when they provide a concrete correctness, identity-stability, or performance benefit.
 9. Preserve all relevant states when modifying a feature:
+    - loading;
+    - empty;
+    - success;
+    - validation error;
+    - API error;
+    - permission denied;
+    - disabled/pending.
 
-   * loading;
-   * empty;
-   * success;
-   * validation error;
-   * API error;
-   * permission denied;
-   * disabled/pending.
 10. Inspect corresponding tests before changing component behavior.
 11. Inspect relevant E2E scenarios when changing user-visible behavior, labels, roles, routes, dialogs, or navigation.
 
@@ -154,13 +154,13 @@ When creating or modifying a component:
 5. Keep side effects visible and deliberate.
 6. Return typed domain-facing values rather than leaking unnecessary implementation details.
 7. Feature hooks may orchestrate:
+    - route parameters;
+    - TanStack DB live queries;
+    - React Query operations;
+    - form actions;
+    - navigation;
+    - feature-local state.
 
-   * route parameters;
-   * TanStack DB live queries;
-   * React Query operations;
-   * form actions;
-   * navigation;
-   * feature-local state.
 8. Do not hide unrelated workflows inside one large "controller" hook when they can be separated clearly.
 9. Add or update tests for hooks containing meaningful business or UI logic.
 
@@ -168,9 +168,9 @@ When creating or modifying a component:
 
 The application uses:
 
-* `@tanstack/react-query` as the remote request/cache foundation;
-* `@tanstack/query-db-collection` to connect suitable queries to collections;
-* `@tanstack/react-db` as the preferred reactive read model for core domain entities.
+- `@tanstack/react-query` as the remote request/cache foundation;
+- `@tanstack/query-db-collection` to connect suitable queries to collections;
+- `@tanstack/react-db` as the preferred reactive read model for core domain entities.
 
 Do not treat React Query and React DB as competing alternatives. They serve different layers.
 
@@ -180,9 +180,9 @@ Core domain entities that are repeatedly queried and observed throughout the app
 
 Existing examples include:
 
-* projects;
-* project categories;
-* project requirements.
+- projects;
+- project categories;
+- project requirements.
 
 When adding another comparable domain resource, first consider whether it belongs in `src/api/collections`.
 
@@ -216,9 +216,9 @@ Use React DB query operators such as `eq` where they make the query clearer.
 
 For route-scoped collections:
 
-* resolve the collection from its factory;
-* keep its identity stable, typically with `useMemo`;
-* include collection/identifier dependencies in `useLiveQuery`.
+- resolve the collection from its factory;
+- keep its identity stable, typically with `useMemo`;
+- include collection/identifier dependencies in `useLiveQuery`.
 
 Do not copy collection contents into another global store.
 
@@ -228,12 +228,12 @@ Do not add a parallel `useQuery` read path for an entity already represented by 
 
 Direct `useQuery` is appropriate for data that is not currently modeled as a long-lived collection, particularly:
 
-* transient operation data;
-* review summaries;
-* review comments;
-* administration-specific datasets;
-* session information;
-* resources with no meaningful shared reactive identity.
+- transient operation data;
+- review summaries;
+- review comments;
+- administration-specific datasets;
+- session information;
+- resources with no meaningful shared reactive identity.
 
 The existing administration and review code are valid examples.
 
@@ -245,9 +245,9 @@ Use a collection when reactive identity, repeated domain access, or cross-featur
 
 Mutations currently use several appropriate mechanisms:
 
-* API wrapper calls from `useActionState`;
-* `useMutation`;
-* focused mutation-runner hooks.
+- API wrapper calls from `useActionState`;
+- `useMutation`;
+- focused mutation-runner hooks.
 
 Follow the established pattern of the feature you are modifying unless there is a concrete reason to improve it.
 
@@ -282,19 +282,19 @@ When the backend OpenAPI contract changes:
 
 The Orval configuration generates:
 
-* React Query clients;
-* model types;
-* Zod schemas.
+- React Query clients;
+- model types;
+- Zod schemas.
 
 ### Hand-written API wrappers
 
 Files such as:
 
-* `projectsApi.ts`;
-* `categoriesApi.ts`;
-* `requirementsApi.ts`;
-* `reviewApi.ts`;
-* `authApi.ts`
+- `projectsApi.ts`;
+- `categoriesApi.ts`;
+- `requirementsApi.ts`;
+- `reviewApi.ts`;
+- `authApi.ts`
 
 form the application-facing API layer.
 
@@ -302,11 +302,11 @@ Use these wrappers when they already exist instead of importing generated endpoi
 
 Hand-written wrappers may:
 
-* adapt generated DTO shapes into frontend domain shapes;
-* validate responses with Zod;
-* expose stable application-facing request functions;
-* centralize query keys or schemas;
-* hide generated naming/details from UI code.
+- adapt generated DTO shapes into frontend domain shapes;
+- validate responses with Zod;
+- expose stable application-facing request functions;
+- centralize query keys or schemas;
+- hide generated naming/details from UI code.
 
 Do not bypass an existing wrapper without a concrete reason.
 
@@ -316,11 +316,11 @@ All generated API requests use the custom `apiFetch` mutator.
 
 Preserve this path so requests retain:
 
-* API base URL handling;
-* access-token headers;
-* JSON response handling;
-* authentication-failure behavior;
-* typed `ApiError` subclasses.
+- API base URL handling;
+- access-token headers;
+- JSON response handling;
+- authentication-failure behavior;
+- typed `ApiError` subclasses.
 
 Do not introduce raw `fetch` calls in feature code when the API infrastructure can represent the request.
 
@@ -353,14 +353,14 @@ Do not introduce a second form library solely for a new feature when the existin
 
 For complex forms, prefer the established separation:
 
-* `*Form.tsx` for presentation;
-* `*FormTypes.ts` for form state/types;
-* `*FormValidation.ts` for validation;
-* `use*FormAction.ts` for submission;
-* `use*FormData.ts` for collection/query-backed data;
-* `use*FormNavigation.ts` for navigation/dirty-state behavior;
-* `use*FormRoute.ts` for route interpretation;
-* `use*FormController.ts` for composition when needed.
+- `*Form.tsx` for presentation;
+- `*FormTypes.ts` for form state/types;
+- `*FormValidation.ts` for validation;
+- `use*FormAction.ts` for submission;
+- `use*FormData.ts` for collection/query-backed data;
+- `use*FormNavigation.ts` for navigation/dirty-state behavior;
+- `use*FormRoute.ts` for route interpretation;
+- `use*FormController.ts` for composition when needed.
 
 Do not create all of these files mechanically for a small form. Use them when responsibilities justify the split.
 
@@ -370,16 +370,16 @@ Client-only cross-cutting state uses `@tanstack/react-store`.
 
 Existing examples include:
 
-* authentication state;
-* tab-bar state;
-* action-bar state;
-* toast state.
+- authentication state;
+- tab-bar state;
+- action-bar state;
+- toast state.
 
 Use a store when state:
 
-* is not canonical backend data;
-* is shared across unrelated parts of the component tree;
-* has meaningful application-wide lifecycle behavior.
+- is not canonical backend data;
+- is shared across unrelated parts of the component tree;
+- has meaningful application-wide lifecycle behavior.
 
 Do not use stores to duplicate data already owned by TanStack DB or React Query.
 
@@ -402,10 +402,10 @@ Reuse it.
 
 Preserve:
 
-* `ProtectedRoute`;
-* authentication-failure handling;
-* auth store lifecycle;
-* access-token propagation through `apiFetch`.
+- `ProtectedRoute`;
+- authentication-failure handling;
+- auth store lifecycle;
+- access-token propagation through `apiFetch`.
 
 A `401` is globally significant because `apiFetch` invokes authentication-failure handling.
 
@@ -417,20 +417,20 @@ Authentication failure clears cached server state. Keep this in mind when adding
 
 Use:
 
-* `AdministratorRoute`;
-* `ProjectPermissionRoute`;
-* global permission helpers;
-* project permission helpers;
-* role metadata.
+- `AdministratorRoute`;
+- `ProjectPermissionRoute`;
+- global permission helpers;
+- project permission helpers;
+- role metadata.
 
 Do not reproduce permission rules with ad hoc role-string comparisons inside feature components.
 
 For permission-dependent UI:
 
-* use named permission predicates;
-* hide or disable actions consistently with the existing feature;
-* remember that frontend permission handling is UX only;
-* backend authorization remains the security boundary.
+- use named permission predicates;
+- hide or disable actions consistently with the existing feature;
+- remember that frontend permission handling is UX only;
+- backend authorization remains the security boundary.
 
 When permissions change, test both allowed and denied UI behavior where relevant.
 
@@ -444,13 +444,12 @@ Use the established React Router architecture.
 4. Preserve route parameter semantics.
 5. Page components should own route-level orchestration, not duplicate low-level route parsing across child components.
 6. When changing routes, update:
-
-   * navigation;
-   * close/back helpers;
-   * tab behavior;
-   * route guards;
-   * unit tests;
-   * E2E tests.
+    - navigation;
+    - close/back helpers;
+    - tab behavior;
+    - route guards;
+    - unit tests;
+    - E2E tests.
 
 ## Route UI metadata
 
@@ -467,21 +466,21 @@ When adding or changing a route:
 
 The RootLayout contains coordinated application-shell behavior:
 
-* Sidebar;
-* TabBar;
-* ActionBar;
-* account menu;
-* loading overlay.
+- Sidebar;
+- TabBar;
+- ActionBar;
+- account menu;
+- loading overlay.
 
 Treat these as shared shell infrastructure.
 
 When changing feature navigation, consider:
 
-* whether a tab should open or activate;
-* what route should become active;
-* whether the active project changes;
-* whether actions are available for the active route;
-* what happens when a tab is closed.
+- whether a tab should open or activate;
+- what route should become active;
+- whether the active project changes;
+- whether actions are available for the active route;
+- what happens when a tab is closed.
 
 Do not implement feature-specific shell behavior independently if the existing stores/router metadata can represent it.
 
@@ -491,12 +490,12 @@ Before adding styles, inspect `src/styles`.
 
 The repository already defines shared:
 
-* colors;
-* typography;
-* UI tokens;
-* mixins;
-* toast styles;
-* reset styles.
+- colors;
+- typography;
+- UI tokens;
+- mixins;
+- toast styles;
+- reset styles.
 
 When creating or modifying component SCSS:
 
@@ -520,9 +519,9 @@ PrimeReact is the main component library.
 
 Before implementing a custom control, check whether:
 
-* PrimeReact already provides it;
-* the repository has an application-specific wrapper/component;
-* an existing component establishes the interaction pattern.
+- PrimeReact already provides it;
+- the repository has an application-specific wrapper/component;
+- an existing component establishes the interaction pattern.
 
 Preserve project-specific styling and accessibility rather than using raw PrimeReact defaults inconsistently.
 
@@ -554,11 +553,11 @@ When changing behavior:
 3. mock API/infrastructure where appropriate;
 4. test behavior rather than component internals;
 5. prefer queries by:
+    - role;
+    - accessible name;
+    - label;
+    - visible text;
 
-   * role;
-   * accessible name;
-   * label;
-   * visible text;
 6. avoid CSS selectors and incidental DOM structure when a semantic locator exists;
 7. cover failure states where meaningful;
 8. add regression tests for bug fixes;
@@ -611,9 +610,9 @@ Do not replace a real-backend scenario with mocked browser API responses merely 
 
 A backend mock is acceptable only when:
 
-* the real backend genuinely cannot produce the scenario;
-* the mock provides a substantial simplification;
-* the test remains meaningful.
+- the real backend genuinely cannot produce the scenario;
+- the mock provides a substantial simplification;
+- the test remains meaningful.
 
 Remove temporary mocks once the real backend supports the workflow.
 
@@ -621,8 +620,8 @@ Remove temporary mocks once the real backend supports the workflow.
 
 Playwright is intentionally configured with:
 
-* `fullyParallel: false`;
-* `workers: 1`.
+- `fullyParallel: false`;
+- `workers: 1`.
 
 Do not enable parallel execution casually.
 
@@ -634,11 +633,11 @@ If parallelization is desired, isolate test data and backend state first.
 
 Use the existing support helpers and fixtures for:
 
-* projects;
-* categories;
-* requirements;
-* memberships;
-* authentication.
+- projects;
+- categories;
+- requirements;
+- memberships;
+- authentication.
 
 Use unique persistent data where collisions are possible.
 
@@ -648,10 +647,10 @@ Keep scenarios deterministic and independent of stale local data.
 
 Prefer:
 
-* role;
-* accessible name;
-* label;
-* visible text.
+- role;
+- accessible name;
+- label;
+- visible text.
 
 Avoid selectors based on CSS classes or incidental DOM structure.
 
@@ -669,14 +668,14 @@ Regenerate them through the normal E2E workflow.
 
 Do not manually modify:
 
-* `src/api/generated`;
-* `test/e2e/.features-gen`;
-* `coverage`;
-* `playwright-report`;
-* `cucumber-report`;
-* `test-results`;
-* `vitest-json-report.json`;
-* `dist`.
+- `src/api/generated`;
+- `test/e2e/.features-gen`;
+- `coverage`;
+- `playwright-report`;
+- `cucumber-report`;
+- `test-results`;
+- `vitest-json-report.json`;
+- `dist`.
 
 These are generated or derived outputs.
 
@@ -688,14 +687,14 @@ Do not add a new dependency when the existing stack can reasonably solve the pro
 
 Before adding one, check whether the functionality already exists in:
 
-* React;
-* React Router;
-* TanStack DB;
-* TanStack Query;
-* TanStack Store;
-* Zod;
-* PrimeReact;
-* existing project utilities.
+- React;
+- React Router;
+- TanStack DB;
+- TanStack Query;
+- TanStack Store;
+- Zod;
+- PrimeReact;
+- existing project utilities.
 
 If a new dependency is genuinely needed:
 
@@ -739,16 +738,16 @@ Run:
 
 when the change affects meaningful user workflows, including:
 
-* routing;
-* authentication;
-* authorization;
-* projects;
-* categories;
-* requirements;
-* administration;
-* shell/navigation behavior;
-* backend-integrated forms;
-* API interaction covered by feature tests.
+- routing;
+- authentication;
+- authorization;
+- projects;
+- categories;
+- requirements;
+- administration;
+- shell/navigation behavior;
+- backend-integrated forms;
+- API interaction covered by feature tests.
 
 Small internal refactors with unchanged observable behavior do not necessarily require the complete E2E suite.
 
@@ -780,9 +779,9 @@ If formatting, API generation, or another command changes tracked source files, 
 
 Do not claim the work is complete when a relevant command fails.
 
-* Fix failures caused by the implementation.
-* Distinguish unrelated pre-existing failures clearly.
-* Do not silence or weaken tests/lint rules merely to obtain a green run.
+- Fix failures caused by the implementation.
+- Distinguish unrelated pre-existing failures clearly.
+- Do not silence or weaken tests/lint rules merely to obtain a green run.
 
 ## Completion report
 

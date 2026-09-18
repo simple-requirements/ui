@@ -61,16 +61,4 @@
     &__actions {
         @include ui.dialog-actions(0);
     }
-
-    &__button {
-        @include ui.dialog-button;
-    }
-
-    &__button--cancel {
-        @include ui.outline-button;
-    }
-
-    &__button--submit {
-        @include ui.primary-button;
-    }
 }

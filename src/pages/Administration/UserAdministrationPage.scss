@@ -1,129 +1,119 @@
-@use "styles/UiMixins" as ui;
+@use 'styles/UiMixins' as ui;
 
 .user-administration {
-  display: grid;
-  gap: var(--ui-space-lg);
-  padding: var(--ui-space-xl);
-
-  &__table-wrapper {
-    inline-size: 100%;
-    overflow-x: auto;
-  }
-
-  &__table {
-    inline-size: 100%;
-    border-collapse: collapse;
-    background: var(--color-app-surface);
-  }
-
-  &__table caption {
-    text-align: start;
-    font-weight: 700;
-    padding-block-end: var(--ui-space-sm);
-  }
-
-  &__table th,
-  &__table td {
-    padding: var(--ui-space-sm);
-    border-block-end: var(--ui-border);
-    text-align: start;
-    vertical-align: middle;
-    white-space: nowrap;
-  }
-
-  &__actions-column {
-    inline-size: 1%;
-  }
-
-  &__user-link {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  &__user-link:hover,
-  &__user-link:focus-visible,
-  &__role-link:hover,
-  &__role-link:focus-visible {
-    color: var(--color-app-active-border);
-    text-decoration: underline;
-  }
-
-  &__user-link small {
-    display: block;
-    color: var(--color-app-text-muted);
-  }
-
-  &__role-link {
-    border: 0;
-    padding: 0;
-    background: transparent;
-    color: var(--color-app-active-border);
-    cursor: pointer;
-    font: inherit;
-    text-decoration: underline;
-  }
-
-  &__role-link:disabled {
-    color: var(--color-app-text-muted);
-    cursor: wait;
-  }
-
-  &__presence {
-    display: inline-flex;
-    min-inline-size: var(--ui-control-height);
-    min-block-size: var(--ui-control-height);
-    align-items: center;
-    justify-content: center;
-    font-size: var(--ui-icon-size);
-  }
-
-  &__presence .pi,
-  &__row-actions .p-button-icon {
-    font-size: var(--ui-icon-size);
-  }
-
-  &__row-actions .p-button {
-    inline-size: var(--ui-control-height);
-    block-size: var(--ui-control-height);
-  }
-
-  &__row-actions {
-    display: flex;
-    align-items: center;
-    gap: var(--ui-space-xs);
-  }
-
-  &__details,
-  &__selection {
-    inline-size: 100%;
-    padding: var(--ui-space-lg);
-    background: var(--color-app-surface);
-    border: var(--ui-border);
-    border-radius: var(--ui-border-radius-small);
-  }
-
-  &__metadata {
     display: grid;
-    gap: var(--ui-space-sm);
-    margin-block-end: var(--ui-space-lg);
-  }
+    gap: var(--ui-space-lg);
+    padding: var(--ui-space-xl);
 
-  &__metadata div {
-    display: grid;
-    grid-template-columns: 12rem 1fr;
-    gap: var(--ui-space-sm);
-  }
+    &__table-wrapper {
+        inline-size: 100%;
+        overflow-x: auto;
+    }
 
-  &__metadata dt {
-    font-weight: 700;
-  }
+    &__table {
+        inline-size: 100%;
+        border-collapse: collapse;
+        background: var(--color-app-surface);
+    }
 
-  &__metadata dd {
-    margin: 0;
-    overflow-wrap: anywhere;
-  }
+    &__table caption {
+        text-align: start;
+        font-weight: 700;
+        padding-block-end: var(--ui-space-sm);
+    }
 
-  &__hint {
-    color: var(--color-app-text-muted);
-  }
+    &__table th,
+    &__table td {
+        padding: var(--ui-space-sm);
+        border-block-end: var(--ui-border);
+        text-align: start;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    &__actions-column {
+        inline-size: 1%;
+    }
+
+    &__user-link {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    &__user-link:hover,
+    &__user-link:focus-visible,
+    &__role-link:hover,
+    &__role-link:focus-visible {
+        color: var(--color-app-active-border);
+        text-decoration: underline;
+    }
+
+    &__user-link small {
+        display: block;
+        color: var(--color-app-text-muted);
+    }
+
+    &__role-link {
+        border: 0;
+        padding: 0;
+        background: transparent;
+        color: var(--color-app-active-border);
+        cursor: pointer;
+        font: inherit;
+        text-decoration: underline;
+    }
+
+    &__role-link:disabled {
+        color: var(--color-app-text-muted);
+        cursor: wait;
+    }
+
+    &__presence {
+        display: inline-flex;
+        min-inline-size: var(--ui-control-height);
+        min-block-size: var(--ui-control-height);
+        align-items: center;
+        justify-content: center;
+        font-size: var(--ui-icon-size);
+    }
+
+    &__row-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--ui-space-xs);
+    }
+
+    &__details,
+    &__selection {
+        inline-size: 100%;
+        padding: var(--ui-space-lg);
+        background: var(--color-app-surface);
+        border: var(--ui-border);
+        border-radius: var(--ui-border-radius-small);
+    }
+
+    &__metadata {
+        display: grid;
+        gap: var(--ui-space-sm);
+        margin-block-end: var(--ui-space-lg);
+    }
+
+    &__metadata div {
+        display: grid;
+        grid-template-columns: 12rem 1fr;
+        gap: var(--ui-space-sm);
+    }
+
+    &__metadata dt {
+        font-weight: 700;
+    }
+
+    &__metadata dd {
+        margin: 0;
+        overflow-wrap: anywhere;
+    }
+
+    &__hint {
+        color: var(--color-app-text-muted);
+    }
 }

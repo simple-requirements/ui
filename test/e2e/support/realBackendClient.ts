@@ -89,11 +89,7 @@ export function jsonRequest(method: 'POST' | 'PATCH' | 'PUT', data: unknown): Re
     return jsonRequestForToken(E2E_ACCESS_TOKEN, method, data);
 }
 
-export function jsonRequestForToken(
-    accessToken: string,
-    method: 'POST' | 'PATCH' | 'PUT',
-    data: unknown,
-): RequestInit {
+export function jsonRequestForToken(accessToken: string, method: 'POST' | 'PATCH' | 'PUT', data: unknown): RequestInit {
     return { method, headers: jsonHeaders(undefined, accessToken), body: JSON.stringify(data) };
 }
 

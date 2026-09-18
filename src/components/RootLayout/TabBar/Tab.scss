@@ -30,8 +30,6 @@
     }
 
     &__select-button {
-        @include ui.transparent-button;
-
         min-inline-size: 0;
         block-size: 100%;
         justify-content: flex-start;
@@ -45,8 +43,6 @@
     }
 
     &__close-button {
-        @include ui.transparent-button;
-
         inline-size: 2.6rem;
         min-inline-size: 2.6rem;
         block-size: 2.6rem;

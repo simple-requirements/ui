@@ -127,7 +127,6 @@ export function closeImplementationTicketsDialog(): void {
     actionBarStore.setState((state) => ({ ...state, implementationTicketsDialogOpen: false }));
 }
 
-
 /** Requests an Administrator workspace action from the active page. */
 export function requestAdministratorAction(administratorActionRequest: AdministratorActionRequest): void {
     actionBarStore.setState((state) => ({ ...state, administratorActionRequest }));

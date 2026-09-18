@@ -15,7 +15,7 @@ export function CreateActionButton({ disabled, onCreate }: CreateActionButtonPro
             label='Create'
             disabled={disabled}
             onClick={onCreate}
-            pt={{ root: { className: 'action-bar__button' } }}
+            pt={{ root: { className: 'ui-button ui-button--outline ui-button--action' } }}
         />
     );
 }
@@ -59,7 +59,7 @@ export function RequirementRouteActionButtons({
                     type='button'
                     label='Edit'
                     onClick={onEdit}
-                    pt={{ root: { className: 'action-bar__button' } }}
+                    pt={{ root: { className: 'ui-button ui-button--outline ui-button--action' } }}
                 />
             )}
 
@@ -68,7 +68,7 @@ export function RequirementRouteActionButtons({
                     type='button'
                     label='Review'
                     onClick={onReview}
-                    pt={{ root: { className: 'action-bar__button' } }}
+                    pt={{ root: { className: 'ui-button ui-button--outline ui-button--action' } }}
                 />
             )}
 
@@ -77,7 +77,7 @@ export function RequirementRouteActionButtons({
                     type='button'
                     label='Tickets'
                     onClick={onManageTickets}
-                    pt={{ root: { className: 'action-bar__button' } }}
+                    pt={{ root: { className: 'ui-button ui-button--outline ui-button--action' } }}
                 />
             )}
 
@@ -86,7 +86,7 @@ export function RequirementRouteActionButtons({
                     type='button'
                     label='Obsolete'
                     onClick={onMarkObsolete}
-                    pt={{ root: { className: 'action-bar__button' } }}
+                    pt={{ root: { className: 'ui-button ui-button--outline ui-button--action' } }}
                 />
             )}
 
@@ -96,7 +96,7 @@ export function RequirementRouteActionButtons({
                     label='Implemented'
                     loading={implementPending}
                     onClick={onMarkImplemented}
-                    pt={{ root: { className: 'action-bar__button' } }}
+                    pt={{ root: { className: 'ui-button ui-button--outline ui-button--action' } }}
                 />
             )}
         </>
@@ -117,7 +117,7 @@ export function CategoryRouteActionButtons({ canEdit, onEdit }: CategoryRouteAct
                 type='button'
                 label='Edit'
                 onClick={onEdit}
-                pt={{ root: { className: 'action-bar__button' } }}
+                pt={{ root: { className: 'ui-button ui-button--outline ui-button--action' } }}
             />
         :   null;
 }
@@ -145,20 +145,19 @@ export function ReviewDecisionActionButtons({ canDecide, onApprove, onReject }: 
             <Button
                 type='button'
                 label='Approve'
-                pt={{ root: { className: 'action-bar__decision-button action-bar__decision-button--approve' } }}
+                pt={{ root: { className: 'ui-button ui-button--primary ui-button--action' } }}
                 onClick={onApprove}
             />
             <Button
                 type='button'
                 label='Reject'
                 severity='danger'
-                pt={{ root: { className: 'action-bar__decision-button action-bar__decision-button--reject' } }}
+                pt={{ root: { className: 'ui-button ui-button--danger ui-button--action' } }}
                 onClick={onReject}
             />
         </>
     );
 }
-
 
 export type AdministratorUserActionButtonsProps = Readonly<{
     label?: 'Activate account' | 'Deactivate account';
@@ -181,7 +180,14 @@ export function AdministratorUserActionButtons({
             severity={label === 'Deactivate account' ? 'danger' : undefined}
             disabled={disabled}
             onClick={onToggleStatus}
-            pt={{ root: { className: 'action-bar__button' } }}
+            pt={{
+                root: {
+                    className:
+                        label === 'Deactivate account' ?
+                            'ui-button ui-button--danger ui-button--action'
+                        :   'ui-button ui-button--outline ui-button--action',
+                },
+            }}
         />
     );
 }
@@ -216,7 +222,7 @@ export function AdministratorProjectActionButtons({
                 icon='pi pi-plus'
                 disabled={disabled}
                 onClick={onCreate}
-                pt={{ root: { className: 'action-bar__button' } }}
+                pt={{ root: { className: 'ui-button ui-button--outline ui-button--action ui-button--with-icon' } }}
             />
         );
     }
@@ -228,7 +234,7 @@ export function AdministratorProjectActionButtons({
                 label='Rename project'
                 disabled={disabled}
                 onClick={onRename}
-                pt={{ root: { className: 'action-bar__button' } }}
+                pt={{ root: { className: 'ui-button ui-button--outline ui-button--action' } }}
             />
             <Button
                 type='button'
@@ -236,7 +242,7 @@ export function AdministratorProjectActionButtons({
                 icon='pi pi-user-plus'
                 disabled={disabled || addMembershipDisabled}
                 onClick={onAddMembership}
-                pt={{ root: { className: 'action-bar__button action-bar__button--with-icon' } }}
+                pt={{ root: { className: 'ui-button ui-button--outline ui-button--action ui-button--with-icon' } }}
             />
             <Button
                 type='button'
@@ -245,7 +251,7 @@ export function AdministratorProjectActionButtons({
                 disabled={disabled || deleteDisabled}
                 title={deleteDisabled ? 'Projects containing requirements cannot be deleted.' : undefined}
                 onClick={onDelete}
-                pt={{ root: { className: 'action-bar__button' } }}
+                pt={{ root: { className: 'ui-button ui-button--danger ui-button--action' } }}
             />
         </>
     );

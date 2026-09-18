@@ -22,7 +22,7 @@ export function RequirementFormActions({ mode, pending, onAbort, onUpdate }: Req
                 label={mode === 'create' ? 'Create' : 'Update'}
                 disabled={pending}
                 onClick={mode === 'update' ? onUpdate : undefined}
-                pt={{ root: { className: 'project-requirements-form-page__primary-button' } }}
+                pt={{ root: { className: 'ui-button ui-button--primary ui-button--form' } }}
             />
             <Button
                 type='button'
@@ -30,7 +30,7 @@ export function RequirementFormActions({ mode, pending, onAbort, onUpdate }: Req
                 outlined
                 disabled={pending}
                 onClick={onAbort}
-                pt={{ root: { className: 'project-requirements-form-page__secondary-button' } }}
+                pt={{ root: { className: 'ui-button ui-button--outline ui-button--form' } }}
             />
         </div>
     );

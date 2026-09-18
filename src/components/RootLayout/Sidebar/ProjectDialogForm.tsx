@@ -36,7 +36,7 @@ function SubmitButton({ mode, externalPending }: Readonly<{ mode: ProjectDialogM
             type='submit'
             label={label}
             disabled={isPending}
-            pt={{ root: { className: 'project-dialog__button project-dialog__button--submit' } }}
+            pt={{ root: { className: 'ui-button ui-button--primary ui-button--dialog' } }}
         />
     );
 }
@@ -100,7 +100,7 @@ export function ProjectDialogForm({ mode, initialName, pending, errorMessage, on
                     label='Cancel'
                     disabled={pending}
                     onClick={onCancel}
-                    pt={{ root: { className: 'project-dialog__button project-dialog__button--cancel' } }}
+                    pt={{ root: { className: 'ui-button ui-button--outline ui-button--dialog' } }}
                 />
                 <SubmitButton
                     mode={mode}

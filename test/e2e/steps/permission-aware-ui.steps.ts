@@ -64,7 +64,6 @@ function configuredPrincipal(role: TestRole): Readonly<{ token: string; userId: 
     }
 }
 
-
 Given('the permission-aware frontend signs me in as {string}', async ({ page }, roleName: string) => {
     const roles: readonly TestRole[] = ['Viewer', 'Developer', 'Requirements Engineer', 'Administrator'];
     const role = roles.find((candidate) => candidate === roleName);

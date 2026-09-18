@@ -1,8 +1,6 @@
 @use 'styles/UiMixins' as ui;
 
 .sidebar-action-button {
-    @include ui.primary-button;
-
     flex: 1 1 auto;
     min-inline-size: 0;
     block-size: var(--sidebar-actions-button-height);
@@ -10,8 +8,6 @@
     white-space: nowrap;
 
     &.sidebar-action-button--ghost {
-        @include ui.primary-ghost-button;
-
         inline-size: var(--sidebar-actions-icon-button-size);
         min-inline-size: var(--sidebar-actions-icon-button-size);
         flex: 0 0 var(--sidebar-actions-icon-button-size);

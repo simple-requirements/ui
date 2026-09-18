@@ -1,15 +1,17 @@
 import "@testing-library/jest-dom/vitest";
 
-import { cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { AdministratorProjectsPage } from "@/pages/Administration/AdministratorProjectsPage";
+import {
+  actionBarStore,
+  requestAdministratorAction,
+} from "@/stores/actionBarStore";
 
-const mocks = vi.hoisted(() => ({
-  useAdministratorProjects: vi.fn(),
-}));
+const mocks = vi.hoisted(() => ({ useAdministratorProjects: vi.fn() }));
 
 vi.mock("@/pages/Administration/useAdministratorProjects", () => ({
   useAdministratorProjects: mocks.useAdministratorProjects,
@@ -20,6 +22,7 @@ const project = {
   name: "Project Alpha",
   categoryNames: ["Authentication"],
   categoryCount: 1,
+  categories: [{ name: "Authentication", requirementCount: 3 }],
   requirementCount: 3,
   memberships: [
     {
@@ -77,10 +80,27 @@ function renderPage(initialEntry = "/admin/projects") {
 
 afterEach(() => {
   cleanup();
+  actionBarStore.setState(() => ({ requirementKey: "" }));
   vi.clearAllMocks();
 });
 
 describe("AdministratorProjectsPage", () => {
+  it("shows a compact overview of every project on the projects root", () => {
+    mocks.useAdministratorProjects.mockReturnValue(administrationState());
+    renderPage();
+
+    expect(
+      screen.getByRole("table", { name: "All projects" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Project Alpha" })).toHaveAttribute(
+      "href",
+      `/admin/projects/${project.id}`,
+    );
+    expect(
+      screen.queryByText(/select a project from the sidebar/iu),
+    ).not.toBeInTheDocument();
+  });
+
   it("shows only administrative project summary data and settings", () => {
     mocks.useAdministratorProjects.mockReturnValue(administrationState());
     renderPage(`/admin/projects/${project.id}`);
@@ -88,20 +108,35 @@ describe("AdministratorProjectsPage", () => {
     expect(
       screen.getByRole("heading", { name: "Project Alpha" }),
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole("table", { name: "Categories for Project Alpha" }),
+    ).toBeInTheDocument();
     expect(screen.getByText("Authentication")).toBeInTheDocument();
-    expect(screen.getByText("3")).toBeInTheDocument();
-    expect(screen.getByLabelText("Ticket URL template")).toBeInTheDocument();
+    expect(screen.getByRole("cell", { name: "3" })).toBeInTheDocument();
+    expect(screen.getByLabelText("URL template")).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Ticket URL template" }),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole("table", { name: "Memberships for Project Alpha" }),
     ).toBeInTheDocument();
+    expect(
+      screen.queryByText(/Memberships use each account/iu),
+    ).not.toBeInTheDocument();
+    expect(
+      actionBarStore.state.administratorProjectActionContext?.deleteDisabled,
+    ).toBe(true);
   });
 
-  it("adds membership using the account's fixed role", async () => {
+  it("adds membership through the ActionBar-triggered dialog", async () => {
     const state = administrationState();
     mocks.useAdministratorProjects.mockReturnValue(state);
     const interaction = userEvent.setup();
 
     renderPage(`/admin/projects/${project.id}`);
+    act(() => requestAdministratorAction("addMembership"));
+
+    await waitFor(() => expect(screen.getByRole("dialog")).toBeInTheDocument());
     await interaction.selectOptions(
       screen.getByLabelText("User"),
       "33333333-3333-4333-8333-333333333333",
@@ -116,17 +151,16 @@ describe("AdministratorProjectsPage", () => {
     });
   });
 
-  it("opens the shared project dialog for project creation", async () => {
+  it("opens the shared project dialog when the ActionBar requests project creation", async () => {
     mocks.useAdministratorProjects.mockReturnValue(administrationState());
-    const interaction = userEvent.setup();
-
     renderPage();
-    await interaction.click(
-      screen.getByRole("button", { name: "New project" }),
-    );
 
-    expect(
-      screen.getByRole("heading", { name: "Create project" }),
-    ).toBeInTheDocument();
+    act(() => requestAdministratorAction("createProject"));
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole("heading", { name: "Create project" }),
+      ).toBeInTheDocument(),
+    );
   });
 });

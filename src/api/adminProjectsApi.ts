@@ -26,6 +26,12 @@ export const administratorProjectSummarySchema = z.object({
   name: z.string().min(1),
   categoryNames: z.array(z.string()),
   categoryCount: z.number().int().nonnegative(),
+  categories: z.array(
+    z.object({
+      name: z.string(),
+      requirementCount: z.number().int().nonnegative(),
+    }),
+  ),
   requirementCount: z.number().int().nonnegative(),
   memberships: z.array(administratorProjectMembershipSchema),
   ticketUrlTemplate: z
@@ -51,6 +57,7 @@ export type AdministratorProjectSummary = Readonly<{
   name: string;
   categoryNames: readonly string[];
   categoryCount: number;
+  categories: readonly Readonly<{ name: string; requirementCount: number }>[];
   requirementCount: number;
   memberships: readonly AdministratorProjectMembership[];
   ticketUrlTemplate: string | null;

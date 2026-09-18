@@ -111,6 +111,16 @@ function renderActionBar(initialRoute = "/"): ReturnType<typeof render> {
       },
       { path: "/projects/:projectId/categories/:categoryId/edit", element },
       {
+        path: "/admin/users/:userId?",
+        element,
+        handle: { actionBar: "administratorUsers" },
+      },
+      {
+        path: "/admin/projects/:projectId?",
+        element,
+        handle: { actionBar: "administratorProjects" },
+      },
+      {
         path: "/projects/:projectId/categories/new",
         element,
         handle: { actionBar: "categoryForm", disableChromeActions: true },
@@ -369,6 +379,82 @@ describe("ActionBar", () => {
         screen.queryByRole("button", { name: /find requirement/i }),
       ).not.toBeInTheDocument();
       expect(screen.getByRole("button", { name: "Create" })).toBeDisabled();
+    });
+
+    it("shows New project on the Administrator projects overview", () => {
+      actionBarStore.setState((state) => ({
+        ...state,
+        administratorProjectActionContext: {
+          selected: false,
+          pending: false,
+          addMembershipDisabled: false,
+          deleteDisabled: false,
+        },
+      }));
+
+      renderActionBar("/admin/projects");
+
+      expect(
+        screen.getByRole("button", { name: "New project" }),
+      ).toBeInTheDocument();
+    });
+
+    it("shows project administration actions for a selected Administrator project", () => {
+      actionBarStore.setState((state) => ({
+        ...state,
+        administratorProjectActionContext: {
+          selected: true,
+          pending: false,
+          addMembershipDisabled: false,
+          deleteDisabled: false,
+        },
+      }));
+
+      renderActionBar("/admin/projects/project-alpha");
+
+      expect(
+        screen.getByRole("button", { name: "Rename project" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Add membership" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Delete project" }),
+      ).toBeEnabled();
+    });
+
+    it("disables project deletion when the selected project contains requirements", () => {
+      actionBarStore.setState((state) => ({
+        ...state,
+        administratorProjectActionContext: {
+          selected: true,
+          pending: false,
+          addMembershipDisabled: false,
+          deleteDisabled: true,
+        },
+      }));
+
+      renderActionBar("/admin/projects/project-alpha");
+
+      expect(
+        screen.getByRole("button", { name: "Delete project" }),
+      ).toBeDisabled();
+    });
+
+    it("shows the selected-user status action in the Administrator ActionBar", () => {
+      actionBarStore.setState((state) => ({
+        ...state,
+        administratorUserActionContext: {
+          label: "Deactivate account",
+          disabled: false,
+        },
+      }));
+
+      renderActionBar("/admin/users/user-alpha");
+
+      expect(
+        screen.getByRole("button", { name: "Deactivate account" }),
+      ).toBeEnabled();
     });
   });
 

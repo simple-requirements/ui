@@ -1,12 +1,9 @@
+@use "styles/UiMixins" as ui;
+
 .user-administration {
   display: grid;
   gap: var(--ui-space-lg);
   padding: var(--ui-space-xl);
-
-  &__eyebrow {
-    margin: 0;
-    color: var(--color-app-text-muted);
-  }
 
   &__table-wrapper {
     inline-size: 100%;
@@ -66,6 +63,11 @@
     text-decoration: underline;
   }
 
+  &__role-link:disabled {
+    color: var(--color-app-text-muted);
+    cursor: wait;
+  }
+
   &__presence {
     display: inline-flex;
     min-inline-size: var(--ui-control-height);
@@ -75,8 +77,17 @@
     font-size: var(--ui-icon-size);
   }
 
-  &__row-actions,
-  &__dialog-actions {
+  &__presence .pi,
+  &__row-actions .p-button-icon {
+    font-size: var(--ui-icon-size);
+  }
+
+  &__row-actions .p-button {
+    inline-size: var(--ui-control-height);
+    block-size: var(--ui-control-height);
+  }
+
+  &__row-actions {
     display: flex;
     align-items: center;
     gap: var(--ui-space-xs);
@@ -94,6 +105,7 @@
   &__metadata {
     display: grid;
     gap: var(--ui-space-sm);
+    margin-block-end: var(--ui-space-lg);
   }
 
   &__metadata div {
@@ -109,30 +121,6 @@
   &__metadata dd {
     margin: 0;
     overflow-wrap: anywhere;
-  }
-
-  &__role-field,
-  &__role-dialog {
-    display: grid;
-    gap: var(--ui-space-sm);
-  }
-
-  &__role-field {
-    margin-block: var(--ui-space-lg);
-    font-weight: 700;
-  }
-
-  &__dialog-actions {
-    justify-content: flex-end;
-    margin-block-start: var(--ui-space-md);
-  }
-
-  &__sessions-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--ui-space-md);
-    margin-block-start: var(--ui-space-xl);
   }
 
   &__hint {

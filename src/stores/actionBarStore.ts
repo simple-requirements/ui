@@ -12,11 +12,33 @@ export type ReviewActionRequirement = Readonly<{
 
 export type ReviewDecisionRequest = 'approve' | 'reject';
 
+export type AdministratorActionRequest =
+    | 'toggleUserStatus'
+    | 'createProject'
+    | 'renameProject'
+    | 'deleteProject'
+    | 'addMembership';
+
+export type AdministratorUserActionContext = Readonly<{
+    label: 'Activate account' | 'Deactivate account';
+    disabled: boolean;
+}>;
+
+export type AdministratorProjectActionContext = Readonly<{
+    selected: boolean;
+    pending: boolean;
+    addMembershipDisabled: boolean;
+    deleteDisabled: boolean;
+}>;
+
 export type ActionBarState = Readonly<{
     requirementKey: string;
     reviewActionRequirement?: ReviewActionRequirement;
     reviewDecisionRequest?: ReviewDecisionRequest;
     implementationTicketsDialogOpen?: boolean;
+    administratorActionRequest?: AdministratorActionRequest;
+    administratorUserActionContext?: AdministratorUserActionContext;
+    administratorProjectActionContext?: AdministratorProjectActionContext;
 }>;
 
 /** Stores route-aware action bar state shared between workspace pages and the application shell. */
@@ -103,4 +125,29 @@ export function openImplementationTicketsDialog(): void {
  */
 export function closeImplementationTicketsDialog(): void {
     actionBarStore.setState((state) => ({ ...state, implementationTicketsDialogOpen: false }));
+}
+
+
+/** Requests an Administrator workspace action from the active page. */
+export function requestAdministratorAction(administratorActionRequest: AdministratorActionRequest): void {
+    actionBarStore.setState((state) => ({ ...state, administratorActionRequest }));
+}
+
+/** Clears the Administrator workspace action request after it is consumed. */
+export function clearAdministratorActionRequest(): void {
+    actionBarStore.setState((state) => ({ ...state, administratorActionRequest: undefined }));
+}
+
+/** Publishes selected-user action state for the shared ActionBar. */
+export function setAdministratorUserActionContext(
+    administratorUserActionContext: AdministratorUserActionContext | undefined,
+): void {
+    actionBarStore.setState((state) => ({ ...state, administratorUserActionContext }));
+}
+
+/** Publishes project action state for the shared ActionBar. */
+export function setAdministratorProjectActionContext(
+    administratorProjectActionContext: AdministratorProjectActionContext | undefined,
+): void {
+    actionBarStore.setState((state) => ({ ...state, administratorProjectActionContext }));
 }

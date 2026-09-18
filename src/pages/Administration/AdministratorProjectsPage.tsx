@@ -1,17 +1,25 @@
+import { useSelector } from "@tanstack/react-store";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
+import { InputText } from "primereact/inputtext";
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 
 import type { AdministratorProjectSummary } from "@/api/adminProjectsApi";
 import type { UserAdministrationResponse } from "@/api/authApi";
-import { ProjectDialog } from "@/components/RootLayout/Sidebar/ProjectDialog";
 import {
   ADMINISTRATOR_PROJECTS_ROUTE,
   getAdministratorProjectRoute,
 } from "@/auth/authRoutes";
 import { projectRoleLabel } from "@/auth/projectRoleMetadata";
+import { AddProjectMembershipDialog } from "@/pages/Administration/AddProjectMembershipDialog";
 import { useAdministratorProjects } from "@/pages/Administration/useAdministratorProjects";
+import { ProjectDialog } from "@/components/RootLayout/Sidebar/ProjectDialog";
+import {
+  actionBarStore,
+  clearAdministratorActionRequest,
+  setAdministratorProjectActionContext,
+} from "@/stores/actionBarStore";
 
 import "@/pages/Administration/AdministratorProjectsPage.scss";
 
@@ -28,111 +36,150 @@ function isEligibleMember(user: UserAdministrationResponse): boolean {
   );
 }
 
+function ProjectOverview({
+  projects,
+}: Readonly<{ projects: readonly AdministratorProjectSummary[] }>) {
+  return (
+    <div className="administrator-projects__table-wrapper">
+      <table className="administrator-projects__table">
+        <caption>All projects</caption>
+        <thead>
+          <tr>
+            <th scope="col">Project</th>
+            <th scope="col">Categories</th>
+            <th scope="col">Requirements</th>
+            <th scope="col">Memberships</th>
+          </tr>
+        </thead>
+        <tbody>
+          {projects.map((project) => (
+            <tr key={project.id}>
+              <th scope="row">
+                <Link
+                  className="administrator-projects__project-link"
+                  to={getAdministratorProjectRoute(project.id)}
+                >
+                  {project.name}
+                </Link>
+              </th>
+              <td>{project.categoryCount}</td>
+              <td>{project.requirementCount}</td>
+              <td>{project.memberships.length}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 function ProjectSummary({
   project,
 }: Readonly<{ project: AdministratorProjectSummary }>) {
   return (
-    <>
-      <dl className="administrator-projects__summary">
-        <div>
-          <dt>Categories</dt>
-          <dd>{project.categoryCount}</dd>
-        </div>
-        <div>
-          <dt>Requirements</dt>
-          <dd>{project.requirementCount}</dd>
-        </div>
-      </dl>
+    <dl className="administrator-projects__summary">
       <div>
-        <h3>Category names</h3>
-        {project.categoryNames.length === 0 ? (
-          <p>No categories.</p>
-        ) : (
-          <ul className="administrator-projects__categories">
-            {project.categoryNames.map((name) => (
-              <li key={name}>{name}</li>
-            ))}
-          </ul>
-        )}
+        <dt>Categories</dt>
+        <dd>{project.categoryCount}</dd>
       </div>
-    </>
+      <div>
+        <dt>Requirements</dt>
+        <dd>{project.requirementCount}</dd>
+      </div>
+    </dl>
+  );
+}
+
+function CategoryAdministration({
+  project,
+}: Readonly<{ project: AdministratorProjectSummary }>) {
+  return (
+    <section
+      className="administrator-projects__categories-panel"
+      aria-labelledby="administrator-project-categories-title"
+    >
+      <h3 id="administrator-project-categories-title">Categories</h3>
+      {project.categories.length === 0 ? (
+        <p>This project has no categories yet.</p>
+      ) : (
+        <table
+          className="administrator-projects__categories-table"
+          aria-label={`Categories for ${project.name}`}
+        >
+          <thead>
+            <tr>
+              <th scope="col">Category</th>
+              <th scope="col">Requirements</th>
+            </tr>
+          </thead>
+          <tbody>
+            {project.categories.map((category) => (
+              <tr key={category.name}>
+                <th scope="row">{category.name}</th>
+                <td>{category.requirementCount}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </section>
+  );
+}
+
+function TicketUrlTemplateAdministration({
+  value,
+  pending,
+  onChange,
+  onSave,
+}: Readonly<{
+  value: string;
+  pending: boolean;
+  onChange: (value: string) => void;
+  onSave: () => Promise<void>;
+}>) {
+  return (
+    <section
+      className="administrator-projects__ticket-settings"
+      aria-labelledby="administrator-ticket-url-title"
+    >
+      <h3 id="administrator-ticket-url-title">Ticket URL template</h3>
+      <div className="administrator-projects__ticket-settings-form">
+        <label htmlFor="administrator-ticket-url-template">URL template</label>
+        <InputText
+          id="administrator-ticket-url-template"
+          value={value}
+          disabled={pending}
+          placeholder="https://tracker.example/tickets/{ticket-id}"
+          onChange={(event) => onChange(event.currentTarget.value)}
+        />
+        <div className="administrator-projects__ticket-settings-actions">
+          <Button
+            type="button"
+            label="Save settings"
+            disabled={pending}
+            onClick={() => void onSave()}
+          />
+        </div>
+      </div>
+    </section>
   );
 }
 
 function MembershipAdministration({
   project,
-  users,
   pending,
-  usersLoading,
-  onAdd,
   onRemove,
 }: Readonly<{
   project: AdministratorProjectSummary;
-  users: readonly UserAdministrationResponse[];
   pending: boolean;
-  usersLoading: boolean;
-  onAdd: (userId: string) => Promise<unknown>;
   onRemove: (userId: string) => Promise<unknown>;
 }>) {
-  const [selectedUserId, setSelectedUserId] = useState("");
-  const memberIds = useMemo(
-    () => new Set(project.memberships.map((membership) => membership.userId)),
-    [project.memberships],
-  );
-  const availableUsers = users.filter(
-    (user) => isEligibleMember(user) && !memberIds.has(user.id),
-  );
-
-  async function addSelectedMembership(): Promise<void> {
-    if (selectedUserId.length === 0) return;
-    await onAdd(selectedUserId);
-    setSelectedUserId("");
-  }
-
   return (
     <section
       className="administrator-projects__memberships"
       aria-labelledby="administrator-project-memberships-title"
     >
       <h3 id="administrator-project-memberships-title">Project memberships</h3>
-      <p>
-        Memberships use each account&apos;s single role. Administrator accounts
-        cannot be project members.
-      </p>
-
-      {usersLoading ? (
-        <p>Loading users …</p>
-      ) : (
-        <div className="administrator-projects__membership-form">
-          <label htmlFor="administrator-project-member">User</label>
-          <select
-            id="administrator-project-member"
-            value={selectedUserId}
-            disabled={pending || availableUsers.length === 0}
-            onChange={(event) => setSelectedUserId(event.currentTarget.value)}
-          >
-            <option value="">Select a user</option>
-            {availableUsers.map((user) => (
-              <option key={user.id} value={user.id}>
-                {user.displayName} (@{user.username}) —{" "}
-                {projectRoleLabel(
-                  user.role as Exclude<
-                    typeof user.role,
-                    null | "administrator"
-                  >,
-                )}
-              </option>
-            ))}
-          </select>
-          <Button
-            type="button"
-            label="Add membership"
-            disabled={pending || selectedUserId.length === 0}
-            onClick={() => void addSelectedMembership()}
-          />
-        </div>
-      )}
-
       {project.memberships.length === 0 ? (
         <p>This project has no memberships yet.</p>
       ) : (
@@ -144,7 +191,12 @@ function MembershipAdministration({
             <tr>
               <th scope="col">User</th>
               <th scope="col">Role</th>
-              <th scope="col">Actions</th>
+              <th
+                scope="col"
+                className="administrator-projects__actions-column"
+              >
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -157,9 +209,12 @@ function MembershipAdministration({
                 <td>
                   <Button
                     type="button"
-                    outlined
+                    text
+                    rounded
                     severity="danger"
-                    label="Remove membership"
+                    icon="pi pi-user-minus"
+                    aria-label={`Remove ${membership.displayName} from project`}
+                    title="Remove membership"
                     disabled={pending}
                     onClick={() => void onRemove(membership.userId)}
                   />
@@ -173,25 +228,85 @@ function MembershipAdministration({
   );
 }
 
-/**
- * Renders project creation, settings, summaries, and memberships in the
- * dedicated Administrator workspace without exposing project content.
- */
+/** Renders the dedicated Administrator project overview and project metadata. */
 export function AdministratorProjectsPage() {
   const administration = useAdministratorProjects();
   const { projectId: selectedProjectId } = useParams<{ projectId?: string }>();
   const navigate = useNavigate();
+  const administratorActionRequest = useSelector(
+    actionBarStore,
+    (state) => state.administratorActionRequest,
+  );
   const [projectDialog, setProjectDialog] = useState<ProjectDialogState>();
   const [deleteProject, setDeleteProject] =
     useState<AdministratorProjectSummary>();
+  const [membershipDialogOpen, setMembershipDialogOpen] = useState(false);
   const selectedProject = administration.projects.find(
     (project) => project.id === selectedProjectId,
   );
   const [ticketUrlTemplate, setTicketUrlTemplate] = useState("");
 
+  const availableMembershipUsers = useMemo(() => {
+    if (selectedProject === undefined) return [];
+    const memberIds = new Set(
+      selectedProject.memberships.map((membership) => membership.userId),
+    );
+    return administration.users.filter(
+      (user) => isEligibleMember(user) && !memberIds.has(user.id),
+    );
+  }, [administration.users, selectedProject]);
+
   useEffect(() => {
     setTicketUrlTemplate(selectedProject?.ticketUrlTemplate ?? "");
   }, [selectedProject?.id, selectedProject?.ticketUrlTemplate]);
+
+  useEffect(() => {
+    setAdministratorProjectActionContext({
+      selected: selectedProject !== undefined,
+      pending: administration.mutationPending,
+      addMembershipDisabled:
+        administration.usersLoading ||
+        administration.usersError ||
+        availableMembershipUsers.length === 0,
+      deleteDisabled:
+        selectedProject === undefined || selectedProject.requirementCount > 0,
+    });
+    return () => setAdministratorProjectActionContext(undefined);
+  }, [
+    administration.mutationPending,
+    administration.usersError,
+    administration.usersLoading,
+    availableMembershipUsers.length,
+    selectedProject,
+  ]);
+
+  useEffect(() => {
+    if (administratorActionRequest === undefined) return;
+    clearAdministratorActionRequest();
+
+    switch (administratorActionRequest) {
+      case "createProject":
+        setProjectDialog({ mode: "create" });
+        return;
+      case "renameProject":
+        if (selectedProject !== undefined)
+          setProjectDialog({ mode: "rename", project: selectedProject });
+        return;
+      case "deleteProject":
+        if (
+          selectedProject !== undefined &&
+          selectedProject.requirementCount === 0
+        ) {
+          setDeleteProject(selectedProject);
+        }
+        return;
+      case "addMembership":
+        if (selectedProject !== undefined) setMembershipDialogOpen(true);
+        return;
+      case "toggleUserStatus":
+        return;
+    }
+  }, [administratorActionRequest, selectedProject]);
 
   async function submitProjectName(name: string): Promise<void> {
     if (projectDialog?.mode === "rename") {
@@ -202,7 +317,6 @@ export function AdministratorProjectsPage() {
       setProjectDialog(undefined);
       return;
     }
-
     const created = await administration.createProject(name);
     setProjectDialog(undefined);
     void navigate(getAdministratorProjectRoute(created.id));
@@ -233,18 +347,8 @@ export function AdministratorProjectsPage() {
       className="administrator-projects"
       aria-labelledby="administrator-projects-title"
     >
-      <header className="administrator-projects__header">
-        <div>
-          <p className="administrator-projects__eyebrow">Administration</p>
-          <h1 id="administrator-projects-title">Projects</h1>
-        </div>
-        <Button
-          type="button"
-          label="New project"
-          icon="pi pi-plus"
-          disabled={administration.mutationPending}
-          onClick={() => setProjectDialog({ mode: "create" })}
-        />
+      <header>
+        <h1 id="administrator-projects-title">Projects</h1>
       </header>
 
       {administration.projectsError ? (
@@ -253,100 +357,38 @@ export function AdministratorProjectsPage() {
         </p>
       ) : administration.projectsLoading ? (
         <p>Loading projects …</p>
+      ) : selectedProjectId === undefined ? (
+        <ProjectOverview projects={administration.projects} />
+      ) : selectedProject === undefined ? (
+        <section className="administrator-projects__details">
+          <p role="alert">The selected project could not be found.</p>
+        </section>
       ) : (
         <div className="administrator-projects__workspace">
-          {selectedProjectId === undefined ? (
-            <section className="administrator-projects__details">
-              <p>
-                Select a project from the sidebar to view and manage its
-                administrative metadata.
-              </p>
-            </section>
-          ) : selectedProject === undefined ? (
-            <section className="administrator-projects__details">
-              <p role="alert">The selected project could not be found.</p>
-            </section>
-          ) : (
-            <div>
-              <section
-                className="administrator-projects__details"
-                aria-labelledby="administrator-project-title"
-              >
-                <div className="administrator-projects__header">
-                  <h2 id="administrator-project-title">
-                    {selectedProject.name}
-                  </h2>
-                  <div className="administrator-projects__toolbar">
-                    <Button
-                      type="button"
-                      label="Rename project"
-                      outlined
-                      disabled={administration.mutationPending}
-                      onClick={() =>
-                        setProjectDialog({
-                          mode: "rename",
-                          project: selectedProject,
-                        })
-                      }
-                    />
-                    <Button
-                      type="button"
-                      label="Delete project"
-                      severity="danger"
-                      outlined
-                      disabled={administration.mutationPending}
-                      onClick={() => setDeleteProject(selectedProject)}
-                    />
-                  </div>
-                </div>
-
-                <ProjectSummary project={selectedProject} />
-
-                <div className="administrator-projects__settings">
-                  <label htmlFor="administrator-ticket-url-template">
-                    Ticket URL template
-                  </label>
-                  <input
-                    id="administrator-ticket-url-template"
-                    type="text"
-                    value={ticketUrlTemplate}
-                    disabled={administration.mutationPending}
-                    placeholder="https://tracker.example/tickets/{ticket-id}"
-                    onChange={(event) =>
-                      setTicketUrlTemplate(event.currentTarget.value)
-                    }
-                  />
-                  <div className="administrator-projects__settings-actions">
-                    <Button
-                      type="button"
-                      label="Save settings"
-                      disabled={administration.mutationPending}
-                      onClick={() => void saveTicketUrlTemplate()}
-                    />
-                  </div>
-                </div>
-              </section>
-
-              <MembershipAdministration
-                project={selectedProject}
-                users={administration.users}
-                pending={administration.mutationPending}
-                usersLoading={administration.usersLoading}
-                onAdd={(userId) =>
-                  administration.addMembership({
-                    projectId: selectedProject.id,
-                    userId,
-                  })
-                }
-                onRemove={(userId) =>
-                  administration.removeMembership({
-                    projectId: selectedProject.id,
-                    userId,
-                  })
-                }
-              />
-            </div>
-          )}
+          <section
+            className="administrator-projects__details"
+            aria-labelledby="administrator-project-title"
+          >
+            <h2 id="administrator-project-title">{selectedProject.name}</h2>
+            <ProjectSummary project={selectedProject} />
+          </section>
+          <CategoryAdministration project={selectedProject} />
+          <TicketUrlTemplateAdministration
+            value={ticketUrlTemplate}
+            pending={administration.mutationPending}
+            onChange={setTicketUrlTemplate}
+            onSave={saveTicketUrlTemplate}
+          />
+          <MembershipAdministration
+            project={selectedProject}
+            pending={administration.mutationPending}
+            onRemove={(userId) =>
+              administration.removeMembership({
+                projectId: selectedProject.id,
+                userId,
+              })
+            }
+          />
         </div>
       )}
 
@@ -372,6 +414,21 @@ export function AdministratorProjectsPage() {
         onSubmit={({ name }) => submitProjectName(name)}
       />
 
+      <AddProjectMembershipDialog
+        visible={membershipDialogOpen}
+        users={availableMembershipUsers}
+        pending={administration.mutationPending}
+        onHide={() => setMembershipDialogOpen(false)}
+        onAdd={(userId) =>
+          selectedProject === undefined
+            ? Promise.resolve()
+            : administration.addMembership({
+                projectId: selectedProject.id,
+                userId,
+              })
+        }
+      />
+
       <Dialog
         visible={deleteProject !== undefined}
         modal
@@ -382,7 +439,7 @@ export function AdministratorProjectsPage() {
           Delete <strong>{deleteProject?.name}</strong>? This action cannot be
           undone.
         </p>
-        <div className="administrator-projects__toolbar">
+        <div className="administrator-projects__dialog-actions">
           <Button
             type="button"
             label="Cancel"

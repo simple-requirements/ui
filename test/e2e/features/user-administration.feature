@@ -1,9 +1,9 @@
-@user-administration
-Feature: User and session administration
-  Administrators inspect real users and sessions through the backend API.
+@frontend-real-backend
+Feature: User administration
+  Administrators manage user account metadata from the dedicated administration workspace.
 
-  Scenario: Open user and session administration
+  Scenario: Open user administration details
     Given a real frontend Administrator session is available
     When I open frontend user administration as a real Administrator
     And I select the Administrator user
-    Then the selected user sessions should be visible
+    Then the selected user account details should be visible

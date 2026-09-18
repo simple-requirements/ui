@@ -5,6 +5,8 @@ import '@/components/RootLayout/ActionBar/ActionBar.scss';
 
 import { getActionBarAvailability } from '@/components/RootLayout/ActionBar/actionBarAvailability';
 import {
+    AdministratorProjectActionButtons,
+    AdministratorUserActionButtons,
     CategoryRouteActionButtons,
     CreateActionButton,
     RequirementRouteActionButtons,
@@ -24,7 +26,12 @@ import {
     getProjectRequirementReviewRoute,
 } from '@/router/projectRoutes';
 import { useRouteUiMetadata } from '@/router/routeUiMetadata';
-import { actionBarStore, openImplementationTicketsDialog, requestReviewDecision } from '@/stores/actionBarStore';
+import {
+    actionBarStore,
+    openImplementationTicketsDialog,
+    requestAdministratorAction,
+    requestReviewDecision,
+} from '@/stores/actionBarStore';
 import { openTab } from '@/stores/tabBarStore';
 
 export type ActionBarProps = Readonly<{ onFindRequirementKey?: (requirementKey: string) => void }>;
@@ -41,6 +48,14 @@ export function ActionBar({ onFindRequirementKey }: ActionBarProps) {
     const configuration = getActionBarConfiguration(actionBarKind);
     const permissions = useProjectPermissions(projectId);
     const reviewActionRequirement = useSelector(actionBarStore, (state) => state.reviewActionRequirement);
+    const administratorUserActionContext = useSelector(
+        actionBarStore,
+        (state) => state.administratorUserActionContext,
+    );
+    const administratorProjectActionContext = useSelector(
+        actionBarStore,
+        (state) => state.administratorProjectActionContext,
+    );
     const obsoleteAction = useObsoleteRequirementAction(reviewActionRequirement);
     const implementAction = useImplementRequirementAction(reviewActionRequirement);
 
@@ -124,6 +139,29 @@ export function ActionBar({ onFindRequirementKey }: ActionBarProps) {
                 <CreateActionButton
                     disabled={!availability.canCreate}
                     onCreate={handleCreate}
+                />
+            )}
+
+
+
+            {configuration.administratorActions === 'users' && (
+                <AdministratorUserActionButtons
+                    label={administratorUserActionContext?.label}
+                    disabled={administratorUserActionContext?.disabled ?? true}
+                    onToggleStatus={() => requestAdministratorAction('toggleUserStatus')}
+                />
+            )}
+
+            {configuration.administratorActions === 'projects' && (
+                <AdministratorProjectActionButtons
+                    selected={administratorProjectActionContext?.selected ?? false}
+                    disabled={administratorProjectActionContext?.pending ?? false}
+                    addMembershipDisabled={administratorProjectActionContext?.addMembershipDisabled ?? true}
+                    deleteDisabled={administratorProjectActionContext?.deleteDisabled ?? true}
+                    onCreate={() => requestAdministratorAction('createProject')}
+                    onRename={() => requestAdministratorAction('renameProject')}
+                    onDelete={() => requestAdministratorAction('deleteProject')}
+                    onAddMembership={() => requestAdministratorAction('addMembership')}
                 />
             )}
 

@@ -129,11 +129,10 @@ When(
   "I assign {string} to the project",
   async ({ page }, displayName: string) => {
     const user = userByDisplayName(displayName);
-    await page
-      .getByRole("region", { name: "Project memberships" })
-      .getByLabel("User", { exact: true })
-      .selectOption(user.id);
     await page.getByRole("button", { name: "Add membership" }).click();
+    const dialog = page.getByRole("dialog");
+    await dialog.getByLabel("User", { exact: true }).selectOption(user.id);
+    await dialog.getByRole("button", { name: "Add membership" }).click();
     await expectBackendMembershipRole(displayName, expectedProjectRole(user));
     await expect(membershipRow(page, displayName)).toBeVisible();
   },
@@ -143,7 +142,7 @@ When(
   "I remove {string} from the project",
   async ({ page }, displayName: string) => {
     await membershipRow(page, displayName)
-      .getByRole("button", { name: "Remove membership" })
+      .getByRole("button", { name: `Remove ${displayName} from project` })
       .click();
   },
 );

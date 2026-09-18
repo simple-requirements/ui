@@ -15,6 +15,7 @@ export type ActionBarConfiguration = Readonly<{
     showImplementedRequirement?: boolean;
     showReview?: boolean;
     showReviewDecisions?: boolean;
+    administratorActions?: 'users' | 'projects';
 }>;
 
 /**
@@ -73,6 +74,20 @@ export function getActionBarConfiguration(actionBarKind: ActionBarKind): ActionB
             return { ariaLabel: 'Project actions', disabled: false, showRequirementLookup: false };
         case 'none':
             return { ariaLabel: 'Workspace actions', disabled: true, showRequirementLookup: false };
+        case 'administratorUsers':
+            return {
+                ariaLabel: 'Administrator user actions',
+                disabled: false,
+                showRequirementLookup: false,
+                administratorActions: 'users',
+            };
+        case 'administratorProjects':
+            return {
+                ariaLabel: 'Administrator project actions',
+                disabled: false,
+                showRequirementLookup: false,
+                administratorActions: 'projects',
+            };
         case 'review':
             return {
                 ariaLabel: 'Requirement review actions',

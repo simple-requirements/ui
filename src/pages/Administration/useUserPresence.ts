@@ -6,7 +6,7 @@ import {
   type UserAdministrationResponse,
 } from "@/api/authApi";
 import { isSessionActive } from "@/pages/Administration/sessionStatus";
-import { userSessionsQueryKey } from "@/pages/Administration/useUserAdministration";
+import { userSessionsQueryKey } from "@/pages/Administration/administrationQueryKeys";
 
 export type UserPresence = Readonly<{
   active: boolean;

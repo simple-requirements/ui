@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import type { UserAdministrationResponse } from "@/api/authApi";
 import type { AccountRole } from "@/auth/authTypes";
 
+import "@/pages/Administration/UserRoleDialog.scss";
+
 const roleOptions: Readonly<{ label: string; value: AccountRole }>[] = [
   { label: "Administrator", value: "administrator" },
   { label: "Requirements Engineer", value: "requirements_engineer" },
@@ -23,10 +25,10 @@ export type UserRoleDialogProps = Readonly<{
   visible: boolean;
   pending: boolean;
   onHide: () => void;
-  onChangeRole: (role: AccountRole) => void;
+  onChangeRole: (role: AccountRole) => void | Promise<void>;
 }>;
 
-/** Shows role assignment in a compact dialog while respecting backend role-lock rules. */
+/** Renders role selection for the temporarily deactivated account. */
 export function UserRoleDialog({
   user,
   visible,
@@ -35,67 +37,104 @@ export function UserRoleDialog({
   onChangeRole,
 }: UserRoleDialogProps) {
   const [role, setRole] = useState<AccountRole | "">(user?.role ?? "");
-  const roleLocked = user?.status === "active";
 
   useEffect(() => {
     setRole(user?.role ?? "");
   }, [user?.id, user?.role]);
 
-  function submit(): void {
-    if (role === "" || user === undefined || roleLocked) return;
-    onChangeRole(role);
-    onHide();
+  async function submit(): Promise<void> {
+    if (role === "" || user === undefined || role === user.role) return;
+    await onChangeRole(role);
   }
 
   return (
     <Dialog
       visible={visible}
       modal
+      dismissableMask={false}
+      closable={!pending}
+      closeOnEscape={!pending}
+      draggable={false}
+      resizable={false}
       header={
-        user === undefined
-          ? "Account role"
-          : `Account role — ${user.displayName}`
+        <h2 className="user-role-dialog__heading">
+          {user === undefined
+            ? "Account role"
+            : `Account role — ${user.displayName}`}
+        </h2>
       }
+      pt={{
+        root: { className: "user-role-dialog" },
+        header: { className: "user-role-dialog__header" },
+        content: { className: "user-role-dialog__content" },
+      }}
       onHide={onHide}
     >
       {user !== undefined && (
-        <div className="user-administration__role-dialog">
-          <label htmlFor="administrator-user-role">Role</label>
-          <select
-            id="administrator-user-role"
-            value={role}
-            disabled={pending || roleLocked}
-            onChange={(event) =>
-              setRole(event.currentTarget.value as AccountRole)
-            }
-          >
-            <option value="" disabled>
-              Select a role
-            </option>
-            {roleOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
+        <form
+          className="user-role-dialog__form"
+          onSubmit={(event) => {
+            event.preventDefault();
+            void submit();
+          }}
+        >
+          <div className="user-role-dialog__field">
+            <label
+              className="user-role-dialog__label"
+              htmlFor="administrator-user-role"
+            >
+              Role
+            </label>
+            <select
+              className="user-role-dialog__select"
+              id="administrator-user-role"
+              value={role}
+              disabled={pending}
+              onChange={(event) =>
+                setRole(event.currentTarget.value as AccountRole)
+              }
+            >
+              <option value="" disabled>
+                Select a role
               </option>
-            ))}
-          </select>
-          {roleLocked && (
-            <p className="user-administration__hint">
-              Deactivate this account before changing its role. Deactivation
-              revokes active sessions.
-            </p>
-          )}
-          <div className="user-administration__dialog-actions">
-            <Button type="button" label="Cancel" outlined onClick={onHide} />
+              {roleOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <p className="user-role-dialog__message">
+            The account is temporarily deactivated while this dialog is open and
+            will be reactivated when the dialog closes.
+          </p>
+          <div className="user-role-dialog__actions">
             <Button
               type="button"
+              outlined
+              label="Cancel"
+              disabled={pending}
+              pt={{
+                root: {
+                  className:
+                    "user-role-dialog__button user-role-dialog__button--cancel",
+                },
+              }}
+              onClick={onHide}
+            />
+            <Button
+              type="submit"
               label="Save role"
-              disabled={
-                pending || roleLocked || role === "" || role === user.role
-              }
-              onClick={submit}
+              disabled={pending || role === "" || role === user.role}
+              pt={{
+                root: {
+                  className:
+                    "user-role-dialog__button user-role-dialog__button--save",
+                },
+              }}
             />
           </div>
-        </div>
+        </form>
       )}
     </Dialog>
   );

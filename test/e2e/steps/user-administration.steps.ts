@@ -1,8 +1,6 @@
 import { expect } from "@playwright/test";
 import { createBdd, test } from "playwright-bdd";
 import {
-  E2E_ADMIN_USER_ID,
-  listUserSessions,
   openAuthenticatedRoute,
   requireBackendAvailable,
 } from "./authenticated-test-backend";
@@ -25,10 +23,18 @@ When("I select the Administrator user", async ({ page }) => {
   await page.getByRole("link", { name: "Administrator", exact: true }).click();
 });
 
-Then("the selected user sessions should be visible", async ({ page }) => {
-  const sessions = await listUserSessions(E2E_ADMIN_USER_ID);
-  expect(sessions.length).toBeGreaterThan(0);
-  await expect(
-    page.getByRole("table", { name: /Sessions for/iu }),
-  ).toBeVisible();
-});
+Then(
+  "the selected user account details should be visible",
+  async ({ page }) => {
+    await expect(
+      page.getByRole("heading", { name: "Administrator" }),
+    ).toBeVisible();
+    await expect(page.getByText("@administrator")).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Administrator" }),
+    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Sessions" })).toHaveCount(
+      0,
+    );
+  },
+);

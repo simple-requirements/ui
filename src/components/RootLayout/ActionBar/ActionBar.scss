@@ -33,6 +33,14 @@
         block-size: var(--ui-control-height);
         padding-inline: 1rem;
         white-space: nowrap;
+
+        .p-button-icon {
+            font-size: var(--ui-icon-size);
+        }
+    }
+
+    &__button--with-icon .p-button-icon {
+        margin-inline-end: 0.5rem;
     }
 
     &__account {

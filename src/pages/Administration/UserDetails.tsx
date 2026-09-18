@@ -1,45 +1,24 @@
-import { Button } from "primereact/button";
-
-import type {
-  SessionResponse,
-  UserAdministrationResponse,
-} from "@/api/authApi";
-import type { AccountRole, UserStatus } from "@/auth/authTypes";
-import { LoadableContent } from "@/components/Feedback/LoadableContent";
-import { UserRoleControl } from "@/pages/Administration/UserRoleControl";
-import { UserStatusControl } from "@/pages/Administration/UserStatusControl";
-import { isSessionActive } from "@/pages/Administration/sessionStatus";
+import type { UserAdministrationResponse } from "@/api/authApi";
+import { accountRoleLabel } from "@/pages/Administration/UserRoleDialog";
 import { formatDateTime } from "@/utils/displayFormatters";
 
 export type UserDetailsProps = Readonly<{
   user: UserAdministrationResponse;
-  sessions: readonly SessionResponse[];
-  sessionsLoading: boolean;
-  sessionsError: boolean;
+  loggedIn: boolean;
   pending: boolean;
-  onChangeRole: (role: AccountRole) => void;
-  onChangeStatus: (status: Exclude<UserStatus, "pending">) => void;
-  onRevokeSession: (sessionId: string) => void;
-  onRevokeAllSessions: () => void;
+  onOpenRoleDialog: (
+    user: UserAdministrationResponse,
+    loggedIn: boolean,
+  ) => void;
 }>;
 
-/**
- * Renders account role, status, and session controls for one user.
- * @param props Selected user, session state, and administration callbacks.
- * @returns User administration details panel.
- */
+/** Renders administrative account metadata for one user. */
 export function UserDetails({
   user,
-  sessions,
-  sessionsLoading,
-  sessionsError,
+  loggedIn,
   pending,
-  onChangeRole,
-  onChangeStatus,
-  onRevokeSession,
-  onRevokeAllSessions,
+  onOpenRoleDialog,
 }: UserDetailsProps) {
-  const activeSessions = sessions.filter((session) => isSessionActive(session));
   return (
     <section
       className="user-administration__details"
@@ -47,7 +26,6 @@ export function UserDetails({
     >
       <header>
         <h2 id="selected-user-title">{user.displayName}</h2>
-        <p>@{user.username}</p>
       </header>
       <dl className="user-administration__metadata">
         <div>
@@ -60,7 +38,16 @@ export function UserDetails({
         </div>
         <div>
           <dt>Role</dt>
-          <dd>{user.role ?? "Not assigned"}</dd>
+          <dd>
+            <button
+              type="button"
+              className="user-administration__role-link"
+              disabled={pending}
+              onClick={() => onOpenRoleDialog(user, loggedIn)}
+            >
+              {accountRoleLabel(user.role)}
+            </button>
+          </dd>
         </div>
         <div>
           <dt>Email verified</dt>
@@ -75,67 +62,6 @@ export function UserDetails({
           <dd>{formatDateTime(user.createdAt)}</dd>
         </div>
       </dl>
-      <UserRoleControl
-        user={user}
-        pending={pending}
-        onChangeRole={onChangeRole}
-      />
-      <UserStatusControl
-        user={user}
-        pending={pending}
-        onChangeStatus={onChangeStatus}
-      />
-
-      <div className="user-administration__sessions-header">
-        <h3>Sessions</h3>
-        <Button
-          type="button"
-          outlined
-          severity="danger"
-          label="Revoke all active sessions"
-          disabled={pending || activeSessions.length === 0}
-          onClick={onRevokeAllSessions}
-        />
-      </div>
-      <LoadableContent
-        loading={sessionsLoading}
-        error={sessionsError}
-        empty={activeSessions.length === 0}
-        loadingMessage="Loading sessions …"
-        errorMessage="Sessions could not be loaded."
-        emptyMessage="This user is not currently logged in."
-      >
-        <table className="user-administration__table">
-          <caption>Sessions for {user.displayName}</caption>
-          <thead>
-            <tr>
-              <th scope="col">Created</th>
-              <th scope="col">Last activity</th>
-              <th scope="col">State</th>
-              <th scope="col">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {activeSessions.map((session) => (
-              <tr key={session.id}>
-                <td>{formatDateTime(session.createdAt)}</td>
-                <td>{formatDateTime(session.lastActivityAt)}</td>
-                <td>Logged in</td>
-                <td>
-                  <Button
-                    type="button"
-                    text
-                    severity="danger"
-                    label="Revoke"
-                    disabled={pending}
-                    onClick={() => onRevokeSession(session.id)}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </LoadableContent>
     </section>
   );
 }

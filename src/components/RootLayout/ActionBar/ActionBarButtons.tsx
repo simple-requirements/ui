@@ -158,3 +158,95 @@ export function ReviewDecisionActionButtons({ canDecide, onApprove, onReject }: 
         </>
     );
 }
+
+
+export type AdministratorUserActionButtonsProps = Readonly<{
+    label?: 'Activate account' | 'Deactivate account';
+    disabled: boolean;
+    onToggleStatus: () => void;
+}>;
+
+/** Renders account-state administration in the shared ActionBar. */
+export function AdministratorUserActionButtons({
+    label,
+    disabled,
+    onToggleStatus,
+}: AdministratorUserActionButtonsProps) {
+    if (label === undefined) return null;
+
+    return (
+        <Button
+            type='button'
+            label={label}
+            severity={label === 'Deactivate account' ? 'danger' : undefined}
+            disabled={disabled}
+            onClick={onToggleStatus}
+            pt={{ root: { className: 'action-bar__button' } }}
+        />
+    );
+}
+
+export type AdministratorProjectActionButtonsProps = Readonly<{
+    selected: boolean;
+    disabled: boolean;
+    addMembershipDisabled: boolean;
+    deleteDisabled: boolean;
+    onCreate: () => void;
+    onRename: () => void;
+    onDelete: () => void;
+    onAddMembership: () => void;
+}>;
+
+/** Renders project administration actions in the shared ActionBar. */
+export function AdministratorProjectActionButtons({
+    selected,
+    disabled,
+    addMembershipDisabled,
+    deleteDisabled,
+    onCreate,
+    onRename,
+    onDelete,
+    onAddMembership,
+}: AdministratorProjectActionButtonsProps) {
+    if (!selected) {
+        return (
+            <Button
+                type='button'
+                label='New project'
+                icon='pi pi-plus'
+                disabled={disabled}
+                onClick={onCreate}
+                pt={{ root: { className: 'action-bar__button' } }}
+            />
+        );
+    }
+
+    return (
+        <>
+            <Button
+                type='button'
+                label='Rename project'
+                disabled={disabled}
+                onClick={onRename}
+                pt={{ root: { className: 'action-bar__button' } }}
+            />
+            <Button
+                type='button'
+                label='Add membership'
+                icon='pi pi-user-plus'
+                disabled={disabled || addMembershipDisabled}
+                onClick={onAddMembership}
+                pt={{ root: { className: 'action-bar__button action-bar__button--with-icon' } }}
+            />
+            <Button
+                type='button'
+                label='Delete project'
+                severity='danger'
+                disabled={disabled || deleteDisabled}
+                title={deleteDisabled ? 'Projects containing requirements cannot be deleted.' : undefined}
+                onClick={onDelete}
+                pt={{ root: { className: 'action-bar__button' } }}
+            />
+        </>
+    );
+}

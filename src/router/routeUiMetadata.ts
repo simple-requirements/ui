@@ -8,7 +8,9 @@ export type ActionBarKind =
     | 'categories'
     | 'categoryForm'
     | 'requirementForm'
-    | 'review';
+    | 'review'
+    | 'administratorUsers'
+    | 'administratorProjects';
 
 export type RouteUiHandle = Readonly<{ actionBar?: ActionBarKind; disableChromeActions?: boolean }>;
 

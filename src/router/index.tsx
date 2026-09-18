@@ -50,12 +50,12 @@ export const routes: RouteObject[] = [
               {
                 path: "admin/users/:userId?",
                 element: <UserAdministrationPage />,
-                handle: routeHandle({ actionBar: "none" }),
+                handle: routeHandle({ actionBar: "administratorUsers" }),
               },
               {
                 path: "admin/projects/:projectId?",
                 element: <AdministratorProjectsPage />,
-                handle: routeHandle({ actionBar: "none" }),
+                handle: routeHandle({ actionBar: "administratorProjects" }),
               },
             ],
           },

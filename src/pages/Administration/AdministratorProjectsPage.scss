@@ -1,90 +1,126 @@
+@use "styles/UiMixins" as ui;
+
 .administrator-projects {
   display: grid;
-  gap: 1.5rem;
-  padding: 1.5rem;
-}
+  gap: var(--ui-space-lg);
+  padding: var(--ui-space-xl);
 
-.administrator-projects__header,
-.administrator-projects__toolbar,
-.administrator-projects__settings-actions,
-.administrator-projects__membership-form {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
+  &__workspace {
+    display: grid;
+    gap: var(--ui-space-lg);
+    min-inline-size: 0;
+  }
 
-.administrator-projects__header {
-  justify-content: space-between;
-}
+  &__details,
+  &__categories-panel,
+  &__ticket-settings,
+  &__memberships {
+    padding: var(--ui-space-lg);
+    border: var(--ui-border);
+    border-radius: var(--ui-border-radius-small);
+    background: var(--color-app-surface);
+  }
 
-.administrator-projects__eyebrow {
-  margin: 0;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  opacity: 0.7;
-}
+  &__details > h2,
+  &__categories-panel > h3,
+  &__ticket-settings > h3,
+  &__memberships > h3 {
+    margin-block-start: 0;
+  }
 
-.administrator-projects__workspace {
-  min-inline-size: 0;
-}
+  &__table-wrapper {
+    inline-size: 100%;
+    overflow-x: auto;
+  }
 
-.administrator-projects__details,
-.administrator-projects__memberships {
-  border: 1px solid var(--surface-border);
-  border-radius: 0.5rem;
-  background: var(--surface-card);
-}
+  &__table,
+  &__categories-table,
+  &__memberships-table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    background: var(--color-app-surface);
+  }
 
-.administrator-projects__details,
-.administrator-projects__memberships {
-  padding: 1rem;
-}
+  &__table caption {
+    text-align: start;
+    font-weight: 700;
+    padding-block-end: var(--ui-space-sm);
+  }
 
-.administrator-projects__summary {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem;
-  margin: 1rem 0;
-}
+  &__table th,
+  &__table td,
+  &__categories-table th,
+  &__categories-table td,
+  &__memberships-table th,
+  &__memberships-table td {
+    padding: var(--ui-space-sm);
+    border-block-end: var(--ui-border);
+    text-align: start;
+    vertical-align: middle;
+  }
 
-.administrator-projects__summary dt {
-  font-weight: 600;
-}
+  &__project-link {
+    color: var(--color-app-active-border);
+    text-decoration: underline;
+  }
 
-.administrator-projects__summary dd {
-  margin: 0.25rem 0 0;
-}
+  &__actions-column {
+    inline-size: 1%;
+  }
 
-.administrator-projects__categories {
-  margin: 0;
-  padding-left: 1.25rem;
-}
+  &__memberships-table .p-button {
+    inline-size: var(--ui-control-height);
+    block-size: var(--ui-control-height);
+  }
 
-.administrator-projects__settings {
-  display: grid;
-  gap: 0.5rem;
-  max-width: 52rem;
-  margin-top: 1rem;
-}
+  &__memberships-table .p-button-icon {
+    font-size: var(--ui-icon-size);
+  }
 
-.administrator-projects__settings input,
-.administrator-projects__membership-form select {
-  width: 100%;
-}
+  &__summary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--ui-space-md);
+    margin-block: var(--ui-space-lg) 0;
+  }
 
-.administrator-projects__memberships-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-}
+  &__summary dt {
+    font-weight: 700;
+  }
 
-.administrator-projects__memberships-table th,
-.administrator-projects__memberships-table td {
-  padding: 0.6rem;
-  text-align: left;
-  border-bottom: 1px solid var(--surface-border);
-}
+  &__summary dd {
+    margin: var(--ui-space-xs) 0 0;
+  }
 
-.administrator-projects__error {
-  color: var(--red-600);
+  &__ticket-settings-form {
+    @include ui.form-layout(64rem);
+
+    padding: 0;
+    gap: var(--ui-space-sm);
+  }
+
+  &__ticket-settings-form label {
+    @include ui.form-label;
+  }
+
+  &__ticket-settings-form .p-inputtext {
+    @include ui.form-line-control(64rem);
+  }
+
+  &__ticket-settings-actions {
+    @include ui.form-actions;
+  }
+
+  &__ticket-settings-actions .p-button {
+    @include ui.primary-button;
+    @include ui.form-button;
+  }
+
+  &__dialog-actions {
+    @include ui.dialog-actions(0);
+  }
+
+  &__error {
+    color: var(--color-feedback-error-text);
+  }
 }

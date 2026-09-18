@@ -44,11 +44,15 @@ export function ListPage() {
                     size={67}
                     minSize={25}
                     pt={{ root: { className: 'project-requirements-list-page__splitter-panel' } }}>
-                    <div className='project-requirements-list-page__list-panel'>
-                        <header className='project-requirements-list-page__header'>
+                    <div
+                        className={
+                            'project-requirements-list-page__list-panel ui-panel ui-panel--full-height '
+                            + 'ui-panel--flex-column ui-panel--overflow-hidden'
+                        }>
+                        <header className='project-requirements-list-page__header ui-panel__header'>
                             <h1
                                 id='project-requirements-list-page-title'
-                                className='project-requirements-list-page__title'>
+                                className='project-requirements-list-page__title ui-panel__title'>
                                 Requirements
                             </h1>
                         </header>

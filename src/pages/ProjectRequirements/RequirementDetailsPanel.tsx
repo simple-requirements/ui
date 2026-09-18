@@ -25,7 +25,10 @@ export function RequirementDetailsPanel({
 
     return (
         <div
-            className='requirement-details-panel'
+            className={
+                'requirement-details-panel ui-panel ui-panel--padded ui-panel--full-height '
+                + 'ui-panel--flex-column ui-panel--overflow-auto'
+            }
             aria-live='polite'>
             <div className='requirement-details-panel__header'>
                 <TitleElement

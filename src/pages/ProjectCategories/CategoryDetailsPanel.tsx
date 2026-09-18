@@ -39,7 +39,10 @@ export function CategoryDetailsPanel({
 
     return (
         <div
-            className='category-details-panel'
+            className={
+                'category-details-panel ui-panel ui-panel--padded ui-panel--full-height '
+                + 'ui-panel--flex-column ui-panel--overflow-auto'
+            }
             aria-live='polite'>
             <div className='category-details-panel__header'>
                 <TitleElement

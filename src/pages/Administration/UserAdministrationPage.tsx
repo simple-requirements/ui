@@ -154,7 +154,7 @@ export function UserAdministrationPage() {
                 : selectedUser === undefined ?
                     <p
                         role='alert'
-                        className='user-administration__selection'>
+                        className='user-administration__selection ui-panel ui-panel--rounded ui-panel--spacious'>
                         The selected user could not be found.
                     </p>
                 :   <UserDetails

@@ -1,0 +1,47 @@
+.ui-panel {
+    min-block-size: 0;
+    background: var(--color-app-surface);
+    border: var(--ui-border);
+}
+
+.ui-panel--rounded {
+    border-radius: var(--ui-border-radius-small);
+}
+
+.ui-panel--padded {
+    padding: var(--ui-panel-padding);
+}
+
+.ui-panel--spacious {
+    padding: var(--ui-space-lg);
+}
+
+.ui-panel--full-height {
+    block-size: 100%;
+}
+
+.ui-panel--flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.ui-panel--overflow-auto {
+    overflow: auto;
+}
+
+.ui-panel--overflow-hidden {
+    overflow: hidden;
+}
+
+.ui-panel__header {
+    flex: 0 0 auto;
+    padding: var(--ui-panel-header-padding);
+    border-block-end: var(--ui-border);
+}
+
+.ui-panel__title {
+    margin: 0;
+    font-size: var(--font-size-h5);
+    line-height: var(--line-height-heading);
+    color: var(--color-app-text);
+}

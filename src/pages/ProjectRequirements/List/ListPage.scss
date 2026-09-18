@@ -15,20 +15,6 @@
     overflow: hidden;
 }
 
-.project-requirements-list-page__list-panel {
-    block-size: 100%;
-
-    @include ui.flex-column-panel;
-}
-
-.project-requirements-list-page__header {
-    @include ui.panel-header;
-}
-
-.project-requirements-list-page__title {
-    @include ui.panel-title;
-}
-
 .project-requirements-list-page__data-table {
     @include ui.prime-data-table;
 }

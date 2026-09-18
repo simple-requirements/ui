@@ -5,32 +5,6 @@
     gap: var(--ui-space-lg);
     padding: var(--ui-space-xl);
 
-    &__table-wrapper {
-        inline-size: 100%;
-        overflow-x: auto;
-    }
-
-    &__table {
-        inline-size: 100%;
-        border-collapse: collapse;
-        background: var(--color-app-surface);
-    }
-
-    &__table caption {
-        text-align: start;
-        font-weight: 700;
-        padding-block-end: var(--ui-space-sm);
-    }
-
-    &__table th,
-    &__table td {
-        padding: var(--ui-space-sm);
-        border-block-end: var(--ui-border);
-        text-align: start;
-        vertical-align: middle;
-        white-space: nowrap;
-    }
-
     &__actions-column {
         inline-size: 1%;
     }
@@ -86,10 +60,6 @@
     &__details,
     &__selection {
         inline-size: 100%;
-        padding: var(--ui-space-lg);
-        background: var(--color-app-surface);
-        border: var(--ui-border);
-        border-radius: var(--ui-border-radius-small);
     }
 
     &__metadata {

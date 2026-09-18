@@ -4,20 +4,6 @@
     @include ui.page-shell;
 }
 
-.project-requirements-form-page__panel {
-    block-size: 100%;
-
-    @include ui.flex-column-panel(auto);
-}
-
-.project-requirements-form-page__header {
-    @include ui.panel-header;
-}
-
-.project-requirements-form-page__title {
-    @include ui.panel-title;
-}
-
 .project-requirements-form-page__form {
     @include ui.form-layout(72rem);
 }

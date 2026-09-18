@@ -40,11 +40,15 @@ export function CategoryListPanels({
                 size={67}
                 minSize={25}
                 pt={{ root: { className: 'project-categories-list-page__splitter-panel' } }}>
-                <div className='project-categories-list-page__list-panel'>
-                    <header className='project-categories-list-page__header'>
+                <div
+                    className={
+                        'project-categories-list-page__list-panel ui-panel ui-panel--full-height '
+                        + 'ui-panel--flex-column ui-panel--overflow-hidden'
+                    }>
+                    <header className='project-categories-list-page__header ui-panel__header'>
                         <h1
                             id='project-categories-list-page-title'
-                            className='project-categories-list-page__title'>
+                            className='project-categories-list-page__title ui-panel__title'>
                             Categories
                         </h1>
                     </header>

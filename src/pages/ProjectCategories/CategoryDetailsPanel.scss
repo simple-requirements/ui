@@ -1,10 +1,6 @@
 @use 'styles/UiMixins' as ui;
 
 .category-details-panel {
-    block-size: 100%;
-    padding: var(--ui-panel-padding);
-
-    @include ui.flex-column-panel(auto);
 }
 
 .category-details-panel__header {

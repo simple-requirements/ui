@@ -15,20 +15,6 @@
     overflow: hidden;
 }
 
-.project-categories-list-page__list-panel {
-    block-size: 100%;
-
-    @include ui.flex-column-panel;
-}
-
-.project-categories-list-page__header {
-    @include ui.panel-header;
-}
-
-.project-categories-list-page__title {
-    @include ui.panel-title;
-}
-
 .project-categories-list-page__data-table {
     @include ui.prime-data-table;
 }

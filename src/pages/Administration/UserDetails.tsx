@@ -13,7 +13,7 @@ export type UserDetailsProps = Readonly<{
 export function UserDetails({ user, loggedIn, pending, onOpenRoleDialog }: UserDetailsProps) {
     return (
         <section
-            className='user-administration__details'
+            className='user-administration__details ui-panel ui-panel--rounded ui-panel--spacious'
             aria-labelledby='selected-user-title'>
             <header>
                 <h2 id='selected-user-title'>{user.displayName}</h2>

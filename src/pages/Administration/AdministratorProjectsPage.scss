@@ -11,52 +11,11 @@
         min-inline-size: 0;
     }
 
-    &__details,
-    &__categories-panel,
-    &__ticket-settings,
-    &__memberships {
-        padding: var(--ui-space-lg);
-        border: var(--ui-border);
-        border-radius: var(--ui-border-radius-small);
-        background: var(--color-app-surface);
-    }
-
     &__details > h2,
     &__categories-panel > h3,
     &__ticket-settings > h3,
     &__memberships > h3 {
         margin-block-start: 0;
-    }
-
-    &__table-wrapper {
-        inline-size: 100%;
-        overflow-x: auto;
-    }
-
-    &__table,
-    &__categories-table,
-    &__memberships-table {
-        inline-size: 100%;
-        border-collapse: collapse;
-        background: var(--color-app-surface);
-    }
-
-    &__table caption {
-        text-align: start;
-        font-weight: 700;
-        padding-block-end: var(--ui-space-sm);
-    }
-
-    &__table th,
-    &__table td,
-    &__categories-table th,
-    &__categories-table td,
-    &__memberships-table th,
-    &__memberships-table td {
-        padding: var(--ui-space-sm);
-        border-block-end: var(--ui-border);
-        text-align: start;
-        vertical-align: middle;
     }
 
     &__project-link {

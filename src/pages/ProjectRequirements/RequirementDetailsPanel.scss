@@ -1,10 +1,6 @@
 @use 'styles/UiMixins' as ui;
 
 .requirement-details-panel {
-    block-size: 100%;
-    padding: var(--ui-panel-padding);
-
-    @include ui.flex-column-panel(auto);
 }
 
 .requirement-details-panel__header {
@@ -32,18 +28,6 @@
     @include ui.details-row;
 }
 
-.requirement-details-panel__tickets-table {
-    inline-size: 100%;
-    border-collapse: collapse;
-
-    th,
-    td {
-        padding: var(--ui-space-xs) var(--ui-space-sm);
-        text-align: start;
-        border-block-end: var(--ui-border);
-    }
-
-    th {
-        font-weight: 600;
-    }
+.requirement-details-panel__tickets-table th {
+    font-weight: 600;
 }

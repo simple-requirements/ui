@@ -27,8 +27,12 @@ export function ImplementationTicketList({
     }
 
     return (
-        <div className='implementation-tickets-panel__table-wrapper'>
-            <table className='implementation-tickets-panel__table'>
+        <div className='implementation-tickets-panel__table-wrapper ui-table-wrapper ui-table-wrapper--bordered'>
+            <table
+                className={
+                    'implementation-tickets-panel__table ui-table ui-table--comfortable '
+                    + 'ui-table--muted-header ui-table--no-last-border'
+                }>
                 <thead>
                     <tr>
                         <th scope='col'>Ticket ID</th>
@@ -80,7 +84,7 @@ function ImplementationTicketTableRow({
             <td>{ticket.completedBy}</td>
             <td>{ticket.completedAt}</td>
             {editable && (
-                <td className='implementation-tickets-panel__table-actions'>
+                <td className='implementation-tickets-panel__table-actions ui-table__actions'>
                     <Button
                         type='button'
                         text

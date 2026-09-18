@@ -4,20 +4,6 @@
     @include ui.page-shell;
 }
 
-.project-categories-form-page__panel {
-    block-size: 100%;
-
-    @include ui.flex-column-panel(auto);
-}
-
-.project-categories-form-page__header {
-    @include ui.panel-header;
-}
-
-.project-categories-form-page__title {
-    @include ui.panel-title;
-}
-
 .project-categories-form-page__form {
     @include ui.form-layout(64rem);
 }

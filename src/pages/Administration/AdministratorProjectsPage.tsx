@@ -31,8 +31,8 @@ function isEligibleMember(user: UserAdministrationResponse): boolean {
 
 function ProjectOverview({ projects }: Readonly<{ projects: readonly AdministratorProjectSummary[] }>) {
     return (
-        <div className='administrator-projects__table-wrapper'>
-            <table className='administrator-projects__table'>
+        <div className='administrator-projects__table-wrapper ui-table-wrapper'>
+            <table className='administrator-projects__table ui-table'>
                 <caption>All projects</caption>
                 <thead>
                     <tr>
@@ -81,13 +81,13 @@ function ProjectSummary({ project }: Readonly<{ project: AdministratorProjectSum
 function CategoryAdministration({ project }: Readonly<{ project: AdministratorProjectSummary }>) {
     return (
         <section
-            className='administrator-projects__categories-panel'
+            className='administrator-projects__categories-panel ui-panel ui-panel--rounded ui-panel--spacious'
             aria-labelledby='administrator-project-categories-title'>
             <h3 id='administrator-project-categories-title'>Categories</h3>
             {project.categories.length === 0 ?
                 <p>This project has no categories yet.</p>
             :   <table
-                    className='administrator-projects__categories-table'
+                    className='administrator-projects__categories-table ui-table'
                     aria-label={`Categories for ${project.name}`}>
                     <thead>
                         <tr>
@@ -117,7 +117,7 @@ function TicketUrlTemplateAdministration({
 }: Readonly<{ value: string; pending: boolean; onChange: (value: string) => void; onSave: () => Promise<void> }>) {
     return (
         <section
-            className='administrator-projects__ticket-settings'
+            className='administrator-projects__ticket-settings ui-panel ui-panel--rounded ui-panel--spacious'
             aria-labelledby='administrator-ticket-url-title'>
             <h3 id='administrator-ticket-url-title'>Ticket URL template</h3>
             <div className='administrator-projects__ticket-settings-form'>
@@ -154,13 +154,13 @@ function MembershipAdministration({
 }>) {
     return (
         <section
-            className='administrator-projects__memberships'
+            className='administrator-projects__memberships ui-panel ui-panel--rounded ui-panel--spacious'
             aria-labelledby='administrator-project-memberships-title'>
             <h3 id='administrator-project-memberships-title'>Project memberships</h3>
             {project.memberships.length === 0 ?
                 <p>This project has no memberships yet.</p>
             :   <table
-                    className='administrator-projects__memberships-table'
+                    className='administrator-projects__memberships-table ui-table'
                     aria-label={`Memberships for ${project.name}`}>
                     <thead>
                         <tr>
@@ -311,12 +311,12 @@ export function AdministratorProjectsPage() {
             : selectedProjectId === undefined ?
                 <ProjectOverview projects={administration.projects} />
             : selectedProject === undefined ?
-                <section className='administrator-projects__details'>
+                <section className='administrator-projects__details ui-panel ui-panel--rounded ui-panel--spacious'>
                     <p role='alert'>The selected project could not be found.</p>
                 </section>
             :   <div className='administrator-projects__workspace'>
                     <section
-                        className='administrator-projects__details'
+                        className='administrator-projects__details ui-panel ui-panel--rounded ui-panel--spacious'
                         aria-labelledby='administrator-project-title'>
                         <h2 id='administrator-project-title'>{selectedProject.name}</h2>
                         <ProjectSummary project={selectedProject} />

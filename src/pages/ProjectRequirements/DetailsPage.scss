@@ -48,38 +48,11 @@
         @include ui.dialog-message;
     }
 
-    .implementation-tickets-panel__table-wrapper {
-        overflow-x: auto;
-        border: var(--ui-border);
-    }
-
     .implementation-tickets-panel__table {
-        inline-size: 100%;
-        border-collapse: collapse;
         font-size: var(--font-size-paragraph);
-    }
-
-    .implementation-tickets-panel__table th,
-    .implementation-tickets-panel__table td {
-        padding: var(--ui-space-sm) var(--ui-space-md);
-        text-align: start;
-        vertical-align: middle;
-        border-block-end: var(--ui-border);
     }
 
     .implementation-tickets-panel__table th {
         font-weight: 600;
-        background: var(--color-app-surface-muted);
-    }
-
-    .implementation-tickets-panel__table tbody tr:last-child td {
-        border-block-end: 0;
-    }
-
-    .implementation-tickets-panel__table-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: var(--ui-space-xs);
-        white-space: nowrap;
     }
 }

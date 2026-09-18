@@ -44,7 +44,7 @@ export function ImplementationTicketsDetail({ requirement }: ImplementationTicke
 
     return (
         <RequirementDetailsRow label='Implementation tickets'>
-            <table className='requirement-details-panel__tickets-table'>
+            <table className='requirement-details-panel__tickets-table ui-table ui-table--compact'>
                 <thead>
                     <tr>
                         <th scope='col'>Ticket ID</th>

@@ -27,11 +27,15 @@ export function FormPage() {
         <section
             className='project-categories-form-page'
             aria-labelledby='project-categories-form-page-title'>
-            <div className='project-categories-form-page__panel'>
-                <header className='project-categories-form-page__header'>
+            <div
+                className={
+                    'project-categories-form-page__panel ui-panel ui-panel--full-height '
+                    + 'ui-panel--flex-column ui-panel--overflow-auto'
+                }>
+                <header className='project-categories-form-page__header ui-panel__header'>
                     <h1
                         id='project-categories-form-page-title'
-                        className='project-categories-form-page__title'>
+                        className='project-categories-form-page__title ui-panel__title'>
                         {formController.formTitle}
                     </h1>
                 </header>

@@ -43,8 +43,8 @@ export function UserList({
     onRevokeAllSessions,
 }: UserListProps) {
     return (
-        <div className='user-administration__table-wrapper'>
-            <table className='user-administration__table'>
+        <div className='user-administration__table-wrapper ui-table-wrapper'>
+            <table className='user-administration__table ui-table ui-table--nowrap'>
                 <caption>Registered users</caption>
                 <thead>
                     <tr>

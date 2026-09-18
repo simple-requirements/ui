@@ -30,20 +30,6 @@
     font-size: $font-size;
 }
 
-@mixin surface-panel($overflow: hidden) {
-    min-block-size: 0;
-    overflow: $overflow;
-    background: var(--color-app-surface);
-    border: var(--ui-border);
-}
-
-@mixin flex-column-panel($overflow: hidden) {
-    @include surface-panel($overflow);
-
-    display: flex;
-    flex-direction: column;
-}
-
 @mixin floating-surface(
     $background: var(--color-app-surface),
     $border: var(--ui-border),
@@ -52,19 +38,6 @@
     background: $background;
     border: $border;
     box-shadow: $shadow;
-}
-
-@mixin panel-header {
-    flex: 0 0 auto;
-    padding: var(--ui-panel-header-padding);
-    border-block-end: var(--ui-border);
-}
-
-@mixin panel-title {
-    margin: 0;
-    font-size: var(--font-size-h5);
-    line-height: var(--line-height-heading);
-    color: var(--color-app-text);
 }
 
 @mixin status-text($padding: var(--ui-status-padding)) {

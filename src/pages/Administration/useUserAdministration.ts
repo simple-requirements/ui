@@ -11,7 +11,7 @@ import { queryClient } from '@/api/queryClient';
 import type { AccountRole, UserStatus } from '@/auth/authTypes';
 import { toastMessages } from '@/components/Feedback/AppToast/toastMessages';
 import { administrationUsersQueryKey, userSessionsQueryKey } from '@/pages/Administration/administrationQueryKeys';
-import { showToastMessage } from '@/stores/toastStore';
+import { showToastMessage } from '@/components/Feedback/toastEvents';
 
 type StatusMutationVariables = Readonly<{
     user: UserAdministrationResponse;

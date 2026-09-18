@@ -1,5 +1,7 @@
 import { useActionState } from 'react';
 
+import { getListProjectCategoriesQueryKey } from '@/api/categoriesApi';
+import { getListProjectsQueryKey } from '@/api/projectsApi';
 import { queryClient } from '@/api/queryClient';
 import {
     createProjectRequirementRequest,
@@ -64,7 +66,16 @@ export function useRequirementFormAction({ projectId, requirementId, mode, onSav
                 return { fieldErrors: {}, formError: 'Requirement route is incomplete.' };
             }
 
-            await queryClient.invalidateQueries({ queryKey: getListProjectRequirementsQueryKey(projectId) });
+            const invalidations = [
+                queryClient.invalidateQueries({ queryKey: getListProjectRequirementsQueryKey(projectId) }),
+                queryClient.invalidateQueries({ queryKey: getListProjectCategoriesQueryKey(projectId) }),
+            ];
+
+            if (mode === 'create') {
+                invalidations.push(queryClient.invalidateQueries({ queryKey: getListProjectsQueryKey() }));
+            }
+
+            await Promise.all(invalidations);
             onSaved(savedRequirement);
 
             return emptyRequirementFormState;

@@ -98,15 +98,17 @@ function getRequirementCreateRoute(categoryKey: string): string {
 }
 
 function getCategoryTable(page: Page) {
-    return page.locator('.project-categories-list-page__data-table');
+    return page.getByRole('table', { name: 'Categories' });
 }
 
 function getCategoryTableRow(page: Page, categoryKey: string) {
-    return getCategoryTable(page).locator('.p-datatable-tbody > tr').filter({ hasText: categoryKey });
+    return getCategoryTable(page)
+        .getByRole('row')
+        .filter({ has: page.getByRole('link', { name: `Copy category key ${categoryKey}` }) });
 }
 
 function getCategoryDetailsPanel(page: Page) {
-    return page.locator('.category-details-panel');
+    return page.getByRole('region', { name: 'Category details' });
 }
 
 async function openCategoryList(page: Page): Promise<void> {
@@ -242,10 +244,12 @@ Then('the requirement creation form should be visible for category {string}', as
     const category = requireCategoryByKey(categoryKey);
     const formRegion = page.getByRole('region', { name: /create requirement/i });
 
+    const categorySelect = formRegion.getByLabel('Category', { exact: true });
+
     await expect(page).toHaveURL(new RegExp(`${escapeRegExp(getRequirementCreateRoute(categoryKey))}$`, 'u'));
     await expect(formRegion.getByRole('heading', { name: /create requirement/i })).toBeVisible();
-    await expect(page.getByLabel('Category')).toHaveValue(category.id);
-    await expect(page.getByLabel('Category')).toContainText(`${category.key} — ${category.name} (${category.type})`);
-    await expect(page.getByLabel('Priority')).toHaveValue('p1');
+    await expect(categorySelect).toHaveValue(category.id);
+    await expect(categorySelect).toContainText(`${category.key} — ${category.name} (${category.type})`);
+    await expect(formRegion.getByLabel('Priority', { exact: true })).toHaveValue('p1');
     await expect(formRegion.getByRole('button', { name: 'Create' })).toBeVisible();
 });

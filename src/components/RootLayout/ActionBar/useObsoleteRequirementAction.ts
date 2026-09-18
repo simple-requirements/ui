@@ -4,7 +4,7 @@ import { queryClient } from '@/api/queryClient';
 import { getListProjectRequirementsQueryKey, markProjectRequirementObsoleteRequest } from '@/api/requirementsApi';
 import { toastMessages } from '@/components/Feedback/AppToast/toastMessages';
 import { setReviewActionRequirement, type ReviewActionRequirement } from '@/stores/actionBarStore';
-import { showToastMessage } from '@/stores/toastStore';
+import { showToastMessage } from '@/components/Feedback/toastEvents';
 
 export function useObsoleteRequirementAction(requirement: ReviewActionRequirement | undefined) {
     const [visible, setVisible] = useState(false);

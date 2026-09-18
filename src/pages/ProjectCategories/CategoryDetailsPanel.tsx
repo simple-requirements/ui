@@ -43,6 +43,8 @@ export function CategoryDetailsPanel({
                 'category-details-panel ui-panel ui-panel--padded ui-panel--full-height '
                 + 'ui-panel--flex-column ui-panel--overflow-auto'
             }
+            role='region'
+            aria-label='Category details'
             aria-live='polite'>
             <div className='category-details-panel__header'>
                 <TitleElement

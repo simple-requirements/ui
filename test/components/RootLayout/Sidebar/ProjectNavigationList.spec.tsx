@@ -7,7 +7,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { SidebarProject } from '@/api/collections/projectsCollection';
 import { ProjectNavigationList } from '@/components/RootLayout/Sidebar/ProjectNavigationList';
-import type { ActiveProjectRoute } from '@/components/RootLayout/Sidebar/useActiveProjectRoute';
+import type { ActiveProjectRoute } from '@/router/projectRoutes';
 
 const projects: readonly SidebarProject[] = [
     {
@@ -35,6 +35,7 @@ type RenderProjectNavigationListOptions = Readonly<{
     onToggleProject?: (projectId: string) => void;
     onOpenProjectSubItem?: (projectId: string) => void;
     onProjectContextMenu?: (projectId: string, event: React.MouseEvent<HTMLButtonElement>) => void;
+    onProjectIntent?: (projectId: string, subRoute?: 'requirements' | 'categories') => void;
 }>;
 
 function renderProjectNavigationList(options: RenderProjectNavigationListOptions = {}): ReturnType<typeof render> {
@@ -47,6 +48,7 @@ function renderProjectNavigationList(options: RenderProjectNavigationListOptions
                 onToggleProject={options.onToggleProject ?? vi.fn()}
                 onOpenProjectSubItem={options.onOpenProjectSubItem ?? vi.fn()}
                 onProjectContextMenu={options.onProjectContextMenu ?? vi.fn()}
+                onProjectIntent={options.onProjectIntent ?? vi.fn()}
             />
         </MemoryRouter>,
     );
@@ -114,6 +116,21 @@ describe('ProjectNavigationList', () => {
         expect(onToggleProject).toHaveBeenCalledWith('project-alpha');
         expect(onOpenProjectSubItem).toHaveBeenCalledWith('project-alpha');
         expect(onProjectContextMenu).toHaveBeenCalledTimes(1);
+    });
+
+    it('forwards project and sub-route navigation intent.', async () => {
+        const user = userEvent.setup();
+        const onProjectIntent = vi.fn();
+
+        renderProjectNavigationList({ expandedProjectId: 'project-alpha', onProjectIntent });
+
+        await user.hover(screen.getByRole('button', { name: /alpha project/i }));
+        await user.hover(screen.getByRole('link', { name: /requirements/i }));
+        await user.hover(screen.getByRole('link', { name: /categories/i }));
+
+        expect(onProjectIntent).toHaveBeenCalledWith('project-alpha');
+        expect(onProjectIntent).toHaveBeenCalledWith('project-alpha', 'requirements');
+        expect(onProjectIntent).toHaveBeenCalledWith('project-alpha', 'categories');
     });
 
     it('renders projects in the provided order.', () => {

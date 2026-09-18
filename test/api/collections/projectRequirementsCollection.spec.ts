@@ -1,6 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { getProjectRequirementsCollection } from '@/api/collections/projectRequirementsCollection';
+import {
+    getProjectRequirementsCollection,
+    resetProjectRequirementsCollections,
+} from '@/api/collections/projectRequirementsCollection';
 import { queryClient } from '@/api/queryClient';
 
 import type { Requirement } from '@/api/requirementsApi';
@@ -46,11 +49,21 @@ type ProjectRequirementsCollectionOptions = Readonly<{
     retry: boolean;
 }>;
 
-const mocks = vi.hoisted(() => ({
-    createCollection: vi.fn((options: unknown) => ({ collectionOptions: options })),
-    queryCollectionOptions: vi.fn((options: unknown) => options),
-    listProjectRequirementsRequest: vi.fn<() => Promise<Requirement[]>>(),
-}));
+const mocks = vi.hoisted(() => {
+    const cleanupMocks: ReturnType<typeof vi.fn<() => Promise<void>>>[] = [];
+
+    return {
+        cleanupMocks,
+        createCollection: vi.fn((options: unknown) => {
+            const cleanup = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
+            cleanupMocks.push(cleanup);
+
+            return { collectionOptions: options, cleanup };
+        }),
+        queryCollectionOptions: vi.fn((options: unknown) => options),
+        listProjectRequirementsRequest: vi.fn<() => Promise<Requirement[]>>(),
+    };
+});
 
 vi.mock('@tanstack/react-db', () => ({ createCollection: mocks.createCollection }));
 vi.mock('@tanstack/query-db-collection', () => ({ queryCollectionOptions: mocks.queryCollectionOptions }));
@@ -77,6 +90,20 @@ describe('projectRequirementsCollection', () => {
         expect(firstCollection).toBe(secondCollection);
         expect(firstCollection).not.toBe(otherCollection);
         expect(mocks.createCollection).toHaveBeenCalledTimes(2);
+    });
+
+    it('clears cached collections at an authentication boundary.', async () => {
+        const firstCollection = getProjectRequirementsCollection('project-reset');
+
+        const cleanup = mocks.cleanupMocks.at(-1);
+        if (cleanup === undefined) {
+            throw new Error('Expected createCollection to register a cleanup mock.');
+        }
+
+        await resetProjectRequirementsCollections();
+
+        expect(cleanup).toHaveBeenCalledOnce();
+        expect(getProjectRequirementsCollection('project-reset')).not.toBe(firstCollection);
     });
 
     it('configures the collection with the project requirements query.', () => {

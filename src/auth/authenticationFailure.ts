@@ -8,16 +8,19 @@ export type AuthenticationFailureListener = () => void;
 const authenticationFailureListeners = new Set<AuthenticationFailureListener>();
 
 /** Clears all data that must not cross an authentication boundary. */
-export function clearUserScopedState(reason?: 'session-expired'): void {
+export async function clearUserScopedState(reason?: 'session-expired'): Promise<void> {
     clearAuthenticatedSession(reason);
-    queryClient.clear();
     resetActionBarStore();
     resetTabBarStore();
+    const { resetDomainCollections } = await import('@/api/collections/resetCollections');
+
+    await resetDomainCollections();
+    queryClient.clear();
 }
 
 /** Clears user-scoped state and asks the router to return to login. */
-export function handleAuthenticationFailure(): void {
-    clearUserScopedState('session-expired');
+export async function handleAuthenticationFailure(): Promise<void> {
+    await clearUserScopedState('session-expired');
 
     for (const listener of authenticationFailureListeners) {
         listener();

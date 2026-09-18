@@ -2,9 +2,12 @@ import type { MouseEvent } from 'react';
 
 import type { SidebarProject } from '@/api/collections/projectsCollection';
 import { ExpandableNavigationItem } from '@/components/Navigation/ExpandableNavigationItem';
-import { getProjectCategoriesRoute, getProjectRequirementsRoute } from '@/router/projectRoutes';
-
-import type { ActiveProjectRoute } from '@/components/RootLayout/Sidebar/useActiveProjectRoute';
+import {
+    getProjectCategoriesRoute,
+    getProjectRequirementsRoute,
+    type ActiveProjectRoute,
+    type ProjectSubRoute,
+} from '@/router/projectRoutes';
 
 export type ProjectNavigationListProps = Readonly<{
     projects: readonly SidebarProject[];
@@ -13,6 +16,7 @@ export type ProjectNavigationListProps = Readonly<{
     onToggleProject: (projectId: string) => void;
     onOpenProjectSubItem: (projectId: string) => void;
     onProjectContextMenu: (projectId: string, event: MouseEvent<HTMLButtonElement>) => void;
+    onProjectIntent: (projectId: string, subRoute?: ProjectSubRoute) => void;
 }>;
 
 export function ProjectNavigationList({
@@ -22,6 +26,7 @@ export function ProjectNavigationList({
     onToggleProject,
     onOpenProjectSubItem,
     onProjectContextMenu,
+    onProjectIntent,
 }: ProjectNavigationListProps) {
     return (
         <nav
@@ -46,15 +51,18 @@ export function ProjectNavigationList({
                                     label: 'Requirements',
                                     to: getProjectRequirementsRoute(project.id),
                                     iconClassName: 'pi pi-list',
+                                    onIntent: () => onProjectIntent(project.id, 'requirements'),
                                 },
                                 {
                                     id: 'categories',
                                     label: 'Categories',
                                     to: getProjectCategoriesRoute(project.id),
                                     iconClassName: 'pi pi-tags',
+                                    onIntent: () => onProjectIntent(project.id, 'categories'),
                                 },
                             ]}
                             onToggle={() => onToggleProject(project.id)}
+                            onIntent={() => onProjectIntent(project.id)}
                             onSubItemClick={() => onOpenProjectSubItem(project.id)}
                             onContextMenu={(event) => onProjectContextMenu(project.id, event)}
                         />

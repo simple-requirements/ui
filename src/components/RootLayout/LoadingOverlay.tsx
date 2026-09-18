@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Button } from 'primereact/button';
 
-import { getListProjectsQueryKey } from '@/api/generated/projects/projects';
+import { getListProjectsQueryKey } from '@/api/projectsApi';
 import { listProjectsRequest } from '@/api/projectsApi';
 import { useIsAdministrator } from '@/auth/projectPermissions';
 import { useLoadingTimeout } from '@/hooks/useLoadingTimeout';
@@ -12,6 +12,7 @@ const LOADING_TIMEOUT_MS = 10_000;
 
 export function LoadingOverlay() {
     const administrator = useIsAdministrator();
+    // Direct Query is intentional here: the shell needs request lifecycle, retry, and error state.
     const projectsQuery = useQuery({
         queryKey: getListProjectsQueryKey(),
         queryFn: listProjectsRequest,

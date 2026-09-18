@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+    getActiveProjectRoute,
     getProjectCategoriesRoute,
     getProjectCategoryCreateRoute,
     getProjectCategoryDetailsCloseRoute,
@@ -27,6 +28,19 @@ describe('projectRoutes', () => {
         expect(getProjectCategoryEditRoute('project-alpha', 'category-auth')).toBe(
             '/projects/project-alpha/categories/category-auth/edit',
         );
+    });
+
+    it('resolves the active project route and sub route from a pathname.', () => {
+        expect(getActiveProjectRoute('/projects/project-alpha')).toEqual({ projectId: 'project-alpha' });
+        expect(getActiveProjectRoute('/projects/project-alpha/requirements')).toEqual({
+            projectId: 'project-alpha',
+            subRoute: 'requirements',
+        });
+        expect(getActiveProjectRoute('/projects/project-alpha/categories/category-auth')).toEqual({
+            projectId: 'project-alpha',
+            subRoute: 'categories',
+        });
+        expect(getActiveProjectRoute('/')).toEqual({});
     });
 
     it('derives the close route from category detail and form routes.', () => {

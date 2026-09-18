@@ -39,8 +39,10 @@ function resolveProjectName(projectName: string): string {
     return resolveTestProjectName(projectName);
 }
 
-function getVisibleProjectLabels(page: Page) {
-    return getProjectList(page).locator('.expandable-navigation-item__label');
+async function getVisibleProjectLabels(page: Page): Promise<string[]> {
+    return getProjectList(page)
+        .getByRole('button')
+        .evaluateAll((buttons) => buttons.map((button) => button.getAttribute('aria-label') ?? ''));
 }
 
 function getVisibleProjectDialog(page: Page) {
@@ -48,7 +50,7 @@ function getVisibleProjectDialog(page: Page) {
 }
 
 function getAdministrativeProjectList(page: Page) {
-    return page.getByRole('region', { name: 'Administrative project list' });
+    return page.getByRole('table', { name: 'All projects' });
 }
 
 async function waitUntilApplicationHasLoaded(page: Page): Promise<void> {
@@ -87,9 +89,7 @@ When('I open the application', async ({ page }) => {
 
 When('I open project {string} from the sidebar', async ({ page }, projectName: string) => {
     const resolvedProjectName = resolveProjectName(projectName);
-    await getProjectList(page)
-        .getByRole('button', { name: new RegExp(resolvedProjectName, 'u') })
-        .click();
+    await getProjectList(page).getByRole('button', { name: resolvedProjectName, exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`/projects/[^/]+$`, 'u'));
 });
 
@@ -107,9 +107,7 @@ When('I create a project named {string}', async ({ page }, projectName: string) 
 
 When('I select administrative project {string}', async ({ page }, projectName: string) => {
     const resolvedProjectName = resolveProjectName(projectName);
-    await getAdministrativeProjectList(page)
-        .getByRole('link', { name: resolvedProjectName, exact: true })
-        .click();
+    await getAdministrativeProjectList(page).getByRole('link', { name: resolvedProjectName, exact: true }).click();
     await expect(page.getByRole('heading', { name: resolvedProjectName })).toBeVisible();
 });
 
@@ -130,7 +128,7 @@ When('I submit the project dialog with an empty name', async ({ page }) => {
 
 Then('the sidebar should show the projects in this order', async ({ page }, dataTable: DataTable) => {
     const expectedProjectNames = getProjectNames(dataTable).map(resolveProjectName);
-    const visibleProjectNames = await getVisibleProjectLabels(page).allTextContents();
+    const visibleProjectNames = await getVisibleProjectLabels(page);
     const relevantProjectNames = visibleProjectNames.filter((projectName) =>
         expectedProjectNames.includes(projectName),
     );
@@ -141,7 +139,7 @@ Then('the sidebar should show the projects in this order', async ({ page }, data
 Then('project administration should contain the project {string}', async ({ page }, projectName: string) => {
     const resolvedProjectName = resolveProjectName(projectName);
     const detailsHeading = page.getByRole('heading', { name: resolvedProjectName, exact: true });
-    if (await detailsHeading.count() > 0) {
+    if ((await detailsHeading.count()) > 0) {
         await expect(detailsHeading).toBeVisible();
         return;
     }

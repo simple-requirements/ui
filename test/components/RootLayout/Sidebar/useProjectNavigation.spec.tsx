@@ -3,10 +3,31 @@ import '@testing-library/jest-dom/vitest';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import type { ActiveProjectRoute } from '@/components/RootLayout/Sidebar/useActiveProjectRoute';
+import type { ActiveProjectRoute } from '@/router/projectRoutes';
 import { useProjectNavigation } from '@/components/RootLayout/Sidebar/useProjectNavigation';
+
+const mocks = vi.hoisted(() => ({
+    prefetchProjectCategories: vi.fn<() => Promise<void>>(() => Promise.resolve()),
+    prefetchProjectDetails: vi.fn<() => Promise<void>>(() => Promise.resolve()),
+    prefetchProjectRequirements: vi.fn<() => Promise<void>>(() => Promise.resolve()),
+    preloadProjectCategoriesListRoute: vi.fn(),
+    preloadProjectDetailsRoute: vi.fn(),
+    preloadProjectRequirementsListRoute: vi.fn(),
+}));
+
+vi.mock('@/api/projectPrefetch', () => ({
+    prefetchProjectCategories: mocks.prefetchProjectCategories,
+    prefetchProjectDetails: mocks.prefetchProjectDetails,
+    prefetchProjectRequirements: mocks.prefetchProjectRequirements,
+}));
+
+vi.mock('@/router/routeModules', () => ({
+    preloadProjectCategoriesListRoute: mocks.preloadProjectCategoriesListRoute,
+    preloadProjectDetailsRoute: mocks.preloadProjectDetailsRoute,
+    preloadProjectRequirementsListRoute: mocks.preloadProjectRequirementsListRoute,
+}));
 
 type ProbeProps = Readonly<{ activeProjectRoute: ActiveProjectRoute }>;
 
@@ -28,6 +49,21 @@ function ProjectNavigationProbe({ activeProjectRoute }: ProbeProps) {
                 onClick={() => controller.openProjectSubItem('project-beta')}>
                 Open Beta sub item
             </button>
+            <button
+                type='button'
+                onClick={() => controller.prefetchProjectRoute('project-alpha')}>
+                Prefetch Alpha overview
+            </button>
+            <button
+                type='button'
+                onClick={() => controller.prefetchProjectRoute('project-alpha', 'requirements')}>
+                Prefetch Alpha requirements
+            </button>
+            <button
+                type='button'
+                onClick={() => controller.prefetchProjectRoute('project-alpha', 'categories')}>
+                Prefetch Alpha categories
+            </button>
         </div>
     );
 }
@@ -45,6 +81,7 @@ function renderProjectNavigationProbe(
 
 afterEach(() => {
     cleanup();
+    vi.clearAllMocks();
 });
 
 describe('useProjectNavigation', () => {
@@ -91,5 +128,21 @@ describe('useProjectNavigation', () => {
         await user.click(screen.getByRole('button', { name: /open beta sub item/i }));
 
         expect(screen.getByLabelText('Expanded project')).toHaveTextContent('project-beta');
+    });
+    it('prefetches route code and matching project data for navigation intent.', async () => {
+        const user = userEvent.setup();
+
+        renderProjectNavigationProbe({});
+
+        await user.click(screen.getByRole('button', { name: /prefetch alpha overview/i }));
+        await user.click(screen.getByRole('button', { name: /prefetch alpha requirements/i }));
+        await user.click(screen.getByRole('button', { name: /prefetch alpha categories/i }));
+
+        expect(mocks.preloadProjectDetailsRoute).toHaveBeenCalledOnce();
+        expect(mocks.prefetchProjectDetails).toHaveBeenCalledWith('project-alpha');
+        expect(mocks.preloadProjectRequirementsListRoute).toHaveBeenCalledOnce();
+        expect(mocks.prefetchProjectRequirements).toHaveBeenCalledWith('project-alpha');
+        expect(mocks.preloadProjectCategoriesListRoute).toHaveBeenCalledOnce();
+        expect(mocks.prefetchProjectCategories).toHaveBeenCalledWith('project-alpha');
     });
 });

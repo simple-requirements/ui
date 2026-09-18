@@ -1,15 +1,19 @@
 import { Store } from '@tanstack/react-store';
 
+import { WORKSPACE_ROUTE } from '@/router/applicationRoutes';
+
 export type TabBarTab = Readonly<{ id: string; label: string; fixed?: boolean; closable?: boolean }>;
 
 export type TabBarState = Readonly<{ openTabs: readonly TabBarTab[]; activeTabId: string | undefined }>;
 
-const initialOpenTabs: readonly TabBarTab[] = [{ id: '/', label: 'Workspace', fixed: true, closable: false }];
+const initialOpenTabs: readonly TabBarTab[] = [
+    { id: WORKSPACE_ROUTE, label: 'Workspace', fixed: true, closable: false },
+];
 
-export const tabBarStore = new Store<TabBarState>({ openTabs: initialOpenTabs, activeTabId: '/' });
+export const tabBarStore = new Store<TabBarState>({ openTabs: initialOpenTabs, activeTabId: WORKSPACE_ROUTE });
 
 export function resetTabBarStore(): void {
-    tabBarStore.setState(() => ({ openTabs: initialOpenTabs, activeTabId: '/' }));
+    tabBarStore.setState(() => ({ openTabs: initialOpenTabs, activeTabId: WORKSPACE_ROUTE }));
 }
 
 function getNextActiveTabId(

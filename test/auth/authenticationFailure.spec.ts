@@ -7,6 +7,10 @@ import { actionBarStore, resetActionBarStore, setRequirementKey } from '@/stores
 import { authStore, clearAuthenticatedSession, setAuthenticatedSession } from '@/stores/authStore';
 import { openTab, resetTabBarStore, tabBarStore } from '@/stores/tabBarStore';
 
+const mocks = vi.hoisted(() => ({ resetDomainCollections: vi.fn<() => Promise<void>>() }));
+
+vi.mock('@/api/collections/resetCollections', () => ({ resetDomainCollections: mocks.resetDomainCollections }));
+
 const user: AuthenticatedUser = {
     id: 'user-1',
     username: 'alice',
@@ -21,10 +25,11 @@ afterEach(() => {
     queryClient.clear();
     resetActionBarStore();
     resetTabBarStore();
+    vi.clearAllMocks();
 });
 
 describe('handleAuthenticationFailure', () => {
-    it('clears every user-scoped store and notifies navigation listeners.', () => {
+    it('clears every user-scoped store and notifies navigation listeners.', async () => {
         const listener = vi.fn();
         const unsubscribe = subscribeToAuthenticationFailures(listener);
         setAuthenticatedSession({ accessToken: 'opaque-token', user });
@@ -32,8 +37,11 @@ describe('handleAuthenticationFailure', () => {
         setRequirementKey('FR-AUTH-0001');
         openTab({ id: '/projects/project-1', label: 'Private project' });
 
-        handleAuthenticationFailure();
+        mocks.resetDomainCollections.mockResolvedValue(undefined);
 
+        await handleAuthenticationFailure();
+
+        expect(mocks.resetDomainCollections).toHaveBeenCalledOnce();
         expect(authStore.state.status).toBe('unauthenticated');
         expect(queryClient.getQueryData(['private-data'])).toBeUndefined();
         expect(actionBarStore.state).toEqual({ requirementKey: '' });

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { deleteProjectCategoryRequest, getListProjectCategoriesQueryKey } from '@/api/categoriesApi';
 import { queryClient } from '@/api/queryClient';
 import { toastMessages } from '@/components/Feedback/AppToast/toastMessages';
-import { showToastMessage } from '@/stores/toastStore';
+import { showToastMessage } from '@/components/Feedback/toastEvents';
 import { canDeleteCategory, type CategoryTableRow } from '@/pages/ProjectCategories/List/categoryListTypes';
 
 type Options = Readonly<{

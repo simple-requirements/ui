@@ -61,7 +61,7 @@ async function expectBackendMembershipRole(displayName: string, role: ProjectRol
 async function openAdministrationProject(page: Page): Promise<void> {
     await openAuthenticatedRoute(page, '/admin/projects');
     await page
-        .getByRole('region', { name: 'Administrative project list' })
+        .getByRole('table', { name: 'All projects' })
         .getByRole('link', { name: requireContext().project.name, exact: true })
         .click();
     await expect(page.getByRole('heading', { name: requireContext().project.name })).toBeVisible();

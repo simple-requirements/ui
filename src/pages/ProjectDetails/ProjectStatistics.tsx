@@ -1,3 +1,4 @@
+import { formatStatus } from '@/pages/ProjectRequirements/List/requirementFormatters';
 import { RequirementStatusBadge } from '@/pages/ProjectRequirements/RequirementStatusBadge';
 import { requirementStatuses, type RequirementStatusStatistics } from '@/pages/ProjectDetails/useProjectDetails';
 
@@ -18,11 +19,17 @@ export function ProjectStatistics({ categoriesCount, requirementsCount, statusSt
                 Statistics
             </h2>
             <div className='project-details-page__summary-grid'>
-                <div className='project-details-page__summary-card'>
+                <div
+                    className='project-details-page__summary-card'
+                    role='group'
+                    aria-label='Categories summary'>
                     <span className='project-details-page__summary-value'>{categoriesCount}</span>
                     <span className='project-details-page__summary-label'>Categories</span>
                 </div>
-                <div className='project-details-page__summary-card'>
+                <div
+                    className='project-details-page__summary-card'
+                    role='group'
+                    aria-label='Requirements summary'>
                     <span className='project-details-page__summary-value'>{requirementsCount}</span>
                     <span className='project-details-page__summary-label'>Requirements</span>
                 </div>
@@ -31,7 +38,9 @@ export function ProjectStatistics({ categoriesCount, requirementsCount, statusSt
                 {requirementStatuses.map((status) => (
                     <div
                         key={status}
-                        className='project-details-page__status-row'>
+                        className='project-details-page__status-row'
+                        role='group'
+                        aria-label={`${formatStatus(status)} requirements`}>
                         <dt>
                             <RequirementStatusBadge status={status} />
                         </dt>

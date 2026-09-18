@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 
 import { subscribeToAuthenticationFailures } from '@/auth/authenticationFailure';
-import { getCurrentRelativeUrl, LOGIN_ROUTE } from '@/auth/authRoutes';
+import { getCurrentRelativeUrl } from '@/auth/authRoutes';
+import { LOGIN_ROUTE } from '@/router/authenticationRoutes';
 
 export function AuthenticationFailureNavigator() {
     const location = useLocation();

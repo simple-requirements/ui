@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 
 import { requestPasswordReset } from '@/api/authApi';
 import { isValidEmail } from '@/auth/accountValidation';
-import { LOGIN_ROUTE } from '@/auth/authRoutes';
+import { LOGIN_ROUTE } from '@/router/authenticationRoutes';
 
 const GENERIC_RESPONSE = 'If the account is eligible, a password-reset email will be sent.';
 

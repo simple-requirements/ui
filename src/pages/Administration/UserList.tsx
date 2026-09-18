@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 
 import type { UserAdministrationResponse } from '@/api/authApi';
 import type { UserStatus } from '@/auth/authTypes';
-import { getAdministratorUserRoute } from '@/auth/authRoutes';
+import { getAdministratorUserRoute } from '@/router/administrationRoutes';
 import { accountRoleLabel } from '@/pages/Administration/UserRoleDialog';
 import type { UserPresence } from '@/pages/Administration/useUserPresence';
 import { formatDateTime } from '@/utils/displayFormatters';

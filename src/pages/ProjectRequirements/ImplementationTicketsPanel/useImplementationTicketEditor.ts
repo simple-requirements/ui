@@ -16,7 +16,7 @@ import {
     type ImplementationTicketFormField,
     type ImplementationTicketFormState,
 } from '@/pages/ProjectRequirements/ImplementationTicketsPanel/implementationTicketFormState';
-import { showToastMessage } from '@/stores/toastStore';
+import { showToastMessage } from '@/components/Feedback/toastEvents';
 
 type UseImplementationTicketEditorArgs = Readonly<{ requirement: Requirement; editable: boolean }>;
 

@@ -84,7 +84,7 @@ vi.mock('@/api/collections/projectRequirementsCollection', () => ({
     getProjectRequirementsCollection: mocks.getProjectRequirementsCollection,
 }));
 vi.mock('@/stores/tabBarStore', () => ({ openTab: mocks.openTab }));
-vi.mock('@/stores/toastStore', () => ({ showToastMessage: mocks.showToastMessage }));
+vi.mock('@/components/Feedback/toastEvents', () => ({ showToastMessage: mocks.showToastMessage }));
 vi.mock('@/api/reviewApi', () => ({ getReviewSummary: mocks.getReviewSummary }));
 
 type QueryResult = Readonly<{ data?: readonly Requirement[]; isLoading: boolean; isError: boolean }>;

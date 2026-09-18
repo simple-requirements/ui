@@ -5,7 +5,7 @@ import { categoryTypeSchema, type Category } from '@/api/categoriesApi';
 import { toastMessages } from '@/components/Feedback/AppToast/toastMessages';
 import { getProjectCategoryDetailsRoute } from '@/router/projectRoutes';
 import { openTab } from '@/stores/tabBarStore';
-import { showToastMessage } from '@/stores/toastStore';
+import { showToastMessage } from '@/components/Feedback/toastEvents';
 
 import {
     createCategoryInitialValues,

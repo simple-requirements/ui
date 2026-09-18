@@ -1,4 +1,4 @@
-import { getListProjectsQueryKey } from '@/api/generated/projects/projects';
+import { getListProjectsQueryKey } from '@/api/projectsApi';
 import { queryClient } from '@/api/queryClient';
 import { ActionButton } from '@/components/RootLayout/Sidebar/ActionButton';
 import { ProjectNavigationList } from '@/components/RootLayout/Sidebar/ProjectNavigationList';
@@ -61,6 +61,7 @@ export function Sidebar() {
                 onToggleProject={projectNavigation.toggleProject}
                 onOpenProjectSubItem={projectNavigation.openProjectSubItem}
                 onProjectContextMenu={projectContextMenu.openProjectContextMenu}
+                onProjectIntent={projectNavigation.prefetchProjectRoute}
             />
         </aside>
     );

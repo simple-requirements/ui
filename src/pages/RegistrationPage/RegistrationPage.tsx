@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 
 import { registerUser } from '@/api/authApi';
 import { isValidEmail, isValidPassword, isValidUsername } from '@/auth/accountValidation';
-import { LOGIN_ROUTE } from '@/auth/authRoutes';
+import { LOGIN_ROUTE, RESEND_EMAIL_VERIFICATION_ROUTE } from '@/router/authenticationRoutes';
 
 type FormState = Readonly<{
     username: string;
@@ -83,7 +83,7 @@ export function RegistrationPage() {
                         can sign in.
                     </p>
                     <div className='ui-public-account__actions'>
-                        <Link to='/verify-email/resend'>Resend verification email</Link>
+                        <Link to={RESEND_EMAIL_VERIFICATION_ROUTE}>Resend verification email</Link>
                         <Link to={LOGIN_ROUTE}>Return to sign in</Link>
                     </div>
                 </section>

@@ -1,60 +1,71 @@
-import { DetailsPage as ProjectCategoriesDetailsPage } from '@/pages/ProjectCategories/DetailsPage';
-import { FormPage as ProjectCategoriesFormPage } from '@/pages/ProjectCategories/Form/FormPage';
-import { ListPage as ProjectCategoriesListPage } from '@/pages/ProjectCategories/List/ListPage';
-import { ProjectDetailsPage } from '@/pages/ProjectDetails/ProjectDetailsPage';
-import { DetailsPage as ProjectRequirementsDetailsPage } from '@/pages/ProjectRequirements/DetailsPage';
-import { FormPage as ProjectRequirementsFormPage } from '@/pages/ProjectRequirements/Form/FormPage';
-import { ListPage as ProjectRequirementsListPage } from '@/pages/ProjectRequirements/List/ListPage';
-import { ReviewPage as ProjectRequirementReviewPage } from '@/pages/ProjectRequirements/Review/ReviewPage';
 import { RootLayout } from '@/pages/RootLayout';
-import { WorkspacePage } from '@/pages/WorkspacePage';
-import { AuthenticationEntryPage } from '@/pages/AuthenticationEntryPage/AuthenticationEntryPage';
-import { EmailVerificationPage } from '@/pages/EmailVerificationPage/EmailVerificationPage';
-import { ResendEmailVerificationPage } from '@/pages/EmailVerificationPage/ResendEmailVerificationPage';
-import { PasswordResetConfirmationPage } from '@/pages/PasswordResetPage/PasswordResetConfirmationPage';
-import { PasswordResetRequestPage } from '@/pages/PasswordResetPage/PasswordResetRequestPage';
-import { RegistrationPage } from '@/pages/RegistrationPage/RegistrationPage';
 import { ProtectedRoute } from '@/auth/ProtectedRoute';
 import { AdministratorRoute } from '@/auth/AdministratorRoute';
 import { ProjectPermissionRoute } from '@/auth/ProjectPermissionRoute';
 import { projectPermissionKinds } from '@/auth/projectPermissions';
-import { AdministratorProjectsPage } from '@/pages/Administration/AdministratorProjectsPage';
-import { UserAdministrationPage } from '@/pages/Administration/UserAdministrationPage';
 import { createBrowserRouter, type RouteObject } from 'react-router';
 
+import { WORKSPACE_ROUTE } from '@/router/applicationRoutes';
+import {
+    EMAIL_VERIFICATION_ROUTE,
+    FORGOT_PASSWORD_ROUTE,
+    LOGIN_ROUTE,
+    REGISTRATION_ROUTE,
+    RESEND_EMAIL_VERIFICATION_ROUTE,
+    RESET_PASSWORD_ROUTE,
+} from '@/router/authenticationRoutes';
 import type { RouteUiHandle } from '@/router/routeUiMetadata';
+import {
+    loadAdministratorProjectsRoute,
+    loadAuthenticationEntryRoute,
+    loadEmailVerificationRoute,
+    loadPasswordResetConfirmationRoute,
+    loadPasswordResetRequestRoute,
+    loadProjectCategoriesFormRoute,
+    loadProjectCategoriesListRoute,
+    loadProjectCategoryDetailsRoute,
+    loadProjectDetailsRoute,
+    loadProjectRequirementDetailsRoute,
+    loadProjectRequirementReviewRoute,
+    loadProjectRequirementsFormRoute,
+    loadProjectRequirementsListRoute,
+    loadRegistrationRoute,
+    loadResendEmailVerificationRoute,
+    loadUserAdministrationRoute,
+    loadWorkspaceRoute,
+} from '@/router/routeModules';
 
 function routeHandle(handle: RouteUiHandle): RouteUiHandle {
     return handle;
 }
 
 export const routes: RouteObject[] = [
-    { path: 'login', element: <AuthenticationEntryPage /> },
-    { path: 'register', element: <RegistrationPage /> },
-    { path: 'verify-email', element: <EmailVerificationPage /> },
-    { path: 'verify-email/resend', element: <ResendEmailVerificationPage /> },
-    { path: 'forgot-password', element: <PasswordResetRequestPage /> },
-    { path: 'reset-password', element: <PasswordResetConfirmationPage /> },
+    { path: LOGIN_ROUTE, lazy: loadAuthenticationEntryRoute },
+    { path: REGISTRATION_ROUTE, lazy: loadRegistrationRoute },
+    { path: EMAIL_VERIFICATION_ROUTE, lazy: loadEmailVerificationRoute },
+    { path: RESEND_EMAIL_VERIFICATION_ROUTE, lazy: loadResendEmailVerificationRoute },
+    { path: FORGOT_PASSWORD_ROUTE, lazy: loadPasswordResetRequestRoute },
+    { path: RESET_PASSWORD_ROUTE, lazy: loadPasswordResetConfirmationRoute },
     {
         element: <ProtectedRoute />,
         children: [
             {
-                path: '/',
+                path: WORKSPACE_ROUTE,
                 element: <RootLayout />,
                 handle: routeHandle({ actionBar: 'none' }),
                 children: [
-                    { index: true, element: <WorkspacePage /> },
+                    { index: true, lazy: loadWorkspaceRoute },
                     {
                         element: <AdministratorRoute />,
                         children: [
                             {
                                 path: 'admin/users/:userId?',
-                                element: <UserAdministrationPage />,
+                                lazy: loadUserAdministrationRoute,
                                 handle: routeHandle({ actionBar: 'administratorUsers' }),
                             },
                             {
                                 path: 'admin/projects/:projectId?',
-                                element: <AdministratorProjectsPage />,
+                                lazy: loadAdministratorProjectsRoute,
                                 handle: routeHandle({ actionBar: 'administratorProjects' }),
                             },
                         ],
@@ -66,14 +77,14 @@ export const routes: RouteObject[] = [
                                 path: 'projects/:projectId',
                                 handle: routeHandle({ actionBar: 'project' }),
                                 children: [
-                                    { index: true, element: <ProjectDetailsPage /> },
+                                    { index: true, lazy: loadProjectDetailsRoute },
                                     {
                                         path: 'requirements',
                                         handle: routeHandle({ actionBar: 'requirementDetails' }),
                                         children: [
                                             {
                                                 index: true,
-                                                element: <ProjectRequirementsListPage />,
+                                                lazy: loadProjectRequirementsListRoute,
                                                 handle: routeHandle({ actionBar: 'requirements' }),
                                             },
                                             {
@@ -85,7 +96,7 @@ export const routes: RouteObject[] = [
                                                 children: [
                                                     {
                                                         path: 'new',
-                                                        element: <ProjectRequirementsFormPage />,
+                                                        lazy: loadProjectRequirementsFormRoute,
                                                         handle: routeHandle({
                                                             actionBar: 'requirementForm',
                                                             disableChromeActions: true,
@@ -93,7 +104,7 @@ export const routes: RouteObject[] = [
                                                     },
                                                     {
                                                         path: ':requirementId/edit',
-                                                        element: <ProjectRequirementsFormPage />,
+                                                        lazy: loadProjectRequirementsFormRoute,
                                                         handle: routeHandle({
                                                             actionBar: 'requirementForm',
                                                             disableChromeActions: true,
@@ -103,17 +114,17 @@ export const routes: RouteObject[] = [
                                             },
                                             {
                                                 path: ':requirementId/review',
-                                                element: <ProjectRequirementReviewPage />,
+                                                lazy: loadProjectRequirementReviewRoute,
                                                 handle: routeHandle({ actionBar: 'review' }),
                                             },
-                                            { path: ':requirementId', element: <ProjectRequirementsDetailsPage /> },
+                                            { path: ':requirementId', lazy: loadProjectRequirementDetailsRoute },
                                         ],
                                     },
                                     {
                                         path: 'categories',
                                         handle: routeHandle({ actionBar: 'categories' }),
                                         children: [
-                                            { index: true, element: <ProjectCategoriesListPage /> },
+                                            { index: true, lazy: loadProjectCategoriesListRoute },
                                             {
                                                 element: (
                                                     <ProjectPermissionRoute
@@ -123,7 +134,7 @@ export const routes: RouteObject[] = [
                                                 children: [
                                                     {
                                                         path: 'new',
-                                                        element: <ProjectCategoriesFormPage />,
+                                                        lazy: loadProjectCategoriesFormRoute,
                                                         handle: routeHandle({
                                                             actionBar: 'categoryForm',
                                                             disableChromeActions: true,
@@ -131,7 +142,7 @@ export const routes: RouteObject[] = [
                                                     },
                                                     {
                                                         path: ':categoryId/edit',
-                                                        element: <ProjectCategoriesFormPage />,
+                                                        lazy: loadProjectCategoriesFormRoute,
                                                         handle: routeHandle({
                                                             actionBar: 'categoryForm',
                                                             disableChromeActions: true,
@@ -139,7 +150,7 @@ export const routes: RouteObject[] = [
                                                     },
                                                 ],
                                             },
-                                            { path: ':categoryId', element: <ProjectCategoriesDetailsPage /> },
+                                            { path: ':categoryId', lazy: loadProjectCategoryDetailsRoute },
                                         ],
                                     },
                                 ],

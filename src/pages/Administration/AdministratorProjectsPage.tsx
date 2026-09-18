@@ -7,7 +7,7 @@ import { Link, useNavigate, useParams } from 'react-router';
 
 import type { AdministratorProjectSummary } from '@/api/adminProjectsApi';
 import type { UserAdministrationResponse } from '@/api/authApi';
-import { ADMINISTRATOR_PROJECTS_ROUTE, getAdministratorProjectRoute } from '@/auth/authRoutes';
+import { ADMINISTRATOR_PROJECTS_ROUTE, getAdministratorProjectRoute } from '@/router/administrationRoutes';
 import { projectRoleLabel } from '@/auth/projectRoleMetadata';
 import { AddProjectMembershipDialog } from '@/pages/Administration/AddProjectMembershipDialog';
 import { useAdministratorProjects } from '@/pages/Administration/useAdministratorProjects';
@@ -376,11 +376,10 @@ export function AdministratorProjectsPage() {
                 users={availableMembershipUsers}
                 pending={administration.mutationPending}
                 onHide={() => setMembershipDialogOpen(false)}
-                onAdd={(userId) =>
-                    selectedProject === undefined ?
-                        Promise.resolve()
-                    :   administration.addMembership({ projectId: selectedProject.id, userId })
-                }
+                onAdd={async (userId) => {
+                    if (selectedProject === undefined) return;
+                    await administration.addMembership({ projectId: selectedProject.id, userId });
+                }}
             />
 
             <Dialog

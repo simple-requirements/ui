@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 
 import { confirmEmailVerification } from '@/api/authApi';
-import { LOGIN_ROUTE } from '@/auth/authRoutes';
+import { LOGIN_ROUTE, RESEND_EMAIL_VERIFICATION_ROUTE } from '@/router/authenticationRoutes';
 
 type ConfirmationState = 'confirming' | 'confirmed' | 'invalid';
 
@@ -81,7 +81,7 @@ export function EmailVerificationPage() {
                             The verification link is invalid or has expired.
                         </p>
                         <div className='ui-public-account__actions'>
-                            <Link to='/verify-email/resend'>Request another verification email</Link>
+                            <Link to={RESEND_EMAIL_VERIFICATION_ROUTE}>Request another verification email</Link>
                             <Link to={LOGIN_ROUTE}>Return to sign in</Link>
                         </div>
                     </>

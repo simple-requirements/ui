@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router';
 
 import { logout } from '@/api/authApi';
 import { clearUserScopedState } from '@/auth/authenticationFailure';
-import { LOGIN_ROUTE } from '@/auth/authRoutes';
+import { LOGIN_ROUTE } from '@/router/authenticationRoutes';
 import type { AuthenticatedUser } from '@/auth/authTypes';
 import { authStore } from '@/stores/authStore';
 
@@ -36,7 +36,7 @@ export function AccountMenu() {
         } catch {
             // Local logout must still complete when the session is already invalid or the network is unavailable.
         } finally {
-            clearUserScopedState();
+            await clearUserScopedState();
             setOpen(false);
             setPending(false);
             void navigate(LOGIN_ROUTE, { replace: true });

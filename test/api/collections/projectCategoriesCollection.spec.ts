@@ -1,6 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { getProjectCategoriesCollection } from '@/api/collections/projectCategoriesCollection';
+import {
+    getProjectCategoriesCollection,
+    resetProjectCategoriesCollections,
+} from '@/api/collections/projectCategoriesCollection';
 import { queryClient } from '@/api/queryClient';
 
 import type { Category } from '@/api/categoriesApi';
@@ -26,11 +29,21 @@ type ProjectCategoriesCollectionOptions = Readonly<{
     retry: boolean;
 }>;
 
-const mocks = vi.hoisted(() => ({
-    createCollection: vi.fn((options: unknown) => ({ collectionOptions: options })),
-    queryCollectionOptions: vi.fn((options: unknown) => options),
-    listProjectCategoriesRequest: vi.fn<() => Promise<Category[]>>(),
-}));
+const mocks = vi.hoisted(() => {
+    const cleanupMocks: ReturnType<typeof vi.fn<() => Promise<void>>>[] = [];
+
+    return {
+        cleanupMocks,
+        createCollection: vi.fn((options: unknown) => {
+            const cleanup = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
+            cleanupMocks.push(cleanup);
+
+            return { collectionOptions: options, cleanup };
+        }),
+        queryCollectionOptions: vi.fn((options: unknown) => options),
+        listProjectCategoriesRequest: vi.fn<() => Promise<Category[]>>(),
+    };
+});
 
 vi.mock('@tanstack/react-db', () => ({ createCollection: mocks.createCollection }));
 vi.mock('@tanstack/query-db-collection', () => ({ queryCollectionOptions: mocks.queryCollectionOptions }));
@@ -57,6 +70,20 @@ describe('projectCategoriesCollection', () => {
         expect(firstCollection).toBe(secondCollection);
         expect(firstCollection).not.toBe(otherCollection);
         expect(mocks.createCollection).toHaveBeenCalledTimes(2);
+    });
+
+    it('clears cached collections at an authentication boundary.', async () => {
+        const firstCollection = getProjectCategoriesCollection('project-reset');
+
+        const cleanup = mocks.cleanupMocks.at(-1);
+        if (cleanup === undefined) {
+            throw new Error('Expected createCollection to register a cleanup mock.');
+        }
+
+        await resetProjectCategoriesCollections();
+
+        expect(cleanup).toHaveBeenCalledOnce();
+        expect(getProjectCategoriesCollection('project-reset')).not.toBe(firstCollection);
     });
 
     it('configures the collection with the project category query.', () => {

@@ -1,17 +1,18 @@
 import { useCallback, useState } from 'react';
 
 import { queryClient } from '@/api/queryClient';
+import { getReviewCommentsQueryKey, getReviewSummaryQueryKey } from '@/api/reviewApi';
 import { toastMessages } from '@/components/Feedback/AppToast/toastMessages';
-import type { AppToastMessage } from '@/stores/toastStore';
-import { showToastMessage } from '@/stores/toastStore';
+import type { AppToastMessage } from '@/components/Feedback/toastEvents';
+import { showToastMessage } from '@/components/Feedback/toastEvents';
 
 export function useReviewMutationRunner(projectId: string | undefined, requirementId: string | undefined) {
     const [pending, setPending] = useState(false);
 
     const refreshReview = useCallback(async (): Promise<void> => {
         await Promise.all([
-            queryClient.invalidateQueries({ queryKey: ['review-comments', projectId, requirementId] }),
-            queryClient.invalidateQueries({ queryKey: ['review-summary', projectId, requirementId] }),
+            queryClient.invalidateQueries({ queryKey: getReviewCommentsQueryKey(projectId, requirementId) }),
+            queryClient.invalidateQueries({ queryKey: getReviewSummaryQueryKey(projectId, requirementId) }),
         ]);
     }, [projectId, requirementId]);
 

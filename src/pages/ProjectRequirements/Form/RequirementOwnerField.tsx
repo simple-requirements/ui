@@ -15,9 +15,9 @@ export type RequirementOwnerFieldProps = Readonly<{
 
 export function RequirementOwnerField({ formState, formValues, pending, onChange }: RequirementOwnerFieldProps) {
     return (
-        <div className='project-requirements-form-page__field'>
+        <div className='project-requirements-form-page__field ui-field'>
             <label
-                className='project-requirements-form-page__label'
+                className='project-requirements-form-page__label ui-label'
                 htmlFor='requirement-owner'>
                 Owner
             </label>
@@ -30,13 +30,15 @@ export function RequirementOwnerField({ formState, formValues, pending, onChange
                 aria-invalid={formState.fieldErrors.owner === undefined ? undefined : true}
                 aria-describedby={formState.fieldErrors.owner === undefined ? undefined : 'requirement-owner-error'}
                 onChange={(event) => onChange(event.currentTarget.value)}
-                pt={{ root: { className: 'project-requirements-form-page__input' } }}
+                pt={{ root: { className: 'project-requirements-form-page__input ui-control ui-control--line' } }}
             />
             {formState.fieldErrors.owner === undefined ?
-                <p className='project-requirements-form-page__hint'>{getRequirementFieldHint('owner', undefined)}</p>
+                <p className='project-requirements-form-page__hint ui-message'>
+                    {getRequirementFieldHint('owner', undefined)}
+                </p>
             :   <p
                     id='requirement-owner-error'
-                    className='project-requirements-form-page__error'>
+                    className='project-requirements-form-page__error ui-message ui-message--error'>
                     {formState.fieldErrors.owner}
                 </p>
             }

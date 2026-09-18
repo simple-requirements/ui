@@ -1,5 +1,3 @@
-@use 'styles/UiMixins' as ui;
-
 .administrator-projects {
     display: grid;
     gap: var(--ui-space-lg);
@@ -40,29 +38,6 @@
 
     &__summary dd {
         margin: var(--ui-space-xs) 0 0;
-    }
-
-    &__ticket-settings-form {
-        @include ui.form-layout(64rem);
-
-        padding: 0;
-        gap: var(--ui-space-sm);
-    }
-
-    &__ticket-settings-form label {
-        @include ui.form-label;
-    }
-
-    &__ticket-settings-form .p-inputtext {
-        @include ui.form-line-control(64rem);
-    }
-
-    &__ticket-settings-actions {
-        @include ui.form-actions;
-    }
-
-    &__dialog-actions {
-        @include ui.dialog-actions(0);
     }
 
     &__error {

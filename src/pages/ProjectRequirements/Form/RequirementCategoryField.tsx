@@ -25,16 +25,16 @@ export function RequirementCategoryField({
     onChange,
 }: RequirementCategoryFieldProps) {
     return (
-        <div className='project-requirements-form-page__field'>
+        <div className='project-requirements-form-page__field ui-field'>
             <label
-                className='project-requirements-form-page__label'
+                className='project-requirements-form-page__label ui-label'
                 htmlFor='requirement-category'>
                 Category
             </label>
             <select
                 id='requirement-category'
                 name='categoryId'
-                className='project-requirements-form-page__select'
+                className='project-requirements-form-page__select ui-control ui-control--line'
                 value={formValues.categoryId}
                 disabled={pending}
                 aria-invalid={formState.fieldErrors.categoryId === undefined ? undefined : true}
@@ -52,12 +52,12 @@ export function RequirementCategoryField({
                 ))}
             </select>
             {formState.fieldErrors.categoryId === undefined ?
-                <p className='project-requirements-form-page__hint'>
+                <p className='project-requirements-form-page__hint ui-message'>
                     {getRequirementFieldHint('categoryId', undefined)}
                 </p>
             :   <p
                     id='requirement-category-error'
-                    className='project-requirements-form-page__error'>
+                    className='project-requirements-form-page__error ui-message ui-message--error'>
                     {formState.fieldErrors.categoryId}
                 </p>
             }

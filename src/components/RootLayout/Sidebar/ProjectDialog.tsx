@@ -40,12 +40,14 @@ export function ProjectDialog({
             draggable={false}
             resizable={false}
             header={
-                <h2 className='project-dialog__heading'>{mode === 'create' ? 'Create project' : 'Rename project'}</h2>
+                <h2 className='project-dialog__heading ui-dialog__heading'>
+                    {mode === 'create' ? 'Create project' : 'Rename project'}
+                </h2>
             }
             pt={{
-                root: { className: 'project-dialog' },
-                header: { className: 'project-dialog__header' },
-                content: { className: 'project-dialog__content' },
+                root: { className: 'project-dialog ui-dialog' },
+                header: { className: 'project-dialog__header ui-dialog__header' },
+                content: { className: 'project-dialog__content ui-dialog__content' },
             }}
             onHide={handleCancel}>
             <ProjectDialogForm

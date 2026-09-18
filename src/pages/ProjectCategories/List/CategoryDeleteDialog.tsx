@@ -3,8 +3,6 @@ import { Dialog } from 'primereact/dialog';
 
 import type { CategoryTableRow } from '@/pages/ProjectCategories/List/categoryListTypes';
 
-import '@/pages/ProjectCategories/List/CategoryDeleteDialog.scss';
-
 export type CategoryDeleteDialogProps = Readonly<{
     category: CategoryTableRow | undefined;
     pending: boolean;
@@ -25,16 +23,18 @@ export function CategoryDeleteDialog({ category, pending, onAbort, onConfirm }: 
             closeOnEscape={!pending}
             draggable={false}
             resizable={false}
-            header={<h2 className='category-delete-dialog__heading'>Delete category</h2>}
+            header={<h2 className='category-delete-dialog__heading ui-dialog__heading'>Delete category</h2>}
             pt={{
-                root: { className: 'category-delete-dialog' },
-                header: { className: 'category-delete-dialog__header' },
-                content: { className: 'category-delete-dialog__content' },
+                root: { className: 'category-delete-dialog ui-dialog ui-dialog--compact' },
+                header: { className: 'category-delete-dialog__header ui-dialog__header' },
+                content: { className: 'category-delete-dialog__content ui-dialog__content' },
             }}
             onHide={onAbort}>
-            <p className='category-delete-dialog__message'>Do you really want to delete {categoryName}?</p>
+            <p className='category-delete-dialog__message ui-dialog__message'>
+                Do you really want to delete {categoryName}?
+            </p>
 
-            <div className='category-delete-dialog__actions'>
+            <div className='category-delete-dialog__actions ui-dialog__actions'>
                 <Button
                     outlined
                     type='button'

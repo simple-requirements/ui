@@ -33,29 +33,34 @@ export function ReviewTextDialog({
             closeOnEscape={!pending}
             draggable={false}
             resizable={false}
-            header={<h2 className='review-dialog__heading'>{title}</h2>}
+            header={<h2 className='review-dialog__heading ui-dialog__heading'>{title}</h2>}
             pt={{
-                root: { className: 'review-dialog review-dialog--text' },
-                header: { className: 'review-dialog__header' },
-                content: { className: 'review-dialog__content' },
+                root: { className: 'review-dialog review-dialog--text ui-dialog' },
+                header: { className: 'review-dialog__header ui-dialog__header' },
+                content: { className: 'review-dialog__content ui-dialog__content' },
             }}
             onHide={onAbort}>
             <form
-                className='review-dialog__form'
+                className='review-dialog__form ui-form--dialog'
                 onSubmit={(event) => {
                     event.preventDefault();
                     if (valid) void onConfirm(text.trim());
                 }}>
                 <p>The backend records the author from the authenticated session.</p>
-                <label htmlFor='review-dialog-text'>{textLabel}</label>
+                <label
+                    className='ui-label'
+                    htmlFor='review-dialog-text'>
+                    {textLabel}
+                </label>
                 <textarea
                     id='review-dialog-text'
+                    className='ui-control ui-control--full ui-textarea'
                     rows={6}
                     value={text}
                     disabled={pending}
                     onChange={(event) => setText(event.currentTarget.value)}
                 />
-                <div className='review-dialog__actions'>
+                <div className='review-dialog__actions ui-dialog__actions ui-dialog__actions--flush'>
                     <Button
                         type='button'
                         outlined

@@ -23,7 +23,7 @@ export function ImplementationTicketList({
     onRemove,
 }: ImplementationTicketListProps) {
     if (tickets.length === 0) {
-        return <p className='implementation-tickets-panel__empty'>No implementation tickets.</p>;
+        return <p className='implementation-tickets-panel__empty ui-dialog__message'>No implementation tickets.</p>;
     }
 
     return (

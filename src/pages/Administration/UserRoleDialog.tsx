@@ -49,31 +49,31 @@ export function UserRoleDialog({ user, visible, pending, onHide, onChangeRole }:
             draggable={false}
             resizable={false}
             header={
-                <h2 className='user-role-dialog__heading'>
+                <h2 className='user-role-dialog__heading ui-dialog__heading'>
                     {user === undefined ? 'Account role' : `Account role — ${user.displayName}`}
                 </h2>
             }
             pt={{
-                root: { className: 'user-role-dialog' },
-                header: { className: 'user-role-dialog__header' },
-                content: { className: 'user-role-dialog__content' },
+                root: { className: 'user-role-dialog ui-dialog' },
+                header: { className: 'user-role-dialog__header ui-dialog__header' },
+                content: { className: 'user-role-dialog__content ui-dialog__content' },
             }}
             onHide={onHide}>
             {user !== undefined && (
                 <form
-                    className='user-role-dialog__form'
+                    className='user-role-dialog__form ui-form--dialog ui-form--dialog-spacious'
                     onSubmit={(event) => {
                         event.preventDefault();
                         void submit();
                     }}>
-                    <div className='user-role-dialog__field'>
+                    <div className='user-role-dialog__field ui-field--dialog'>
                         <label
-                            className='user-role-dialog__label'
+                            className='user-role-dialog__label ui-label'
                             htmlFor='administrator-user-role'>
                             Role
                         </label>
                         <select
-                            className='user-role-dialog__select'
+                            className='user-role-dialog__select ui-control ui-control--dialog'
                             id='administrator-user-role'
                             value={role}
                             disabled={pending}
@@ -92,11 +92,11 @@ export function UserRoleDialog({ user, visible, pending, onHide, onChangeRole }:
                             ))}
                         </select>
                     </div>
-                    <p className='user-role-dialog__message'>
+                    <p className='user-role-dialog__message ui-dialog__message'>
                         The account is temporarily deactivated while this dialog is open and will be reactivated when
                         the dialog closes.
                     </p>
-                    <div className='user-role-dialog__actions'>
+                    <div className='user-role-dialog__actions ui-dialog__actions ui-dialog__actions--flush'>
                         <Button
                             type='button'
                             outlined

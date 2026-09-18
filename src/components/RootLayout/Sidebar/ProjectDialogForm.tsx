@@ -59,12 +59,12 @@ export function ProjectDialogForm({ mode, initialName, pending, errorMessage, on
 
     return (
         <form
-            className='project-dialog__form'
+            className='project-dialog__form ui-form--dialog ui-form--dialog-spacious'
             noValidate
             action={formAction}>
-            <div className='project-dialog__field'>
+            <div className='project-dialog__field ui-field--dialog'>
                 <label
-                    className='project-dialog__label'
+                    className='project-dialog__label ui-label ui-label--dialog'
                     htmlFor={inputId}>
                     Project name
                 </label>
@@ -80,20 +80,23 @@ export function ProjectDialogForm({ mode, initialName, pending, errorMessage, on
                         root: {
                             className:
                                 invalid ?
-                                    'project-dialog__input project-dialog__input--invalid'
-                                :   'project-dialog__input',
+                                    'project-dialog__input ui-control ui-control--dialog ui-control--invalid'
+                                :   'project-dialog__input ui-control ui-control--dialog',
                         },
                     }}
                 />
                 {currentError !== undefined && (
                     <p
                         id={errorId}
-                        className='project-dialog__message project-dialog__message--error'>
+                        className={
+                            'project-dialog__message project-dialog__message--error ui-message ui-message--error '
+                            + 'ui-message--full'
+                        }>
                         {currentError}
                     </p>
                 )}
             </div>
-            <div className='project-dialog__actions'>
+            <div className='project-dialog__actions ui-dialog__actions ui-dialog__actions--flush'>
                 <Button
                     outlined
                     type='button'

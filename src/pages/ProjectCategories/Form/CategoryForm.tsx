@@ -43,14 +43,14 @@ export function CategoryForm({ mode, controller }: CategoryFormProps) {
         <form
             id='category-form'
             name='category-form'
-            className='project-categories-form-page__form'
+            className='project-categories-form-page__form ui-form ui-form--medium'
             action={formAction}
             data-route={formRoute}>
             {formState.formError !== undefined && <InlineStatus kind='error'>{formState.formError}</InlineStatus>}
 
-            <div className='project-categories-form-page__field'>
+            <div className='project-categories-form-page__field ui-field'>
                 <label
-                    className='project-categories-form-page__label'
+                    className='project-categories-form-page__label ui-label'
                     htmlFor='category-name'>
                     Name
                 </label>
@@ -63,21 +63,28 @@ export function CategoryForm({ mode, controller }: CategoryFormProps) {
                     aria-invalid={formState.fieldErrors.name === undefined ? undefined : true}
                     aria-describedby={formState.fieldErrors.name === undefined ? undefined : 'category-name-error'}
                     onChange={(event) => updateFormValue('name', event.currentTarget.value)}
-                    pt={{ root: { className: 'project-categories-form-page__input' } }}
+                    pt={{
+                        root: {
+                            className:
+                                'project-categories-form-page__input ui-control ui-control--line ui-control--narrow',
+                        },
+                    }}
                 />
                 {formState.fieldErrors.name === undefined ?
-                    <p className='project-categories-form-page__hint'>{getFieldHint('name', mode, undefined)}</p>
+                    <p className='project-categories-form-page__hint ui-message'>
+                        {getFieldHint('name', mode, undefined)}
+                    </p>
                 :   <p
                         id='category-name-error'
-                        className='project-categories-form-page__error'>
+                        className='project-categories-form-page__error ui-message ui-message--error'>
                         {formState.fieldErrors.name}
                     </p>
                 }
             </div>
 
-            <div className='project-categories-form-page__field'>
+            <div className='project-categories-form-page__field ui-field'>
                 <label
-                    className='project-categories-form-page__label'
+                    className='project-categories-form-page__label ui-label'
                     htmlFor='category-key'>
                     Key
                 </label>
@@ -91,28 +98,35 @@ export function CategoryForm({ mode, controller }: CategoryFormProps) {
                     aria-invalid={formState.fieldErrors.key === undefined ? undefined : true}
                     aria-describedby={formState.fieldErrors.key === undefined ? undefined : 'category-key-error'}
                     onChange={(event) => updateFormValue('key', event.currentTarget.value)}
-                    pt={{ root: { className: 'project-categories-form-page__input' } }}
+                    pt={{
+                        root: {
+                            className:
+                                'project-categories-form-page__input ui-control ui-control--line ui-control--narrow',
+                        },
+                    }}
                 />
                 {formState.fieldErrors.key === undefined ?
-                    <p className='project-categories-form-page__hint'>{getFieldHint('key', mode, undefined)}</p>
+                    <p className='project-categories-form-page__hint ui-message'>
+                        {getFieldHint('key', mode, undefined)}
+                    </p>
                 :   <p
                         id='category-key-error'
-                        className='project-categories-form-page__error'>
+                        className='project-categories-form-page__error ui-message ui-message--error'>
                         {formState.fieldErrors.key}
                     </p>
                 }
             </div>
 
-            <div className='project-categories-form-page__field'>
+            <div className='project-categories-form-page__field ui-field'>
                 <label
-                    className='project-categories-form-page__label'
+                    className='project-categories-form-page__label ui-label'
                     htmlFor='category-type'>
                     Type
                 </label>
                 <select
                     id='category-type'
                     name='type'
-                    className='project-categories-form-page__select'
+                    className='project-categories-form-page__select ui-control ui-control--line ui-control--narrow'
                     value={formValues.type}
                     disabled={pending || mode === 'update'}
                     aria-describedby={formState.fieldErrors.type === undefined ? undefined : 'category-type-error'}
@@ -128,10 +142,12 @@ export function CategoryForm({ mode, controller }: CategoryFormProps) {
                     ))}
                 </select>
                 {formState.fieldErrors.type === undefined ?
-                    <p className='project-categories-form-page__hint'>{getFieldHint('type', mode, undefined)}</p>
+                    <p className='project-categories-form-page__hint ui-message'>
+                        {getFieldHint('type', mode, undefined)}
+                    </p>
                 :   <p
                         id='category-type-error'
-                        className='project-categories-form-page__error'>
+                        className='project-categories-form-page__error ui-message ui-message--error'>
                         {formState.fieldErrors.type}
                     </p>
                 }
@@ -144,7 +160,7 @@ export function CategoryForm({ mode, controller }: CategoryFormProps) {
                 )}
             </div>
 
-            <div className='project-categories-form-page__actions'>
+            <div className='project-categories-form-page__actions ui-form-actions'>
                 <Button
                     type='submit'
                     label={mode === 'create' ? 'Create' : 'Update'}

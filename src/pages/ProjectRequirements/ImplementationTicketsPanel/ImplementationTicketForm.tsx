@@ -32,33 +32,48 @@ export function ImplementationTicketForm({
     onAbortEditing,
 }: ImplementationTicketFormProps) {
     return (
-        <div className='implementation-tickets-panel__form'>
-            <label htmlFor='implementation-ticket-id'>Ticket ID</label>
+        <div className='implementation-tickets-panel__form ui-form--dialog'>
+            <label
+                className='ui-label'
+                htmlFor='implementation-ticket-id'>
+                Ticket ID
+            </label>
             <InputText
                 id='implementation-ticket-id'
+                className='ui-control ui-control--line ui-control--full'
                 value={form.ticketId}
                 disabled={pending}
                 onChange={(event) => onUpdateField('ticketId', event.currentTarget.value)}
             />
 
-            <label htmlFor='implementation-ticket-completed-by'>Completed by</label>
+            <label
+                className='ui-label'
+                htmlFor='implementation-ticket-completed-by'>
+                Completed by
+            </label>
             <InputText
                 id='implementation-ticket-completed-by'
+                className='ui-control ui-control--line ui-control--full'
                 value={form.completedBy}
                 disabled={pending}
                 onChange={(event) => onUpdateField('completedBy', event.currentTarget.value)}
             />
 
-            <label htmlFor='implementation-ticket-completed-at'>Completion date</label>
+            <label
+                className='ui-label'
+                htmlFor='implementation-ticket-completed-at'>
+                Completion date
+            </label>
             <input
                 id='implementation-ticket-completed-at'
+                className='ui-control ui-control--line ui-control--full'
                 type='date'
                 value={form.completedAt}
                 disabled={pending}
                 onChange={(event) => onUpdateField('completedAt', event.currentTarget.value)}
             />
 
-            <div className='implementation-tickets-panel__form-actions'>
+            <div className='implementation-tickets-panel__form-actions ui-dialog__actions'>
                 {editing !== undefined && (
                     <Button
                         type='button'

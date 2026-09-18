@@ -44,27 +44,27 @@ export function AddProjectMembershipDialog({
             closeOnEscape={!pending}
             draggable={false}
             resizable={false}
-            header={<h2 className='add-membership-dialog__heading'>Add membership</h2>}
+            header={<h2 className='add-membership-dialog__heading ui-dialog__heading'>Add membership</h2>}
             pt={{
-                root: { className: 'add-membership-dialog' },
-                header: { className: 'add-membership-dialog__header' },
-                content: { className: 'add-membership-dialog__content' },
+                root: { className: 'add-membership-dialog ui-dialog' },
+                header: { className: 'add-membership-dialog__header ui-dialog__header' },
+                content: { className: 'add-membership-dialog__content ui-dialog__content' },
             }}
             onHide={onHide}>
             <form
-                className='add-membership-dialog__form'
+                className='add-membership-dialog__form ui-form--dialog ui-form--dialog-spacious'
                 onSubmit={(event) => {
                     event.preventDefault();
                     void submit();
                 }}>
-                <div className='add-membership-dialog__field'>
+                <div className='add-membership-dialog__field ui-field--dialog'>
                     <label
-                        className='add-membership-dialog__label'
+                        className='add-membership-dialog__label ui-label'
                         htmlFor='administrator-project-member'>
                         User
                     </label>
                     <select
-                        className='add-membership-dialog__select'
+                        className='add-membership-dialog__select ui-control ui-control--dialog'
                         id='administrator-project-member'
                         value={selectedUserId}
                         disabled={pending || users.length === 0}
@@ -81,9 +81,11 @@ export function AddProjectMembershipDialog({
                     </select>
                 </div>
                 {users.length === 0 && (
-                    <p className='add-membership-dialog__message'>No eligible users are available.</p>
+                    <p className='add-membership-dialog__message ui-dialog__message'>
+                        No eligible users are available.
+                    </p>
                 )}
-                <div className='add-membership-dialog__actions'>
+                <div className='add-membership-dialog__actions ui-dialog__actions ui-dialog__actions--flush'>
                     <Button
                         type='button'
                         label='Cancel'

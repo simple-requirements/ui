@@ -1,64 +1,7 @@
-@use 'styles/UiMixins' as ui;
-
 .project-dialog {
-    @include ui.dialog-shell(56rem);
-
     min-block-size: 30rem;
-
-    &__header {
-        @include ui.dialog-header;
-    }
-
-    &__content {
-        @include ui.dialog-content;
-    }
-
-    &__heading {
-        @include ui.dialog-heading;
-    }
 
     &__form {
         min-block-size: 20rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        gap: var(--ui-space-xl);
-    }
-
-    &__field {
-        display: flex;
-        flex-direction: column;
-        gap: var(--ui-space-sm);
-    }
-
-    &__label {
-        font-size: var(--font-size-h6);
-        font-weight: 600;
-        color: var(--color-app-text);
-    }
-
-    &__input {
-        inline-size: 100%;
-        block-size: var(--ui-dialog-control-height);
-        padding-inline: 1rem;
-        border-radius: 0;
-        font-size: var(--font-size-paragraph);
-        box-shadow: none;
-    }
-
-    &__input--invalid {
-        border-color: var(--color-feedback-error-border);
-    }
-
-    &__message {
-        @include ui.form-message;
-    }
-
-    &__message--error {
-        color: var(--color-feedback-error-text);
-    }
-
-    &__actions {
-        @include ui.dialog-actions(0);
     }
 }

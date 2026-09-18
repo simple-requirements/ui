@@ -39,16 +39,16 @@ export function RequirementTextAreaField({
     const fieldId = textAreaIds[fieldName];
 
     return (
-        <div className='project-requirements-form-page__field'>
+        <div className='project-requirements-form-page__field ui-field'>
             <label
-                className='project-requirements-form-page__label'
+                className='project-requirements-form-page__label ui-label'
                 htmlFor={fieldId}>
                 {label}
             </label>
             <textarea
                 id={fieldId}
                 name={fieldName}
-                className='project-requirements-form-page__textarea'
+                className='project-requirements-form-page__textarea ui-control ui-textarea'
                 value={formValues[fieldName]}
                 disabled={pending}
                 rows={rows}
@@ -57,10 +57,12 @@ export function RequirementTextAreaField({
                 onChange={(event) => onChange(fieldName, event.currentTarget.value)}
             />
             {formState.fieldErrors[fieldName] === undefined ?
-                <p className='project-requirements-form-page__hint'>{getRequirementFieldHint(fieldName, undefined)}</p>
+                <p className='project-requirements-form-page__hint ui-message'>
+                    {getRequirementFieldHint(fieldName, undefined)}
+                </p>
             :   <p
                     id={`${fieldId}-error`}
-                    className='project-requirements-form-page__error'>
+                    className='project-requirements-form-page__error ui-message ui-message--error'>
                     {formState.fieldErrors[fieldName]}
                 </p>
             }

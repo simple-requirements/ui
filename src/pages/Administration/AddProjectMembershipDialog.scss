@@ -1,50 +1,7 @@
-@use 'styles/UiMixins' as ui;
-
 .add-membership-dialog {
-    @include ui.dialog-shell(56rem);
-
     min-block-size: 26rem;
-
-    &__header {
-        @include ui.dialog-header;
-    }
-    &__content {
-        @include ui.dialog-content;
-    }
-    &__heading {
-        @include ui.dialog-heading;
-    }
 
     &__form {
         min-block-size: 16rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        gap: var(--ui-space-xl);
-    }
-
-    &__field {
-        display: flex;
-        flex-direction: column;
-        gap: var(--ui-space-sm);
-    }
-    &__label {
-        @include ui.form-label;
-    }
-    &__select {
-        inline-size: 100%;
-        block-size: var(--ui-dialog-control-height);
-        padding-inline: 1rem;
-        border: var(--ui-border);
-        border-radius: 0;
-        background: var(--color-app-surface);
-        color: var(--color-app-text);
-        font-size: var(--font-size-paragraph);
-    }
-    &__message {
-        @include ui.dialog-message;
-    }
-    &__actions {
-        @include ui.dialog-actions(0);
     }
 }

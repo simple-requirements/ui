@@ -1,8 +1,6 @@
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 
-import '@/components/FormNavigation/DirtyFormNavigationDialog.scss';
-
 export type DirtyFormNavigationDialogProps = Readonly<{
     visible: boolean;
     message: string;
@@ -19,15 +17,17 @@ export function DirtyFormNavigationDialog({ visible, message, onStay, onDiscard 
             resizable={false}
             dismissableMask={false}
             onHide={onStay}
-            header={<h2 className='dirty-form-navigation-dialog__heading'>Discard unsaved changes?</h2>}
+            header={
+                <h2 className='dirty-form-navigation-dialog__heading ui-dialog__heading'>Discard unsaved changes?</h2>
+            }
             pt={{
-                root: { className: 'dirty-form-navigation-dialog' },
-                header: { className: 'dirty-form-navigation-dialog__header' },
-                content: { className: 'dirty-form-navigation-dialog__content' },
+                root: { className: 'dirty-form-navigation-dialog ui-dialog ui-dialog--compact' },
+                header: { className: 'dirty-form-navigation-dialog__header ui-dialog__header' },
+                content: { className: 'dirty-form-navigation-dialog__content ui-dialog__content' },
             }}>
-            <p className='dirty-form-navigation-dialog__message'>{message}</p>
+            <p className='dirty-form-navigation-dialog__message ui-dialog__message'>{message}</p>
 
-            <div className='dirty-form-navigation-dialog__actions'>
+            <div className='dirty-form-navigation-dialog__actions ui-dialog__actions'>
                 <Button
                     type='button'
                     label='Stay on page'

@@ -57,7 +57,7 @@ export function RequirementForm({ mode, categories, controller }: RequirementFor
                 ref={formRef}
                 id='requirement-form'
                 name='requirement-form'
-                className='project-requirements-form-page__form'
+                className='project-requirements-form-page__form ui-form ui-form--wide'
                 action={formAction}
                 data-route={formRoute}
                 onSubmit={(event) => {

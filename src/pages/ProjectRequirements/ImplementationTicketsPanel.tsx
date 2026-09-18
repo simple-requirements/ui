@@ -33,11 +33,13 @@ export function ImplementationTicketsPanel({ requirement, visible, onHide }: Imp
             closeOnEscape={!editor.pending}
             draggable={false}
             resizable={false}
-            header={<h2 className='implementation-tickets-dialog__heading'>Implementation tickets</h2>}
+            header={
+                <h2 className='implementation-tickets-dialog__heading ui-dialog__heading'>Implementation tickets</h2>
+            }
             pt={{
-                root: { className: 'implementation-tickets-dialog' },
-                header: { className: 'implementation-tickets-dialog__header' },
-                content: { className: 'implementation-tickets-dialog__content' },
+                root: { className: 'implementation-tickets-dialog ui-dialog' },
+                header: { className: 'implementation-tickets-dialog__header ui-dialog__header' },
+                content: { className: 'implementation-tickets-dialog__content ui-dialog__content' },
             }}
             onHide={onHide}>
             {editable && (

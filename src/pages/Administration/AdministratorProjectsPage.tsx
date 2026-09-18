@@ -120,16 +120,25 @@ function TicketUrlTemplateAdministration({
             className='administrator-projects__ticket-settings ui-panel ui-panel--rounded ui-panel--spacious'
             aria-labelledby='administrator-ticket-url-title'>
             <h3 id='administrator-ticket-url-title'>Ticket URL template</h3>
-            <div className='administrator-projects__ticket-settings-form'>
-                <label htmlFor='administrator-ticket-url-template'>URL template</label>
+            <div
+                className={
+                    'administrator-projects__ticket-settings-form ui-form ui-form--medium ui-form--flush '
+                    + 'ui-form--compact'
+                }>
+                <label
+                    className='ui-label'
+                    htmlFor='administrator-ticket-url-template'>
+                    URL template
+                </label>
                 <InputText
                     id='administrator-ticket-url-template'
                     value={value}
                     disabled={pending}
+                    className='ui-control ui-control--line ui-control--full'
                     placeholder='https://tracker.example/tickets/{ticket-id}'
                     onChange={(event) => onChange(event.currentTarget.value)}
                 />
-                <div className='administrator-projects__ticket-settings-actions'>
+                <div className='administrator-projects__ticket-settings-actions ui-form-actions'>
                     <Button
                         type='button'
                         label='Save settings'
@@ -378,15 +387,21 @@ export function AdministratorProjectsPage() {
                 visible={deleteProject !== undefined}
                 modal
                 header='Delete project'
+                pt={{
+                    root: { className: 'ui-dialog ui-dialog--compact' },
+                    header: { className: 'ui-dialog__header' },
+                    content: { className: 'ui-dialog__content' },
+                }}
                 onHide={() => setDeleteProject(undefined)}>
-                <p>
+                <p className='ui-dialog__message'>
                     Delete <strong>{deleteProject?.name}</strong>? This action cannot be undone.
                 </p>
-                <div className='administrator-projects__dialog-actions'>
+                <div className='administrator-projects__dialog-actions ui-dialog__actions ui-dialog__actions--flush'>
                     <Button
                         type='button'
                         label='Cancel'
                         outlined
+                        pt={{ root: { className: 'ui-button ui-button--outline ui-button--dialog' } }}
                         disabled={administration.mutationPending}
                         onClick={() => setDeleteProject(undefined)}
                     />
@@ -394,6 +409,7 @@ export function AdministratorProjectsPage() {
                         type='button'
                         label='Delete'
                         severity='danger'
+                        pt={{ root: { className: 'ui-button ui-button--danger ui-button--dialog' } }}
                         disabled={administration.mutationPending}
                         onClick={() => void confirmDelete()}
                     />

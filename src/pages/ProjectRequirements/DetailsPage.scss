@@ -5,47 +5,10 @@
 }
 
 .implementation-tickets-dialog {
-    @include ui.dialog-shell(56rem);
-
-    &__header {
-        @include ui.dialog-header;
-    }
-
     &__content {
-        @include ui.dialog-content;
         display: flex;
         flex-direction: column;
         gap: var(--ui-space-lg);
-    }
-
-    &__heading {
-        @include ui.dialog-heading;
-    }
-
-    .implementation-tickets-panel__form {
-        display: flex;
-        flex-direction: column;
-        gap: var(--ui-space-sm);
-    }
-
-    .implementation-tickets-panel__form label {
-        @include ui.form-label;
-    }
-
-    .implementation-tickets-panel__form .p-inputtext,
-    .implementation-tickets-panel__form input[type='date'] {
-        @include ui.form-line-control(100%);
-
-        font-size: var(--font-size-paragraph);
-        line-height: var(--line-height-paragraph);
-    }
-
-    .implementation-tickets-panel__form-actions {
-        @include ui.dialog-actions;
-    }
-
-    .implementation-tickets-panel__empty {
-        @include ui.dialog-message;
     }
 
     .implementation-tickets-panel__table {

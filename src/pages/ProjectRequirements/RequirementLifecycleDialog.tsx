@@ -47,27 +47,36 @@ export function RequirementLifecycleDialog({
             closeOnEscape={!pending}
             draggable={false}
             resizable={false}
-            header={<h2 className='requirement-lifecycle-dialog__heading'>{title}</h2>}
+            header={<h2 className='requirement-lifecycle-dialog__heading ui-dialog__heading'>{title}</h2>}
             pt={{
-                root: { className: 'requirement-lifecycle-dialog' },
-                header: { className: 'requirement-lifecycle-dialog__header' },
-                content: { className: 'requirement-lifecycle-dialog__content' },
+                root: { className: 'requirement-lifecycle-dialog ui-dialog' },
+                header: { className: 'requirement-lifecycle-dialog__header ui-dialog__header' },
+                content: { className: 'requirement-lifecycle-dialog__content ui-dialog__content' },
             }}
             onHide={onAbort}>
             <form
-                className='requirement-lifecycle-dialog__form'
+                className='requirement-lifecycle-dialog__form ui-form--dialog'
                 onSubmit={(event) => {
                     event.preventDefault();
                     if (valid && !confirmationBlocked) {
                         void onConfirm(reasonRequired ? reason.trim() : undefined);
                     }
                 }}>
-                {warning !== undefined && <p className='requirement-lifecycle-dialog__warning'>{warning}</p>}
+                {warning !== undefined && (
+                    <p className='requirement-lifecycle-dialog__warning ui-message ui-message--warning ui-message--full'>
+                        {warning}
+                    </p>
+                )}
                 {reasonRequired && (
                     <>
-                        <label htmlFor={`${fieldPrefix}-reason`}>{reasonLabel}</label>
+                        <label
+                            className='ui-label'
+                            htmlFor={`${fieldPrefix}-reason`}>
+                            {reasonLabel}
+                        </label>
                         <textarea
                             id={`${fieldPrefix}-reason`}
+                            className='ui-control ui-control--full ui-textarea'
                             rows={5}
                             maxLength={500}
                             value={reason}
@@ -76,7 +85,7 @@ export function RequirementLifecycleDialog({
                         />
                     </>
                 )}
-                <div className='requirement-lifecycle-dialog__actions'>
+                <div className='requirement-lifecycle-dialog__actions ui-dialog__actions ui-dialog__actions--flush'>
                     <Button
                         type='button'
                         outlined

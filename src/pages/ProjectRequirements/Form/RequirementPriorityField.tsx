@@ -16,16 +16,16 @@ export type RequirementPriorityFieldProps = Readonly<{
 
 export function RequirementPriorityField({ formState, formValues, pending, onChange }: RequirementPriorityFieldProps) {
     return (
-        <div className='project-requirements-form-page__field'>
+        <div className='project-requirements-form-page__field ui-field'>
             <label
-                className='project-requirements-form-page__label'
+                className='project-requirements-form-page__label ui-label'
                 htmlFor='requirement-priority'>
                 Priority
             </label>
             <select
                 id='requirement-priority'
                 name='priority'
-                className='project-requirements-form-page__select'
+                className='project-requirements-form-page__select ui-control ui-control--line'
                 value={formValues.priority}
                 disabled={pending}
                 onChange={(event) => onChange(event.currentTarget.value)}>
@@ -37,7 +37,7 @@ export function RequirementPriorityField({ formState, formValues, pending, onCha
                     </option>
                 ))}
             </select>
-            <p className='project-requirements-form-page__hint'>
+            <p className='project-requirements-form-page__hint ui-message'>
                 {getRequirementFieldHint('priority', formState.fieldErrors.priority)}
             </p>
         </div>

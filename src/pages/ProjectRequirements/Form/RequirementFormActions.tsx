@@ -16,7 +16,7 @@ export type RequirementFormActionsProps = Readonly<{
  */
 export function RequirementFormActions({ mode, pending, onAbort, onUpdate }: RequirementFormActionsProps) {
     return (
-        <div className='project-requirements-form-page__actions'>
+        <div className='project-requirements-form-page__actions ui-form-actions'>
             <Button
                 type={mode === 'create' ? 'submit' : 'button'}
                 label={mode === 'create' ? 'Create' : 'Update'}

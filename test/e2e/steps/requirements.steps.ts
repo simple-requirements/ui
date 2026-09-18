@@ -2,11 +2,13 @@ import { expect, type Page } from '@playwright/test';
 import { createBdd, test } from 'playwright-bdd';
 import {
     createTestCategory,
+    createPersistentTestProject,
     createTestProject,
     createTestRequirement,
     E2E_REQUIREMENTS_ENGINEER_LOGIN_USERNAME,
     openAuthenticatedRoute,
     resetTestBackend,
+    resolveTestProjectName,
 } from './authenticated-test-backend';
 
 const { Given, When, Then } = createBdd(test);
@@ -86,7 +88,7 @@ function getRequirementRows(dataTable: DataTable): readonly Record<string, strin
 }
 
 async function createBackendProject(projectName: string): Promise<BackendProject> {
-    return createTestProject(projectName);
+    return createPersistentTestProject(projectName);
 }
 
 async function createBackendCategory(
@@ -171,7 +173,8 @@ function getProjectList(page: Page) {
 }
 
 function getProjectButton(page: Page, projectName: string) {
-    return getProjectList(page).getByRole('button').filter({ hasText: projectName });
+    const resolvedProjectName = resolveTestProjectName(projectName);
+    return getProjectList(page).getByRole('button').filter({ hasText: resolvedProjectName });
 }
 
 async function openRequirementList(page: Page): Promise<void> {

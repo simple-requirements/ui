@@ -5,7 +5,7 @@ export type Project = Readonly<{
     name: string;
     createdAt: string;
     updatedAt: string;
-    requirementCount?: number;
+    requirementCount: number;
     ticketUrlTemplate?: string | null;
 }>;
 

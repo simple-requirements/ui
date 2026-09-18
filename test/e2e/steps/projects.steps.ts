@@ -2,11 +2,10 @@ import { expect, type Page } from '@playwright/test';
 import { createBdd, test } from 'playwright-bdd';
 import {
     createTestProject,
-    deleteTestProject,
     E2E_REQUIREMENTS_ENGINEER_LOGIN_USERNAME,
-    listTestProjects,
     openAuthenticatedRoute,
     resetTestBackend,
+    resolveTestProjectName,
 } from './authenticated-test-backend';
 
 const { Given, When, Then } = createBdd(test);
@@ -14,8 +13,6 @@ const { Given, When, Then } = createBdd(test);
 const APPLICATION_LOADING_TIMEOUT_MS = 15_000;
 
 type DataTable = Readonly<{ hashes: () => readonly Record<string, string>[] }>;
-
-type BackendProject = Awaited<ReturnType<typeof createTestProject>>;
 
 function getProjectNames(dataTable: DataTable): string[] {
     return dataTable.hashes().map((row) => {
@@ -27,15 +24,8 @@ function getProjectNames(dataTable: DataTable): string[] {
     });
 }
 
-async function clearBackendProjects(): Promise<void> {
-    const projects: BackendProject[] = await listTestProjects();
-    for (const project of projects) {
-        await deleteTestProject(project.id);
-    }
-}
-
 async function setBackendProjects(projectNames: readonly string[]): Promise<void> {
-    await clearBackendProjects();
+    await resetTestBackend();
     for (const projectName of projectNames) {
         await createTestProject(projectName);
     }
@@ -43,6 +33,10 @@ async function setBackendProjects(projectNames: readonly string[]): Promise<void
 
 function getProjectList(page: Page) {
     return page.getByRole('navigation', { name: 'Project list' });
+}
+
+function resolveProjectName(projectName: string): string {
+    return resolveTestProjectName(projectName);
 }
 
 function getVisibleProjectLabels(page: Page) {
@@ -92,8 +86,9 @@ When('I open the application', async ({ page }) => {
 });
 
 When('I open project {string} from the sidebar', async ({ page }, projectName: string) => {
+    const resolvedProjectName = resolveProjectName(projectName);
     await getProjectList(page)
-        .getByRole('button', { name: new RegExp(projectName, 'u') })
+        .getByRole('button', { name: new RegExp(resolvedProjectName, 'u') })
         .click();
     await expect(page).toHaveURL(new RegExp(`/projects/[^/]+$`, 'u'));
 });
@@ -111,10 +106,11 @@ When('I create a project named {string}', async ({ page }, projectName: string) 
 });
 
 When('I select administrative project {string}', async ({ page }, projectName: string) => {
+    const resolvedProjectName = resolveProjectName(projectName);
     await getAdministrativeProjectList(page)
-        .getByRole('button', { name: new RegExp(projectName, 'u') })
+        .getByRole('button', { name: new RegExp(resolvedProjectName, 'u') })
         .click();
-    await expect(page.getByRole('heading', { name: projectName })).toBeVisible();
+    await expect(page.getByRole('heading', { name: resolvedProjectName })).toBeVisible();
 });
 
 When('I choose {string}', async ({ page }, action: string) => {
@@ -133,15 +129,25 @@ When('I submit the project dialog with an empty name', async ({ page }) => {
 });
 
 Then('the sidebar should show the projects in this order', async ({ page }, dataTable: DataTable) => {
-    await expect(getVisibleProjectLabels(page)).toHaveText(getProjectNames(dataTable));
+    const expectedProjectNames = getProjectNames(dataTable).map(resolveProjectName);
+    const visibleProjectNames = await getVisibleProjectLabels(page).allTextContents();
+    const relevantProjectNames = visibleProjectNames.filter((projectName) =>
+        expectedProjectNames.includes(projectName),
+    );
+
+    expect(relevantProjectNames).toEqual(expectedProjectNames);
 });
 
 Then('project administration should contain the project {string}', async ({ page }, projectName: string) => {
-    await expect(getAdministrativeProjectList(page).getByText(projectName, { exact: true })).toBeVisible();
+    await expect(
+        getAdministrativeProjectList(page).getByText(resolveProjectName(projectName), { exact: true }),
+    ).toBeVisible();
 });
 
 Then('project administration should not contain the project {string}', async ({ page }, projectName: string) => {
-    await expect(getAdministrativeProjectList(page).getByText(projectName, { exact: true })).toHaveCount(0);
+    await expect(
+        getAdministrativeProjectList(page).getByText(resolveProjectName(projectName), { exact: true }),
+    ).toHaveCount(0);
 });
 
 Then('the project dialog should show {string}', async ({ page }, message: string) => {

@@ -3,7 +3,7 @@ import { createBdd, test } from 'playwright-bdd';
 import {
     createImplementationTicket,
     createTestCategory,
-    createTestProject,
+    createPersistentTestProject,
     createTestRequirement,
     E2E_ACCESS_TOKEN,
     E2E_ADMIN_USER_ID,
@@ -33,7 +33,8 @@ type PermissionContext = Readonly<{
     role: TestRole;
     requirement: Requirement;
     projectId: string;
-    hiddenProjectId: string;
+    projectName: string;
+    hiddenProjectName: string;
 }>;
 
 let context: PermissionContext | undefined;
@@ -71,8 +72,8 @@ Given('the permission-aware frontend signs me in as {string}', async ({ page }, 
 
     const principal = configuredPrincipal(role);
     await resetTestBackend();
-    const project = await createTestProject('Assigned Project');
-    const hiddenProject = await createTestProject('Unassigned Project');
+    const project = await createPersistentTestProject('Assigned Project');
+    const hiddenProject = await createPersistentTestProject('Unassigned Project');
     const category = await createTestCategory(project.id, { key: 'AUTH', type: 'FR', name: 'Authentication' });
     const draft = await createTestRequirement(project.id, {
         categoryId: category.id,
@@ -96,7 +97,13 @@ Given('the permission-aware frontend signs me in as {string}', async ({ page }, 
         await removeProjectMembership(hiddenProject.id, principal.userId);
     }
 
-    context = { role, requirement, projectId: project.id, hiddenProjectId: hiddenProject.id };
+    context = {
+        role,
+        requirement,
+        projectId: project.id,
+        projectName: project.name,
+        hiddenProjectName: hiddenProject.name,
+    };
     await page.goto('/login');
     await signInToRealBackend(page, principal.username);
 });
@@ -122,8 +129,9 @@ Then('requirement contents should not be visible', async ({ page }) => {
 });
 
 Then('only the assigned permission test project should be visible', async ({ page }) => {
-    await expect(page.getByRole('button', { name: /Assigned Project/iu })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Unassigned Project/iu })).toHaveCount(0);
+    const { projectName, hiddenProjectName } = requireContext();
+    await expect(page.getByRole('button', { name: new RegExp(projectName, 'u') })).toBeVisible();
+    await expect(page.getByRole('button', { name: new RegExp(hiddenProjectName, 'u') })).toHaveCount(0);
 });
 
 Then('project creation should not be visible', async ({ page }) => {

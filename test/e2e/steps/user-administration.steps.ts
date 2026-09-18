@@ -18,8 +18,13 @@ When('I select the Administrator user', async ({ page }) => {
 });
 
 Then('the selected user account details should be visible', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: 'Administrator' })).toBeVisible();
-    await expect(page.getByText('@administrator')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Administrator' })).toBeVisible();
+    const details = page.getByRole('region', { name: 'Administrator' });
+
+    await expect(details.getByRole('heading', { name: 'Administrator' })).toBeVisible();
+    await expect(details.getByText('Email', { exact: true })).toBeVisible();
+    await expect(details.getByText('Status', { exact: true })).toBeVisible();
+    await expect(details.getByText('Role', { exact: true })).toBeVisible();
+    await expect(details.getByRole('button', { name: 'Administrator' })).toBeVisible();
+    await expect(page.getByText('@administrator')).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Sessions' })).toHaveCount(0);
 });

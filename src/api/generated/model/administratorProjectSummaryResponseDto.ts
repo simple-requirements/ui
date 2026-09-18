@@ -5,6 +5,7 @@
  * HTTP API for the Requirements Management app.
  * OpenAPI spec version: 0.0.1
  */
+import type { AdministratorProjectCategorySummaryResponseDto } from './administratorProjectCategorySummaryResponseDto';
 import type { AdministratorProjectSummaryResponseDtoTicketUrlTemplate } from './administratorProjectSummaryResponseDtoTicketUrlTemplate';
 import type { ProjectMembershipResponseDto } from './projectMembershipResponseDto';
 
@@ -17,6 +18,8 @@ export interface AdministratorProjectSummaryResponseDto {
     categoryNames: string[];
     /** @minimum 0 */
     categoryCount: number;
+    /** Administrative category summaries with requirement counts; no requirement content is exposed. */
+    categories: AdministratorProjectCategorySummaryResponseDto[];
     /** @minimum 0 */
     requirementCount: number;
     memberships: ProjectMembershipResponseDto[];

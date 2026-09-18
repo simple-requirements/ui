@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.0.1
  */
 
+export * from './administratorProjectCategorySummaryResponseDto';
 export * from './administratorProjectSummaryResponseDto';
 export * from './administratorProjectSummaryResponseDtoTicketUrlTemplate';
 export * from './approveRequirementDto';

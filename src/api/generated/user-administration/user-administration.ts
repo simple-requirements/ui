@@ -278,14 +278,26 @@ export function useUserAdministrationControllerFind<
 
 export type userAdministrationControllerUpdateRoleResponse200 = { data: UserAdministrationResponseDto; status: 200 };
 
+export type userAdministrationControllerUpdateRoleResponse409 = { data: void; status: 409 };
+
 export type userAdministrationControllerUpdateRoleResponseSuccess =
     userAdministrationControllerUpdateRoleResponse200 & { headers: Headers };
-export type userAdministrationControllerUpdateRoleResponse = userAdministrationControllerUpdateRoleResponseSuccess;
+export type userAdministrationControllerUpdateRoleResponseError = userAdministrationControllerUpdateRoleResponse409 & {
+    headers: Headers;
+};
+
+export type userAdministrationControllerUpdateRoleResponse =
+    | userAdministrationControllerUpdateRoleResponseSuccess
+    | userAdministrationControllerUpdateRoleResponseError;
 
 export const getUserAdministrationControllerUpdateRoleUrl = (userId: string) => {
     return `/admin/users/${userId}/role`;
 };
 
+/**
+ * Roles can be assigned while an account is pending or changed while it is deactivated. Active accounts must be deactivated first. Administrator accounts cannot retain project memberships.
+ * @summary Assign or change an account role
+ */
 export const userAdministrationControllerUpdateRole = async (
     userId: string,
     updateUserRoleDto: UpdateUserRoleDto,
@@ -325,7 +337,7 @@ export const getUserAdministrationControllerUpdateRoleQueryKey = (
 
 export const getUserAdministrationControllerUpdateRoleQueryOptions = <
     TData = Awaited<ReturnType<typeof userAdministrationControllerUpdateRole>>,
-    TError = unknown,
+    TError = void,
 >(
     userId: string,
     updateUserRoleDto: UpdateUserRoleDto,
@@ -357,11 +369,11 @@ export const getUserAdministrationControllerUpdateRoleQueryOptions = <
 export type UserAdministrationControllerUpdateRoleQueryResult = NonNullable<
     Awaited<ReturnType<typeof userAdministrationControllerUpdateRole>>
 >;
-export type UserAdministrationControllerUpdateRoleQueryError = unknown;
+export type UserAdministrationControllerUpdateRoleQueryError = void;
 
 export function useUserAdministrationControllerUpdateRole<
     TData = Awaited<ReturnType<typeof userAdministrationControllerUpdateRole>>,
-    TError = unknown,
+    TError = void,
 >(
     userId: string,
     updateUserRoleDto: UpdateUserRoleDto,
@@ -382,7 +394,7 @@ export function useUserAdministrationControllerUpdateRole<
 ): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useUserAdministrationControllerUpdateRole<
     TData = Awaited<ReturnType<typeof userAdministrationControllerUpdateRole>>,
-    TError = unknown,
+    TError = void,
 >(
     userId: string,
     updateUserRoleDto: UpdateUserRoleDto,
@@ -403,7 +415,7 @@ export function useUserAdministrationControllerUpdateRole<
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useUserAdministrationControllerUpdateRole<
     TData = Awaited<ReturnType<typeof userAdministrationControllerUpdateRole>>,
-    TError = unknown,
+    TError = void,
 >(
     userId: string,
     updateUserRoleDto: UpdateUserRoleDto,
@@ -414,10 +426,13 @@ export function useUserAdministrationControllerUpdateRole<
     },
     queryClient?: QueryClient,
 ): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Assign or change an account role
+ */
 
 export function useUserAdministrationControllerUpdateRole<
     TData = Awaited<ReturnType<typeof userAdministrationControllerUpdateRole>>,
-    TError = unknown,
+    TError = void,
 >(
     userId: string,
     updateUserRoleDto: UpdateUserRoleDto,

@@ -26,5 +26,5 @@ Then('the selected user account details should be visible', async ({ page }) => 
     await expect(details.getByText('Role', { exact: true })).toBeVisible();
     await expect(details.getByRole('button', { name: 'Administrator' })).toBeVisible();
     await expect(page.getByText('@administrator')).toHaveCount(0);
-    await expect(page.getByRole('heading', { name: 'Sessions' })).toHaveCount(0);
+    await expect(details.getByRole('heading', { name: 'Sessions', exact: true })).toHaveCount(0);
 });

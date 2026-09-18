@@ -20,14 +20,10 @@ export async function createTestRequirement(
     );
 }
 
-export async function updateRequirementStatus(
-    projectId: string,
-    requirementId: string,
-    data: Record<string, unknown>,
-): Promise<Requirement> {
+export async function approveTestRequirement(projectId: string, requirementId: string): Promise<Requirement> {
     return requestJson<Requirement>(
-        `/projects/${encodeURIComponent(projectId)}/requirements/${encodeURIComponent(requirementId)}`,
-        jsonRequestForToken(E2E_REQUIREMENTS_ENGINEER_ACCESS_TOKEN, 'PATCH', data),
+        `/projects/${encodeURIComponent(projectId)}/requirements/${encodeURIComponent(requirementId)}/review/approve`,
+        jsonRequestForToken(E2E_REQUIREMENTS_ENGINEER_ACCESS_TOKEN, 'POST', {}),
         200,
     );
 }

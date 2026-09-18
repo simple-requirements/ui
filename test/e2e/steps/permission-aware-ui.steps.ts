@@ -20,7 +20,7 @@ import {
     removeProjectMembership,
     resetTestBackend,
     setProjectMembership,
-    updateRequirementStatus,
+    approveTestRequirement,
     signInToRealBackend,
     type Requirement,
 } from './authenticated-test-backend';
@@ -83,10 +83,7 @@ Given('the permission-aware frontend signs me in as {string}', async ({ page }, 
         rationale: null,
         source: null,
     });
-    const requirement = await updateRequirementStatus(project.id, draft.id, {
-        status: 'approved',
-        reviewer: 'Requirements Engineer',
-    });
+    const requirement = await approveTestRequirement(project.id, draft.id);
     await createImplementationTicket(project.id, requirement.id, 'AUTH-42');
 
     await removeProjectMembership(project.id, E2E_ADMIN_USER_ID);

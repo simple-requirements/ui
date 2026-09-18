@@ -3,7 +3,6 @@ import { createBdd, test } from 'playwright-bdd';
 import {
     createTestCategory,
     createPersistentTestProject,
-    createTestProject,
     createTestRequirement,
     E2E_REQUIREMENTS_ENGINEER_LOGIN_USERNAME,
     openAuthenticatedRoute,
@@ -19,7 +18,7 @@ const OPTIONAL_TABLE_VALUE = '—';
 
 type DataTable = Readonly<{ hashes: () => readonly Record<string, string>[] }>;
 
-type BackendProject = Awaited<ReturnType<typeof createTestProject>>;
+type BackendProject = Awaited<ReturnType<typeof createPersistentTestProject>>;
 type BackendCategory = Awaited<ReturnType<typeof createTestCategory>>;
 type BackendRequirement = Awaited<ReturnType<typeof createTestRequirement>>;
 type RequirementTestContext = Readonly<{

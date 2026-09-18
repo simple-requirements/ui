@@ -15,6 +15,7 @@ let persistentProjectSequence = 0;
  * unique persistent project names and isolate themselves by the created project id.
  */
 export async function resetTestBackend(): Promise<void> {
+    projectNameAliases.clear();
     const projects = await listTestProjects();
     for (const project of projects) {
         if (project.requirementCount > 0) continue;

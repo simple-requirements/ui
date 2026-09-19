@@ -1,16 +1,15 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-type QueryOptions = Readonly<{
-    queryKey: readonly unknown[];
-    queryFn: () => Promise<unknown>;
-}>;
+type QueryOptions = Readonly<{ queryKey: readonly unknown[]; queryFn: () => Promise<unknown> }>;
 
 const mocks = vi.hoisted(() => ({
     getListProjectCategoriesQueryKey: vi.fn(() => ['categories', 'project-alpha'] as const),
     getListProjectRequirementsQueryKey: vi.fn(() => ['requirements', 'project-alpha'] as const),
     listProjectCategoriesRequest: vi.fn(() => Promise.resolve([])),
     listProjectRequirementsRequest: vi.fn(() => Promise.resolve([])),
-    query: vi.fn<(options: QueryOptions) => Promise<unknown>>(async (options) => options.queryFn()),
+    prefetchQuery: vi.fn<(options: QueryOptions) => Promise<void>>(async (options) => {
+        await options.queryFn();
+    }),
 }));
 
 vi.mock('@/api/categoriesApi', () => ({
@@ -23,17 +22,15 @@ vi.mock('@/api/requirementsApi', () => ({
     listProjectRequirementsRequest: mocks.listProjectRequirementsRequest,
 }));
 
-vi.mock('@/api/queryClient', () => ({ queryClient: { query: mocks.query } }));
+vi.mock('@/api/queryClient', () => ({ queryClient: { prefetchQuery: mocks.prefetchQuery } }));
 
-import {
-    prefetchProjectCategories,
-    prefetchProjectDetails,
-    prefetchProjectRequirements,
-} from '@/api/projectPrefetch';
+import { prefetchProjectCategories, prefetchProjectDetails, prefetchProjectRequirements } from '@/api/projectPrefetch';
 
 afterEach(() => {
     vi.clearAllMocks();
-    mocks.query.mockImplementation(async (options) => options.queryFn());
+    mocks.prefetchQuery.mockImplementation(async (options) => {
+        await options.queryFn();
+    });
 });
 
 describe('projectPrefetch', () => {
@@ -42,7 +39,7 @@ describe('projectPrefetch', () => {
 
         expect(mocks.getListProjectRequirementsQueryKey).toHaveBeenCalledWith('project-alpha');
         expect(mocks.listProjectRequirementsRequest).toHaveBeenCalledWith('project-alpha');
-        expect(mocks.query).toHaveBeenCalledWith(
+        expect(mocks.prefetchQuery).toHaveBeenCalledWith(
             expect.objectContaining({ queryKey: ['requirements', 'project-alpha'] }),
         );
     });
@@ -52,7 +49,7 @@ describe('projectPrefetch', () => {
 
         expect(mocks.getListProjectCategoriesQueryKey).toHaveBeenCalledWith('project-alpha');
         expect(mocks.listProjectCategoriesRequest).toHaveBeenCalledWith('project-alpha');
-        expect(mocks.query).toHaveBeenCalledWith(
+        expect(mocks.prefetchQuery).toHaveBeenCalledWith(
             expect.objectContaining({ queryKey: ['categories', 'project-alpha'] }),
         );
     });
@@ -65,7 +62,7 @@ describe('projectPrefetch', () => {
     });
 
     it('does not surface speculative prefetch failures.', async () => {
-        mocks.query.mockRejectedValueOnce(new Error('offline'));
+        mocks.prefetchQuery.mockRejectedValueOnce(new Error('offline'));
 
         await expect(prefetchProjectRequirements('project-alpha')).resolves.toBeUndefined();
     });

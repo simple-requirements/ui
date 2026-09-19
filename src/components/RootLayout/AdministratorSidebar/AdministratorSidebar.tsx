@@ -13,10 +13,7 @@ import {
     type AdministratorSection,
 } from '@/router/administrationRoutes';
 import { ExpandableNavigationItem } from '@/components/Navigation/ExpandableNavigationItem';
-import {
-    preloadAdministratorProjectsRoute,
-    preloadUserAdministrationRoute,
-} from '@/router/routeModules';
+import { preloadAdministratorProjectsRoute, preloadUserAdministrationRoute } from '@/router/routeModules';
 import {
     administrationProjectsQueryKey,
     administrationUsersQueryKey,

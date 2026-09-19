@@ -1,16 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 
-import {
-    prefetchProjectCategories,
-    prefetchProjectDetails,
-    prefetchProjectRequirements,
-} from '@/api/projectPrefetch';
-import {
-    getProjectRoute,
-    type ActiveProjectRoute,
-    type ProjectSubRoute,
-} from '@/router/projectRoutes';
+import { prefetchProjectCategories, prefetchProjectDetails, prefetchProjectRequirements } from '@/api/projectPrefetch';
+import { getProjectRoute, type ActiveProjectRoute, type ProjectSubRoute } from '@/router/projectRoutes';
 import {
     preloadProjectCategoriesListRoute,
     preloadProjectDetailsRoute,

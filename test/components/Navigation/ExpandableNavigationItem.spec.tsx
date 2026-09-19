@@ -162,10 +162,7 @@ describe('ExpandableNavigationItem', () => {
         it('sub item onIntent when a sub item receives pointer or keyboard intent.', async () => {
             const user = userEvent.setup();
             const onIntent = vi.fn();
-            const subItems = [
-                { ...defaultSubItems[0], onIntent },
-                defaultSubItems[1],
-            ];
+            const subItems = [{ ...defaultSubItems[0], onIntent }, defaultSubItems[1]];
 
             renderExpandableNavigationItem({ expanded: true, subItems });
             const requirementsLink = screen.getByRole('link', { name: /requirements/i });

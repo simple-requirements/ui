@@ -29,7 +29,6 @@ vi.mock('@/router/routeModules', () => ({
     preloadProjectRequirementsListRoute: mocks.preloadProjectRequirementsListRoute,
 }));
 
-
 type ProbeProps = Readonly<{ activeProjectRoute: ActiveProjectRoute }>;
 
 function ProjectNavigationProbe({ activeProjectRoute }: ProbeProps) {
@@ -146,5 +145,4 @@ describe('useProjectNavigation', () => {
         expect(mocks.preloadProjectCategoriesListRoute).toHaveBeenCalledOnce();
         expect(mocks.prefetchProjectCategories).toHaveBeenCalledWith('project-alpha');
     });
-
 });

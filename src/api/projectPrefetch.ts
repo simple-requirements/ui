@@ -1,12 +1,6 @@
-import {
-    getListProjectCategoriesQueryKey,
-    listProjectCategoriesRequest,
-} from '@/api/categoriesApi';
+import { getListProjectCategoriesQueryKey, listProjectCategoriesRequest } from '@/api/categoriesApi';
 import { queryClient } from '@/api/queryClient';
-import {
-    getListProjectRequirementsQueryKey,
-    listProjectRequirementsRequest,
-} from '@/api/requirementsApi';
+import { getListProjectRequirementsQueryKey, listProjectRequirementsRequest } from '@/api/requirementsApi';
 
 async function queryWithoutSurfacingError(query: Promise<unknown>): Promise<void> {
     await query.then(() => undefined).catch(() => undefined);
@@ -15,7 +9,7 @@ async function queryWithoutSurfacingError(query: Promise<unknown>): Promise<void
 /** Warms the requirements cache for a project on likely navigation intent. */
 export function prefetchProjectRequirements(projectId: string): Promise<void> {
     return queryWithoutSurfacingError(
-        queryClient.query({
+        queryClient.prefetchQuery({
             queryKey: getListProjectRequirementsQueryKey(projectId),
             queryFn: () => listProjectRequirementsRequest(projectId),
         }),
@@ -25,7 +19,7 @@ export function prefetchProjectRequirements(projectId: string): Promise<void> {
 /** Warms the categories cache for a project on likely navigation intent. */
 export function prefetchProjectCategories(projectId: string): Promise<void> {
     return queryWithoutSurfacingError(
-        queryClient.query({
+        queryClient.prefetchQuery({
             queryKey: getListProjectCategoriesQueryKey(projectId),
             queryFn: () => listProjectCategoriesRequest(projectId),
         }),

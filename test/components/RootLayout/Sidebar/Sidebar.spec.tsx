@@ -19,15 +19,9 @@ type TestProject = Readonly<{
 
 type UseLiveQueryResult = Readonly<{ data: readonly TestProject[] }>;
 
-const mocks = vi.hoisted(() => ({ useLiveQuery: vi.fn(), useQueries: vi.fn(), contextMenuShow: vi.fn() }));
+const mocks = vi.hoisted(() => ({ useLiveQuery: vi.fn(), contextMenuShow: vi.fn() }));
 
 vi.mock('@tanstack/react-db', () => ({ useLiveQuery: mocks.useLiveQuery }));
-
-vi.mock('@tanstack/react-query', async (importOriginal) => {
-    const actual = await importOriginal<typeof ReactQuery>();
-
-    return { ...actual, useQueries: mocks.useQueries };
-});
 
 vi.mock('@/api/collections/projectsCollection', () => ({ projectsCollection: {} }));
 
@@ -67,10 +61,6 @@ function createTestQueryClient(): ReactQuery.QueryClient {
 }
 
 function renderSidebar(initialEntry = '/'): ReturnType<typeof render> {
-    if (mocks.useQueries.getMockImplementation() === undefined) {
-        mockRequirementCountQueries();
-    }
-
     const router = createMemoryRouter(
         [
             {
@@ -122,22 +112,6 @@ function mockUseLiveQuery(result: Partial<UseLiveQueryResult>): void {
     mocks.useLiveQuery.mockReturnValue({ data: [], ...result });
 }
 
-function mockRequirementCountQueries(countsByProjectId: Readonly<Record<string, number>> = {}): void {
-    mocks.useQueries.mockImplementation(({ queries }: { queries: readonly { queryKey: readonly unknown[] }[] }) =>
-        queries.map((query) => {
-            const queryKey = String(query.queryKey[0]);
-            const projectId = queryKey.replace('/projects/', '').replace('/requirements', '');
-            const count = countsByProjectId[projectId] ?? 0;
-
-            return {
-                data: Array.from({ length: count }, (_, index) => ({
-                    id: `${projectId}-requirement-${String(index)}`,
-                })),
-            };
-        }),
-    );
-}
-
 beforeEach(() => {
     setAuthenticatedSession({
         accessToken: 'test-token',
@@ -156,7 +130,6 @@ beforeEach(() => {
 afterEach(() => {
     cleanup();
     mocks.useLiveQuery.mockReset();
-    mocks.useQueries.mockReset();
     mocks.contextMenuShow.mockReset();
     clearAuthenticatedSession();
 });
@@ -176,13 +149,11 @@ describe('Sidebar', () => {
     it('sorts projects by name before rendering the navigation list.', () => {
         mockUseLiveQuery({
             data: [
-                createProject({ id: 'project-zeta', name: 'Zeta Project', requirementCount: 0 }),
-                createProject({ id: 'project-alpha', name: 'Alpha Project', requirementCount: 0 }),
-                createProject({ id: 'project-beta', name: 'Beta Project', requirementCount: 0 }),
+                createProject({ id: 'project-zeta', name: 'Zeta Project', requirementCount: 2 }),
+                createProject({ id: 'project-alpha', name: 'Alpha Project', requirementCount: 4 }),
+                createProject({ id: 'project-beta', name: 'Beta Project', requirementCount: 7 }),
             ],
         });
-        mockRequirementCountQueries({ 'project-alpha': 4, 'project-beta': 7, 'project-zeta': 2 });
-
         renderSidebar();
 
         const navigation = screen.getByRole('navigation', { name: /project list/i });
@@ -195,11 +166,10 @@ describe('Sidebar', () => {
         ]);
     });
 
-    it('uses the loaded requirements count behind each project name.', () => {
+    it('uses the project summary requirement count behind each project name.', () => {
         mockUseLiveQuery({
-            data: [createProject({ id: 'project-alpha', name: 'Alpha Project', requirementCount: 0 })],
+            data: [createProject({ id: 'project-alpha', name: 'Alpha Project', requirementCount: 4 })],
         });
-        mockRequirementCountQueries({ 'project-alpha': 4 });
 
         renderSidebar();
 

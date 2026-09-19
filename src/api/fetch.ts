@@ -72,7 +72,7 @@ export async function apiFetch<T>(url: string, options: RequestInit = {}): Promi
     const body = await readResponseBody(response);
 
     if (response.status === 401) {
-        handleAuthenticationFailure();
+        await handleAuthenticationFailure();
         throw new AuthenticationRequiredError(body);
     }
 

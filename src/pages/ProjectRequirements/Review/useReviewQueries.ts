@@ -3,7 +3,12 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 import { getProjectRequirementsCollection } from '@/api/collections/projectRequirementsCollection';
-import { getReviewSummary, listReviewComments } from '@/api/reviewApi';
+import {
+    getReviewCommentsQueryKey,
+    getReviewSummary,
+    getReviewSummaryQueryKey,
+    listReviewComments,
+} from '@/api/reviewApi';
 
 export function useReviewQueries(projectId: string | undefined, requirementId: string | undefined) {
     const collection = useMemo(
@@ -23,7 +28,7 @@ export function useReviewQueries(projectId: string | undefined, requirementId: s
     );
 
     const commentsQuery = useQuery({
-        queryKey: ['review-comments', projectId, requirementId],
+        queryKey: getReviewCommentsQueryKey(projectId, requirementId),
         queryFn: () => {
             if (projectId === undefined || requirementId === undefined) {
                 throw new Error('Review comment identifiers are missing.');
@@ -35,7 +40,7 @@ export function useReviewQueries(projectId: string | undefined, requirementId: s
     });
 
     const summaryQuery = useQuery({
-        queryKey: ['review-summary', projectId, requirementId],
+        queryKey: getReviewSummaryQueryKey(projectId, requirementId),
         queryFn: () => {
             if (projectId === undefined || requirementId === undefined) {
                 throw new Error('Review summary identifiers are missing.');

@@ -67,7 +67,7 @@ describe('ProtectedRoute', () => {
         setAuthenticatedSession({ accessToken: 'opaque-token', user });
         renderRoutes('/private');
 
-        act(() => handleAuthenticationFailure());
+        await act(() => handleAuthenticationFailure());
 
         await waitFor(() => expect(screen.getByRole('heading', { name: 'Login' })).toBeInTheDocument());
         expect(screen.getByLabelText('Login state')).toHaveTextContent('"reason":"session-expired"');

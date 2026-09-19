@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 
 import { queryClient } from '@/api/queryClient';
+import { getReviewCommentsQueryKey, getReviewSummaryQueryKey } from '@/api/reviewApi';
 import { toastMessages } from '@/components/Feedback/AppToast/toastMessages';
 import type { AppToastMessage } from '@/stores/toastStore';
 import { showToastMessage } from '@/stores/toastStore';
@@ -10,8 +11,8 @@ export function useReviewMutationRunner(projectId: string | undefined, requireme
 
     const refreshReview = useCallback(async (): Promise<void> => {
         await Promise.all([
-            queryClient.invalidateQueries({ queryKey: ['review-comments', projectId, requirementId] }),
-            queryClient.invalidateQueries({ queryKey: ['review-summary', projectId, requirementId] }),
+            queryClient.invalidateQueries({ queryKey: getReviewCommentsQueryKey(projectId, requirementId) }),
+            queryClient.invalidateQueries({ queryKey: getReviewSummaryQueryKey(projectId, requirementId) }),
         ]);
     }, [projectId, requirementId]);
 

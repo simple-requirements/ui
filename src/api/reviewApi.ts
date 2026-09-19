@@ -38,6 +38,11 @@ export type ReviewComment = z.infer<typeof commentSchema>;
 export type ReviewCommentReply = z.infer<typeof replySchema>;
 export type ReviewSummary = z.infer<typeof reviewSummarySchema>;
 
+export const getReviewCommentsQueryKey = (projectId: string | undefined, requirementId: string | undefined) =>
+    ['review-comments', projectId, requirementId] as const;
+export const getReviewSummaryQueryKey = (projectId: string | undefined, requirementId: string | undefined) =>
+    ['review-summary', projectId, requirementId] as const;
+
 type ApiResponse<T> = Readonly<{ data: T }>;
 const baseUrl = (projectId: string, requirementId: string): string =>
     `/projects/${projectId}/requirements/${requirementId}`;

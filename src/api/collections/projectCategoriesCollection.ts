@@ -35,3 +35,9 @@ export function getProjectCategoriesCollection(projectId: string): ProjectCatego
 
     return collection;
 }
+
+/** Clears all project-scoped category rows at an authentication boundary. */
+export async function resetProjectCategoriesCollections(): Promise<void> {
+    await Promise.all([...projectCategoriesCollections.values()].map((collection) => collection.cleanup()));
+    projectCategoriesCollections.clear();
+}

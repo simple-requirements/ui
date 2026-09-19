@@ -5,7 +5,7 @@ import { useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { getProjectRequirementsCollection } from '@/api/collections/projectRequirementsCollection';
-import { getReviewSummary } from '@/api/reviewApi';
+import { getReviewSummary, getReviewSummaryQueryKey } from '@/api/reviewApi';
 import { InlineStatus } from '@/components/Feedback/InlineStatus';
 import { LoadableContent } from '@/components/Feedback/LoadableContent';
 import { getProjectRequirementDetailsRoute, getProjectRequirementReviewRoute } from '@/router/projectRoutes';
@@ -64,7 +64,7 @@ export function DetailsPage() {
     );
 
     const reviewSummaryQuery = useQuery({
-        queryKey: ['review-summary', projectId, requirementId],
+        queryKey: getReviewSummaryQueryKey(projectId, requirementId),
         queryFn: () => {
             if (projectId === undefined || requirementId === undefined) {
                 throw new Error('Review summary identifiers are missing.');

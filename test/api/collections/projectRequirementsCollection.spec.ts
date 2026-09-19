@@ -1,6 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { getProjectRequirementsCollection } from '@/api/collections/projectRequirementsCollection';
+import {
+    getProjectRequirementsCollection,
+    resetProjectRequirementsCollections,
+} from '@/api/collections/projectRequirementsCollection';
 import { queryClient } from '@/api/queryClient';
 
 import type { Requirement } from '@/api/requirementsApi';
@@ -47,7 +50,10 @@ type ProjectRequirementsCollectionOptions = Readonly<{
 }>;
 
 const mocks = vi.hoisted(() => ({
-    createCollection: vi.fn((options: unknown) => ({ collectionOptions: options })),
+    createCollection: vi.fn((options: unknown) => ({
+        collectionOptions: options,
+        cleanup: vi.fn().mockResolvedValue(undefined),
+    })),
     queryCollectionOptions: vi.fn((options: unknown) => options),
     listProjectRequirementsRequest: vi.fn<() => Promise<Requirement[]>>(),
 }));
@@ -77,6 +83,15 @@ describe('projectRequirementsCollection', () => {
         expect(firstCollection).toBe(secondCollection);
         expect(firstCollection).not.toBe(otherCollection);
         expect(mocks.createCollection).toHaveBeenCalledTimes(2);
+    });
+
+    it('clears cached collections at an authentication boundary.', async () => {
+        const firstCollection = getProjectRequirementsCollection('project-reset');
+
+        await resetProjectRequirementsCollections();
+
+        expect(firstCollection.cleanup).toHaveBeenCalledOnce();
+        expect(getProjectRequirementsCollection('project-reset')).not.toBe(firstCollection);
     });
 
     it('configures the collection with the project requirements query.', () => {

@@ -36,7 +36,7 @@ export function AccountMenu() {
         } catch {
             // Local logout must still complete when the session is already invalid or the network is unavailable.
         } finally {
-            clearUserScopedState();
+            await clearUserScopedState();
             setOpen(false);
             setPending(false);
             void navigate(LOGIN_ROUTE, { replace: true });

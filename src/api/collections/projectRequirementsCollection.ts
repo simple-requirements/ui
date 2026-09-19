@@ -39,3 +39,9 @@ export function getProjectRequirementsCollection(projectId: string): ProjectRequ
 
     return collection;
 }
+
+/** Clears all project-scoped requirement rows at an authentication boundary. */
+export async function resetProjectRequirementsCollections(): Promise<void> {
+    await Promise.all([...projectRequirementsCollections.values()].map((collection) => collection.cleanup()));
+    projectRequirementsCollections.clear();
+}

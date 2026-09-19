@@ -12,6 +12,7 @@ const LOADING_TIMEOUT_MS = 10_000;
 
 export function LoadingOverlay() {
     const administrator = useIsAdministrator();
+    // Direct Query is intentional here: the shell needs request lifecycle, retry, and error state.
     const projectsQuery = useQuery({
         queryKey: getListProjectsQueryKey(),
         queryFn: listProjectsRequest,

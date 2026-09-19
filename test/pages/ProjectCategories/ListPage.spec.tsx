@@ -46,7 +46,6 @@ const categories: readonly Category[] = [
 const mocks = vi.hoisted(() => ({
     useLiveQuery: vi.fn(),
     getProjectCategoriesCollection: vi.fn((projectId: string) => ({ id: `categories:${projectId}` })),
-    getProjectRequirementsCollection: vi.fn((projectId: string) => ({ id: `requirements:${projectId}` })),
     deleteProjectCategoryRequest: vi.fn(),
     getListProjectCategoriesQueryKey: vi.fn((projectId: string) => [`/projects/${projectId}/categories`] as const),
     invalidateQueries: vi.fn(),
@@ -57,9 +56,6 @@ const mocks = vi.hoisted(() => ({
 vi.mock('@tanstack/react-db', () => ({ useLiveQuery: mocks.useLiveQuery }));
 vi.mock('@/api/collections/projectCategoriesCollection', () => ({
     getProjectCategoriesCollection: mocks.getProjectCategoriesCollection,
-}));
-vi.mock('@/api/collections/projectRequirementsCollection', () => ({
-    getProjectRequirementsCollection: mocks.getProjectRequirementsCollection,
 }));
 vi.mock('@/api/categoriesApi', async (importOriginal) => {
     const original = await importOriginal<typeof CategoriesApiModule>();
@@ -163,40 +159,11 @@ describe('ProjectCategories ListPage', () => {
         expect(screen.getByRole('link', { name: /copy category key perf/i })).toBeInTheDocument();
     });
 
-    it('renders requirement counts calculated from loaded project requirements.', () => {
-        const requirements = [
-            { id: 'requirement-1', categoryId: '11111111-1111-4111-8111-111111111111', visibleKey: 'FR-AUTH-0001' },
-            { id: 'requirement-2', categoryId: '11111111-1111-4111-8111-111111111111', visibleKey: 'FR-AUTH-0002' },
-            { id: 'requirement-3', categoryId: '33333333-3333-4333-8333-333333333333', visibleKey: 'NFR-PERF-0001' },
-        ];
-        mocks.useLiveQuery.mockImplementation((_queryBuilder, dependencies: readonly unknown[]) => {
-            const collection = dependencies[0];
-            const collectionId =
-                typeof collection === 'object' && collection !== null && 'id' in collection ? collection.id : '';
+    it('renders requirement counts from the category summaries.', () => {
+        renderCategoriesListPage({ data: categories });
 
-            if (collectionId === 'requirements:project-alpha') {
-                return { data: requirements, isLoading: false, isError: false };
-            }
-
-            return {
-                data: categories.map((category) => ({
-                    id: category.id,
-                    projectId: category.projectId,
-                    name: category.name,
-                    key: category.key,
-                    type: category.type,
-                    createdAt: category.createdAt,
-                    updatedAt: category.updatedAt,
-                })),
-                isLoading: false,
-                isError: false,
-            };
-        });
-
-        renderCategoriesListPage();
-
-        expect(getTableRowByCellText('Authentication')).toHaveTextContent('2');
-        expect(getTableRowByCellText('Performance')).toHaveTextContent('1');
+        expect(getTableRowByCellText('Authentication')).toHaveTextContent('3');
+        expect(getTableRowByCellText('Performance')).toHaveTextContent('2');
         expect(getTableRowByCellText('Validation')).toHaveTextContent('0');
     });
 

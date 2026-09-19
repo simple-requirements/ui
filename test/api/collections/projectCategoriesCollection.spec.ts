@@ -1,6 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { getProjectCategoriesCollection } from '@/api/collections/projectCategoriesCollection';
+import {
+    getProjectCategoriesCollection,
+    resetProjectCategoriesCollections,
+} from '@/api/collections/projectCategoriesCollection';
 import { queryClient } from '@/api/queryClient';
 
 import type { Category } from '@/api/categoriesApi';
@@ -27,7 +30,10 @@ type ProjectCategoriesCollectionOptions = Readonly<{
 }>;
 
 const mocks = vi.hoisted(() => ({
-    createCollection: vi.fn((options: unknown) => ({ collectionOptions: options })),
+    createCollection: vi.fn((options: unknown) => ({
+        collectionOptions: options,
+        cleanup: vi.fn().mockResolvedValue(undefined),
+    })),
     queryCollectionOptions: vi.fn((options: unknown) => options),
     listProjectCategoriesRequest: vi.fn<() => Promise<Category[]>>(),
 }));
@@ -57,6 +63,15 @@ describe('projectCategoriesCollection', () => {
         expect(firstCollection).toBe(secondCollection);
         expect(firstCollection).not.toBe(otherCollection);
         expect(mocks.createCollection).toHaveBeenCalledTimes(2);
+    });
+
+    it('clears cached collections at an authentication boundary.', async () => {
+        const firstCollection = getProjectCategoriesCollection('project-reset');
+
+        await resetProjectCategoriesCollections();
+
+        expect(firstCollection.cleanup).toHaveBeenCalledOnce();
+        expect(getProjectCategoriesCollection('project-reset')).not.toBe(firstCollection);
     });
 
     it('configures the collection with the project category query.', () => {

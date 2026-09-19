@@ -179,6 +179,9 @@ describe('ProjectRequirements FormPage', () => {
         expect(screen.getByLabelText('Current route')).toHaveTextContent(
             '/projects/project-alpha/requirements/11111111-1111-4111-8111-111111111111',
         );
+        expect(mocks.invalidateQueries).toHaveBeenCalledWith({ queryKey: ['/projects/project-alpha/requirements'] });
+        expect(mocks.invalidateQueries).toHaveBeenCalledWith({ queryKey: ['/projects/project-alpha/categories'] });
+        expect(mocks.invalidateQueries).toHaveBeenCalledWith({ queryKey: ['/projects'] });
     });
 
     it('renders the update requirement form with the current values.', () => {
@@ -223,5 +226,8 @@ describe('ProjectRequirements FormPage', () => {
                 }),
             );
         });
+        expect(mocks.invalidateQueries).toHaveBeenCalledWith({ queryKey: ['/projects/project-alpha/requirements'] });
+        expect(mocks.invalidateQueries).toHaveBeenCalledWith({ queryKey: ['/projects/project-alpha/categories'] });
+        expect(mocks.invalidateQueries).not.toHaveBeenCalledWith({ queryKey: ['/projects'] });
     });
 });

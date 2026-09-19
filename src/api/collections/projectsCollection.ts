@@ -7,13 +7,23 @@ import { queryClient } from '@/api/queryClient';
 
 export type SidebarProject = Project & Readonly<{ requirementCount: number }>;
 
-export const projectsCollection = createCollection(
-    queryCollectionOptions({
-        id: 'projects',
-        queryKey: getListProjectsQueryKey(),
-        queryClient,
-        getKey: (project) => project.id,
-        schema: projectSchema,
-        queryFn: listProjectsRequest,
-    }),
-);
+function createProjectsCollection() {
+    return createCollection(
+        queryCollectionOptions({
+            id: 'projects',
+            queryKey: getListProjectsQueryKey(),
+            queryClient,
+            getKey: (project) => project.id,
+            schema: projectSchema,
+            queryFn: listProjectsRequest,
+        }),
+    );
+}
+
+export let projectsCollection = createProjectsCollection();
+
+/** Clears user-scoped project rows and prepares a fresh collection for the next authenticated session. */
+export async function resetProjectsCollection(): Promise<void> {
+    await projectsCollection.cleanup();
+    projectsCollection = createProjectsCollection();
+}

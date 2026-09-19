@@ -90,7 +90,7 @@ describe('projectRequirementsCollection', () => {
 
         await resetProjectRequirementsCollections();
 
-        expect(firstCollection.cleanup).toHaveBeenCalledOnce();
+        expect(firstCollection.cleanup.mock.calls).toHaveLength(1);
         expect(getProjectRequirementsCollection('project-reset')).not.toBe(firstCollection);
     });
 

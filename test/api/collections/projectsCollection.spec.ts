@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { projectsCollection, resetProjectsCollection } from '@/api/collections/projectsCollection';
 import { queryClient } from '@/api/queryClient';
@@ -37,6 +37,11 @@ vi.mock('@tanstack/query-db-collection', () => ({ queryCollectionOptions: mocks.
 vi.mock('@/api/generated/projects/projects', () => ({ getListProjectsQueryKey: () => ['/projects'] as const }));
 vi.mock('@/api/projectsApi', () => ({ projectSchema: {}, listProjectsRequest: mocks.listProjectsRequest }));
 
+beforeEach(async () => {
+    vi.clearAllMocks();
+    await resetProjectsCollection();
+});
+
 afterEach(() => {
     vi.clearAllMocks();
 });
@@ -68,7 +73,7 @@ describe('projectsCollection', () => {
 
         await resetProjectsCollection();
 
-        expect(previousCollection.cleanup).toHaveBeenCalledOnce();
+        expect(previousCollection.cleanup.mock.calls).toHaveLength(1);
         expect(projectsCollection).not.toBe(previousCollection);
     });
 });

@@ -23,6 +23,7 @@ export default defineConfig(
         ignores: [
             'dist/**',
             'coverage/**',
+            'docs/assets/**',
             'playwright-report/**',
             'test-results/**',
             'test/e2e/.features-gen/**',

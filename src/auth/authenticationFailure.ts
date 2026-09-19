@@ -1,4 +1,3 @@
-import { resetDomainCollections } from '@/api/collections/resetCollections';
 import { queryClient } from '@/api/queryClient';
 import { clearAuthenticatedSession } from '@/stores/authStore';
 import { resetActionBarStore } from '@/stores/actionBarStore';
@@ -13,6 +12,8 @@ export async function clearUserScopedState(reason?: 'session-expired'): Promise<
     clearAuthenticatedSession(reason);
     resetActionBarStore();
     resetTabBarStore();
+    const { resetDomainCollections } = await import('@/api/collections/resetCollections');
+
     await resetDomainCollections();
     queryClient.clear();
 }

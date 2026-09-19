@@ -70,7 +70,7 @@ describe('projectCategoriesCollection', () => {
 
         await resetProjectCategoriesCollections();
 
-        expect(firstCollection.cleanup).toHaveBeenCalledOnce();
+        expect(firstCollection.cleanup.mock.calls).toHaveLength(1);
         expect(getProjectCategoriesCollection('project-reset')).not.toBe(firstCollection);
     });
 

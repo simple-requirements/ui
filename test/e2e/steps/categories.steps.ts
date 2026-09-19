@@ -98,15 +98,17 @@ function getRequirementCreateRoute(categoryKey: string): string {
 }
 
 function getCategoryTable(page: Page) {
-    return page.locator('.project-categories-list-page__data-table');
+    return page.getByRole('table', { name: 'Categories' });
 }
 
 function getCategoryTableRow(page: Page, categoryKey: string) {
-    return getCategoryTable(page).locator('.p-datatable-tbody > tr').filter({ hasText: categoryKey });
+    return getCategoryTable(page)
+        .getByRole('row')
+        .filter({ has: page.getByRole('link', { name: `Copy category key ${categoryKey}` }) });
 }
 
 function getCategoryDetailsPanel(page: Page) {
-    return page.locator('.category-details-panel');
+    return page.getByRole('region', { name: 'Category details' });
 }
 
 async function openCategoryList(page: Page): Promise<void> {

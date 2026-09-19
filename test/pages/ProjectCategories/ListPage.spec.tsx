@@ -68,7 +68,7 @@ vi.mock('@/api/categoriesApi', async (importOriginal) => {
 });
 vi.mock('@/api/queryClient', () => ({ queryClient: { invalidateQueries: mocks.invalidateQueries } }));
 vi.mock('@/stores/tabBarStore', () => ({ openTab: mocks.openTab }));
-vi.mock('@/stores/toastStore', () => ({ showToastMessage: mocks.showToastMessage }));
+vi.mock('@/components/Feedback/toastEvents', () => ({ showToastMessage: mocks.showToastMessage }));
 
 type QueryResult = Readonly<{ data?: readonly Category[]; isLoading: boolean; isError: boolean }>;
 

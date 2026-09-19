@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { listProjects } from '@/api/generated/projects/projects';
+import { getListProjectsQueryKey, listProjects } from '@/api/generated/projects/projects';
 
 export const projectSchema = z.object({
     id: z.uuid(),
@@ -24,3 +24,5 @@ export async function listProjectsRequest(): Promise<Project[]> {
 
     return projectsResponseSchema.parse(response.data);
 }
+
+export { getListProjectsQueryKey };

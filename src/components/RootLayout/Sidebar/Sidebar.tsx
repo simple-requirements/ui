@@ -1,4 +1,4 @@
-import { getListProjectsQueryKey } from '@/api/generated/projects/projects';
+import { getListProjectsQueryKey } from '@/api/projectsApi';
 import { queryClient } from '@/api/queryClient';
 import { ActionButton } from '@/components/RootLayout/Sidebar/ActionButton';
 import { ProjectNavigationList } from '@/components/RootLayout/Sidebar/ProjectNavigationList';

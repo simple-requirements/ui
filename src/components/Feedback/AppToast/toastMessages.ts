@@ -1,4 +1,4 @@
-import type { AppToastMessage } from '@/stores/toastStore';
+import type { AppToastMessage } from '@/components/Feedback/toastEvents';
 
 const successLife = 3000;
 const errorLife = 5000;

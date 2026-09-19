@@ -5,7 +5,7 @@ import { Link, useSearchParams } from 'react-router';
 
 import { confirmPasswordReset } from '@/api/authApi';
 import { isValidPassword } from '@/auth/accountValidation';
-import { LOGIN_ROUTE } from '@/auth/authRoutes';
+import { FORGOT_PASSWORD_ROUTE, LOGIN_ROUTE } from '@/router/authenticationRoutes';
 
 /**
  * Renders the password-reset confirmation form for a reset token.
@@ -113,7 +113,7 @@ export function PasswordResetConfirmationPage() {
                         </form>
                     </>
                 :   <div className='ui-public-account__actions'>
-                        <Link to='/forgot-password'>Request a new reset link</Link>
+                        <Link to={FORGOT_PASSWORD_ROUTE}>Request a new reset link</Link>
                     </div>
                 }
             </section>

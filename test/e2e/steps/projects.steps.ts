@@ -39,8 +39,10 @@ function resolveProjectName(projectName: string): string {
     return resolveTestProjectName(projectName);
 }
 
-function getVisibleProjectLabels(page: Page) {
-    return getProjectList(page).locator('.expandable-navigation-item__label');
+async function getVisibleProjectLabels(page: Page): Promise<string[]> {
+    return getProjectList(page)
+        .getByRole('button')
+        .evaluateAll((buttons) => buttons.map((button) => button.getAttribute('aria-label') ?? ''));
 }
 
 function getVisibleProjectDialog(page: Page) {
@@ -88,7 +90,7 @@ When('I open the application', async ({ page }) => {
 When('I open project {string} from the sidebar', async ({ page }, projectName: string) => {
     const resolvedProjectName = resolveProjectName(projectName);
     await getProjectList(page)
-        .getByRole('button', { name: new RegExp(resolvedProjectName, 'u') })
+        .getByRole('button', { name: resolvedProjectName, exact: true })
         .click();
     await expect(page).toHaveURL(new RegExp(`/projects/[^/]+$`, 'u'));
 });
@@ -128,7 +130,7 @@ When('I submit the project dialog with an empty name', async ({ page }) => {
 
 Then('the sidebar should show the projects in this order', async ({ page }, dataTable: DataTable) => {
     const expectedProjectNames = getProjectNames(dataTable).map(resolveProjectName);
-    const visibleProjectNames = await getVisibleProjectLabels(page).allTextContents();
+    const visibleProjectNames = await getVisibleProjectLabels(page);
     const relevantProjectNames = visibleProjectNames.filter((projectName) =>
         expectedProjectNames.includes(projectName),
     );

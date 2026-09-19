@@ -1,7 +1,7 @@
 import { useSelector } from '@tanstack/react-store';
 import { Navigate } from 'react-router';
 
-import { ADMINISTRATOR_USERS_ROUTE } from '@/auth/authRoutes';
+import { ADMINISTRATOR_USERS_ROUTE } from '@/router/administrationRoutes';
 import { isAdministrator } from '@/auth/globalPermissions';
 import { authStore } from '@/stores/authStore';
 

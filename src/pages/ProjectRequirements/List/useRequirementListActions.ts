@@ -5,7 +5,7 @@ import { toastMessages } from '@/components/Feedback/AppToast/toastMessages';
 import { getProjectRequirementDetailsRoute, getProjectRequirementReviewRoute } from '@/router/projectRoutes';
 import { clearReviewActionRequirement, setReviewActionRequirement } from '@/stores/actionBarStore';
 import { openTab } from '@/stores/tabBarStore';
-import { showToastMessage } from '@/stores/toastStore';
+import { showToastMessage } from '@/components/Feedback/toastEvents';
 import type { RequirementTableRow } from '@/pages/ProjectRequirements/List/requirementListTypes';
 
 type Options = Readonly<{

@@ -3,7 +3,7 @@ import { queryClient } from '@/api/queryClient';
 import { getListProjectRequirementsQueryKey, markProjectRequirementImplementedRequest } from '@/api/requirementsApi';
 import { setReviewActionRequirement, type ReviewActionRequirement } from '@/stores/actionBarStore';
 import { toastMessages } from '@/components/Feedback/AppToast/toastMessages';
-import { showToastMessage } from '@/stores/toastStore';
+import { showToastMessage } from '@/components/Feedback/toastEvents';
 
 export function useImplementRequirementAction(requirement: ReviewActionRequirement | undefined) {
     const [pending, setPending] = useState(false);

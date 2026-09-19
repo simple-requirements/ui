@@ -7,9 +7,11 @@ import { listUsers } from '@/api/authApi';
 import {
     ADMINISTRATOR_PROJECTS_ROUTE,
     ADMINISTRATOR_USERS_ROUTE,
+    getActiveAdministratorSection,
     getAdministratorProjectRoute,
     getAdministratorUserRoute,
-} from '@/auth/authRoutes';
+    type AdministratorSection,
+} from '@/router/administrationRoutes';
 import { ExpandableNavigationItem } from '@/components/Navigation/ExpandableNavigationItem';
 import {
     administrationProjectsQueryKey,
@@ -18,20 +20,12 @@ import {
 
 import '@/components/RootLayout/AdministratorSidebar/AdministratorSidebar.scss';
 
-type AdministratorSection = 'users' | 'projects';
-
-function sectionFromPath(pathname: string): AdministratorSection | undefined {
-    if (pathname.startsWith(ADMINISTRATOR_USERS_ROUTE)) return 'users';
-    if (pathname.startsWith(ADMINISTRATOR_PROJECTS_ROUTE)) return 'projects';
-    return undefined;
-}
-
 /** Renders the dedicated expandable Administrator workspace navigation. */
 export function AdministratorSidebar() {
     const location = useLocation();
     const navigate = useNavigate();
     const params = useParams();
-    const activeSection = sectionFromPath(location.pathname);
+    const activeSection = getActiveAdministratorSection(location.pathname);
     const [expandedSection, setExpandedSection] = useState<AdministratorSection | undefined>(activeSection);
     const usersQuery = useQuery({
         queryKey: administrationUsersQueryKey,

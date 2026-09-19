@@ -1,7 +1,7 @@
 import { Toast } from 'primereact/toast';
 import { useEffect, useRef } from 'react';
 
-import { subscribeToToastMessages } from '@/stores/toastStore';
+import { subscribeToToastMessages } from '@/components/Feedback/toastEvents';
 
 export function AppToast() {
     const toastRef = useRef<Toast>(null);

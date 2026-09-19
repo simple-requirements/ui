@@ -17,7 +17,7 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock('@/pages/Administration/useUserAdministration', () => ({ useUserAdministration: mocks.useUserAdministration }));
 vi.mock('@/pages/Administration/useUserPresence', () => ({ useUserPresence: mocks.useUserPresence }));
-vi.mock('@/stores/toastStore', () => ({ showToastMessage: mocks.showToastMessage }));
+vi.mock('@/components/Feedback/toastEvents', () => ({ showToastMessage: mocks.showToastMessage }));
 
 type StatusChange = Readonly<{ status: 'active' | 'deactivated' }>;
 

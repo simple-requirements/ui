@@ -2,7 +2,8 @@ import { useSelector } from '@tanstack/react-store';
 import { Navigate, Outlet, useLocation } from 'react-router';
 
 import { AuthenticationFailureNavigator } from '@/auth/AuthenticationFailureNavigator';
-import { getCurrentRelativeUrl, LOGIN_ROUTE } from '@/auth/authRoutes';
+import { getCurrentRelativeUrl } from '@/auth/authRoutes';
+import { LOGIN_ROUTE } from '@/router/authenticationRoutes';
 import { authStore } from '@/stores/authStore';
 
 export function ProtectedRoute() {

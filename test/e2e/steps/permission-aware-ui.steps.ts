@@ -127,8 +127,9 @@ Then('requirement contents should not be visible', async ({ page }) => {
 
 Then('only the assigned permission test project should be visible', async ({ page }) => {
     const { projectName, hiddenProjectName } = requireContext();
-    await expect(page.getByRole('button', { name: new RegExp(projectName, 'u') })).toBeVisible();
-    await expect(page.getByRole('button', { name: new RegExp(hiddenProjectName, 'u') })).toHaveCount(0);
+    const projectNavigation = page.getByRole('navigation', { name: 'Project list' });
+    await expect(projectNavigation.getByRole('button', { name: projectName, exact: true })).toBeVisible();
+    await expect(projectNavigation.getByRole('button', { name: hiddenProjectName, exact: true })).toHaveCount(0);
 });
 
 Then('project creation should not be visible', async ({ page }) => {
@@ -138,7 +139,7 @@ Then('project creation should not be visible', async ({ page }) => {
 Then('Administrator project administration navigation should be visible', async ({ page }) => {
     const administratorNavigation = page.getByRole('navigation', { name: 'Administrator sections' });
 
-    await expect(administratorNavigation.getByRole('button', { name: /^Projects(?:\s+\d+)?$/u })).toBeVisible();
+    await expect(administratorNavigation.getByRole('button', { name: 'Projects', exact: true })).toBeVisible();
 });
 
 Then('requirement mutation actions should not be visible', async ({ page }) => {

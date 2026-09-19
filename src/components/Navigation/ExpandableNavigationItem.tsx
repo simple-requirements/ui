@@ -72,6 +72,7 @@ export function ExpandableNavigationItem({
                     <Button
                         outlined
                         type='button'
+                        aria-label={label}
                         aria-current={active ? 'page' : undefined}
                         aria-expanded={expanded}
                         aria-controls={subListId}

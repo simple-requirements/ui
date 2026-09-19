@@ -17,7 +17,7 @@ import {
     clearAdministratorActionRequest,
     setAdministratorUserActionContext,
 } from '@/stores/actionBarStore';
-import { showToastMessage } from '@/stores/toastStore';
+import { showToastMessage } from '@/components/Feedback/toastEvents';
 
 import '@/pages/Administration/UserAdministrationPage.scss';
 

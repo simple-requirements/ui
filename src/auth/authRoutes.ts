@@ -1,14 +1,5 @@
-export const LOGIN_ROUTE = '/login';
-export const ADMINISTRATOR_USERS_ROUTE = '/admin/users';
-export const ADMINISTRATOR_PROJECTS_ROUTE = '/admin/projects';
-
-export function getAdministratorUserRoute(userId: string): string {
-    return `${ADMINISTRATOR_USERS_ROUTE}/${encodeURIComponent(userId)}`;
-}
-
-export function getAdministratorProjectRoute(projectId: string): string {
-    return `${ADMINISTRATOR_PROJECTS_ROUTE}/${encodeURIComponent(projectId)}`;
-}
+import { WORKSPACE_ROUTE } from '@/router/applicationRoutes';
+import { LOGIN_ROUTE } from '@/router/authenticationRoutes';
 
 export type LoginLocationState = Readonly<{ returnTo?: string; reason?: 'session-expired' }>;
 
@@ -19,7 +10,7 @@ export type LoginLocationState = Readonly<{ returnTo?: string; reason?: 'session
  */
 export function getSafeReturnTo(state: unknown): string {
     if (typeof state !== 'object' || state === null) {
-        return '/';
+        return WORKSPACE_ROUTE;
     }
 
     const returnTo = (state as LoginLocationState).returnTo;
@@ -32,7 +23,7 @@ export function getSafeReturnTo(state: unknown): string {
         || returnTo.startsWith(`${LOGIN_ROUTE}?`)
         || returnTo.startsWith(`${LOGIN_ROUTE}#`)
     ) {
-        return '/';
+        return WORKSPACE_ROUTE;
     }
 
     return returnTo;

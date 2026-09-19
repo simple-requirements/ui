@@ -140,31 +140,31 @@ function getRequirementDetailsRoute(requirementKey: string): string {
 }
 
 function getRequirementTable(page: Page) {
-    return page.locator('.project-requirements-list-page__data-table');
+    return page.getByRole('table', { name: 'Requirements' });
 }
 
 function getRequirementTableRow(page: Page, requirementKey: string) {
-    return getRequirementTable(page).locator('.p-datatable-tbody > tr').filter({ hasText: requirementKey });
-}
-
-function getRequirementSelectionCell(page: Page, requirementKey: string) {
-    return getRequirementTableRow(page, requirementKey).locator('td').nth(1);
+    return getRequirementTable(page)
+        .getByRole('row')
+        .filter({ has: page.getByRole('button', { name: `Copy requirement key ${requirementKey}` }) });
 }
 
 function getRequirementDetailsPanel(page: Page) {
-    return page.locator('.requirement-details-panel');
+    return page.getByRole('region', { name: 'Requirement details' });
 }
 
 function getProjectDetailsPage(page: Page) {
-    return page.locator('.project-details-page');
+    const { project } = requireRequirementTestContext();
+
+    return page.getByRole('region', { name: project.name });
 }
 
 function getProjectDetailsSummaryCard(page: Page, label: string) {
-    return getProjectDetailsPage(page).locator('.project-details-page__summary-card').filter({ hasText: label });
+    return getProjectDetailsPage(page).getByRole('group', { name: `${label} summary` });
 }
 
 function getProjectDetailsStatusRow(page: Page, status: string) {
-    return getProjectDetailsPage(page).locator('.project-details-page__status-row').filter({ hasText: status });
+    return getProjectDetailsPage(page).getByRole('group', { name: `${status} requirements` });
 }
 
 function getProjectList(page: Page) {
@@ -231,7 +231,7 @@ When('I open the requirements list for the requirement test project', async ({ p
 });
 
 When('I select requirement {string}', async ({ page }, requirementKey: string) => {
-    await getRequirementSelectionCell(page, requirementKey).click();
+    await getRequirementTableRow(page, requirementKey).click();
 });
 
 When('I open the review for the selected requirement', async ({ page }) => {
@@ -263,7 +263,7 @@ When('I mark the requirement obsolete because {string}', async ({ page }, reason
 });
 
 When('I double-click requirement {string}', async ({ page }, requirementKey: string) => {
-    await getRequirementSelectionCell(page, requirementKey).dblclick();
+    await getRequirementTableRow(page, requirementKey).dblclick();
 });
 
 When('I copy requirement key {string}', async ({ page }, requirementKey: string) => {
@@ -317,7 +317,7 @@ Then('the requirement test project details should show statistics', async ({ pag
     for (const status of ['draft', 'approved', 'implemented', 'obsolete', 'rejected'] as const) {
         const expectedCount = expectedStatistics[status];
 
-        await expect(getProjectDetailsStatusRow(page, formatStatus(status)).locator('dd')).toHaveText(expectedCount);
+        await expect(getProjectDetailsStatusRow(page, formatStatus(status))).toContainText(expectedCount);
     }
 });
 

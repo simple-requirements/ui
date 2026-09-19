@@ -2,6 +2,30 @@ import { matchPath } from 'react-router';
 
 export type ProjectSubRoute = 'requirements' | 'categories';
 
+export type ActiveProjectRoute = Readonly<{ projectId?: string; subRoute?: ProjectSubRoute }>;
+
+export function getActiveProjectRoute(pathname: string): ActiveProjectRoute {
+    const requirementsRouteMatch = matchPath('/projects/:projectId/requirements/*', pathname);
+
+    if (requirementsRouteMatch?.params.projectId !== undefined) {
+        return { projectId: requirementsRouteMatch.params.projectId, subRoute: 'requirements' };
+    }
+
+    const categoriesRouteMatch = matchPath('/projects/:projectId/categories/*', pathname);
+
+    if (categoriesRouteMatch?.params.projectId !== undefined) {
+        return { projectId: categoriesRouteMatch.params.projectId, subRoute: 'categories' };
+    }
+
+    const projectRouteMatch = matchPath('/projects/:projectId', pathname);
+
+    if (projectRouteMatch?.params.projectId !== undefined) {
+        return { projectId: projectRouteMatch.params.projectId };
+    }
+
+    return {};
+}
+
 export function getProjectRoute(projectId: string): string {
     return `/projects/${projectId}`;
 }

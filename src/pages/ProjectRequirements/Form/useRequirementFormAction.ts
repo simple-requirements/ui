@@ -1,7 +1,7 @@
 import { useActionState } from 'react';
 
 import { getListProjectCategoriesQueryKey } from '@/api/categoriesApi';
-import { getListProjectsQueryKey } from '@/api/generated/projects/projects';
+import { getListProjectsQueryKey } from '@/api/projectsApi';
 import { queryClient } from '@/api/queryClient';
 import {
     createProjectRequirementRequest,

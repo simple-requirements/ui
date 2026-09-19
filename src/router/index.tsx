@@ -22,6 +22,15 @@ import { AdministratorProjectsPage } from '@/pages/Administration/AdministratorP
 import { UserAdministrationPage } from '@/pages/Administration/UserAdministrationPage';
 import { createBrowserRouter, type RouteObject } from 'react-router';
 
+import { WORKSPACE_ROUTE } from '@/router/applicationRoutes';
+import {
+    EMAIL_VERIFICATION_ROUTE,
+    FORGOT_PASSWORD_ROUTE,
+    LOGIN_ROUTE,
+    REGISTRATION_ROUTE,
+    RESEND_EMAIL_VERIFICATION_ROUTE,
+    RESET_PASSWORD_ROUTE,
+} from '@/router/authenticationRoutes';
 import type { RouteUiHandle } from '@/router/routeUiMetadata';
 
 function routeHandle(handle: RouteUiHandle): RouteUiHandle {
@@ -29,17 +38,17 @@ function routeHandle(handle: RouteUiHandle): RouteUiHandle {
 }
 
 export const routes: RouteObject[] = [
-    { path: 'login', element: <AuthenticationEntryPage /> },
-    { path: 'register', element: <RegistrationPage /> },
-    { path: 'verify-email', element: <EmailVerificationPage /> },
-    { path: 'verify-email/resend', element: <ResendEmailVerificationPage /> },
-    { path: 'forgot-password', element: <PasswordResetRequestPage /> },
-    { path: 'reset-password', element: <PasswordResetConfirmationPage /> },
+    { path: LOGIN_ROUTE, element: <AuthenticationEntryPage /> },
+    { path: REGISTRATION_ROUTE, element: <RegistrationPage /> },
+    { path: EMAIL_VERIFICATION_ROUTE, element: <EmailVerificationPage /> },
+    { path: RESEND_EMAIL_VERIFICATION_ROUTE, element: <ResendEmailVerificationPage /> },
+    { path: FORGOT_PASSWORD_ROUTE, element: <PasswordResetRequestPage /> },
+    { path: RESET_PASSWORD_ROUTE, element: <PasswordResetConfirmationPage /> },
     {
         element: <ProtectedRoute />,
         children: [
             {
-                path: '/',
+                path: WORKSPACE_ROUTE,
                 element: <RootLayout />,
                 handle: routeHandle({ actionBar: 'none' }),
                 children: [

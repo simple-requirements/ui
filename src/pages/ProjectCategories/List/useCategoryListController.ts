@@ -11,7 +11,7 @@ import {
     getProjectRequirementCreateRoute,
 } from '@/router/projectRoutes';
 import { openTab } from '@/stores/tabBarStore';
-import { showToastMessage } from '@/stores/toastStore';
+import { showToastMessage } from '@/components/Feedback/toastEvents';
 
 import { canDeleteCategory, type CategoryTableRow } from '@/pages/ProjectCategories/List/categoryListTypes';
 import { useDeleteCategory } from '@/pages/ProjectCategories/List/useDeleteCategory';

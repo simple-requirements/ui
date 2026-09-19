@@ -10,8 +10,10 @@ import {
 import { getProjectRoute } from '@/router/projectRoutes';
 import { authStore } from '@/stores/authStore';
 
+import { WORKSPACE_ROUTE } from '@/router/applicationRoutes';
+
 function deniedRedirectTarget(projectId: string, permission: ProjectPermission): string {
-    return permission === projectPermissionKinds.read ? '/' : getProjectRoute(projectId);
+    return permission === projectPermissionKinds.read ? WORKSPACE_ROUTE : getProjectRoute(projectId);
 }
 
 export function ProjectPermissionRoute({ permission }: Readonly<{ permission: ProjectPermission }>) {
@@ -21,7 +23,7 @@ export function ProjectPermissionRoute({ permission }: Readonly<{ permission: Pr
     if (projectId === undefined)
         return (
             <Navigate
-                to='/'
+                to={WORKSPACE_ROUTE}
                 replace
             />
         );

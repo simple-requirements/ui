@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router';
 
 import { logout } from '@/api/authApi';
 import { clearUserScopedState } from '@/auth/authenticationFailure';
-import { LOGIN_ROUTE } from '@/auth/authRoutes';
+import { LOGIN_ROUTE } from '@/router/authenticationRoutes';
 import type { AuthenticatedUser } from '@/auth/authTypes';
 import { authStore } from '@/stores/authStore';
 

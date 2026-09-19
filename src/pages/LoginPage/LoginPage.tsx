@@ -6,6 +6,7 @@ import { useSelector } from '@tanstack/react-store';
 
 import { getAuthenticatedUser, login } from '@/api/authApi';
 import { getSafeReturnTo } from '@/auth/authRoutes';
+import { FORGOT_PASSWORD_ROUTE, REGISTRATION_ROUTE } from '@/router/authenticationRoutes';
 import { authStore, setAuthenticatedSession } from '@/stores/authStore';
 
 const LOGIN_ERROR_MESSAGE = 'The username or password is invalid, or the account is unavailable.';
@@ -132,8 +133,8 @@ export function LoginPage({ notice }: LoginPageProps) {
                     />
                 </form>
                 <div className='ui-public-account__actions'>
-                    <Link to='/register'>Do not have an account? Register yourself.</Link>
-                    <Link to='/forgot-password'>Forgot your password? Reset it here.</Link>
+                    <Link to={REGISTRATION_ROUTE}>Do not have an account? Register yourself.</Link>
+                    <Link to={FORGOT_PASSWORD_ROUTE}>Forgot your password? Reset it here.</Link>
                 </div>
             </section>
         </main>

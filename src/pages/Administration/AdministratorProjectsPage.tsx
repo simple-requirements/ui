@@ -7,7 +7,7 @@ import { Link, useNavigate, useParams } from 'react-router';
 
 import type { AdministratorProjectSummary } from '@/api/adminProjectsApi';
 import type { UserAdministrationResponse } from '@/api/authApi';
-import { ADMINISTRATOR_PROJECTS_ROUTE, getAdministratorProjectRoute } from '@/auth/authRoutes';
+import { ADMINISTRATOR_PROJECTS_ROUTE, getAdministratorProjectRoute } from '@/router/administrationRoutes';
 import { projectRoleLabel } from '@/auth/projectRoleMetadata';
 import { AddProjectMembershipDialog } from '@/pages/Administration/AddProjectMembershipDialog';
 import { useAdministratorProjects } from '@/pages/Administration/useAdministratorProjects';

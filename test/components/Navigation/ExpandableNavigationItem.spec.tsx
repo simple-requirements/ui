@@ -146,6 +146,36 @@ describe('ExpandableNavigationItem', () => {
             expect(onContextMenu).toHaveBeenCalledTimes(1);
         });
 
+        it('onIntent when the item receives pointer or keyboard intent.', async () => {
+            const user = userEvent.setup();
+            const onIntent = vi.fn();
+
+            renderExpandableNavigationItem({ onIntent });
+            const button = screen.getByRole('button', { name: /alpha project/i });
+
+            await user.hover(button);
+            fireEvent.focus(button);
+
+            expect(onIntent).toHaveBeenCalledTimes(2);
+        });
+
+        it('sub item onIntent when a sub item receives pointer or keyboard intent.', async () => {
+            const user = userEvent.setup();
+            const onIntent = vi.fn();
+            const subItems = [
+                { ...defaultSubItems[0], onIntent },
+                defaultSubItems[1],
+            ];
+
+            renderExpandableNavigationItem({ expanded: true, subItems });
+            const requirementsLink = screen.getByRole('link', { name: /requirements/i });
+
+            await user.hover(requirementsLink);
+            fireEvent.focus(requirementsLink);
+
+            expect(onIntent).toHaveBeenCalledTimes(2);
+        });
+
         it('onSubItemClick when a sub item is clicked.', async () => {
             const user = userEvent.setup();
             const onSubItemClick = vi.fn();

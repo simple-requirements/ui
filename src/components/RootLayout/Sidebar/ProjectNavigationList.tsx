@@ -6,6 +6,7 @@ import {
     getProjectCategoriesRoute,
     getProjectRequirementsRoute,
     type ActiveProjectRoute,
+    type ProjectSubRoute,
 } from '@/router/projectRoutes';
 
 export type ProjectNavigationListProps = Readonly<{
@@ -15,6 +16,7 @@ export type ProjectNavigationListProps = Readonly<{
     onToggleProject: (projectId: string) => void;
     onOpenProjectSubItem: (projectId: string) => void;
     onProjectContextMenu: (projectId: string, event: MouseEvent<HTMLButtonElement>) => void;
+    onProjectIntent: (projectId: string, subRoute?: ProjectSubRoute) => void;
 }>;
 
 export function ProjectNavigationList({
@@ -24,6 +26,7 @@ export function ProjectNavigationList({
     onToggleProject,
     onOpenProjectSubItem,
     onProjectContextMenu,
+    onProjectIntent,
 }: ProjectNavigationListProps) {
     return (
         <nav
@@ -48,15 +51,18 @@ export function ProjectNavigationList({
                                     label: 'Requirements',
                                     to: getProjectRequirementsRoute(project.id),
                                     iconClassName: 'pi pi-list',
+                                    onIntent: () => onProjectIntent(project.id, 'requirements'),
                                 },
                                 {
                                     id: 'categories',
                                     label: 'Categories',
                                     to: getProjectCategoriesRoute(project.id),
                                     iconClassName: 'pi pi-tags',
+                                    onIntent: () => onProjectIntent(project.id, 'categories'),
                                 },
                             ]}
                             onToggle={() => onToggleProject(project.id)}
+                            onIntent={() => onProjectIntent(project.id)}
                             onSubItemClick={() => onOpenProjectSubItem(project.id)}
                             onContextMenu={(event) => onProjectContextMenu(project.id, event)}
                         />

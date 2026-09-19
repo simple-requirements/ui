@@ -14,6 +14,7 @@ export type ExpandableNavigationSubItem = Readonly<{
     to: string;
     iconClassName?: string;
     badgeValue?: number | string;
+    onIntent?: () => void;
 }>;
 
 export type ExpandableNavigationItemProps = Readonly<{
@@ -25,6 +26,7 @@ export type ExpandableNavigationItemProps = Readonly<{
     iconClassName?: string;
     expandedIconClassName?: string;
     onToggle: () => void;
+    onIntent?: () => void;
     onSubItemClick?: () => void;
     onContextMenu?: MouseEventHandler<HTMLButtonElement>;
 }>;
@@ -60,6 +62,7 @@ export function ExpandableNavigationItem({
     iconClassName = 'pi pi-folder',
     expandedIconClassName = 'pi pi-folder-open',
     onToggle,
+    onIntent,
     onSubItemClick,
     onContextMenu,
 }: ExpandableNavigationItemProps) {
@@ -76,10 +79,20 @@ export function ExpandableNavigationItem({
                         aria-current={active ? 'page' : undefined}
                         aria-expanded={expanded}
                         aria-controls={subListId}
+                        aria-describedby={tooltipTriggerProps['aria-describedby']}
                         onClick={onToggle}
                         onContextMenu={onContextMenu}
-                        pt={{ root: { className: getButtonClassName(active) } }}
-                        {...tooltipTriggerProps}>
+                        onMouseEnter={() => {
+                            tooltipTriggerProps.onMouseEnter();
+                            onIntent?.();
+                        }}
+                        onMouseLeave={tooltipTriggerProps.onMouseLeave}
+                        onFocus={() => {
+                            tooltipTriggerProps.onFocus();
+                            onIntent?.();
+                        }}
+                        onBlur={tooltipTriggerProps.onBlur}
+                        pt={{ root: { className: getButtonClassName(active) } }}>
                         <span className='expandable-navigation-item__button-content'>
                             <i
                                 className={getIconClassName(expanded, iconClassName, expandedIconClassName)}
@@ -110,6 +123,8 @@ export function ExpandableNavigationItem({
                                 to={subItem.to}
                                 tabIndex={expanded ? undefined : -1}
                                 className={({ isActive }) => getSubItemClassName(isActive)}
+                                onMouseEnter={() => subItem.onIntent?.()}
+                                onFocus={() => subItem.onIntent?.()}
                                 onClick={() => onSubItemClick?.()}>
                                 {subItem.iconClassName !== undefined && (
                                     <i

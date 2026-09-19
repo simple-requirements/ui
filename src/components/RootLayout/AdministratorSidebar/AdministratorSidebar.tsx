@@ -14,6 +14,10 @@ import {
 } from '@/router/administrationRoutes';
 import { ExpandableNavigationItem } from '@/components/Navigation/ExpandableNavigationItem';
 import {
+    preloadAdministratorProjectsRoute,
+    preloadUserAdministrationRoute,
+} from '@/router/routeModules';
+import {
     administrationProjectsQueryKey,
     administrationUsersQueryKey,
 } from '@/pages/Administration/administrationQueryKeys';
@@ -40,6 +44,7 @@ export function AdministratorSidebar() {
                 label: user.displayName,
                 to: getAdministratorUserRoute(user.id),
                 iconClassName: 'pi pi-user',
+                onIntent: preloadUserAdministrationRoute,
             })),
         [usersQuery.data],
     );
@@ -51,6 +56,7 @@ export function AdministratorSidebar() {
                 to: getAdministratorProjectRoute(project.id),
                 iconClassName: 'pi pi-folder',
                 badgeValue: project.requirementCount,
+                onIntent: preloadAdministratorProjectsRoute,
             })),
         [projectsQuery.data],
     );
@@ -79,6 +85,7 @@ export function AdministratorSidebar() {
                         expandedIconClassName='pi pi-users'
                         subItems={userItems}
                         onToggle={() => toggleSection('users')}
+                        onIntent={preloadUserAdministrationRoute}
                     />
                     <ExpandableNavigationItem
                         label='Projects'
@@ -89,6 +96,7 @@ export function AdministratorSidebar() {
                         expandedIconClassName='pi pi-folder-open'
                         subItems={projectItems}
                         onToggle={() => toggleSection('projects')}
+                        onIntent={preloadAdministratorProjectsRoute}
                     />
                 </ul>
             </nav>

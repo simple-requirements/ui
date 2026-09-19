@@ -61,6 +61,7 @@ export function Sidebar() {
                 onToggleProject={projectNavigation.toggleProject}
                 onOpenProjectSubItem={projectNavigation.openProjectSubItem}
                 onProjectContextMenu={projectContextMenu.openProjectContextMenu}
+                onProjectIntent={projectNavigation.prefetchProjectRoute}
             />
         </aside>
     );

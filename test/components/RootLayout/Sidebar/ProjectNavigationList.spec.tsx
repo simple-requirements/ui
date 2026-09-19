@@ -7,7 +7,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { SidebarProject } from '@/api/collections/projectsCollection';
 import { ProjectNavigationList } from '@/components/RootLayout/Sidebar/ProjectNavigationList';
-import type { ActiveProjectRoute } from '@/components/RootLayout/Sidebar/useActiveProjectRoute';
+import type { ActiveProjectRoute } from '@/router/projectRoutes';
 
 const projects: readonly SidebarProject[] = [
     {

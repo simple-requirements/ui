@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 
-import { getProjectRoute } from '@/router/projectRoutes';
-
-import type { ActiveProjectRoute } from '@/components/RootLayout/Sidebar/useActiveProjectRoute';
+import { getProjectRoute, type ActiveProjectRoute } from '@/router/projectRoutes';
 
 export type ProjectNavigationController = Readonly<{
     expandedProjectId: string | undefined;

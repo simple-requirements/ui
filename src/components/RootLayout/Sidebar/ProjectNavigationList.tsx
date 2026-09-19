@@ -2,9 +2,11 @@ import type { MouseEvent } from 'react';
 
 import type { SidebarProject } from '@/api/collections/projectsCollection';
 import { ExpandableNavigationItem } from '@/components/Navigation/ExpandableNavigationItem';
-import { getProjectCategoriesRoute, getProjectRequirementsRoute } from '@/router/projectRoutes';
-
-import type { ActiveProjectRoute } from '@/components/RootLayout/Sidebar/useActiveProjectRoute';
+import {
+    getProjectCategoriesRoute,
+    getProjectRequirementsRoute,
+    type ActiveProjectRoute,
+} from '@/router/projectRoutes';
 
 export type ProjectNavigationListProps = Readonly<{
     projects: readonly SidebarProject[];

@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import type { ActiveProjectRoute } from '@/components/RootLayout/Sidebar/useActiveProjectRoute';
+import type { ActiveProjectRoute } from '@/router/projectRoutes';
 import { useProjectNavigation } from '@/components/RootLayout/Sidebar/useProjectNavigation';
 
 type ProbeProps = Readonly<{ activeProjectRoute: ActiveProjectRoute }>;

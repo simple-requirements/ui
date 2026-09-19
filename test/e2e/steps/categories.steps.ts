@@ -244,10 +244,12 @@ Then('the requirement creation form should be visible for category {string}', as
     const category = requireCategoryByKey(categoryKey);
     const formRegion = page.getByRole('region', { name: /create requirement/i });
 
+    const categorySelect = formRegion.getByLabel('Category', { exact: true });
+
     await expect(page).toHaveURL(new RegExp(`${escapeRegExp(getRequirementCreateRoute(categoryKey))}$`, 'u'));
     await expect(formRegion.getByRole('heading', { name: /create requirement/i })).toBeVisible();
-    await expect(page.getByLabel('Category')).toHaveValue(category.id);
-    await expect(page.getByLabel('Category')).toContainText(`${category.key} — ${category.name} (${category.type})`);
-    await expect(page.getByLabel('Priority')).toHaveValue('p1');
+    await expect(categorySelect).toHaveValue(category.id);
+    await expect(categorySelect).toContainText(`${category.key} — ${category.name} (${category.type})`);
+    await expect(formRegion.getByLabel('Priority', { exact: true })).toHaveValue('p1');
     await expect(formRegion.getByRole('button', { name: 'Create' })).toBeVisible();
 });

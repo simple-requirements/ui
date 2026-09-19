@@ -376,11 +376,10 @@ export function AdministratorProjectsPage() {
                 users={availableMembershipUsers}
                 pending={administration.mutationPending}
                 onHide={() => setMembershipDialogOpen(false)}
-                onAdd={(userId) =>
-                    selectedProject === undefined ?
-                        Promise.resolve()
-                    :   administration.addMembership({ projectId: selectedProject.id, userId })
-                }
+                onAdd={async (userId) => {
+                    if (selectedProject === undefined) return;
+                    await administration.addMembership({ projectId: selectedProject.id, userId });
+                }}
             />
 
             <Dialog

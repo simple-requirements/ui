@@ -73,7 +73,10 @@ export async function updateAdministratorProject(
     projectId: string,
     data: Readonly<{ name?: string; ticketUrlTemplate?: string | null }>,
 ): Promise<AdministratorProjectSummary> {
-    const response = await adminUpdateProject(projectId, data);
+    // Keep the domain-facing contract correct while isolating the generated OpenAPI typing mismatch.
+    // Orval currently emits ticketUrlTemplate as an object-shaped nullable type instead of string | null.
+    const generatedUpdate = data as unknown as Parameters<typeof adminUpdateProject>[1];
+    const response = await adminUpdateProject(projectId, generatedUpdate);
 
     return parseProject(response.data);
 }

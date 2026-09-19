@@ -80,7 +80,7 @@ export function CategoryTable({
             pt={{
                 root: { className: 'project-categories-list-page__data-table' },
                 wrapper: { className: 'project-categories-list-page__data-table-wrapper' },
-                table: { className: 'project-categories-list-page__table', 'aria-label': 'Categories' },
+                table: { 'className': 'project-categories-list-page__table', 'aria-label': 'Categories' },
             }}
             scrollable
             scrollHeight='flex'>

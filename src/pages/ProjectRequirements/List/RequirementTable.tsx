@@ -102,7 +102,7 @@ export function RequirementTable({
             pt={{
                 root: { className: 'project-requirements-list-page__data-table' },
                 wrapper: { className: 'project-requirements-list-page__data-table-wrapper' },
-                table: { className: 'project-requirements-list-page__table', 'aria-label': 'Requirements' },
+                table: { 'className': 'project-requirements-list-page__table', 'aria-label': 'Requirements' },
             }}
             scrollable
             scrollHeight='flex'>

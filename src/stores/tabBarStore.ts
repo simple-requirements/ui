@@ -6,7 +6,9 @@ export type TabBarTab = Readonly<{ id: string; label: string; fixed?: boolean; c
 
 export type TabBarState = Readonly<{ openTabs: readonly TabBarTab[]; activeTabId: string | undefined }>;
 
-const initialOpenTabs: readonly TabBarTab[] = [{ id: WORKSPACE_ROUTE, label: 'Workspace', fixed: true, closable: false }];
+const initialOpenTabs: readonly TabBarTab[] = [
+    { id: WORKSPACE_ROUTE, label: 'Workspace', fixed: true, closable: false },
+];
 
 export const tabBarStore = new Store<TabBarState>({ openTabs: initialOpenTabs, activeTabId: WORKSPACE_ROUTE });
 

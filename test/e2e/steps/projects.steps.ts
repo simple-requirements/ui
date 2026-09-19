@@ -89,9 +89,7 @@ When('I open the application', async ({ page }) => {
 
 When('I open project {string} from the sidebar', async ({ page }, projectName: string) => {
     const resolvedProjectName = resolveProjectName(projectName);
-    await getProjectList(page)
-        .getByRole('button', { name: resolvedProjectName, exact: true })
-        .click();
+    await getProjectList(page).getByRole('button', { name: resolvedProjectName, exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`/projects/[^/]+$`, 'u'));
 });
 

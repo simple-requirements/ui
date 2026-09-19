@@ -30,7 +30,6 @@ describe('projectRoutes', () => {
         );
     });
 
-
     it('resolves the active project route and sub route from a pathname.', () => {
         expect(getActiveProjectRoute('/projects/project-alpha')).toEqual({ projectId: 'project-alpha' });
         expect(getActiveProjectRoute('/projects/project-alpha/requirements')).toEqual({

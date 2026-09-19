@@ -24,7 +24,7 @@ type ProjectsCollectionOptions = Readonly<{
 }>;
 
 const mocks = vi.hoisted(() => {
-    const cleanupMocks: Array<ReturnType<typeof vi.fn<() => Promise<void>>>> = [];
+    const cleanupMocks: ReturnType<typeof vi.fn<() => Promise<void>>>[] = [];
 
     return {
         cleanupMocks,

@@ -68,9 +68,11 @@ describe('projectCategoriesCollection', () => {
     it('clears cached collections at an authentication boundary.', async () => {
         const firstCollection = getProjectCategoriesCollection('project-reset');
 
+        const cleanup = mocks.createCollection.mock.results.at(-1)?.value.cleanup;
+
         await resetProjectCategoriesCollections();
 
-        expect(firstCollection.cleanup.mock.calls).toHaveLength(1);
+        expect(cleanup).toHaveBeenCalledOnce();
         expect(getProjectCategoriesCollection('project-reset')).not.toBe(firstCollection);
     });
 

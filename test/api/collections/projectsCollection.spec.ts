@@ -70,10 +70,11 @@ describe('projectsCollection', () => {
 
     it('cleans up and recreates the global collection at an authentication boundary.', async () => {
         const previousCollection = projectsCollection;
+        const cleanup = mocks.createCollection.mock.results.at(-1)?.value.cleanup;
 
         await resetProjectsCollection();
 
-        expect(previousCollection.cleanup.mock.calls).toHaveLength(1);
+        expect(cleanup).toHaveBeenCalledOnce();
         expect(projectsCollection).not.toBe(previousCollection);
     });
 });

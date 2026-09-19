@@ -88,9 +88,11 @@ describe('projectRequirementsCollection', () => {
     it('clears cached collections at an authentication boundary.', async () => {
         const firstCollection = getProjectRequirementsCollection('project-reset');
 
+        const cleanup = mocks.createCollection.mock.results.at(-1)?.value.cleanup;
+
         await resetProjectRequirementsCollections();
 
-        expect(firstCollection.cleanup.mock.calls).toHaveLength(1);
+        expect(cleanup).toHaveBeenCalledOnce();
         expect(getProjectRequirementsCollection('project-reset')).not.toBe(firstCollection);
     });
 

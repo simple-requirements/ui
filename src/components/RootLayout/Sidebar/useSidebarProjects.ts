@@ -14,7 +14,7 @@ export function useSidebarProjects(): readonly SidebarProject[] {
         () =>
             [...projects]
                 .sort((left, right) => left.name.localeCompare(right.name))
-                .map((project): SidebarProject => ({ ...project, requirementCount: project.requirementCount ?? 0 })),
+                .map((project): SidebarProject => ({ ...project, requirementCount: project.requirementCount })),
         [projects],
     );
 }

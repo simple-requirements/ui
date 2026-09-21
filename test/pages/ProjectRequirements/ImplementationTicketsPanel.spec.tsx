@@ -90,6 +90,11 @@ describe('ImplementationTicketsPanel permissions', () => {
         expect(screen.getByRole('button', { name: 'Delete ticket' })).toBeInTheDocument();
         expect(screen.getByRole('columnheader', { name: 'Completed by' })).toBeInTheDocument();
         expect(screen.getByText('Dev Example')).toBeInTheDocument();
+        expect(screen.getByLabelText('Ticket ID')).toHaveClass('ui-control--dialog');
+        expect(screen.getByLabelText('Completed by').parentElement).toHaveClass('ui-field--dialog');
+        expect(screen.getByRole('button', { name: 'Add ticket' }).parentElement).toHaveClass(
+            'ui-dialog__actions--flush',
+        );
 
         await userEvent.click(screen.getByRole('button', { name: 'Edit ticket' }));
         expect(screen.getByRole('textbox', { name: 'Completed by' })).toHaveValue('Dev Example');

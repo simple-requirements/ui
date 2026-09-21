@@ -7,7 +7,7 @@ export const projectSchema = z.object({
     name: z.string().min(1),
     createdAt: z.iso.datetime(),
     updatedAt: z.iso.datetime(),
-    requirementCount: z.number().int().nonnegative().optional(),
+    requirementCount: z.number().int().nonnegative(),
     ticketUrlTemplate: z
         .string()
         .nullable()

@@ -70,7 +70,7 @@ afterEach(() => {
 });
 
 describe('RevisionHistoryPanel', () => {
-    it('shows newest revisions first and marks the current revision', () => {
+    it('shows newest revisions first and highlights the current revision', () => {
         mocks.useQuery.mockReturnValue({ data: revisions, isLoading: false, isError: false });
 
         render(
@@ -83,11 +83,13 @@ describe('RevisionHistoryPanel', () => {
 
         const rows = screen.getAllByRole('row');
         expect(within(rows[1]).getByText('Revision 2')).toBeInTheDocument();
-        expect(within(rows[1]).getByText('Current')).toBeInTheDocument();
+        expect(rows[1]).toHaveClass('revision-history-panel__row--current');
+        expect(within(rows[1]).queryByText('Current')).not.toBeInTheDocument();
         expect(within(rows[1]).getByText('Content changed')).toBeInTheDocument();
         expect(within(rows[1]).getByText('Clarified authentication behavior.')).toBeInTheDocument();
         expect(within(rows[1]).getByText('Ada Engineer')).toBeInTheDocument();
         expect(within(rows[2]).getByText('Revision 1')).toBeInTheDocument();
+        expect(within(rows[2]).getByText('Requirement created')).toBeInTheDocument();
 
         expect(mocks.useQuery).toHaveBeenCalledWith(
             expect.objectContaining({

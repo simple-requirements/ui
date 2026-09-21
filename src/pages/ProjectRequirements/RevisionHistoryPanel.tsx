@@ -35,16 +35,23 @@ function RevisionHistoryTable({
                 </thead>
                 <tbody>
                     {[...revisions].reverse().map((revision) => (
-                        <tr key={revision.revisionNumber}>
+                        <tr
+                            key={revision.revisionNumber}
+                            className={
+                                revision.revisionNumber === currentRevisionNumber ?
+                                    'revision-history-panel__row--current'
+                                :   undefined
+                            }>
                             <td>
                                 <span className='revision-history-panel__revision'>
                                     Revision {revision.revisionNumber}
                                 </span>
-                                {revision.revisionNumber === currentRevisionNumber && (
-                                    <span className='revision-history-panel__current'>Current</span>
-                                )}
                             </td>
-                            <td>{formatChangeType(revision.changeType)}</td>
+                            <td>
+                                {revision.revisionNumber === 1 ?
+                                    'Requirement created'
+                                :   formatChangeType(revision.changeType)}
+                            </td>
                             <td>{revision.changeReason}</td>
                             <td>{revision.changedByDisplayName}</td>
                             <td>

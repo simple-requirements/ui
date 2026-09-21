@@ -18,11 +18,8 @@
     font-weight: 600;
 }
 
-.revision-history-panel__current {
-    display: block;
-    margin-block-start: var(--ui-space-xs);
-    color: var(--color-app-text-muted);
-    font-size: var(--font-size-small);
+.revision-history-panel__row--current {
+    background: var(--color-app-active-background);
 }
 
 .revision-history-panel__table td:nth-child(3) {

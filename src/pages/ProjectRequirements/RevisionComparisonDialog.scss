@@ -1,0 +1,70 @@
+.revision-comparison-dialog.ui-dialog {
+    inline-size: min(104rem, calc(100vw - var(--ui-dialog-inline-margin)));
+}
+
+.revision-comparison-dialog__content {
+    display: grid;
+    gap: var(--ui-space-xl);
+}
+
+.revision-comparison-dialog__selectors {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 22rem));
+    gap: var(--ui-space-md);
+}
+
+.revision-comparison-dialog__result {
+    display: grid;
+    gap: var(--ui-space-xl);
+}
+
+.revision-comparison-dialog__result h3,
+.revision-comparison-dialog__description h3 {
+    margin: 0 0 var(--ui-space-md);
+    font-size: var(--font-size-h6);
+    line-height: var(--line-height-heading);
+    color: var(--color-app-text);
+}
+
+.revision-comparison-dialog__diff {
+    overflow: auto;
+    border: var(--ui-border);
+    border-radius: var(--ui-border-radius-small);
+}
+
+.revision-comparison-dialog__table th[scope='row'] {
+    inline-size: 18rem;
+    min-inline-size: 14rem;
+    text-align: start;
+    vertical-align: top;
+}
+
+.revision-comparison-dialog__table td {
+    min-inline-size: 20rem;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    vertical-align: top;
+}
+
+.revision-comparison-dialog__field--changed > * {
+    color: var(--color-feedback-error-text);
+    background: var(--color-feedback-error-background);
+}
+
+.revision-comparison-dialog__ticket-list {
+    margin: 0;
+    padding-inline-start: var(--ui-space-lg);
+}
+
+.revision-comparison-dialog__structured-value {
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font: inherit;
+}
+
+@media (max-width: 48rem) {
+    .revision-comparison-dialog__selectors {
+        grid-template-columns: 1fr;
+    }
+}

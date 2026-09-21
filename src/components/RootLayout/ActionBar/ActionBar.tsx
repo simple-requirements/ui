@@ -29,6 +29,7 @@ import { useRouteUiMetadata } from '@/router/routeUiMetadata';
 import {
     actionBarStore,
     openImplementationTicketsDialog,
+    openRevisionComparisonDialog,
     requestAdministratorAction,
     requestReviewDecision,
 } from '@/stores/actionBarStore';
@@ -48,6 +49,10 @@ export function ActionBar({ onFindRequirementKey }: ActionBarProps) {
     const configuration = getActionBarConfiguration(actionBarKind);
     const permissions = useProjectPermissions(projectId);
     const reviewActionRequirement = useSelector(actionBarStore, (state) => state.reviewActionRequirement);
+    const revisionComparisonAvailable = useSelector(
+        actionBarStore,
+        (state) => state.revisionComparisonAvailable ?? false,
+    );
     const administratorUserActionContext = useSelector(actionBarStore, (state) => state.administratorUserActionContext);
     const administratorProjectActionContext = useSelector(
         actionBarStore,
@@ -169,12 +174,14 @@ export function ActionBar({ onFindRequirementKey }: ActionBarProps) {
                 canEdit={availability.canEditRequirement}
                 canReview={availability.canReview}
                 canManageTickets={availability.canManageTickets}
+                canCompareRevisions={(configuration.showRevisionComparison ?? false) && revisionComparisonAvailable}
                 canMarkObsolete={availability.canMarkObsolete}
                 canMarkImplemented={availability.canMarkImplemented}
                 implementPending={implementAction.pending}
                 onEdit={handleEditRequirement}
                 onReview={handleReview}
                 onManageTickets={openImplementationTicketsDialog}
+                onCompareRevisions={openRevisionComparisonDialog}
                 onMarkObsolete={obsoleteAction.open}
                 onMarkImplemented={() => void implementAction.implement()}
             />

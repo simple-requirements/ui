@@ -36,6 +36,8 @@ export type ActionBarState = Readonly<{
     reviewActionRequirement?: ReviewActionRequirement;
     reviewDecisionRequest?: ReviewDecisionRequest;
     implementationTicketsDialogOpen?: boolean;
+    revisionComparisonAvailable?: boolean;
+    revisionComparisonDialogOpen?: boolean;
     administratorActionRequest?: AdministratorActionRequest;
     administratorUserActionContext?: AdministratorUserActionContext;
     administratorProjectActionContext?: AdministratorProjectActionContext;
@@ -80,6 +82,14 @@ export function setReviewActionRequirement(reviewActionRequirement: ReviewAction
             state.reviewActionRequirement?.requirementId === reviewActionRequirement.requirementId ?
                 state.implementationTicketsDialogOpen
             :   false,
+        revisionComparisonAvailable:
+            state.reviewActionRequirement?.requirementId === reviewActionRequirement.requirementId ?
+                state.revisionComparisonAvailable
+            :   false,
+        revisionComparisonDialogOpen:
+            state.reviewActionRequirement?.requirementId === reviewActionRequirement.requirementId ?
+                state.revisionComparisonDialogOpen
+            :   false,
     }));
 }
 
@@ -92,6 +102,8 @@ export function clearReviewActionRequirement(): void {
         ...state,
         reviewActionRequirement: undefined,
         implementationTicketsDialogOpen: false,
+        revisionComparisonAvailable: false,
+        revisionComparisonDialogOpen: false,
     }));
 }
 
@@ -125,6 +137,28 @@ export function openImplementationTicketsDialog(): void {
  */
 export function closeImplementationTicketsDialog(): void {
     actionBarStore.setState((state) => ({ ...state, implementationTicketsDialogOpen: false }));
+}
+
+/** Publishes whether the active requirement has enough revisions for comparison. */
+export function setRevisionComparisonAvailable(revisionComparisonAvailable: boolean): void {
+    actionBarStore.setState((state) => ({
+        ...state,
+        revisionComparisonAvailable,
+        revisionComparisonDialogOpen: revisionComparisonAvailable ? state.revisionComparisonDialogOpen : false,
+    }));
+}
+
+/** Opens the revision-comparison dialog for the active requirement. */
+export function openRevisionComparisonDialog(): void {
+    actionBarStore.setState((state) => ({
+        ...state,
+        revisionComparisonDialogOpen: state.revisionComparisonAvailable === true,
+    }));
+}
+
+/** Closes the revision-comparison dialog for the active requirement. */
+export function closeRevisionComparisonDialog(): void {
+    actionBarStore.setState((state) => ({ ...state, revisionComparisonDialogOpen: false }));
 }
 
 /** Requests an Administrator workspace action from the active page. */

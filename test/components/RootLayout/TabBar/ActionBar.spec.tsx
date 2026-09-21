@@ -267,6 +267,22 @@ describe('ActionBar', () => {
             expect(screen.getByRole('button', { name: 'Tickets' })).toBeInTheDocument();
         });
 
+        it('shows Compare on requirement details only when revision comparison is available.', () => {
+            setMockReviewActionRequirement('draft');
+            actionBarStore.setState((state) => ({ ...state, revisionComparisonAvailable: true }));
+            renderActionBar('/projects/project-alpha/requirements/requirement-alpha');
+
+            expect(screen.getByRole('button', { name: 'Compare' })).toBeInTheDocument();
+        });
+
+        it('hides Compare when fewer than two revisions are available.', () => {
+            setMockReviewActionRequirement('draft');
+            actionBarStore.setState((state) => ({ ...state, revisionComparisonAvailable: false }));
+            renderActionBar('/projects/project-alpha/requirements/requirement-alpha');
+
+            expect(screen.queryByRole('button', { name: 'Compare' })).not.toBeInTheDocument();
+        });
+
         it('hides requirement lookup on category routes.', () => {
             renderActionBar('/projects/project-alpha/categories');
 

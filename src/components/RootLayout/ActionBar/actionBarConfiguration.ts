@@ -11,6 +11,7 @@ export type ActionBarConfiguration = Readonly<{
     showEditRequirement?: boolean;
     showEditCategory?: boolean;
     showImplementationTickets?: boolean;
+    showRevisionComparison?: boolean;
     showObsoleteRequirement?: boolean;
     showImplementedRequirement?: boolean;
     showReview?: boolean;
@@ -48,6 +49,7 @@ export function getActionBarConfiguration(actionBarKind: ActionBarKind): ActionB
                 showRequirementLookup: false,
                 showEditRequirement: true,
                 showImplementationTickets: true,
+                showRevisionComparison: true,
                 showObsoleteRequirement: true,
                 showImplementedRequirement: true,
                 showReview: true,

@@ -6,6 +6,7 @@ import type * as ReactQueryModule from '@tanstack/react-query';
 
 import type { Requirement } from '@/api/requirementsApi';
 import { RevisionHistoryPanel } from '@/pages/ProjectRequirements/RevisionHistoryPanel';
+import { actionBarStore } from '@/stores/actionBarStore';
 
 const mocks = vi.hoisted(() => ({ useQuery: vi.fn() }));
 
@@ -14,8 +15,9 @@ vi.mock('@tanstack/react-query', async (importOriginal) => {
     return { ...actual, useQuery: mocks.useQuery };
 });
 
-vi.mock('@/pages/ProjectRequirements/RevisionComparisonPanel', () => ({
-    RevisionComparisonPanel: () => <div>Revision comparison</div>,
+vi.mock('@/pages/ProjectRequirements/RevisionComparisonDialog', () => ({
+    RevisionComparisonDialog: ({ visible }: Readonly<{ visible: boolean }>) =>
+        visible ? <div>Revision comparison</div> : null,
 }));
 
 const baseRevision = {
@@ -70,6 +72,7 @@ const revisions: Requirement[] = [
 
 afterEach(() => {
     cleanup();
+    actionBarStore.setState(() => ({ requirementKey: '' }));
     vi.clearAllMocks();
 });
 
@@ -102,6 +105,7 @@ describe('RevisionHistoryPanel', () => {
                 ],
             }),
         );
+        expect(actionBarStore.state.revisionComparisonAvailable).toBe(true);
     });
 
     it('shows loading, error, and empty states', () => {

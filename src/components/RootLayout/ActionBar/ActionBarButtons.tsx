@@ -24,12 +24,14 @@ export type RequirementRouteActionButtonsProps = Readonly<{
     canEdit: boolean;
     canReview: boolean;
     canManageTickets: boolean;
+    canCompareRevisions: boolean;
     canMarkObsolete: boolean;
     canMarkImplemented: boolean;
     implementPending: boolean;
     onEdit: () => void;
     onReview: () => void;
     onManageTickets: () => void;
+    onCompareRevisions: () => void;
     onMarkObsolete: () => void;
     onMarkImplemented: () => void;
 }>;
@@ -43,12 +45,14 @@ export function RequirementRouteActionButtons({
     canEdit,
     canReview,
     canManageTickets,
+    canCompareRevisions,
     canMarkObsolete,
     canMarkImplemented,
     implementPending,
     onEdit,
     onReview,
     onManageTickets,
+    onCompareRevisions,
     onMarkObsolete,
     onMarkImplemented,
 }: RequirementRouteActionButtonsProps) {
@@ -77,6 +81,15 @@ export function RequirementRouteActionButtons({
                     type='button'
                     label='Tickets'
                     onClick={onManageTickets}
+                    pt={{ root: { className: 'ui-button ui-button--outline ui-button--action' } }}
+                />
+            )}
+
+            {canCompareRevisions && (
+                <Button
+                    type='button'
+                    label='Compare'
+                    onClick={onCompareRevisions}
                     pt={{ root: { className: 'ui-button ui-button--outline ui-button--action' } }}
                 />
             )}

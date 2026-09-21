@@ -1,4 +1,6 @@
+import { useSelector } from '@tanstack/react-store';
 import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 
 import {
     getRequirementRevisionsQueryKey,
@@ -6,7 +8,12 @@ import {
     type Requirement,
 } from '@/api/requirementsApi';
 import { LoadableContent } from '@/components/Feedback/LoadableContent';
-import { RevisionComparisonPanel } from '@/pages/ProjectRequirements/RevisionComparisonPanel';
+import { RevisionComparisonDialog } from '@/pages/ProjectRequirements/RevisionComparisonDialog';
+import {
+    actionBarStore,
+    closeRevisionComparisonDialog,
+    setRevisionComparisonAvailable,
+} from '@/stores/actionBarStore';
 import { formatDateTime } from '@/utils/displayFormatters';
 
 import '@/pages/ProjectRequirements/RevisionHistoryPanel.scss';
@@ -45,7 +52,7 @@ function RevisionHistoryTable({
                             }>
                             <td>
                                 <span className='revision-history-panel__revision'>
-                                    Revision {revision.revisionNumber}
+                                    Revision {String(revision.revisionNumber)}
                                 </span>
                             </td>
                             <td>
@@ -72,8 +79,14 @@ export function RevisionHistoryPanel({ projectId, requirementId, currentRevision
         queryKey: getRequirementRevisionsQueryKey(projectId, requirementId),
         queryFn: () => listRequirementRevisionsRequest(projectId, requirementId),
     });
-
+    const comparisonDialogOpen = useSelector(actionBarStore, (state) => state.revisionComparisonDialogOpen ?? false);
     const revisions = revisionsQuery.data ?? [];
+    const comparisonAvailable = revisions.length >= 2;
+
+    useEffect(() => {
+        setRevisionComparisonAvailable(comparisonAvailable);
+        return () => setRevisionComparisonAvailable(false);
+    }, [comparisonAvailable]);
 
     return (
         <section
@@ -94,18 +107,21 @@ export function RevisionHistoryPanel({ projectId, requirementId, currentRevision
                 loadingMessage='Loading revision history …'
                 errorMessage='Revision history could not be loaded.'
                 emptyMessage='No revision history is available for this requirement.'>
-                <>
-                    <RevisionHistoryTable
-                        revisions={revisions}
-                        currentRevisionNumber={currentRevisionNumber}
-                    />
-                    <RevisionComparisonPanel
-                        projectId={projectId}
-                        requirementId={requirementId}
-                        revisions={revisions}
-                    />
-                </>
+                <RevisionHistoryTable
+                    revisions={revisions}
+                    currentRevisionNumber={currentRevisionNumber}
+                />
             </LoadableContent>
+
+            {comparisonAvailable && (
+                <RevisionComparisonDialog
+                    projectId={projectId}
+                    requirementId={requirementId}
+                    revisions={revisions}
+                    visible={comparisonDialogOpen}
+                    onHide={closeRevisionComparisonDialog}
+                />
+            )}
         </section>
     );
 }

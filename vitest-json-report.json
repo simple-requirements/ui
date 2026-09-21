@@ -24,7 +24,7 @@
         "updated": 0,
         "didUpdate": false
     },
-    "startTime": 1789997560927,
+    "startTime": 1789998864816,
     "success": true,
     "testResults": [
         {
@@ -34,7 +34,7 @@
                     "fullName": "categoriesApi creates the generated list query key.",
                     "status": "passed",
                     "title": "creates the generated list query key.",
-                    "duration": 6.394921000000068,
+                    "duration": 1.7028480000000172,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -44,7 +44,7 @@
                     "fullName": "categoriesApi does not invent a missing requirement count.",
                     "status": "passed",
                     "title": "does not invent a missing requirement count.",
-                    "duration": 4.1974360000001525,
+                    "duration": 1.935055000000034,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -54,7 +54,7 @@
                     "fullName": "categoriesApi normalizes create input.",
                     "status": "passed",
                     "title": "normalizes create input.",
-                    "duration": 0.6551240000001144,
+                    "duration": 0.5598370000000159,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -64,7 +64,7 @@
                     "fullName": "categoriesApi lists and parses project categories through the generated API client.",
                     "status": "passed",
                     "title": "lists and parses project categories through the generated API client.",
-                    "duration": 4.9731839999999465,
+                    "duration": 1.6775390000000243,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -74,7 +74,7 @@
                     "fullName": "categoriesApi creates a project category through the generated API client.",
                     "status": "passed",
                     "title": "creates a project category through the generated API client.",
-                    "duration": 0.5663739999999962,
+                    "duration": 0.6547879999999395,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -84,14 +84,14 @@
                     "fullName": "categoriesApi updates a project category through the generated API client.",
                     "status": "passed",
                     "title": "updates a project category through the generated API client.",
-                    "duration": 0.4233790000000681,
+                    "duration": 0.5198379999999361,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997592491,
-            "endTime": 1789997592508.4233,
+            "startTime": 1789998895901,
+            "endTime": 1789998895908.5198,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/api/categoriesApi.spec.ts"
@@ -103,7 +103,7 @@
                     "fullName": "apiFetch reads JSON responses and adds the default Accept header.",
                     "status": "passed",
                     "title": "reads JSON responses and adds the default Accept header.",
-                    "duration": 11.807099999999991,
+                    "duration": 7.597234000000071,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -113,7 +113,7 @@
                     "fullName": "apiFetch adds the in-memory bearer token to authenticated requests.",
                     "status": "passed",
                     "title": "adds the in-memory bearer token to authenticated requests.",
-                    "duration": 0.6201609999999391,
+                    "duration": 1.6089039999999386,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -123,7 +123,7 @@
                     "fullName": "apiFetch keeps a caller-provided Accept header.",
                     "status": "passed",
                     "title": "keeps a caller-provided Accept header.",
-                    "duration": 1.3165890000000218,
+                    "duration": 1.1614309999999932,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -133,7 +133,7 @@
                     "fullName": "apiFetch returns undefined data for 204 responses.",
                     "status": "passed",
                     "title": "returns undefined data for 204 responses.",
-                    "duration": 0.3503009999999449,
+                    "duration": 0.5991189999999733,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -143,7 +143,7 @@
                     "fullName": "apiFetch throws ApiError for non-OK responses.",
                     "status": "passed",
                     "title": "throws ApiError for non-OK responses.",
-                    "duration": 1.6911760000000413,
+                    "duration": 0.6917989999999463,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -153,7 +153,7 @@
                     "fullName": "apiFetch clears authentication and throws a typed error for 401 responses.",
                     "status": "passed",
                     "title": "clears authentication and throws a typed error for 401 responses.",
-                    "duration": 212.55770899999993,
+                    "duration": 124.28372400000012,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -163,14 +163,14 @@
                     "fullName": "apiFetch keeps authentication and throws a typed error for 403 responses.",
                     "status": "passed",
                     "title": "keeps authentication and throws a typed error for 403 responses.",
-                    "duration": 0.7301209999998264,
+                    "duration": 0.6547880000000532,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997588141,
-            "endTime": 1789997588369.7302,
+            "startTime": 1789998885217,
+            "endTime": 1789998885353.6548,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/api/fetch.spec.ts"
@@ -182,7 +182,7 @@
                     "fullName": "projectPrefetch prefetches project requirements with the collection backing query key.",
                     "status": "passed",
                     "title": "prefetches project requirements with the collection backing query key.",
-                    "duration": 11.250623999999902,
+                    "duration": 6.843018000000029,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -192,7 +192,7 @@
                     "fullName": "projectPrefetch prefetches project categories with the collection backing query key.",
                     "status": "passed",
                     "title": "prefetches project categories with the collection backing query key.",
-                    "duration": 1.5344910000000027,
+                    "duration": 0.5688969999999927,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -202,7 +202,7 @@
                     "fullName": "projectPrefetch prefetches both datasets required by project details.",
                     "status": "passed",
                     "title": "prefetches both datasets required by project details.",
-                    "duration": 0.3057130000000825,
+                    "duration": 0.26914000000010674,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -212,14 +212,14 @@
                     "fullName": "projectPrefetch does not surface speculative prefetch failures.",
                     "status": "passed",
                     "title": "does not surface speculative prefetch failures.",
-                    "duration": 3.1552090000000135,
+                    "duration": 5.13404300000002,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997594352,
-            "endTime": 1789997594368.1553,
+            "startTime": 1789998895732,
+            "endTime": 1789998895744.134,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/api/projectPrefetch.spec.ts"
@@ -231,7 +231,7 @@
                     "fullName": "requirementsApi creates the list query key.",
                     "status": "passed",
                     "title": "creates the list query key.",
-                    "duration": 1.8616230000000087,
+                    "duration": 1.5316709999999603,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -241,7 +241,7 @@
                     "fullName": "requirementsApi creates the revision-history query key.",
                     "status": "passed",
                     "title": "creates the revision-history query key.",
-                    "duration": 0.3039939999998751,
+                    "duration": 0.47993799999994735,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -251,7 +251,7 @@
                     "fullName": "requirementsApi parses a requirement.",
                     "status": "passed",
                     "title": "parses a requirement.",
-                    "duration": 4.301822000000129,
+                    "duration": 14.077818000000093,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -261,7 +261,7 @@
                     "fullName": "requirementsApi requires a non-empty change reason for requirement updates.",
                     "status": "passed",
                     "title": "requires a non-empty change reason for requirement updates.",
-                    "duration": 1.598019000000022,
+                    "duration": 1.3101370000000543,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -271,7 +271,7 @@
                     "fullName": "requirementsApi parses an implementation ticket with a derived URL.",
                     "status": "passed",
                     "title": "parses an implementation ticket with a derived URL.",
-                    "duration": 0.7029179999999542,
+                    "duration": 0.6367549999999937,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -281,7 +281,7 @@
                     "fullName": "requirementsApi lists and parses project requirements.",
                     "status": "passed",
                     "title": "lists and parses project requirements.",
-                    "duration": 2.2572439999999006,
+                    "duration": 1.8127570000000333,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -291,7 +291,7 @@
                     "fullName": "requirementsApi lists requirement revisions through the current backend route.",
                     "status": "passed",
                     "title": "lists requirement revisions through the current backend route.",
-                    "duration": 0.7768929999999727,
+                    "duration": 0.7349389999999403,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -301,7 +301,7 @@
                     "fullName": "requirementsApi compares requirement revisions using the backend comparison contract.",
                     "status": "passed",
                     "title": "compares requirement revisions using the backend comparison contract.",
-                    "duration": 0.9088839999999436,
+                    "duration": 0.8810999999999467,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -311,7 +311,7 @@
                     "fullName": "requirementsApi creates and updates implementation tickets with user-entered completer names.",
                     "status": "passed",
                     "title": "creates and updates implementation tickets with user-entered completer names.",
-                    "duration": 0.69333000000006,
+                    "duration": 0.5692520000000059,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -321,14 +321,14 @@
                     "fullName": "requirementsApi marks a requirement obsolete with a reason.",
                     "status": "passed",
                     "title": "marks a requirement obsolete with a reason.",
-                    "duration": 1.5689930000000913,
+                    "duration": 1.1337369999999964,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997592340,
-            "endTime": 1789997592355.569,
+            "startTime": 1789998896710,
+            "endTime": 1789998896733.1338,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/api/requirementsApi.spec.ts"
@@ -340,7 +340,7 @@
                     "fullName": "reviewApi creates comments without client-supplied actor names.",
                     "status": "passed",
                     "title": "creates comments without client-supplied actor names.",
-                    "duration": 6.331377999999972,
+                    "duration": 12.22046899999998,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -350,7 +350,7 @@
                     "fullName": "reviewApi creates replies without client-supplied actor names.",
                     "status": "passed",
                     "title": "creates replies without client-supplied actor names.",
-                    "duration": 1.1835670000000391,
+                    "duration": 1.2957989999999882,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -360,7 +360,7 @@
                     "fullName": "reviewApi resolves comments without client-supplied resolver names.",
                     "status": "passed",
                     "title": "resolves comments without client-supplied resolver names.",
-                    "duration": 8.056219000000056,
+                    "duration": 0.49435300000004645,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -370,14 +370,14 @@
                     "fullName": "reviewApi approves and rejects without client-supplied reviewer names.",
                     "status": "passed",
                     "title": "approves and rejects without client-supplied reviewer names.",
-                    "duration": 2.4040679999998247,
+                    "duration": 2.1136359999999286,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997589402,
-            "endTime": 1789997589420.404,
+            "startTime": 1789998895554,
+            "endTime": 1789998895570.1135,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/api/reviewApi.spec.ts"
@@ -389,7 +389,7 @@
                     "fullName": "AdministratorRoute renders the dedicated Administrator workspace for an Administrator",
                     "status": "passed",
                     "title": "renders the dedicated Administrator workspace for an Administrator",
-                    "duration": 144.14482599999997,
+                    "duration": 190.34006899999986,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -399,14 +399,14 @@
                     "fullName": "AdministratorRoute redirects a project-scoped account to the project workspace",
                     "status": "passed",
                     "title": "redirects a project-scoped account to the project workspace",
-                    "duration": 27.926873999999998,
+                    "duration": 12.48950200000013,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997587931,
-            "endTime": 1789997588102.9268,
+            "startTime": 1789998891262,
+            "endTime": 1789998891465.4895,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/auth/AdministratorRoute.spec.tsx"
@@ -418,7 +418,7 @@
                     "fullName": "ProjectPermissionRoute renders project content when the account has the required permission",
                     "status": "passed",
                     "title": "renders project content when the account has the required permission",
-                    "duration": 137.3640130000001,
+                    "duration": 154.05100199999993,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -428,7 +428,7 @@
                     "fullName": "ProjectPermissionRoute redirects a member without mutation permission to the project overview",
                     "status": "passed",
                     "title": "redirects a member without mutation permission to the project overview",
-                    "duration": 18.437578999999914,
+                    "duration": 19.501854999999978,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -438,14 +438,14 @@
                     "fullName": "ProjectPermissionRoute redirects a non-member without read permission to the workspace",
                     "status": "passed",
                     "title": "redirects a non-member without read permission to the workspace",
-                    "duration": 10.68419300000005,
+                    "duration": 12.397373000000016,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997581574,
-            "endTime": 1789997581740.684,
+            "startTime": 1789998891962,
+            "endTime": 1789998892148.3975,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/auth/ProjectPermissionRoute.spec.tsx"
@@ -457,7 +457,7 @@
                     "fullName": "ProtectedRoute redirects unauthenticated users and preserves the complete requested URL.",
                     "status": "passed",
                     "title": "redirects unauthenticated users and preserves the complete requested URL.",
-                    "duration": 175.000133,
+                    "duration": 238.60035700000003,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -467,7 +467,7 @@
                     "fullName": "ProtectedRoute renders protected content for an authenticated session.",
                     "status": "passed",
                     "title": "renders protected content for an authenticated session.",
-                    "duration": 9.536693000000014,
+                    "duration": 12.919429000000036,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -477,14 +477,14 @@
                     "fullName": "ProtectedRoute returns to login with an expiry reason when authentication fails.",
                     "status": "passed",
                     "title": "returns to login with an expiry reason when authentication fails.",
-                    "duration": 163.88744700000007,
+                    "duration": 118.4561920000001,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997578499,
-            "endTime": 1789997578846.8875,
+            "startTime": 1789998882671,
+            "endTime": 1789998883041.4563,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/auth/ProtectedRoute.spec.tsx"
@@ -496,7 +496,7 @@
                     "fullName": "account validation uses the backend username constraints",
                     "status": "passed",
                     "title": "uses the backend username constraints",
-                    "duration": 1.3915349999999762,
+                    "duration": 1.2395010000000184,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -506,7 +506,7 @@
                     "fullName": "account validation requires a complete email address",
                     "status": "passed",
                     "title": "requires a complete email address",
-                    "duration": 0.4345260000000053,
+                    "duration": 0.4514169999999922,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -516,14 +516,14 @@
                     "fullName": "account validation accepts passwords between 15 and 128 characters",
                     "status": "passed",
                     "title": "accepts passwords between 15 and 128 characters",
-                    "duration": 0.2589980000000196,
+                    "duration": 0.22409600000003138,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997596203,
-            "endTime": 1789997596204.4346,
+            "startTime": 1789998900074,
+            "endTime": 1789998900076.224,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/auth/accountValidation.spec.ts"
@@ -535,7 +535,7 @@
                     "fullName": "authentication routes preserves internal application destinations.",
                     "status": "passed",
                     "title": "preserves internal application destinations.",
-                    "duration": 1.1608189999999468,
+                    "duration": 1.1845949999999448,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -545,7 +545,7 @@
                     "fullName": "authentication routes falls back to the workspace for unsafe login state.",
                     "status": "passed",
                     "title": "falls back to the workspace for unsafe login state.",
-                    "duration": 0.21906000000001313,
+                    "duration": 0.15336899999999787,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -555,7 +555,7 @@
                     "fullName": "authentication routes falls back to the workspace for unsafe login state.",
                     "status": "passed",
                     "title": "falls back to the workspace for unsafe login state.",
-                    "duration": 0.09842400000002272,
+                    "duration": 0.09913700000004155,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -565,7 +565,7 @@
                     "fullName": "authentication routes falls back to the workspace for unsafe login state.",
                     "status": "passed",
                     "title": "falls back to the workspace for unsafe login state.",
-                    "duration": 0.08342599999991762,
+                    "duration": 0.09022700000002715,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -575,7 +575,7 @@
                     "fullName": "authentication routes falls back to the workspace for unsafe login state.",
                     "status": "passed",
                     "title": "falls back to the workspace for unsafe login state.",
-                    "duration": 0.12316899999996167,
+                    "duration": 0.08970099999999093,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -585,7 +585,7 @@
                     "fullName": "authentication routes falls back to the workspace for unsafe login state.",
                     "status": "passed",
                     "title": "falls back to the workspace for unsafe login state.",
-                    "duration": 0.07014600000002247,
+                    "duration": 0.13633499999991727,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -595,7 +595,7 @@
                     "fullName": "authentication routes falls back to the workspace for unsafe login state.",
                     "status": "passed",
                     "title": "falls back to the workspace for unsafe login state.",
-                    "duration": 0.1615550000000212,
+                    "duration": 0.08022199999993518,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -605,7 +605,7 @@
                     "fullName": "authentication routes falls back to the workspace for unsafe login state.",
                     "status": "passed",
                     "title": "falls back to the workspace for unsafe login state.",
-                    "duration": 0.07372400000008383,
+                    "duration": 0.08482600000002094,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -615,14 +615,14 @@
                     "fullName": "authentication routes builds a relative URL from the current router location.",
                     "status": "passed",
                     "title": "builds a relative URL from the current router location.",
-                    "duration": 0.13519700000006196,
+                    "duration": 0.14068399999996473,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997595334,
-            "endTime": 1789997595336.1353,
+            "startTime": 1789998899420,
+            "endTime": 1789998899422.1406,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/auth/authRoutes.spec.ts"
@@ -634,14 +634,14 @@
                     "fullName": "handleAuthenticationFailure clears every user-scoped store and notifies navigation listeners.",
                     "status": "passed",
                     "title": "clears every user-scoped store and notifies navigation listeners.",
-                    "duration": 11.942923000000064,
+                    "duration": 4.060324999999921,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997593450,
-            "endTime": 1789997593461.9429,
+            "startTime": 1789998897612,
+            "endTime": 1789998897616.0603,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/auth/authenticationFailure.spec.ts"
@@ -653,7 +653,7 @@
                     "fullName": "global permissions identifies administrators from the single account role",
                     "status": "passed",
                     "title": "identifies administrators from the single account role",
-                    "duration": 1.337266999999997,
+                    "duration": 4.348950000000059,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -663,7 +663,7 @@
                     "fullName": "project permissions denies project access without membership",
                     "status": "passed",
                     "title": "denies project access without membership",
-                    "duration": 0.2964439999999513,
+                    "duration": 0.3645449999999073,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -673,7 +673,7 @@
                     "fullName": "project permissions grants read-only access to viewers",
                     "status": "passed",
                     "title": "grants read-only access to viewers",
-                    "duration": 0.23782599999992726,
+                    "duration": 0.7367420000000493,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -683,7 +683,7 @@
                     "fullName": "project permissions grants ticket management to developers without requirement management",
                     "status": "passed",
                     "title": "grants ticket management to developers without requirement management",
-                    "duration": 0.1356150000000298,
+                    "duration": 0.19360600000004524,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -693,7 +693,7 @@
                     "fullName": "project permissions grants requirement and ticket management to requirements engineers",
                     "status": "passed",
                     "title": "grants requirement and ticket management to requirements engineers",
-                    "duration": 0.17183399999998983,
+                    "duration": 0.26184699999998884,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -703,14 +703,14 @@
                     "fullName": "project permissions denies Administrators all project-content permissions",
                     "status": "passed",
                     "title": "denies Administrators all project-content permissions",
-                    "duration": 0.12300599999991846,
+                    "duration": 0.12920699999995122,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997593734,
-            "endTime": 1789997593737.123,
+            "startTime": 1789998899602,
+            "endTime": 1789998899608.262,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/auth/projectPermissions.spec.ts"
@@ -722,7 +722,7 @@
                     "fullName": "Tooltip renders the tooltip after hovering for the configured delay.",
                     "status": "passed",
                     "title": "the tooltip after hovering for the configured delay.",
-                    "duration": 193.92859799999997,
+                    "duration": 209.33278700000005,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -732,7 +732,7 @@
                     "fullName": "Tooltip renders the tooltip after focusing for the configured delay.",
                     "status": "passed",
                     "title": "the tooltip after focusing for the configured delay.",
-                    "duration": 9.810905999999932,
+                    "duration": 16.785188000000062,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -742,7 +742,7 @@
                     "fullName": "Tooltip shows / hides does not show the tooltip when hovering ends before the delay.",
                     "status": "passed",
                     "title": "does not show the tooltip when hovering ends before the delay.",
-                    "duration": 4.641638000000057,
+                    "duration": 9.057311000000027,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -752,14 +752,14 @@
                     "fullName": "Tooltip shows / hides hides the tooltip when hovering ends.",
                     "status": "passed",
                     "title": "hides the tooltip when hovering ends.",
-                    "duration": 8.930729999999812,
+                    "duration": 11.855049999999892,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997584517,
-            "endTime": 1789997584734.9307,
+            "startTime": 1789998886384,
+            "endTime": 1789998886631.855,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/components/Tooltip.spec.tsx"
@@ -771,7 +771,7 @@
                     "fullName": "administrationRoutes builds Administrator detail routes.",
                     "status": "passed",
                     "title": "builds Administrator detail routes.",
-                    "duration": 5.732255000000009,
+                    "duration": 6.968377000000032,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -781,14 +781,14 @@
                     "fullName": "administrationRoutes resolves the active Administrator section.",
                     "status": "passed",
                     "title": "resolves the active Administrator section.",
-                    "duration": 0.2801640000000134,
+                    "duration": 0.31546000000003005,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997596102,
-            "endTime": 1789997596108.2803,
+            "startTime": 1789998898438,
+            "endTime": 1789998898445.3154,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/router/administrationRoutes.spec.ts"
@@ -800,7 +800,7 @@
                     "fullName": "projectRoutes builds project routes.",
                     "status": "passed",
                     "title": "builds project routes.",
-                    "duration": 6.298324000000093,
+                    "duration": 2.147064999999998,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -810,7 +810,7 @@
                     "fullName": "projectRoutes resolves the active project route and sub route from a pathname.",
                     "status": "passed",
                     "title": "resolves the active project route and sub route from a pathname.",
-                    "duration": 1.3297180000000708,
+                    "duration": 1.3598140000000285,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -820,7 +820,7 @@
                     "fullName": "projectRoutes derives the close route from category detail and form routes.",
                     "status": "passed",
                     "title": "derives the close route from category detail and form routes.",
-                    "duration": 0.40838800000005904,
+                    "duration": 0.3703769999999622,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -830,7 +830,7 @@
                     "fullName": "projectRoutes derives the close route from requirement details routes.",
                     "status": "passed",
                     "title": "derives the close route from requirement details routes.",
-                    "duration": 0.24292800000000625,
+                    "duration": 0.2792530000000397,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -840,135 +840,17 @@
                     "fullName": "projectRoutes returns undefined for list routes.",
                     "status": "passed",
                     "title": "returns undefined for list routes.",
-                    "duration": 0.2412610000000086,
+                    "duration": 0.26022199999999884,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997591251,
-            "endTime": 1789997591260.243,
+            "startTime": 1789998897567,
+            "endTime": 1789998897571.3704,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/router/projectRoutes.spec.ts"
-        },
-        {
-            "assertionResults": [
-                {
-                    "ancestorTitles": ["authStore"],
-                    "fullName": "authStore starts unauthenticated and exposes no token.",
-                    "status": "passed",
-                    "title": "starts unauthenticated and exposes no token.",
-                    "duration": 2.091686999999979,
-                    "failureMessages": [],
-                    "meta": {},
-                    "tags": []
-                },
-                {
-                    "ancestorTitles": ["authStore"],
-                    "fullName": "authStore keeps the authenticated user and opaque token in memory.",
-                    "status": "passed",
-                    "title": "keeps the authenticated user and opaque token in memory.",
-                    "duration": 0.399483000000032,
-                    "failureMessages": [],
-                    "meta": {},
-                    "tags": []
-                },
-                {
-                    "ancestorTitles": ["authStore"],
-                    "fullName": "authStore removes the complete authenticated session.",
-                    "status": "passed",
-                    "title": "removes the complete authenticated session.",
-                    "duration": 0.23316199999999299,
-                    "failureMessages": [],
-                    "meta": {},
-                    "tags": []
-                },
-                {
-                    "ancestorTitles": ["authStore"],
-                    "fullName": "authStore can retain the reason why an authenticated session ended.",
-                    "status": "passed",
-                    "title": "can retain the reason why an authenticated session ended.",
-                    "duration": 0.17362100000002556,
-                    "failureMessages": [],
-                    "meta": {},
-                    "tags": []
-                }
-            ],
-            "startTime": 1789997595656,
-            "endTime": 1789997595659.1736,
-            "status": "passed",
-            "message": "",
-            "name": "/home/node/frontend/test/stores/authStore.spec.ts"
-        },
-        {
-            "assertionResults": [
-                {
-                    "ancestorTitles": ["tabBarStore"],
-                    "fullName": "tabBarStore opens a new tab and activates it.",
-                    "status": "passed",
-                    "title": "opens a new tab and activates it.",
-                    "duration": 2.0171629999999823,
-                    "failureMessages": [],
-                    "meta": {},
-                    "tags": []
-                },
-                {
-                    "ancestorTitles": ["tabBarStore"],
-                    "fullName": "tabBarStore activates an existing tab instead of adding it twice.",
-                    "status": "passed",
-                    "title": "activates an existing tab instead of adding it twice.",
-                    "duration": 0.8670650000000251,
-                    "failureMessages": [],
-                    "meta": {},
-                    "tags": []
-                },
-                {
-                    "ancestorTitles": ["tabBarStore"],
-                    "fullName": "tabBarStore does not activate a missing tab.",
-                    "status": "passed",
-                    "title": "does not activate a missing tab.",
-                    "duration": 0.4408020000000761,
-                    "failureMessages": [],
-                    "meta": {},
-                    "tags": []
-                },
-                {
-                    "ancestorTitles": ["tabBarStore"],
-                    "fullName": "tabBarStore closes the active tab and activates the tab at the same position.",
-                    "status": "passed",
-                    "title": "closes the active tab and activates the tab at the same position.",
-                    "duration": 0.37235999999995784,
-                    "failureMessages": [],
-                    "meta": {},
-                    "tags": []
-                },
-                {
-                    "ancestorTitles": ["tabBarStore"],
-                    "fullName": "tabBarStore does not close non-closable tabs.",
-                    "status": "passed",
-                    "title": "does not close non-closable tabs.",
-                    "duration": 0.3358130000000301,
-                    "failureMessages": [],
-                    "meta": {},
-                    "tags": []
-                },
-                {
-                    "ancestorTitles": ["tabBarStore"],
-                    "fullName": "tabBarStore clears the active tab.",
-                    "status": "passed",
-                    "title": "clears the active tab.",
-                    "duration": 0.17311600000005,
-                    "failureMessages": [],
-                    "meta": {},
-                    "tags": []
-                }
-            ],
-            "startTime": 1789997595246,
-            "endTime": 1789997595250.3723,
-            "status": "passed",
-            "message": "",
-            "name": "/home/node/frontend/test/stores/tabBarStore.spec.ts"
         },
         {
             "assertionResults": [
@@ -977,7 +859,7 @@
                     "fullName": "public account recovery pages confirms an email token only once under React Strict Mode",
                     "status": "passed",
                     "title": "confirms an email token only once under React Strict Mode",
-                    "duration": 50.488309999999956,
+                    "duration": 52.6988859999999,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -987,7 +869,7 @@
                     "fullName": "public account recovery pages resends verification without revealing whether the account exists",
                     "status": "passed",
                     "title": "resends verification without revealing whether the account exists",
-                    "duration": 273.424798,
+                    "duration": 273.938584,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -997,7 +879,7 @@
                     "fullName": "public account recovery pages requests a password reset with a normalized email and a generic response",
                     "status": "passed",
                     "title": "requests a password reset with a normalized email and a generic response",
-                    "duration": 151.86633099999995,
+                    "duration": 135.04344200000014,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1007,7 +889,7 @@
                     "fullName": "public account recovery pages sets a new password using the reset token",
                     "status": "passed",
                     "title": "sets a new password using the reset token",
-                    "duration": 334.20275800000013,
+                    "duration": 374.77173800000014,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1017,14 +899,14 @@
                     "fullName": "public account recovery pages does not render a password form without a reset token",
                     "status": "passed",
                     "title": "does not render a password form without a reset token",
-                    "duration": 8.500884000000042,
+                    "duration": 9.113506000000143,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997570497,
-            "endTime": 1789997571315.501,
+            "startTime": 1789998875018,
+            "endTime": 1789998875864.1135,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/AccountRecoveryPages.spec.tsx"
@@ -1036,7 +918,7 @@
                     "fullName": "AdministratorProjectsPage shows a compact overview of every project on the projects root",
                     "status": "passed",
                     "title": "shows a compact overview of every project on the projects root",
-                    "duration": 361.10963200000015,
+                    "duration": 227.37087900000006,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1046,7 +928,7 @@
                     "fullName": "AdministratorProjectsPage shows only administrative project summary data and settings",
                     "status": "passed",
                     "title": "shows only administrative project summary data and settings",
-                    "duration": 115.52221899999995,
+                    "duration": 114.25714300000004,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1056,7 +938,7 @@
                     "fullName": "AdministratorProjectsPage adds membership through the ActionBar-triggered dialog",
                     "status": "passed",
                     "title": "adds membership through the ActionBar-triggered dialog",
-                    "duration": 270.72345800000016,
+                    "duration": 227.65012100000013,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1066,14 +948,14 @@
                     "fullName": "AdministratorProjectsPage opens the shared project dialog when the ActionBar requests project creation",
                     "status": "passed",
                     "title": "opens the shared project dialog when the ActionBar requests project creation",
-                    "duration": 62.31641999999965,
+                    "duration": 88.94195400000012,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997571123,
-            "endTime": 1789997571933.3164,
+            "startTime": 1789998875450,
+            "endTime": 1789998876107.942,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/AdministratorProjectsPage.spec.tsx"
@@ -1085,7 +967,7 @@
                     "fullName": "AuthenticationEntryPage shows login after confirming that bootstrap is complete.",
                     "status": "passed",
                     "title": "shows login after confirming that bootstrap is complete.",
-                    "duration": 224.379232,
+                    "duration": 238.31635000000006,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1095,7 +977,7 @@
                     "fullName": "AuthenticationEntryPage shows initial Administrator registration while bootstrap is available.",
                     "status": "passed",
                     "title": "shows initial Administrator registration while bootstrap is available.",
-                    "duration": 56.53195500000015,
+                    "duration": 47.868915000000015,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1105,7 +987,7 @@
                     "fullName": "AuthenticationEntryPage does not expose login when bootstrap status cannot be established and supports retry.",
                     "status": "passed",
                     "title": "does not expose login when bootstrap status cannot be established and supports retry.",
-                    "duration": 88.34341399999994,
+                    "duration": 62.21804199999997,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1115,14 +997,14 @@
                     "fullName": "AuthenticationEntryPage rejects malformed bootstrap status responses.",
                     "status": "passed",
                     "title": "rejects malformed bootstrap status responses.",
-                    "duration": 16.670296000000008,
+                    "duration": 26.10273499999994,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997576965,
-            "endTime": 1789997577350.6704,
+            "startTime": 1789998881118,
+            "endTime": 1789998881492.1028,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/AuthenticationEntryPage.spec.tsx"
@@ -1134,7 +1016,7 @@
                     "fullName": "BootstrapAdministratorPage uses standard text-field styling for email and every password input.",
                     "status": "passed",
                     "title": "uses standard text-field styling for email and every password input.",
-                    "duration": 140.80773,
+                    "duration": 238.65456700000004,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1144,7 +1026,7 @@
                     "fullName": "BootstrapAdministratorPage validates matching passwords before enabling registration.",
                     "status": "passed",
                     "title": "validates matching passwords before enabling registration.",
-                    "duration": 335.9071949999998,
+                    "duration": 368.13609500000007,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1154,7 +1036,7 @@
                     "fullName": "BootstrapAdministratorPage submits normalized account data and explains the email-verification step.",
                     "status": "passed",
                     "title": "submits normalized account data and explains the email-verification step.",
-                    "duration": 892.1697819999999,
+                    "duration": 879.7504080000001,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1164,7 +1046,7 @@
                     "fullName": "BootstrapAdministratorPage switches to normal login when another request completed bootstrap first.",
                     "status": "passed",
                     "title": "switches to normal login when another request completed bootstrap first.",
-                    "duration": 750.4037819999999,
+                    "duration": 896.7548310000002,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1174,14 +1056,14 @@
                     "fullName": "BootstrapAdministratorPage shows a specific retry-later message for rate limiting.",
                     "status": "passed",
                     "title": "shows a specific retry-later message for rate limiting.",
-                    "duration": 741.2105850000003,
+                    "duration": 885.7664749999999,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997562582,
-            "endTime": 1789997565443.2107,
+            "startTime": 1789998866153,
+            "endTime": 1789998869421.7664,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/BootstrapAdministratorPage.spec.tsx"
@@ -1193,7 +1075,7 @@
                     "fullName": "LoginPage styles the password field like the username field while preserving password input behavior.",
                     "status": "passed",
                     "title": "styles the password field like the username field while preserving password input behavior.",
-                    "duration": 120.44563700000003,
+                    "duration": 118.75645299999996,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1203,7 +1085,7 @@
                     "fullName": "LoginPage links to registration and password recovery.",
                     "status": "passed",
                     "title": "links to registration and password recovery.",
-                    "duration": 65.3202040000001,
+                    "duration": 111.22707300000002,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1213,7 +1095,7 @@
                     "fullName": "LoginPage signs in, stores the session, and returns to the requested route.",
                     "status": "passed",
                     "title": "signs in, stores the session, and returns to the requested route.",
-                    "duration": 196.47417700000005,
+                    "duration": 238.16517899999985,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1223,7 +1105,7 @@
                     "fullName": "LoginPage shows a generic error without disclosing the account state.",
                     "status": "passed",
                     "title": "shows a generic error without disclosing the account state.",
-                    "duration": 208.43652399999996,
+                    "duration": 298.66424600000005,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1233,7 +1115,7 @@
                     "fullName": "LoginPage explains when the previous session expired.",
                     "status": "passed",
                     "title": "explains when the previous session expired.",
-                    "duration": 44.633857000000035,
+                    "duration": 77.697764,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1243,14 +1125,14 @@
                     "fullName": "LoginPage redirects an already authenticated user without showing the login form.",
                     "status": "passed",
                     "title": "redirects an already authenticated user without showing the login form.",
-                    "duration": 10.564603999999918,
+                    "duration": 8.574701000000005,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997572460,
-            "endTime": 1789997573105.5647,
+            "startTime": 1789998877336,
+            "endTime": 1789998878188.5747,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/LoginPage.spec.tsx"
@@ -1262,14 +1144,14 @@
                     "fullName": "ProjectDetailsPage links to requirements for a project-scoped user.",
                     "status": "passed",
                     "title": "links to requirements for a project-scoped user.",
-                    "duration": 216.02853299999992,
+                    "duration": 203.22446000000014,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997585315,
-            "endTime": 1789997585531.0286,
+            "startTime": 1789998886008,
+            "endTime": 1789998886211.2244,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectDetailsPage.spec.tsx"
@@ -1281,7 +1163,7 @@
                     "fullName": "RegistrationPage uses the standard text-field styling for email and password inputs.",
                     "status": "passed",
                     "title": "uses the standard text-field styling for email and password inputs.",
-                    "duration": 190.79658299999983,
+                    "duration": 184.91036699999995,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1291,7 +1173,7 @@
                     "fullName": "RegistrationPage submits normalized local-account data and explains the activation steps",
                     "status": "passed",
                     "title": "submits normalized local-account data and explains the activation steps",
-                    "duration": 932.635221,
+                    "duration": 868.152638,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1301,14 +1183,14 @@
                     "fullName": "RegistrationPage does not expose backend account details when registration fails",
                     "status": "passed",
                     "title": "does not expose backend account details when registration fails",
-                    "duration": 701.511868,
+                    "duration": 678.1816629999998,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997562188,
-            "endTime": 1789997564013.512,
+            "startTime": 1789998866098,
+            "endTime": 1789998867829.1816,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/RegistrationPage.spec.tsx"
@@ -1320,7 +1202,7 @@
                     "fullName": "RootLayout uses the dedicated Administrator sidebar for Administrator accounts",
                     "status": "passed",
                     "title": "uses the dedicated Administrator sidebar for Administrator accounts",
-                    "duration": 125.012563,
+                    "duration": 153.06495800000016,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1330,14 +1212,14 @@
                     "fullName": "RootLayout uses project navigation for project-scoped accounts",
                     "status": "passed",
                     "title": "uses project navigation for project-scoped accounts",
-                    "duration": 13.187649000000192,
+                    "duration": 21.58529599999997,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997588140,
-            "endTime": 1789997588278.1877,
+            "startTime": 1789998892339,
+            "endTime": 1789998892513.5852,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/RootLayout.spec.tsx"
@@ -1349,7 +1231,7 @@
                     "fullName": "UserAdministrationPage renders the expanded full-width user table with login presence and actions",
                     "status": "passed",
                     "title": "renders the expanded full-width user table with login presence and actions",
-                    "duration": 314.04225700000006,
+                    "duration": 297.9859469999999,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1359,7 +1241,7 @@
                     "fullName": "UserAdministrationPage disables self-deactivation and self-session revocation in the user table",
                     "status": "passed",
                     "title": "disables self-deactivation and self-session revocation in the user table",
-                    "duration": 61.41619800000012,
+                    "duration": 32.57119999999986,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1369,7 +1251,7 @@
                     "fullName": "UserAdministrationPage blocks the role dialog while the selected user is logged in",
                     "status": "passed",
                     "title": "blocks the role dialog while the selected user is logged in",
-                    "duration": 79.3453219999999,
+                    "duration": 48.539061000000174,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1379,7 +1261,7 @@
                     "fullName": "UserAdministrationPage temporarily deactivates an active logged-out user before opening the role dialog and reactivates on cancel",
                     "status": "passed",
                     "title": "temporarily deactivates an active logged-out user before opening the role dialog and reactivates on cancel",
-                    "duration": 358.9902760000002,
+                    "duration": 343.37443900000017,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1389,7 +1271,7 @@
                     "fullName": "UserAdministrationPage saves a role change and restores the temporarily deactivated account",
                     "status": "passed",
                     "title": "saves a role change and restores the temporarily deactivated account",
-                    "duration": 227.05087600000024,
+                    "duration": 260.57667800000036,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1399,7 +1281,7 @@
                     "fullName": "UserAdministrationPage moves selected-user account status administration into the ActionBar",
                     "status": "passed",
                     "title": "moves selected-user account status administration into the ActionBar",
-                    "duration": 15.431054000000131,
+                    "duration": 28.82018799999969,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1409,14 +1291,14 @@
                     "fullName": "UserAdministrationPage shows user metadata without the old sessions section or account-role dropdown",
                     "status": "passed",
                     "title": "shows user metadata without the old sessions section or account-role dropdown",
-                    "duration": 25.76019200000019,
+                    "duration": 43.148897000000034,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997568703,
-            "endTime": 1789997569785.7603,
+            "startTime": 1789998872575,
+            "endTime": 1789998873630.149,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/UserAdministrationPage.spec.tsx"
@@ -1428,7 +1310,7 @@
                     "fullName": "UserDetails shows account metadata without the redundant username or local account-state control",
                     "status": "passed",
                     "title": "shows account metadata without the redundant username or local account-state control",
-                    "duration": 171.86940499999992,
+                    "duration": 178.77822100000003,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1438,14 +1320,14 @@
                     "fullName": "UserDetails opens role administration from the role metadata link",
                     "status": "passed",
                     "title": "opens role administration from the role metadata link",
-                    "duration": 38.890265,
+                    "duration": 49.740023000000065,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997582715,
-            "endTime": 1789997582925.8904,
+            "startTime": 1789998887316,
+            "endTime": 1789998887543.74,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/UserDetails.spec.tsx"
@@ -1457,7 +1339,7 @@
                     "fullName": "WorkspacePage redirects Administrators directly to the dedicated Administrator workspace",
                     "status": "passed",
                     "title": "redirects Administrators directly to the dedicated Administrator workspace",
-                    "duration": 187.903816,
+                    "duration": 208.78985399999988,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1467,17 +1349,135 @@
                     "fullName": "WorkspacePage keeps project-scoped accounts in the project workspace",
                     "status": "passed",
                     "title": "keeps project-scoped accounts in the project workspace",
-                    "duration": 10.773179999999911,
+                    "duration": 18.04103000000009,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997586745,
-            "endTime": 1789997586943.7732,
+            "startTime": 1789998888348,
+            "endTime": 1789998888575.041,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/WorkspacePage.spec.tsx"
+        },
+        {
+            "assertionResults": [
+                {
+                    "ancestorTitles": ["authStore"],
+                    "fullName": "authStore starts unauthenticated and exposes no token.",
+                    "status": "passed",
+                    "title": "starts unauthenticated and exposes no token.",
+                    "duration": 1.7707599999999957,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                },
+                {
+                    "ancestorTitles": ["authStore"],
+                    "fullName": "authStore keeps the authenticated user and opaque token in memory.",
+                    "status": "passed",
+                    "title": "keeps the authenticated user and opaque token in memory.",
+                    "duration": 0.42954900000006546,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                },
+                {
+                    "ancestorTitles": ["authStore"],
+                    "fullName": "authStore removes the complete authenticated session.",
+                    "status": "passed",
+                    "title": "removes the complete authenticated session.",
+                    "duration": 0.46784500000001117,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                },
+                {
+                    "ancestorTitles": ["authStore"],
+                    "fullName": "authStore can retain the reason why an authenticated session ended.",
+                    "status": "passed",
+                    "title": "can retain the reason why an authenticated session ended.",
+                    "duration": 0.1827379999999721,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                }
+            ],
+            "startTime": 1789998899247,
+            "endTime": 1789998899250.1826,
+            "status": "passed",
+            "message": "",
+            "name": "/home/node/frontend/test/stores/authStore.spec.ts"
+        },
+        {
+            "assertionResults": [
+                {
+                    "ancestorTitles": ["tabBarStore"],
+                    "fullName": "tabBarStore opens a new tab and activates it.",
+                    "status": "passed",
+                    "title": "opens a new tab and activates it.",
+                    "duration": 3.672443000000044,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                },
+                {
+                    "ancestorTitles": ["tabBarStore"],
+                    "fullName": "tabBarStore activates an existing tab instead of adding it twice.",
+                    "status": "passed",
+                    "title": "activates an existing tab instead of adding it twice.",
+                    "duration": 0.7474929999999631,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                },
+                {
+                    "ancestorTitles": ["tabBarStore"],
+                    "fullName": "tabBarStore does not activate a missing tab.",
+                    "status": "passed",
+                    "title": "does not activate a missing tab.",
+                    "duration": 0.1740909999999758,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                },
+                {
+                    "ancestorTitles": ["tabBarStore"],
+                    "fullName": "tabBarStore closes the active tab and activates the tab at the same position.",
+                    "status": "passed",
+                    "title": "closes the active tab and activates the tab at the same position.",
+                    "duration": 0.662413000000015,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                },
+                {
+                    "ancestorTitles": ["tabBarStore"],
+                    "fullName": "tabBarStore does not close non-closable tabs.",
+                    "status": "passed",
+                    "title": "does not close non-closable tabs.",
+                    "duration": 0.1937759999999571,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                },
+                {
+                    "ancestorTitles": ["tabBarStore"],
+                    "fullName": "tabBarStore clears the active tab.",
+                    "status": "passed",
+                    "title": "clears the active tab.",
+                    "duration": 0.12629000000003998,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                }
+            ],
+            "startTime": 1789998898524,
+            "endTime": 1789998898529.1938,
+            "status": "passed",
+            "message": "",
+            "name": "/home/node/frontend/test/stores/tabBarStore.spec.ts"
         },
         {
             "assertionResults": [
@@ -1486,7 +1486,7 @@
                     "fullName": "projectCategoriesCollection creates and caches a category collection per project.",
                     "status": "passed",
                     "title": "creates and caches a category collection per project.",
-                    "duration": 2.3395100000000184,
+                    "duration": 3.4632739999999558,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1496,7 +1496,7 @@
                     "fullName": "projectCategoriesCollection clears cached collections at an authentication boundary.",
                     "status": "passed",
                     "title": "clears cached collections at an authentication boundary.",
-                    "duration": 0.44241599999986647,
+                    "duration": 0.7491670000000568,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1506,7 +1506,7 @@
                     "fullName": "projectCategoriesCollection configures the collection with the project category query.",
                     "status": "passed",
                     "title": "configures the collection with the project category query.",
-                    "duration": 1.6820679999998447,
+                    "duration": 2.7841949999999542,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1516,7 +1516,7 @@
                     "fullName": "projectCategoriesCollection uses the category id as collection key.",
                     "status": "passed",
                     "title": "uses the category id as collection key.",
-                    "duration": 0.21573400000011134,
+                    "duration": 0.4046210000000201,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1526,14 +1526,14 @@
                     "fullName": "projectCategoriesCollection loads categories for the configured project id.",
                     "status": "passed",
                     "title": "loads categories for the configured project id.",
-                    "duration": 0.8328679999999622,
+                    "duration": 0.8520050000000765,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997593416,
-            "endTime": 1789997593421.8328,
+            "startTime": 1789998897838,
+            "endTime": 1789998897846.852,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/api/collections/projectCategoriesCollection.spec.ts"
@@ -1545,7 +1545,7 @@
                     "fullName": "projectRequirementsCollection creates and caches a requirements collection per project.",
                     "status": "passed",
                     "title": "creates and caches a requirements collection per project.",
-                    "duration": 2.3509449999999106,
+                    "duration": 2.072750000000042,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1555,7 +1555,7 @@
                     "fullName": "projectRequirementsCollection clears cached collections at an authentication boundary.",
                     "status": "passed",
                     "title": "clears cached collections at an authentication boundary.",
-                    "duration": 0.5919910000000073,
+                    "duration": 0.794399999999996,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1565,7 +1565,7 @@
                     "fullName": "projectRequirementsCollection configures the collection with the project requirements query.",
                     "status": "passed",
                     "title": "configures the collection with the project requirements query.",
-                    "duration": 10.217688000000066,
+                    "duration": 1.6093250000000126,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1575,7 +1575,7 @@
                     "fullName": "projectRequirementsCollection uses the requirement id as collection key.",
                     "status": "passed",
                     "title": "uses the requirement id as collection key.",
-                    "duration": 0.27689699999996265,
+                    "duration": 0.21441600000002836,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1585,14 +1585,14 @@
                     "fullName": "projectRequirementsCollection loads requirements for the configured project id.",
                     "status": "passed",
                     "title": "loads requirements for the configured project id.",
-                    "duration": 3.012122999999974,
+                    "duration": 0.7526129999999966,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997594345,
-            "endTime": 1789997594362.0122,
+            "startTime": 1789998896590,
+            "endTime": 1789998896595.7527,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/api/collections/projectRequirementsCollection.spec.ts"
@@ -1604,7 +1604,7 @@
                     "fullName": "projectsCollection configures the collection with the project query.",
                     "status": "passed",
                     "title": "configures the collection with the project query.",
-                    "duration": 1.9380080000000817,
+                    "duration": 3.792487000000051,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1614,7 +1614,7 @@
                     "fullName": "projectsCollection uses the project id as collection key.",
                     "status": "passed",
                     "title": "uses the project id as collection key.",
-                    "duration": 0.31679400000007263,
+                    "duration": 0.46603300000003856,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1624,7 +1624,7 @@
                     "fullName": "projectsCollection loads projects through the domain-facing API wrapper.",
                     "status": "passed",
                     "title": "loads projects through the domain-facing API wrapper.",
-                    "duration": 0.7879109999998946,
+                    "duration": 0.9461869999998953,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1634,14 +1634,14 @@
                     "fullName": "projectsCollection cleans up and recreates the global collection at an authentication boundary.",
                     "status": "passed",
                     "title": "cleans up and recreates the global collection at an authentication boundary.",
-                    "duration": 0.48008500000003096,
+                    "duration": 0.4208380000000034,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997594627,
-            "endTime": 1789997594631.48,
+            "startTime": 1789998898629,
+            "endTime": 1789998898635.421,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/api/collections/projectsCollection.spec.ts"
@@ -1653,7 +1653,7 @@
                     "fullName": "InlineStatus renders non-error messages as polite status messages.",
                     "status": "passed",
                     "title": "renders non-error messages as polite status messages.",
-                    "duration": 158.74136999999996,
+                    "duration": 143.8893529999998,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1663,14 +1663,14 @@
                     "fullName": "InlineStatus renders error messages as assertive alerts.",
                     "status": "passed",
                     "title": "renders error messages as assertive alerts.",
-                    "duration": 14.872451000000183,
+                    "duration": 7.510825000000068,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997585711,
-            "endTime": 1789997585884.8726,
+            "startTime": 1789998890455,
+            "endTime": 1789998890606.5107,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/components/Feedback/InlineStatus.spec.tsx"
@@ -1682,7 +1682,7 @@
                     "fullName": "LoadableContent renders the loading message first.",
                     "status": "passed",
                     "title": "renders the loading message first.",
-                    "duration": 102.48258800000008,
+                    "duration": 107.158997,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1692,7 +1692,7 @@
                     "fullName": "LoadableContent renders the error message when loading is false and error is true.",
                     "status": "passed",
                     "title": "renders the error message when loading is false and error is true.",
-                    "duration": 7.091826000000083,
+                    "duration": 6.164970999999923,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1702,7 +1702,7 @@
                     "fullName": "LoadableContent renders the configured empty message.",
                     "status": "passed",
                     "title": "renders the configured empty message.",
-                    "duration": 21.041423000000123,
+                    "duration": 24.37547299999983,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1712,14 +1712,14 @@
                     "fullName": "LoadableContent renders the children when loading, error, and empty are false.",
                     "status": "passed",
                     "title": "renders the children when loading, error, and empty are false.",
-                    "duration": 3.2101930000001175,
+                    "duration": 2.348756999999978,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997585660,
-            "endTime": 1789997585794.2102,
+            "startTime": 1789998892567,
+            "endTime": 1789998892707.3489,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/components/Feedback/LoadableContent.spec.tsx"
@@ -1731,7 +1731,7 @@
                     "fullName": "ExpandableNavigationItem renders the item label.",
                     "status": "passed",
                     "title": "the item label.",
-                    "duration": 204.57147599999985,
+                    "duration": 206.93003399999998,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1741,7 +1741,7 @@
                     "fullName": "ExpandableNavigationItem renders the optional parent badge value.",
                     "status": "passed",
                     "title": "the optional parent badge value.",
-                    "duration": 35.14221399999997,
+                    "duration": 31.868244000000004,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1751,7 +1751,7 @@
                     "fullName": "ExpandableNavigationItem renders the collapsed state as aria-expanded=false.",
                     "status": "passed",
                     "title": "the collapsed state as aria-expanded=false.",
-                    "duration": 31.031085000000076,
+                    "duration": 27.095820999999887,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1761,7 +1761,7 @@
                     "fullName": "ExpandableNavigationItem renders the expanded state as aria-expanded=true.",
                     "status": "passed",
                     "title": "the expanded state as aria-expanded=true.",
-                    "duration": 29.953256999999894,
+                    "duration": 30.11340999999993,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1771,7 +1771,7 @@
                     "fullName": "ExpandableNavigationItem renders expanded sub item links with their destination href values.",
                     "status": "passed",
                     "title": "expanded sub item links with their destination href values.",
-                    "duration": 74.52569299999982,
+                    "duration": 28.65425399999981,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1781,7 +1781,7 @@
                     "fullName": "ExpandableNavigationItem renders a sub item badge value.",
                     "status": "passed",
                     "title": "a sub item badge value.",
-                    "duration": 28.678711999999905,
+                    "duration": 21.502275000000054,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1791,7 +1791,7 @@
                     "fullName": "ExpandableNavigationItem renders no accessible sub items when the item is collapsed.",
                     "status": "passed",
                     "title": "no accessible sub items when the item is collapsed.",
-                    "duration": 62.52023800000006,
+                    "duration": 27.790124000000105,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1801,7 +1801,7 @@
                     "fullName": "ExpandableNavigationItem marks / does not mark an active parent item with aria-current.",
                     "status": "passed",
                     "title": "an active parent item with aria-current.",
-                    "duration": 22.36491799999999,
+                    "duration": 27.026409000000058,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1811,7 +1811,7 @@
                     "fullName": "ExpandableNavigationItem marks / does not mark a non-active parent item without aria-current.",
                     "status": "passed",
                     "title": "a non-active parent item without aria-current.",
-                    "duration": 34.112941999999975,
+                    "duration": 23.328205000000025,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1821,7 +1821,7 @@
                     "fullName": "ExpandableNavigationItem marks / does not mark the active sub item based on the current route.",
                     "status": "passed",
                     "title": "the active sub item based on the current route.",
-                    "duration": 47.49616199999991,
+                    "duration": 43.59884399999987,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1831,7 +1831,7 @@
                     "fullName": "ExpandableNavigationItem calls onToggle when the item button is clicked.",
                     "status": "passed",
                     "title": "onToggle when the item button is clicked.",
-                    "duration": 91.69008400000007,
+                    "duration": 76.44318900000007,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1841,7 +1841,7 @@
                     "fullName": "ExpandableNavigationItem calls onContextMenu when the item button is right-clicked.",
                     "status": "passed",
                     "title": "onContextMenu when the item button is right-clicked.",
-                    "duration": 15.785348000000113,
+                    "duration": 22.130642999999964,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1851,7 +1851,7 @@
                     "fullName": "ExpandableNavigationItem calls onIntent when the item receives pointer or keyboard intent.",
                     "status": "passed",
                     "title": "onIntent when the item receives pointer or keyboard intent.",
-                    "duration": 17.37186399999996,
+                    "duration": 29.44644799999992,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1861,7 +1861,7 @@
                     "fullName": "ExpandableNavigationItem calls sub item onIntent when a sub item receives pointer or keyboard intent.",
                     "status": "passed",
                     "title": "sub item onIntent when a sub item receives pointer or keyboard intent.",
-                    "duration": 39.37059699999986,
+                    "duration": 24.948853999999983,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1871,14 +1871,14 @@
                     "fullName": "ExpandableNavigationItem calls onSubItemClick when a sub item is clicked.",
                     "status": "passed",
                     "title": "onSubItemClick when a sub item is clicked.",
-                    "duration": 44.800471000000016,
+                    "duration": 31.098197000000027,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997574483,
-            "endTime": 1789997575262.8005,
+            "startTime": 1789998875602,
+            "endTime": 1789998876259.0981,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/components/Navigation/ExpandableNavigationItem.spec.tsx"
@@ -1890,7 +1890,7 @@
                     "fullName": "AccountMenu does not expose workspace navigation for an Administrator.",
                     "status": "passed",
                     "title": "does not expose workspace navigation for an Administrator.",
-                    "duration": 223.1542710000001,
+                    "duration": 267.6899189999999,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1900,7 +1900,7 @@
                     "fullName": "AccountMenu shows the authenticated identity and logs out through the API.",
                     "status": "passed",
                     "title": "shows the authenticated identity and logs out through the API.",
-                    "duration": 240.629864,
+                    "duration": 248.94414100000017,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1910,14 +1910,14 @@
                     "fullName": "AccountMenu completes local logout even when the backend request fails.",
                     "status": "passed",
                     "title": "completes local logout even when the backend request fails.",
-                    "duration": 69.20867899999985,
+                    "duration": 61.463097999999945,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997573357,
-            "endTime": 1789997573890.2087,
+            "startTime": 1789998879264,
+            "endTime": 1789998879842.4631,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/components/RootLayout/AccountMenu.spec.tsx"
@@ -1929,7 +1929,7 @@
                     "fullName": "LoadingOverlay renders the loading message while the project data is loading.",
                     "status": "passed",
                     "title": "the loading message while the project data is loading.",
-                    "duration": 181.28054399999996,
+                    "duration": 141.18708500000002,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1939,7 +1939,7 @@
                     "fullName": "LoadingOverlay renders a network error message and reload button when loading fails.",
                     "status": "passed",
                     "title": "a network error message and reload button when loading fails.",
-                    "duration": 91.17854899999998,
+                    "duration": 61.14768800000002,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1949,7 +1949,7 @@
                     "fullName": "LoadingOverlay renders a network error message and reload button after the loading timeout.",
                     "status": "passed",
                     "title": "a network error message and reload button after the loading timeout.",
-                    "duration": 40.740013999999974,
+                    "duration": 43.42443000000003,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1959,7 +1959,7 @@
                     "fullName": "LoadingOverlay does not render after the project data has been loaded.",
                     "status": "passed",
                     "title": "after the project data has been loaded.",
-                    "duration": 2.107180999999855,
+                    "duration": 3.883098999999902,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1969,7 +1969,7 @@
                     "fullName": "LoadingOverlay does not render for an Administrator without loading the project-workspace list.",
                     "status": "passed",
                     "title": "for an Administrator without loading the project-workspace list.",
-                    "duration": 4.904800000000023,
+                    "duration": 4.61347899999987,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1979,7 +1979,7 @@
                     "fullName": "LoadingOverlay reloads the project data when the reload button is clicked.",
                     "status": "passed",
                     "title": "the project data when the reload button is clicked.",
-                    "duration": 37.021106000000145,
+                    "duration": 43.76990000000001,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -1989,14 +1989,14 @@
                     "fullName": "LoadingOverlay reloads resets the loading timeout when the reload button is clicked.",
                     "status": "passed",
                     "title": "resets the loading timeout when the reload button is clicked.",
-                    "duration": 39.094204999999874,
+                    "duration": 53.49644699999999,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997581198,
-            "endTime": 1789997581594.0942,
+            "startTime": 1789998881149,
+            "endTime": 1789998881500.4963,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/components/RootLayout/LoadingOverlay.spec.tsx"
@@ -2008,7 +2008,7 @@
                     "fullName": "isSessionActive treats an unrevoked session inside the inactivity window as active",
                     "status": "passed",
                     "title": "treats an unrevoked session inside the inactivity window as active",
-                    "duration": 1.077760000000012,
+                    "duration": 1.2003129999999373,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2018,14 +2018,14 @@
                     "fullName": "isSessionActive treats a revoked or timed-out session as inactive",
                     "status": "passed",
                     "title": "treats a revoked or timed-out session as inactive",
-                    "duration": 0.16653299999995852,
+                    "duration": 0.1961590000000797,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997596441,
-            "endTime": 1789997596442.1665,
+            "startTime": 1789998900153,
+            "endTime": 1789998900154.2002,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/Administration/sessionStatus.spec.ts"
@@ -2037,7 +2037,7 @@
                     "fullName": "useAdministratorProjects returns loaded project/user data and exposes mutation functions",
                     "status": "passed",
                     "title": "returns loaded project/user data and exposes mutation functions",
-                    "duration": 12.863372000000027,
+                    "duration": 18.51659399999994,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2047,7 +2047,7 @@
                     "fullName": "useAdministratorProjects wires project creation to the API and refreshes the administrator project query",
                     "status": "passed",
                     "title": "wires project creation to the API and refreshes the administrator project query",
-                    "duration": 3.028568000000064,
+                    "duration": 3.294316999999978,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2057,14 +2057,14 @@
                     "fullName": "useAdministratorProjects aggregates loading, mutation pending, and mutation error state",
                     "status": "passed",
                     "title": "aggregates loading, mutation pending, and mutation error state",
-                    "duration": 1.4586490000000367,
+                    "duration": 7.783501000000001,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997590353,
-            "endTime": 1789997590370.4587,
+            "startTime": 1789998894833,
+            "endTime": 1789998894862.7834,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/Administration/useAdministratorProjects.spec.tsx"
@@ -2076,7 +2076,7 @@
                     "fullName": "useUserAdministration returns user query state and the three administration mutation APIs",
                     "status": "passed",
                     "title": "returns user query state and the three administration mutation APIs",
-                    "duration": 18.207644000000073,
+                    "duration": 17.667551999999887,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2086,7 +2086,7 @@
                     "fullName": "useUserAdministration updates a role, refreshes the user query, and publishes a success toast",
                     "status": "passed",
                     "title": "updates a role, refreshes the user query, and publishes a success toast",
-                    "duration": 3.5550089999999273,
+                    "duration": 3.1481619999999566,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2096,14 +2096,14 @@
                     "fullName": "useUserAdministration reports pending state when any user mutation is pending",
                     "status": "passed",
                     "title": "reports pending state when any user mutation is pending",
-                    "duration": 1.559592000000066,
+                    "duration": 2.119386000000077,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997590289,
-            "endTime": 1789997590312.5596,
+            "startTime": 1789998894552,
+            "endTime": 1789998894575.1194,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/Administration/useUserAdministration.spec.tsx"
@@ -2115,36 +2115,17 @@
                     "fullName": "useUserPresence maps per-user session query state to presence information",
                     "status": "passed",
                     "title": "maps per-user session query state to presence information",
-                    "duration": 12.578025999999909,
+                    "duration": 24.638541999999916,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997592901,
-            "endTime": 1789997592913.5781,
+            "startTime": 1789998896966,
+            "endTime": 1789998896990.6384,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/Administration/useUserPresence.spec.tsx"
-        },
-        {
-            "assertionResults": [
-                {
-                    "ancestorTitles": ["useProjectDetails"],
-                    "fullName": "useProjectDetails derives counts, status statistics, loading, and error state from collection queries",
-                    "status": "passed",
-                    "title": "derives counts, status statistics, loading, and error state from collection queries",
-                    "duration": 24.320848999999953,
-                    "failureMessages": [],
-                    "meta": {},
-                    "tags": []
-                }
-            ],
-            "startTime": 1789997591746,
-            "endTime": 1789997591770.3208,
-            "status": "passed",
-            "message": "",
-            "name": "/home/node/frontend/test/pages/ProjectDetails/useProjectDetails.spec.tsx"
         },
         {
             "assertionResults": [
@@ -2153,7 +2134,7 @@
                     "fullName": "CategoryDetailsPanel renders the empty message when no category is selected.",
                     "status": "passed",
                     "title": "renders the empty message when no category is selected.",
-                    "duration": 164.42699300000004,
+                    "duration": 155.27073400000018,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2163,14 +2144,14 @@
                     "fullName": "CategoryDetailsPanel renders the category fields.",
                     "status": "passed",
                     "title": "renders the category fields.",
-                    "duration": 49.16246500000011,
+                    "duration": 72.13876800000003,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997583929,
-            "endTime": 1789997584143.1624,
+            "startTime": 1789998886773,
+            "endTime": 1789998887000.1387,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectCategories/CategoryDetailsPanel.spec.tsx"
@@ -2182,14 +2163,14 @@
                     "fullName": "ProjectCategories DetailsPage keeps route actions out of the category detail panel.",
                     "status": "passed",
                     "title": "keeps route actions out of the category detail panel.",
-                    "duration": 170.095775,
+                    "duration": 225.05367,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997584469,
-            "endTime": 1789997584639.0957,
+            "startTime": 1789998891022,
+            "endTime": 1789998891247.0537,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectCategories/DetailsPage.spec.tsx"
@@ -2201,7 +2182,7 @@
                     "fullName": "ProjectCategories FormPage renders the create form with editable category fields.",
                     "status": "passed",
                     "title": "renders the create form with editable category fields.",
-                    "duration": 328.294629,
+                    "duration": 253.92505099999994,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2211,7 +2192,7 @@
                     "fullName": "ProjectCategories FormPage creates a category, opens a details tab, navigates to details, and shows a Toast message.",
                     "status": "passed",
                     "title": "creates a category, opens a details tab, navigates to details, and shows a Toast message.",
-                    "duration": 380.8852139999999,
+                    "duration": 314.62812799999983,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2221,7 +2202,7 @@
                     "fullName": "ProjectCategories FormPage validates required and unique create fields.",
                     "status": "passed",
                     "title": "validates required and unique create fields.",
-                    "duration": 287.06279600000016,
+                    "duration": 294.90577600000006,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2231,7 +2212,7 @@
                     "fullName": "ProjectCategories FormPage renders the update form with read-only key and locked type.",
                     "status": "passed",
                     "title": "renders the update form with read-only key and locked type.",
-                    "duration": 65.63121999999976,
+                    "duration": 49.3964390000001,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2241,7 +2222,7 @@
                     "fullName": "ProjectCategories FormPage uses the category details tab while editing a category.",
                     "status": "passed",
                     "title": "uses the category details tab while editing a category.",
-                    "duration": 48.91787699999986,
+                    "duration": 36.472201999999925,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2251,7 +2232,7 @@
                     "fullName": "ProjectCategories FormPage updates only the category name.",
                     "status": "passed",
                     "title": "updates only the category name.",
-                    "duration": 119.6100419999998,
+                    "duration": 107.75336000000016,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2261,7 +2242,7 @@
                     "fullName": "ProjectCategories FormPage asks for confirmation before aborting a dirty form.",
                     "status": "passed",
                     "title": "asks for confirmation before aborting a dirty form.",
-                    "duration": 323.9419640000001,
+                    "duration": 351.3819840000001,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2271,14 +2252,14 @@
                     "fullName": "ProjectCategories FormPage blocks route changes from a dirty form until the user confirms.",
                     "status": "passed",
                     "title": "blocks route changes from a dirty form until the user confirms.",
-                    "duration": 223.98153700000012,
+                    "duration": 260.85663999999997,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997565514,
-            "endTime": 1789997567292.9814,
+            "startTime": 1789998866754,
+            "endTime": 1789998868422.8567,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectCategories/FormPage.spec.tsx"
@@ -2290,7 +2271,7 @@
                     "fullName": "ProjectCategories ListPage renders category keys as copy links.",
                     "status": "passed",
                     "title": "renders category keys as copy links.",
-                    "duration": 327.63491299999987,
+                    "duration": 352.9628809999999,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2300,7 +2281,7 @@
                     "fullName": "ProjectCategories ListPage renders requirement counts from the category summaries.",
                     "status": "passed",
                     "title": "renders requirement counts from the category summaries.",
-                    "duration": 103.44928300000015,
+                    "duration": 85.24726900000019,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2310,7 +2291,7 @@
                     "fullName": "ProjectCategories ListPage copies the category key when the key cell is clicked.",
                     "status": "passed",
                     "title": "copies the category key when the key cell is clicked.",
-                    "duration": 68.06296900000007,
+                    "duration": 78.43393000000015,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2320,7 +2301,7 @@
                     "fullName": "ProjectCategories ListPage shows the category context menu actions on right click.",
                     "status": "passed",
                     "title": "shows the category context menu actions on right click.",
-                    "duration": 189.4196109999998,
+                    "duration": 95.83461100000022,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2330,7 +2311,7 @@
                     "fullName": "ProjectCategories ListPage deletes the selected category from the context menu when it has no requirements.",
                     "status": "passed",
                     "title": "deletes the selected category from the context menu when it has no requirements.",
-                    "duration": 285.0864609999999,
+                    "duration": 269.043443,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2340,7 +2321,7 @@
                     "fullName": "ProjectCategories ListPage does not delete a category with requirements from the context menu.",
                     "status": "passed",
                     "title": "does not delete a category with requirements from the context menu.",
-                    "duration": 105.41905599999973,
+                    "duration": 67.07299899999998,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2350,17 +2331,36 @@
                     "fullName": "ProjectCategories ListPage navigates to the requirement creation placeholder from the context menu.",
                     "status": "passed",
                     "title": "navigates to the requirement creation placeholder from the context menu.",
-                    "duration": 153.32057600000007,
+                    "duration": 101.53101000000015,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997568134,
-            "endTime": 1789997569367.3206,
+            "startTime": 1789998871076,
+            "endTime": 1789998872126.531,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectCategories/ListPage.spec.tsx"
+        },
+        {
+            "assertionResults": [
+                {
+                    "ancestorTitles": ["useProjectDetails"],
+                    "fullName": "useProjectDetails derives counts, status statistics, loading, and error state from collection queries",
+                    "status": "passed",
+                    "title": "derives counts, status statistics, loading, and error state from collection queries",
+                    "duration": 16.151944000000185,
+                    "failureMessages": [],
+                    "meta": {},
+                    "tags": []
+                }
+            ],
+            "startTime": 1789998893871,
+            "endTime": 1789998893887.1519,
+            "status": "passed",
+            "message": "",
+            "name": "/home/node/frontend/test/pages/ProjectDetails/useProjectDetails.spec.tsx"
         },
         {
             "assertionResults": [
@@ -2369,7 +2369,7 @@
                     "fullName": "Requirement DetailsPage publishes requirement context and opens a details tab",
                     "status": "passed",
                     "title": "publishes requirement context and opens a details tab",
-                    "duration": 187.06244100000004,
+                    "duration": 138.00103000000013,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2379,7 +2379,7 @@
                     "fullName": "Requirement DetailsPage redirects a draft requirement to review when review activity has started",
                     "status": "passed",
                     "title": "redirects a draft requirement to review when review activity has started",
-                    "duration": 18.415031999999883,
+                    "duration": 16.942686000000094,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2389,14 +2389,14 @@
                     "fullName": "Requirement DetailsPage shows an error when route identifiers are incomplete",
                     "status": "passed",
                     "title": "shows an error when route identifiers are incomplete",
-                    "duration": 6.45656699999995,
+                    "duration": 9.032043000000158,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997583315,
-            "endTime": 1789997583526.4565,
+            "startTime": 1789998887911,
+            "endTime": 1789998888075.032,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectRequirements/DetailsPage.spec.tsx"
@@ -2408,7 +2408,7 @@
                     "fullName": "ProjectRequirements FormPage renders the create requirement form with the selected category preselected.",
                     "status": "passed",
                     "title": "renders the create requirement form with the selected category preselected.",
-                    "duration": 269.54356099999995,
+                    "duration": 333.33456,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2418,7 +2418,7 @@
                     "fullName": "ProjectRequirements FormPage creates a requirement and navigates to the details route.",
                     "status": "passed",
                     "title": "creates a requirement and navigates to the details route.",
-                    "duration": 271.25144,
+                    "duration": 312.421288,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2428,7 +2428,7 @@
                     "fullName": "ProjectRequirements FormPage renders the update requirement form with the current values.",
                     "status": "passed",
                     "title": "renders the update requirement form with the current values.",
-                    "duration": 44.18522900000016,
+                    "duration": 33.35208200000034,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2438,14 +2438,14 @@
                     "fullName": "ProjectRequirements FormPage requires and submits a change reason when updating a requirement.",
                     "status": "passed",
                     "title": "requires and submits a change reason when updating a requirement.",
-                    "duration": 741.8569419999999,
+                    "duration": 687.8411509999996,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997567264,
-            "endTime": 1789997568590.857,
+            "startTime": 1789998870331,
+            "endTime": 1789998871698.841,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectRequirements/FormPage.spec.tsx"
@@ -2457,7 +2457,7 @@
                     "fullName": "useImplementationTicketEditor creates a valid ticket, refreshes requirements, and resets the form",
                     "status": "passed",
                     "title": "creates a valid ticket, refreshes requirements, and resets the form",
-                    "duration": 25.309164999999894,
+                    "duration": 22.576430999999957,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2467,7 +2467,7 @@
                     "fullName": "useImplementationTicketEditor edits and deletes an existing ticket when editable",
                     "status": "passed",
                     "title": "edits and deletes an existing ticket when editable",
-                    "duration": 9.526127000000088,
+                    "duration": 3.841519999999946,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2477,14 +2477,14 @@
                     "fullName": "useImplementationTicketEditor ignores submit and delete operations in read-only mode",
                     "status": "passed",
                     "title": "ignores submit and delete operations in read-only mode",
-                    "duration": 1.487918000000036,
+                    "duration": 1.6467420000001312,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997589319,
-            "endTime": 1789997589354.488,
+            "startTime": 1789998893364,
+            "endTime": 1789998893391.6467,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectRequirements/ImplementationTicketEditor.spec.tsx"
@@ -2496,7 +2496,7 @@
                     "fullName": "ImplementationTicketsPanel permissions lets a Developer manage tickets on an approved requirement.",
                     "status": "passed",
                     "title": "lets a Developer manage tickets on an approved requirement.",
-                    "duration": 595.13338,
+                    "duration": 407.40347500000007,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2506,7 +2506,7 @@
                     "fullName": "ImplementationTicketsPanel permissions keeps tickets visible but read-only for a Viewer.",
                     "status": "passed",
                     "title": "keeps tickets visible but read-only for a Viewer.",
-                    "duration": 40.94849599999998,
+                    "duration": 26.836293999999953,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2516,14 +2516,14 @@
                     "fullName": "ImplementationTicketsPanel permissions keeps implemented requirement tickets read-only even for a Developer.",
                     "status": "passed",
                     "title": "keeps implemented requirement tickets read-only even for a Developer.",
-                    "duration": 57.24974999999995,
+                    "duration": 37.350345999999945,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997576787,
-            "endTime": 1789997577480.2498,
+            "startTime": 1789998877330,
+            "endTime": 1789998877802.3503,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectRequirements/ImplementationTicketsPanel.spec.tsx"
@@ -2535,7 +2535,7 @@
                     "fullName": "ProjectRequirements ListPage loads the requirements collection for the route project.",
                     "status": "passed",
                     "title": "loads the requirements collection for the route project.",
-                    "duration": 122.69182500000011,
+                    "duration": 99.71186199999988,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2545,7 +2545,7 @@
                     "fullName": "ProjectRequirements ListPage renders the current requirements table and details panel.",
                     "status": "passed",
                     "title": "renders the current requirements table and details panel.",
-                    "duration": 279.59300299999995,
+                    "duration": 246.41026999999985,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2555,7 +2555,7 @@
                     "fullName": "ProjectRequirements ListPage shows the selected requirement in the details panel when a row is clicked.",
                     "status": "passed",
                     "title": "shows the selected requirement in the details panel when a row is clicked.",
-                    "duration": 200.48115300000018,
+                    "duration": 197.44620299999997,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2565,7 +2565,7 @@
                     "fullName": "ProjectRequirements ListPage keeps the selected requirement visible when the selected row is clicked again.",
                     "status": "passed",
                     "title": "keeps the selected requirement visible when the selected row is clicked again.",
-                    "duration": 160.595104,
+                    "duration": 128.87605500000018,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2575,7 +2575,7 @@
                     "fullName": "ProjectRequirements ListPage opens a requirement details tab and navigates when a row is double clicked.",
                     "status": "passed",
                     "title": "opens a requirement details tab and navigates when a row is double clicked.",
-                    "duration": 117.16077399999995,
+                    "duration": 122.28901099999985,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2585,7 +2585,7 @@
                     "fullName": "ProjectRequirements ListPage copies the requirement key when the key cell is clicked.",
                     "status": "passed",
                     "title": "copies the requirement key when the key cell is clicked.",
-                    "duration": 128.98426800000016,
+                    "duration": 120.75272200000018,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2595,7 +2595,7 @@
                     "fullName": "ProjectRequirements ListPage renders the loading state.",
                     "status": "passed",
                     "title": "renders the loading state.",
-                    "duration": 24.36968399999978,
+                    "duration": 13.957906000000094,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2605,7 +2605,7 @@
                     "fullName": "ProjectRequirements ListPage renders the error state.",
                     "status": "passed",
                     "title": "renders the error state.",
-                    "duration": 17.520824000000175,
+                    "duration": 42.17366000000038,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2615,14 +2615,14 @@
                     "fullName": "ProjectRequirements ListPage renders the empty state.",
                     "status": "passed",
                     "title": "renders the empty state.",
-                    "duration": 9.879046000000017,
+                    "duration": 12.228501000000051,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997570332,
-            "endTime": 1789997571392.8792,
+            "startTime": 1789998873139,
+            "endTime": 1789998874123.2285,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectRequirements/ListPage.spec.tsx"
@@ -2634,7 +2634,7 @@
                     "fullName": "RequirementDetailsPanel shows reviewer, rejection reason, and rejection date for rejected requirements.",
                     "status": "passed",
                     "title": "shows reviewer, rejection reason, and rejection date for rejected requirements.",
-                    "duration": 132.37501500000008,
+                    "duration": 92.18139799999994,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2644,7 +2644,7 @@
                     "fullName": "RequirementDetailsPanel shows the actor, reason, and timestamp for obsolete requirements while retaining the reviewer.",
                     "status": "passed",
                     "title": "shows the actor, reason, and timestamp for obsolete requirements while retaining the reviewer.",
-                    "duration": 58.50390399999992,
+                    "duration": 38.917066999999975,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2654,14 +2654,14 @@
                     "fullName": "RequirementDetailsPanel renders implementation tickets as a table for approved requirements.",
                     "status": "passed",
                     "title": "renders implementation tickets as a table for approved requirements.",
-                    "duration": 147.3428839999999,
+                    "duration": 80.24226900000008,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997579974,
-            "endTime": 1789997580312.3428,
+            "startTime": 1789998883893,
+            "endTime": 1789998884104.2422,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectRequirements/RequirementDetailsPanel.spec.tsx"
@@ -2673,7 +2673,7 @@
                     "fullName": "RequirementLifecycleDialog requires a reason when configured for rejection or obsolescence.",
                     "status": "passed",
                     "title": "requires a reason when configured for rejection or obsolescence.",
-                    "duration": 365.6291899999999,
+                    "duration": 399.389733,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2683,14 +2683,14 @@
                     "fullName": "RequirementLifecycleDialog supports approval without collecting a reviewer name.",
                     "status": "passed",
                     "title": "supports approval without collecting a reviewer name.",
-                    "duration": 93.96016000000009,
+                    "duration": 115.9733490000001,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997576406,
-            "endTime": 1789997576865.9602,
+            "startTime": 1789998880925,
+            "endTime": 1789998881439.9734,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectRequirements/RequirementLifecycleDialog.spec.tsx"
@@ -2702,7 +2702,7 @@
                     "fullName": "ReviewCommentsPanel expands comments longer than 200 characters and exposes review actions for open comments.",
                     "status": "passed",
                     "title": "expands comments longer than 200 characters and exposes review actions for open comments.",
-                    "duration": 328.77141299999994,
+                    "duration": 345.32864599999994,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2712,14 +2712,14 @@
                     "fullName": "ReviewCommentsPanel renders existing comments without mutation controls in read-only mode.",
                     "status": "passed",
                     "title": "renders existing comments without mutation controls in read-only mode.",
-                    "duration": 10.469769000000042,
+                    "duration": 7.416699999999992,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997581593,
-            "endTime": 1789997581932.4697,
+            "startTime": 1789998883820,
+            "endTime": 1789998884172.4167,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectRequirements/ReviewCommentsPanel.spec.tsx"
@@ -2731,7 +2731,7 @@
                     "fullName": "RevisionHistoryPanel shows newest revisions first and highlights the current revision",
                     "status": "passed",
                     "title": "shows newest revisions first and highlights the current revision",
-                    "duration": 173.02961000000005,
+                    "duration": 164.76950699999998,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2741,14 +2741,14 @@
                     "fullName": "RevisionHistoryPanel shows loading, error, and empty states",
                     "status": "passed",
                     "title": "shows loading, error, and empty states",
-                    "duration": 4.812333999999964,
+                    "duration": 14.846817999999985,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997586849,
-            "endTime": 1789997587026.8123,
+            "startTime": 1789998889861,
+            "endTime": 1789998890039.847,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectRequirements/RevisionHistoryPanel.spec.tsx"
@@ -2760,7 +2760,7 @@
                     "fullName": "AdministratorSidebar expands Users & Sessions and renders all users as navigation children",
                     "status": "passed",
                     "title": "expands Users & Sessions and renders all users as navigation children",
-                    "duration": 233.17028499999992,
+                    "duration": 295.9293969999999,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2770,7 +2770,7 @@
                     "fullName": "AdministratorSidebar expands Projects and renders all projects as navigation children",
                     "status": "passed",
                     "title": "expands Projects and renders all projects as navigation children",
-                    "duration": 74.779133,
+                    "duration": 83.092353,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2780,14 +2780,14 @@
                     "fullName": "AdministratorSidebar navigates to the section overview when a section is toggled",
                     "status": "passed",
                     "title": "navigates to the section overview when a section is toggled",
-                    "duration": 68.62318200000004,
+                    "duration": 85.93669799999998,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997578260,
-            "endTime": 1789997578637.6233,
+            "startTime": 1789998882787,
+            "endTime": 1789998883251.9368,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/components/RootLayout/AdministratorSidebar/AdministratorSidebar.spec.tsx"
@@ -2799,7 +2799,7 @@
                     "fullName": "ActionButton renders the synchronize action.",
                     "status": "passed",
                     "title": "renders the synchronize action.",
-                    "duration": 136.399005,
+                    "duration": 253.47299899999996,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2809,7 +2809,7 @@
                     "fullName": "ActionButton disables synchronization when requested.",
                     "status": "passed",
                     "title": "disables synchronization when requested.",
-                    "duration": 20.280725000000075,
+                    "duration": 18.32930699999997,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2819,7 +2819,7 @@
                     "fullName": "ActionButton calls onSynchronize when the synchronize button is clicked.",
                     "status": "passed",
                     "title": "calls onSynchronize when the synchronize button is clicked.",
-                    "duration": 23.526607000000013,
+                    "duration": 33.24739999999997,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2829,14 +2829,14 @@
                     "fullName": "ActionButton can be clicked without a callback.",
                     "status": "passed",
                     "title": "can be clicked without a callback.",
-                    "duration": 17.314830999999913,
+                    "duration": 23.958055999999942,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997579704,
-            "endTime": 1789997579901.315,
+            "startTime": 1789998888518,
+            "endTime": 1789998888846.958,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/components/RootLayout/Sidebar/ActionButton.spec.tsx"
@@ -2848,7 +2848,7 @@
                     "fullName": "ProjectDialog does not render dialog content when visible is false.",
                     "status": "passed",
                     "title": "does not render dialog content when visible is false.",
-                    "duration": 102.58308299999999,
+                    "duration": 113.90876200000002,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2858,7 +2858,7 @@
                     "fullName": "ProjectDialog renders the Create project heading in create mode.",
                     "status": "passed",
                     "title": "renders the Create project heading in create mode.",
-                    "duration": 174.402832,
+                    "duration": 101.89813800000002,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2868,7 +2868,7 @@
                     "fullName": "ProjectDialog renders the Rename project heading in rename mode.",
                     "status": "passed",
                     "title": "renders the Rename project heading in rename mode.",
-                    "duration": 89.76543200000015,
+                    "duration": 34.433671000000004,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2878,7 +2878,7 @@
                     "fullName": "ProjectDialog starts with an empty input in create mode.",
                     "status": "passed",
                     "title": "starts with an empty input in create mode.",
-                    "duration": 54.34950600000002,
+                    "duration": 31.65112399999998,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2888,7 +2888,7 @@
                     "fullName": "ProjectDialog uses initialName as input value.",
                     "status": "passed",
                     "title": "uses initialName as input value.",
-                    "duration": 46.85088000000019,
+                    "duration": 43.43657600000006,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2898,7 +2898,7 @@
                     "fullName": "ProjectDialog shows a validation error when submitting an empty project name.",
                     "status": "passed",
                     "title": "shows a validation error when submitting an empty project name.",
-                    "duration": 108.62999100000002,
+                    "duration": 84.24205399999983,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2908,7 +2908,7 @@
                     "fullName": "ProjectDialog shows a validation error when submitting a whitespace-only project name.",
                     "status": "passed",
                     "title": "shows a validation error when submitting a whitespace-only project name.",
-                    "duration": 81.8184769999998,
+                    "duration": 126.58760600000005,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2918,7 +2918,7 @@
                     "fullName": "ProjectDialog calls onSubmit with the trimmed project name.",
                     "status": "passed",
                     "title": "calls onSubmit with the trimmed project name.",
-                    "duration": 123.37835700000005,
+                    "duration": 164.968658,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2928,7 +2928,7 @@
                     "fullName": "ProjectDialog calls onCancel when Cancel is clicked.",
                     "status": "passed",
                     "title": "calls onCancel when Cancel is clicked.",
-                    "duration": 41.07213999999999,
+                    "duration": 60.962516999999934,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2938,7 +2938,7 @@
                     "fullName": "ProjectDialog disables the buttons and shows Creating while pending in create mode.",
                     "status": "passed",
                     "title": "disables the buttons and shows Creating while pending in create mode.",
-                    "duration": 23.790768999999955,
+                    "duration": 42.56614200000013,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2948,7 +2948,7 @@
                     "fullName": "ProjectDialog disables the buttons and shows Renaming while pending in rename mode.",
                     "status": "passed",
                     "title": "disables the buttons and shows Renaming while pending in rename mode.",
-                    "duration": 23.992677000000185,
+                    "duration": 43.239502999999786,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2958,7 +2958,7 @@
                     "fullName": "ProjectDialog does not call onCancel while pending.",
                     "status": "passed",
                     "title": "does not call onCancel while pending.",
-                    "duration": 32.45938799999999,
+                    "duration": 47.24655400000029,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2968,7 +2968,7 @@
                     "fullName": "ProjectDialog renders an error message from the parent.",
                     "status": "passed",
                     "title": "renders an error message from the parent.",
-                    "duration": 47.60378999999989,
+                    "duration": 32.60007900000028,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -2978,14 +2978,14 @@
                     "fullName": "ProjectDialog does not render a close button.",
                     "status": "passed",
                     "title": "does not render a close button.",
-                    "duration": 44.624530999999934,
+                    "duration": 32.96552699999984,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997565603,
-            "endTime": 1789997566598.6245,
+            "startTime": 1789998873535,
+            "endTime": 1789998874495.9656,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/components/RootLayout/Sidebar/ProjectDialog.spec.tsx"
@@ -2997,7 +2997,7 @@
                     "fullName": "ProjectNavigationList renders the empty state.",
                     "status": "passed",
                     "title": "renders the empty state.",
-                    "duration": 143.27698899999996,
+                    "duration": 236.8621169999999,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3007,7 +3007,7 @@
                     "fullName": "ProjectNavigationList renders projects.",
                     "status": "passed",
                     "title": "renders projects.",
-                    "duration": 131.27199700000006,
+                    "duration": 126.46428900000001,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3017,7 +3017,7 @@
                     "fullName": "ProjectNavigationList renders sub items and the requirements counter behind the project name.",
                     "status": "passed",
                     "title": "renders sub items and the requirements counter behind the project name.",
-                    "duration": 74.49455200000011,
+                    "duration": 51.24412700000016,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3027,7 +3027,7 @@
                     "fullName": "ProjectNavigationList marks the active project overview.",
                     "status": "passed",
                     "title": "marks the active project overview.",
-                    "duration": 35.3088180000002,
+                    "duration": 31.655843000000004,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3037,7 +3037,7 @@
                     "fullName": "ProjectNavigationList calls the project handlers.",
                     "status": "passed",
                     "title": "calls the project handlers.",
-                    "duration": 99.74386600000003,
+                    "duration": 94.59456099999989,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3047,7 +3047,7 @@
                     "fullName": "ProjectNavigationList forwards project and sub-route navigation intent.",
                     "status": "passed",
                     "title": "forwards project and sub-route navigation intent.",
-                    "duration": 69.32504799999992,
+                    "duration": 76.89049499999987,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3057,14 +3057,14 @@
                     "fullName": "ProjectNavigationList renders projects in the provided order.",
                     "status": "passed",
                     "title": "renders projects in the provided order.",
-                    "duration": 31.320654000000104,
+                    "duration": 28.468598000000156,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997575015,
-            "endTime": 1789997575599.3206,
+            "startTime": 1789998879130,
+            "endTime": 1789998879776.4685,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/components/RootLayout/Sidebar/ProjectNavigationList.spec.tsx"
@@ -3076,7 +3076,7 @@
                     "fullName": "Sidebar renders the main sidebar regions.",
                     "status": "passed",
                     "title": "renders the main sidebar regions.",
-                    "duration": 184.06271500000003,
+                    "duration": 233.62120400000003,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3086,7 +3086,7 @@
                     "fullName": "Sidebar sorts projects by name before rendering the navigation list.",
                     "status": "passed",
                     "title": "sorts projects by name before rendering the navigation list.",
-                    "duration": 104.14264400000002,
+                    "duration": 105.58602399999995,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3096,7 +3096,7 @@
                     "fullName": "Sidebar uses the project summary requirement count behind each project name.",
                     "status": "passed",
                     "title": "uses the project summary requirement count behind each project name.",
-                    "duration": 36.658558000000085,
+                    "duration": 35.72894600000018,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3106,7 +3106,7 @@
                     "fullName": "Sidebar opens a project and updates the route-driven active sub item.",
                     "status": "passed",
                     "title": "opens a project and updates the route-driven active sub item.",
-                    "duration": 324.66023600000017,
+                    "duration": 170.14644900000008,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3116,14 +3116,14 @@
                     "fullName": "Sidebar disables project action buttons on category form routes.",
                     "status": "passed",
                     "title": "disables project action buttons on category form routes.",
-                    "duration": 38.27803700000004,
+                    "duration": 14.105556999999862,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997572573,
-            "endTime": 1789997573260.278,
+            "startTime": 1789998877591,
+            "endTime": 1789998878150.1055,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/components/RootLayout/Sidebar/Sidebar.spec.tsx"
@@ -3135,14 +3135,14 @@
                     "fullName": "SidebarContextMenu contains only project-workspace export actions.",
                     "status": "passed",
                     "title": "contains only project-workspace export actions.",
-                    "duration": 175.5233250000001,
+                    "duration": 203.197856,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997589154,
-            "endTime": 1789997589329.5234,
+            "startTime": 1789998889823,
+            "endTime": 1789998890026.1978,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/components/RootLayout/Sidebar/SidebarContextMenu.spec.tsx"
@@ -3154,14 +3154,14 @@
                     "fullName": "useProjectContextMenu stores the project for the opened context menu and shows the PrimeReact menu.",
                     "status": "passed",
                     "title": "stores the project for the opened context menu and shows the PrimeReact menu.",
-                    "duration": 188.90873499999998,
+                    "duration": 128.8821220000002,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997587006,
-            "endTime": 1789997587194.9087,
+            "startTime": 1789998889126,
+            "endTime": 1789998889254.882,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/components/RootLayout/Sidebar/useProjectContextMenu.spec.tsx"
@@ -3173,7 +3173,7 @@
                     "fullName": "useProjectNavigation starts expanded when the active route points to a project sub route.",
                     "status": "passed",
                     "title": "starts expanded when the active route points to a project sub route.",
-                    "duration": 63.806916,
+                    "duration": 32.258820000000014,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3183,7 +3183,7 @@
                     "fullName": "useProjectNavigation opens a collapsed project and navigates to its project details route.",
                     "status": "passed",
                     "title": "opens a collapsed project and navigates to its project details route.",
-                    "duration": 144.83736199999998,
+                    "duration": 147.35025500000006,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3193,7 +3193,7 @@
                     "fullName": "useProjectNavigation collapses an expanded project and navigates to its project overview route.",
                     "status": "passed",
                     "title": "collapses an expanded project and navigates to its project overview route.",
-                    "duration": 32.81094699999994,
+                    "duration": 29.494664000000057,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3203,7 +3203,7 @@
                     "fullName": "useProjectNavigation keeps a project expanded when one of its sub items is opened.",
                     "status": "passed",
                     "title": "keeps a project expanded when one of its sub items is opened.",
-                    "duration": 31.642769000000044,
+                    "duration": 20.771432000000004,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3213,14 +3213,14 @@
                     "fullName": "useProjectNavigation prefetches route code and matching project data for navigation intent.",
                     "status": "passed",
                     "title": "prefetches route code and matching project data for navigation intent.",
-                    "duration": 45.288769,
+                    "duration": 45.362650999999914,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997580214,
-            "endTime": 1789997580532.2888,
+            "startTime": 1789998884498,
+            "endTime": 1789998884773.3625,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/components/RootLayout/Sidebar/useProjectNavigation.spec.tsx"
@@ -3232,7 +3232,7 @@
                     "fullName": "ActionBar renders renders the requirement key input and Find requirement button on requirement list routes.",
                     "status": "passed",
                     "title": "renders the requirement key input and Find requirement button on requirement list routes.",
-                    "duration": 310.05474000000004,
+                    "duration": 319.895892,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3242,7 +3242,7 @@
                     "fullName": "ActionBar renders renders the requirement key from the store on requirement list routes.",
                     "status": "passed",
                     "title": "renders the requirement key from the store on requirement list routes.",
-                    "duration": 74.82023299999992,
+                    "duration": 65.37409100000013,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3252,7 +3252,7 @@
                     "fullName": "ActionBar renders renders a Create button on requirement routes.",
                     "status": "passed",
                     "title": "renders a Create button on requirement routes.",
-                    "duration": 34.78667399999995,
+                    "duration": 39.79454900000019,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3262,7 +3262,7 @@
                     "fullName": "ActionBar renders renders Create directly after the requirement lookup actions on requirement list routes.",
                     "status": "passed",
                     "title": "renders Create directly after the requirement lookup actions on requirement list routes.",
-                    "duration": 36.072557000000415,
+                    "duration": 31.574213999999984,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3272,7 +3272,7 @@
                     "fullName": "ActionBar renders opens the review workspace for a selected draft requirement.",
                     "status": "passed",
                     "title": "opens the review workspace for a selected draft requirement.",
-                    "duration": 120.96591899999976,
+                    "duration": 169.56662200000028,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3282,7 +3282,7 @@
                     "fullName": "ActionBar renders does not show the Review button for a selected non-draft requirement.",
                     "status": "passed",
                     "title": "does not show the Review button for a selected non-draft requirement.",
-                    "duration": 33.98916499999996,
+                    "duration": 70.92062799999985,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3292,7 +3292,7 @@
                     "fullName": "ActionBar renders shows Create, Edit, and Review in this order on draft requirement detail routes.",
                     "status": "passed",
                     "title": "shows Create, Edit, and Review in this order on draft requirement detail routes.",
-                    "duration": 57.03806199999963,
+                    "duration": 56.864022000000205,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3302,7 +3302,7 @@
                     "fullName": "ActionBar renders shows Edit, Approve, and Reject on review routes for draft requirements.",
                     "status": "passed",
                     "title": "shows Edit, Approve, and Reject on review routes for draft requirements.",
-                    "duration": 29.099013999999897,
+                    "duration": 32.119658999999956,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3312,7 +3312,7 @@
                     "fullName": "ActionBar renders hides Approve and Reject on review routes for rejected requirements.",
                     "status": "passed",
                     "title": "hides Approve and Reject on review routes for rejected requirements.",
-                    "duration": 13.874659000000065,
+                    "duration": 15.193858999999975,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3322,7 +3322,7 @@
                     "fullName": "ActionBar renders hides Edit and Obsolete on detail routes for rejected requirements.",
                     "status": "passed",
                     "title": "hides Edit and Obsolete on detail routes for rejected requirements.",
-                    "duration": 18.553247000000283,
+                    "duration": 32.83440699999983,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3332,7 +3332,7 @@
                     "fullName": "ActionBar renders does not show Obsolete for draft requirements.",
                     "status": "passed",
                     "title": "does not show Obsolete for draft requirements.",
-                    "duration": 20.96728600000006,
+                    "duration": 28.90196100000003,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3342,7 +3342,7 @@
                     "fullName": "ActionBar renders shows Obsolete on detail routes for approved requirements.",
                     "status": "passed",
                     "title": "shows Obsolete on detail routes for approved requirements.",
-                    "duration": 45.401278000000275,
+                    "duration": 49.36746499999981,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3352,7 +3352,7 @@
                     "fullName": "ActionBar renders shows Obsolete on detail routes for implemented requirements.",
                     "status": "passed",
                     "title": "shows Obsolete on detail routes for implemented requirements.",
-                    "duration": 27.788064000000304,
+                    "duration": 39.31082900000001,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3362,7 +3362,7 @@
                     "fullName": "ActionBar renders enables Implemented only for an approved requirement with a ticket.",
                     "status": "passed",
                     "title": "enables Implemented only for an approved requirement with a ticket.",
-                    "duration": 42.879504,
+                    "duration": 28.076634999999897,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3372,7 +3372,7 @@
                     "fullName": "ActionBar renders hides Implemented for an approved requirement without tickets.",
                     "status": "passed",
                     "title": "hides Implemented for an approved requirement without tickets.",
-                    "duration": 30.754781999999977,
+                    "duration": 19.535073999999895,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3382,7 +3382,7 @@
                     "fullName": "ActionBar renders renders a Create button on category routes.",
                     "status": "passed",
                     "title": "renders a Create button on category routes.",
-                    "duration": 17.165670999999747,
+                    "duration": 12.207922000000053,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3392,7 +3392,7 @@
                     "fullName": "ActionBar renders shows Edit in the ActionBar on category detail routes.",
                     "status": "passed",
                     "title": "shows Edit in the ActionBar on category detail routes.",
-                    "duration": 19.167521999999735,
+                    "duration": 15.512968999999885,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3402,7 +3402,7 @@
                     "fullName": "ActionBar renders shows Tickets for an approved requirement when ticket management is permitted.",
                     "status": "passed",
                     "title": "shows Tickets for an approved requirement when ticket management is permitted.",
-                    "duration": 31.3608720000002,
+                    "duration": 27.638993000000028,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3412,7 +3412,7 @@
                     "fullName": "ActionBar renders hides requirement lookup on category routes.",
                     "status": "passed",
                     "title": "hides requirement lookup on category routes.",
-                    "duration": 33.36884699999973,
+                    "duration": 13.217269999999644,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3422,7 +3422,7 @@
                     "fullName": "ActionBar renders hides requirement lookup and disables Create on requirement form routes.",
                     "status": "passed",
                     "title": "hides requirement lookup and disables Create on requirement form routes.",
-                    "duration": 21.505223000000115,
+                    "duration": 33.08928999999989,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3432,7 +3432,7 @@
                     "fullName": "ActionBar renders hides requirement lookup and disables Create on category form routes.",
                     "status": "passed",
                     "title": "hides requirement lookup and disables Create on category form routes.",
-                    "duration": 31.592627999999877,
+                    "duration": 27.422903000000133,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3442,7 +3442,7 @@
                     "fullName": "ActionBar renders shows New project on the Administrator projects overview",
                     "status": "passed",
                     "title": "shows New project on the Administrator projects overview",
-                    "duration": 27.35377900000003,
+                    "duration": 17.01261899999963,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3452,7 +3452,7 @@
                     "fullName": "ActionBar renders shows project administration actions for a selected Administrator project",
                     "status": "passed",
                     "title": "shows project administration actions for a selected Administrator project",
-                    "duration": 24.314503999999943,
+                    "duration": 22.18102399999998,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3462,7 +3462,7 @@
                     "fullName": "ActionBar renders disables project deletion when the selected project contains requirements",
                     "status": "passed",
                     "title": "disables project deletion when the selected project contains requirements",
-                    "duration": 21.715813000000253,
+                    "duration": 21.990892999999687,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3472,7 +3472,7 @@
                     "fullName": "ActionBar renders shows the selected-user status action in the Administrator ActionBar",
                     "status": "passed",
                     "title": "shows the selected-user status action in the Administrator ActionBar",
-                    "duration": 14.837035999999898,
+                    "duration": 13.123223999999936,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3482,7 +3482,7 @@
                     "fullName": "ActionBar navigates to the requirement create route when Create is clicked on requirement routes.",
                     "status": "passed",
                     "title": "navigates to the requirement create route when Create is clicked on requirement routes.",
-                    "duration": 35.949035000000094,
+                    "duration": 31.299932999999783,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3492,7 +3492,7 @@
                     "fullName": "ActionBar navigates to the category create route when Create is clicked.",
                     "status": "passed",
                     "title": "navigates to the category create route when Create is clicked.",
-                    "duration": 29.53781600000002,
+                    "duration": 36.12993000000006,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3502,7 +3502,7 @@
                     "fullName": "ActionBar navigates from a category detail route to category edit mode.",
                     "status": "passed",
                     "title": "navigates from a category detail route to category edit mode.",
-                    "duration": 44.53116,
+                    "duration": 34.287424999999985,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3512,7 +3512,7 @@
                     "fullName": "ActionBar hides requirement mutation actions for a Viewer while preserving lookup.",
                     "status": "passed",
                     "title": "hides requirement mutation actions for a Viewer while preserving lookup.",
-                    "duration": 22.888508,
+                    "duration": 42.55430800000022,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3522,7 +3522,7 @@
                     "fullName": "ActionBar requires a reason and marks an approved requirement obsolete.",
                     "status": "passed",
                     "title": "requires a reason and marks an approved requirement obsolete.",
-                    "duration": 295.25462100000004,
+                    "duration": 341.96842800000013,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3532,7 +3532,7 @@
                     "fullName": "RequirementKeyLookup calls onFindKey with the trimmed requirement key when Find requirement is clicked.",
                     "status": "passed",
                     "title": "calls onFindKey with the trimmed requirement key when Find requirement is clicked.",
-                    "duration": 26.401648000000023,
+                    "duration": 30.903663999999935,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3542,7 +3542,7 @@
                     "fullName": "RequirementKeyLookup calls onFindKey with the trimmed requirement key when Enter is pressed.",
                     "status": "passed",
                     "title": "calls onFindKey with the trimmed requirement key when Enter is pressed.",
-                    "duration": 38.10871900000029,
+                    "duration": 23.11514100000022,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3552,7 +3552,7 @@
                     "fullName": "RequirementKeyLookup does not call onFindKey when the input is empty.",
                     "status": "passed",
                     "title": "does not call onFindKey when the input is empty.",
-                    "duration": 22.657606000000214,
+                    "duration": 33.99267499999996,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3562,7 +3562,7 @@
                     "fullName": "RequirementKeyLookup does not call onFindKey when the input contains only whitespace.",
                     "status": "passed",
                     "title": "does not call onFindKey when the input contains only whitespace.",
-                    "duration": 19.05049599999984,
+                    "duration": 22.529203000000052,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3572,7 +3572,7 @@
                     "fullName": "RequirementKeyLookup passes changed input values to the action bar store.",
                     "status": "passed",
                     "title": "passes changed input values to the action bar store.",
-                    "duration": 16.219838999999865,
+                    "duration": 13.959585999999945,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3582,14 +3582,14 @@
                     "fullName": "RequirementKeyLookup can be used without callbacks.",
                     "status": "passed",
                     "title": "can be used without callbacks.",
-                    "duration": 37.50304300000016,
+                    "duration": 36.923971000000165,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997562738,
-            "endTime": 1789997564466.503,
+            "startTime": 1789998869364,
+            "endTime": 1789998871218.924,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/components/RootLayout/TabBar/ActionBar.spec.tsx"
@@ -3601,7 +3601,7 @@
                     "fullName": "Tab renders the tab group, select button, and close button.",
                     "status": "passed",
                     "title": "renders the tab group, select button, and close button.",
-                    "duration": 186.17946800000004,
+                    "duration": 194.99735499999997,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3611,7 +3611,7 @@
                     "fullName": "Tab hides the close button when the tab is not closable.",
                     "status": "passed",
                     "title": "hides the close button when the tab is not closable.",
-                    "duration": 17.37265400000001,
+                    "duration": 17.70151799999985,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3621,7 +3621,7 @@
                     "fullName": "Tab calls onClick when the select button is clicked.",
                     "status": "passed",
                     "title": "calls onClick when the select button is clicked.",
-                    "duration": 34.354826,
+                    "duration": 40.43021299999987,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3631,7 +3631,7 @@
                     "fullName": "Tab calls onClose when the close button is clicked.",
                     "status": "passed",
                     "title": "calls onClose when the close button is clicked.",
-                    "duration": 27.83822699999996,
+                    "duration": 18.055206,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3641,7 +3641,7 @@
                     "fullName": "Tab does not call onClick when the close button is clicked.",
                     "status": "passed",
                     "title": "does not call onClick when the close button is clicked.",
-                    "duration": 37.734138999999914,
+                    "duration": 24.173442000000023,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3651,7 +3651,7 @@
                     "fullName": "Tab exposes the active tab with aria-current.",
                     "status": "passed",
                     "title": "exposes the active tab with aria-current.",
-                    "duration": 27.35947599999986,
+                    "duration": 15.745571999999811,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3661,14 +3661,14 @@
                     "fullName": "Tab does not expose aria-current for an inactive tab.",
                     "status": "passed",
                     "title": "does not expose aria-current for an inactive tab.",
-                    "duration": 31.82031999999981,
+                    "duration": 21.094493000000057,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997578770,
-            "endTime": 1789997579132.8203,
+            "startTime": 1789998882423,
+            "endTime": 1789998882755.0945,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/components/RootLayout/TabBar/Tab.spec.tsx"
@@ -3680,7 +3680,7 @@
                     "fullName": "TabBar renders the workspace tabs navigation.",
                     "status": "passed",
                     "title": "renders the workspace tabs navigation.",
-                    "duration": 210.36519900000008,
+                    "duration": 253.62151399999993,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3690,7 +3690,7 @@
                     "fullName": "TabBar navigates when a route-backed tab is clicked.",
                     "status": "passed",
                     "title": "navigates when a route-backed tab is clicked.",
-                    "duration": 118.75969499999997,
+                    "duration": 151.67707599999994,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3700,7 +3700,7 @@
                     "fullName": "TabBar navigates back to the category list when the active category details tab is closed.",
                     "status": "passed",
                     "title": "navigates back to the category list when the active category details tab is closed.",
-                    "duration": 64.9238429999998,
+                    "duration": 75.47376299999996,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3710,7 +3710,7 @@
                     "fullName": "TabBar does not navigate when an inactive tab is closed.",
                     "status": "passed",
                     "title": "does not navigate when an inactive tab is closed.",
-                    "duration": 97.68142199999988,
+                    "duration": 52.42835299999979,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3720,14 +3720,14 @@
                     "fullName": "TabBar navigates to the next route-backed tab when the active tab is closed.",
                     "status": "passed",
                     "title": "navigates to the next route-backed tab when the active tab is closed.",
-                    "duration": 62.85074899999995,
+                    "duration": 56.153662999999824,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997574382,
-            "endTime": 1789997574938.8508,
+            "startTime": 1789998879412,
+            "endTime": 1789998880005.1536,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/components/RootLayout/TabBar/TabBar.spec.tsx"
@@ -3739,7 +3739,7 @@
                     "fullName": "ReviewPage renders editable review controls for a requirements engineer and submits a comment",
                     "status": "passed",
                     "title": "renders editable review controls for a requirements engineer and submits a comment",
-                    "duration": 209.79100700000004,
+                    "duration": 165.44342600000004,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3749,7 +3749,7 @@
                     "fullName": "ReviewPage redirects a non-draft requirement back to its details route",
                     "status": "passed",
                     "title": "redirects a non-draft requirement back to its details route",
-                    "duration": 16.386453999999958,
+                    "duration": 11.93194399999993,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3759,14 +3759,14 @@
                     "fullName": "ReviewPage confirms an approval request and navigates to details after invalidating requirements",
                     "status": "passed",
                     "title": "confirms an approval request and navigates to details after invalidating requirements",
-                    "duration": 29.834084000000075,
+                    "duration": 27.9656480000001,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997582974,
-            "endTime": 1789997583229.834,
+            "startTime": 1789998885345,
+            "endTime": 1789998885549.9656,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectRequirements/Review/ReviewPage.spec.tsx"
@@ -3778,7 +3778,7 @@
                     "fullName": "useReviewMutationRunner refreshes review queries and shows the success toast after a successful action",
                     "status": "passed",
                     "title": "refreshes review queries and shows the success toast after a successful action",
-                    "duration": 14.908537999999908,
+                    "duration": 16.853364000000056,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3788,14 +3788,14 @@
                     "fullName": "useReviewMutationRunner returns false and reports an action failure without refreshing",
                     "status": "passed",
                     "title": "returns false and reports an action failure without refreshing",
-                    "duration": 1.958127000000104,
+                    "duration": 3.5833039999999983,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997590565,
-            "endTime": 1789997590581.958,
+            "startTime": 1789998894895,
+            "endTime": 1789998894915.5833,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectRequirements/Review/useReviewMutationRunner.spec.tsx"
@@ -3807,7 +3807,7 @@
                     "fullName": "useReviewQueries combines collection-backed requirement data with comments and summary query state",
                     "status": "passed",
                     "title": "combines collection-backed requirement data with comments and summary query state",
-                    "duration": 22.113593000000037,
+                    "duration": 13.54622500000005,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
@@ -3817,14 +3817,14 @@
                     "fullName": "useReviewQueries disables remote review queries when route identifiers are incomplete",
                     "status": "passed",
                     "title": "disables remote review queries when route identifiers are incomplete",
-                    "duration": 1.9570609999998396,
+                    "duration": 1.4512979999999516,
                     "failureMessages": [],
                     "meta": {},
                     "tags": []
                 }
             ],
-            "startTime": 1789997591417,
-            "endTime": 1789997591440.957,
+            "startTime": 1789998893932,
+            "endTime": 1789998893946.4514,
             "status": "passed",
             "message": "",
             "name": "/home/node/frontend/test/pages/ProjectRequirements/Review/useReviewQueries.spec.tsx"

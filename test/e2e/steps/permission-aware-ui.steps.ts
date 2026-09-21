@@ -155,9 +155,9 @@ Then('requirement mutation actions should be visible', async ({ page }) => {
 });
 
 Then('implementation ticket mutation actions should not be visible', async ({ page }) => {
-    const ticketTable = page.getByRole('table');
+    const ticketTable = page.getByRole('table').filter({ has: page.getByRole('columnheader', { name: 'Ticket ID' }) });
 
-    await expect(ticketTable.getByText(/AUTH-42/u)).toBeVisible();
+    await expect(ticketTable.getByRole('cell', { name: 'AUTH-42', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Tickets' })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Add ticket' })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Edit ticket' })).toHaveCount(0);

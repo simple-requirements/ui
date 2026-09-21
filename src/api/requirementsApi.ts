@@ -1,9 +1,16 @@
 import { z } from 'zod';
 
-import type { CreateRequirementDto, UpdateRequirementDto } from '@/api/generated/model';
+import type {
+    CompareRequirementRevisionsParams,
+    CreateRequirementDto,
+    UpdateRequirementDto,
+} from '@/api/generated/model';
 import {
+    compareRequirementRevisions as compareGeneratedRequirementRevisions,
     createRequirement as createGeneratedRequirement,
+    getListRequirementRevisionsQueryKey as getRequirementRevisionsQueryKey,
     getListRequirementsQueryKey,
+    listRequirementRevisions as listGeneratedRequirementRevisions,
     listRequirements as listGeneratedRequirements,
     updateRequirement as updateGeneratedRequirement,
 } from '@/api/generated/requirements/requirements';
@@ -148,7 +155,7 @@ function toRequirementLifecycleDto(
     return requirement as unknown as UpdateRequirementDto;
 }
 
-export { getListRequirementsQueryKey as getListProjectRequirementsQueryKey };
+export { getRequirementRevisionsQueryKey, getListRequirementsQueryKey as getListProjectRequirementsQueryKey };
 
 export async function listProjectRequirementsRequest(projectId: string): Promise<Requirement[]> {
     const response = await listGeneratedRequirements(projectId);
@@ -167,10 +174,7 @@ export async function listRequirementRevisionsRequest(
     projectId: string,
     requirementId: string,
 ): Promise<Requirement[]> {
-    const response = await apiFetch<{ data: unknown }>(
-        `/projects/${projectId}/requirements/${requirementId}/revisions`,
-        { method: 'GET' },
-    );
+    const response = await listGeneratedRequirementRevisions(projectId, requirementId);
 
     return requirementsResponseSchema.parse(response.data);
 }
@@ -190,10 +194,8 @@ export async function compareRequirementRevisionsRequest(
     fromRevision: number,
     toRevision: number,
 ): Promise<RequirementRevisionComparison> {
-    const response = await apiFetch<{ data: unknown }>(
-        `/projects/${projectId}/requirements/${requirementId}/revisions/compare?from=${fromRevision.toString()}&to=${toRevision.toString()}`,
-        { method: 'GET' },
-    );
+    const params: CompareRequirementRevisionsParams = { from: fromRevision, to: toRevision };
+    const response = await compareGeneratedRequirementRevisions(projectId, requirementId, params);
 
     return requirementRevisionComparisonSchema.parse(response.data);
 }

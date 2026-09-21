@@ -5,6 +5,7 @@ import {
     compareRequirementRevisionsRequest,
     createImplementationTicketRequest,
     getListProjectRequirementsQueryKey,
+    getRequirementRevisionsQueryKey,
     listProjectRequirementsRequest,
     listRequirementRevisionsRequest,
     markProjectRequirementObsoleteRequest,
@@ -29,6 +30,17 @@ afterEach(() => {
 describe('requirementsApi', () => {
     it('creates the list query key.', () => {
         expect(getListProjectRequirementsQueryKey('project-alpha')).toEqual(['/projects/project-alpha/requirements']);
+    });
+
+    it('creates the revision-history query key.', () => {
+        expect(
+            getRequirementRevisionsQueryKey(
+                '22222222-2222-4222-8222-222222222222',
+                '11111111-1111-4111-8111-111111111111',
+            ),
+        ).toEqual([
+            '/projects/22222222-2222-4222-8222-222222222222/requirements/11111111-1111-4111-8111-111111111111/revisions',
+        ]);
     });
 
     it('parses a requirement.', () => {

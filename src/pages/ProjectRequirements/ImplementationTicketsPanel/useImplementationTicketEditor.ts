@@ -5,6 +5,7 @@ import {
     createImplementationTicketRequest,
     deleteImplementationTicketRequest,
     getListProjectRequirementsQueryKey,
+    getRequirementRevisionsQueryKey,
     updateImplementationTicketRequest,
     type ImplementationTicket,
     type Requirement,
@@ -42,7 +43,12 @@ export function useImplementationTicketEditor({
     const valid = isImplementationTicketFormValid(form);
 
     async function refresh(): Promise<void> {
-        await queryClient.invalidateQueries({ queryKey: getListProjectRequirementsQueryKey(requirement.projectId) });
+        await Promise.all([
+            queryClient.invalidateQueries({ queryKey: getListProjectRequirementsQueryKey(requirement.projectId) }),
+            queryClient.invalidateQueries({
+                queryKey: getRequirementRevisionsQueryKey(requirement.projectId, requirement.id),
+            }),
+        ]);
     }
 
     function resetForm(): void {

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { queryClient } from '@/api/queryClient';
-import { getListProjectRequirementsQueryKey } from '@/api/requirementsApi';
+import { getListProjectRequirementsQueryKey, getRequirementRevisionsQueryKey } from '@/api/requirementsApi';
 import {
     approveReview,
     createReviewComment,
@@ -112,7 +112,12 @@ export function ReviewPage() {
                     visibleKey: updatedRequirement.visibleKey,
                     status: updatedRequirement.status,
                 });
-                await queryClient.invalidateQueries({ queryKey: getListProjectRequirementsQueryKey(activeProjectId) });
+                await Promise.all([
+                    queryClient.invalidateQueries({ queryKey: getListProjectRequirementsQueryKey(activeProjectId) }),
+                    queryClient.invalidateQueries({
+                        queryKey: getRequirementRevisionsQueryKey(activeProjectId, activeRequirementId),
+                    }),
+                ]);
                 return updatedRequirement;
             },
             decisionRequest === 'reject' ?

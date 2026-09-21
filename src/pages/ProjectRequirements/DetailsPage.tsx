@@ -18,6 +18,7 @@ import {
 import { openTab } from '@/stores/tabBarStore';
 
 import { RequirementDetailsPanel } from '@/pages/ProjectRequirements/RequirementDetailsPanel';
+import { RevisionHistoryPanel } from '@/pages/ProjectRequirements/RevisionHistoryPanel';
 import { ImplementationTicketsPanel } from '@/pages/ProjectRequirements/ImplementationTicketsPanel';
 
 import '@/pages/ProjectRequirements/DetailsPage.scss';
@@ -133,6 +134,13 @@ export function DetailsPage() {
                     titleElement='h1'
                     titleId='project-requirements-details-page-title'
                 />
+                {requirement !== undefined && (
+                    <RevisionHistoryPanel
+                        projectId={projectId}
+                        requirementId={requirement.id}
+                        currentRevisionNumber={requirement.revisionNumber}
+                    />
+                )}
                 {requirement !== undefined && (
                     <ImplementationTicketsPanel
                         requirement={requirement}

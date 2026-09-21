@@ -6,6 +6,7 @@ import { queryClient } from '@/api/queryClient';
 import {
     createProjectRequirementRequest,
     getListProjectRequirementsQueryKey,
+    getRequirementRevisionsQueryKey,
     updateProjectRequirementRequest,
     type CreateRequirementRequest,
     type Requirement,
@@ -73,6 +74,12 @@ export function useRequirementFormAction({ projectId, requirementId, mode, onSav
 
             if (mode === 'create') {
                 invalidations.push(queryClient.invalidateQueries({ queryKey: getListProjectsQueryKey() }));
+            } else if (requirementId !== undefined) {
+                invalidations.push(
+                    queryClient.invalidateQueries({
+                        queryKey: getRequirementRevisionsQueryKey(projectId, requirementId),
+                    }),
+                );
             }
 
             await Promise.all(invalidations);

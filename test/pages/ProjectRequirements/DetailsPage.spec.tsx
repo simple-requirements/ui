@@ -21,13 +21,22 @@ vi.mock('@/stores/tabBarStore', () => ({ openTab: mocks.openTab }));
 vi.mock('@/pages/ProjectRequirements/RequirementDetailsPanel', () => ({
     RequirementDetailsPanel: ({ title }: Readonly<{ title: string }>) => <h1>{title}</h1>,
 }));
+vi.mock('@/pages/ProjectRequirements/RevisionHistoryPanel', () => ({
+    RevisionHistoryPanel: () => <section aria-label='Revision history' />,
+}));
 vi.mock('@/pages/ProjectRequirements/ImplementationTicketsPanel', () => ({
     ImplementationTicketsPanel: ({ visible }: Readonly<{ visible: boolean }>) => (
         <output aria-label='Tickets visible'>{String(visible)}</output>
     ),
 }));
 
-const requirement = { id: 'requirement-1', visibleKey: 'FR-AUTH-0001', status: 'draft', implementationTickets: [] };
+const requirement = {
+    id: 'requirement-1',
+    visibleKey: 'FR-AUTH-0001',
+    revisionNumber: 2,
+    status: 'draft',
+    implementationTickets: [],
+};
 
 function LocationProbe() {
     return <output aria-label='Location'>{useLocation().pathname}</output>;
@@ -68,6 +77,7 @@ describe('Requirement DetailsPage', () => {
 
         expect(await screen.findByRole('heading', { name: 'FR-AUTH-0001' })).toBeInTheDocument();
         expect(mocks.openTab).toHaveBeenCalledWith(expect.objectContaining({ label: 'FR-AUTH-0001' }));
+        expect(screen.getByRole('region', { name: 'Revision history' })).toBeInTheDocument();
         expect(actionBarStore.state.reviewActionRequirement).toEqual(
             expect.objectContaining({ requirementId: 'requirement-1' }),
         );

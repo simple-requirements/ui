@@ -1,0 +1,31 @@
+.revision-history-panel {
+    margin-block-start: var(--ui-space-lg);
+}
+
+.revision-history-panel__header {
+    margin-block-end: var(--ui-space-md);
+}
+
+.revision-history-panel__title {
+    margin: 0;
+    font-size: var(--font-size-h5);
+    line-height: var(--line-height-heading);
+    color: var(--color-app-text);
+}
+
+.revision-history-panel__revision {
+    display: block;
+    font-weight: 600;
+}
+
+.revision-history-panel__current {
+    display: block;
+    margin-block-start: var(--ui-space-xs);
+    color: var(--color-app-text-muted);
+    font-size: var(--font-size-small);
+}
+
+.revision-history-panel__table td:nth-child(3) {
+    min-inline-size: 18rem;
+    white-space: normal;
+}

@@ -228,6 +228,9 @@ describe('ProjectRequirements FormPage', () => {
         });
         expect(mocks.invalidateQueries).toHaveBeenCalledWith({ queryKey: ['/projects/project-alpha/requirements'] });
         expect(mocks.invalidateQueries).toHaveBeenCalledWith({ queryKey: ['/projects/project-alpha/categories'] });
+        expect(mocks.invalidateQueries).toHaveBeenCalledWith({
+            queryKey: ['/projects/project-alpha/requirements/11111111-1111-4111-8111-111111111111/revisions'],
+        });
         expect(mocks.invalidateQueries).not.toHaveBeenCalledWith({ queryKey: ['/projects'] });
     });
 });

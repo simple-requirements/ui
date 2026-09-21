@@ -73,7 +73,7 @@ describe('useImplementationTicketEditor', () => {
         await act(async () => result.current.submit());
 
         expect(mocks.create).toHaveBeenCalledOnce();
-        expect(mocks.invalidateQueries).toHaveBeenCalledOnce();
+        expect(mocks.invalidateQueries).toHaveBeenCalledTimes(2);
         expect(result.current.form.ticketId).toBe('');
         expect(result.current.pending).toBe(false);
         expect(mocks.showToastMessage).toHaveBeenCalledOnce();

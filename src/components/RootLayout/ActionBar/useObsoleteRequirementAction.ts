@@ -1,7 +1,11 @@
 import { useState } from 'react';
 
 import { queryClient } from '@/api/queryClient';
-import { getListProjectRequirementsQueryKey, markProjectRequirementObsoleteRequest } from '@/api/requirementsApi';
+import {
+    getListProjectRequirementsQueryKey,
+    getRequirementRevisionsQueryKey,
+    markProjectRequirementObsoleteRequest,
+} from '@/api/requirementsApi';
 import { toastMessages } from '@/components/Feedback/AppToast/toastMessages';
 import { setReviewActionRequirement, type ReviewActionRequirement } from '@/stores/actionBarStore';
 import { showToastMessage } from '@/components/Feedback/toastEvents';
@@ -25,9 +29,14 @@ export function useObsoleteRequirementAction(requirement: ReviewActionRequiremen
                 visibleKey: updatedRequirement.visibleKey,
                 status: updatedRequirement.status,
             });
-            await queryClient.invalidateQueries({
-                queryKey: getListProjectRequirementsQueryKey(updatedRequirement.projectId),
-            });
+            await Promise.all([
+                queryClient.invalidateQueries({
+                    queryKey: getListProjectRequirementsQueryKey(updatedRequirement.projectId),
+                }),
+                queryClient.invalidateQueries({
+                    queryKey: getRequirementRevisionsQueryKey(updatedRequirement.projectId, updatedRequirement.id),
+                }),
+            ]);
             setVisible(false);
             showToastMessage(toastMessages.requirementObsolete(updatedRequirement.visibleKey));
         } catch (error) {

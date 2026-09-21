@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { queryClient } from '@/api/queryClient';
-import { getListProjectRequirementsQueryKey, markProjectRequirementImplementedRequest } from '@/api/requirementsApi';
+import {
+    getListProjectRequirementsQueryKey,
+    getRequirementRevisionsQueryKey,
+    markProjectRequirementImplementedRequest,
+} from '@/api/requirementsApi';
 import { setReviewActionRequirement, type ReviewActionRequirement } from '@/stores/actionBarStore';
 import { toastMessages } from '@/components/Feedback/AppToast/toastMessages';
 import { showToastMessage } from '@/components/Feedback/toastEvents';
@@ -22,7 +26,12 @@ export function useImplementRequirementAction(requirement: ReviewActionRequireme
                 status: updated.status,
                 implementationTicketCount: updated.implementationTickets.length,
             });
-            await queryClient.invalidateQueries({ queryKey: getListProjectRequirementsQueryKey(updated.projectId) });
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: getListProjectRequirementsQueryKey(updated.projectId) }),
+                queryClient.invalidateQueries({
+                    queryKey: getRequirementRevisionsQueryKey(updated.projectId, updated.id),
+                }),
+            ]);
             showToastMessage(toastMessages.requirementImplemented(updated.visibleKey));
         } catch (error) {
             showToastMessage(

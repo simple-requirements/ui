@@ -2,6 +2,12 @@
 
 .project-requirements-details-page {
     @include ui.page-shell;
+
+    overflow: auto;
+
+    .requirement-details-panel {
+        block-size: auto;
+    }
 }
 
 .implementation-tickets-dialog {

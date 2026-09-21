@@ -1,0 +1,58 @@
+.revision-comparison-panel {
+    display: grid;
+    gap: var(--ui-space-md);
+    margin-block-start: var(--ui-space-xl);
+    padding-block-start: var(--ui-space-lg);
+    border-block-start: var(--ui-border);
+}
+
+.revision-comparison-panel__title {
+    margin: 0;
+    font-size: var(--font-size-h6);
+    line-height: var(--line-height-heading);
+    color: var(--color-app-text);
+}
+
+.revision-comparison-panel__selectors {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 22rem));
+    gap: var(--ui-space-md);
+}
+
+.revision-comparison-panel__table th[scope='row'] {
+    inline-size: 18rem;
+    min-inline-size: 14rem;
+    text-align: start;
+    vertical-align: top;
+}
+
+.revision-comparison-panel__table td {
+    min-inline-size: 20rem;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    vertical-align: top;
+}
+
+.revision-comparison-panel__ticket-list {
+    margin: 0;
+    padding-inline-start: var(--ui-space-lg);
+}
+
+.revision-comparison-panel__structured-value {
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font: inherit;
+}
+
+.revision-comparison-panel__empty,
+.revision-comparison-panel__unavailable {
+    margin: 0;
+    color: var(--color-app-text-muted);
+}
+
+@media (max-width: 48rem) {
+    .revision-comparison-panel__selectors {
+        grid-template-columns: 1fr;
+    }
+}

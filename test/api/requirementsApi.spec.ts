@@ -5,6 +5,7 @@ import {
     compareRequirementRevisionsRequest,
     createImplementationTicketRequest,
     getListProjectRequirementsQueryKey,
+    getRequirementRevisionComparisonQueryKey,
     getRequirementRevisionsQueryKey,
     listProjectRequirementsRequest,
     listRequirementRevisionsRequest,
@@ -40,6 +41,20 @@ describe('requirementsApi', () => {
             ),
         ).toEqual([
             '/projects/22222222-2222-4222-8222-222222222222/requirements/11111111-1111-4111-8111-111111111111/revisions',
+        ]);
+    });
+
+    it('creates the generated revision-comparison query key.', () => {
+        expect(
+            getRequirementRevisionComparisonQueryKey(
+                '22222222-2222-4222-8222-222222222222',
+                '11111111-1111-4111-8111-111111111111',
+                1,
+                3,
+            ),
+        ).toEqual([
+            '/projects/22222222-2222-4222-8222-222222222222/requirements/11111111-1111-4111-8111-111111111111/revisions/compare',
+            { from: 1, to: 3 },
         ]);
     });
 

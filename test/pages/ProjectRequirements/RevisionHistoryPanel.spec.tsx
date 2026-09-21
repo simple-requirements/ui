@@ -14,6 +14,10 @@ vi.mock('@tanstack/react-query', async (importOriginal) => {
     return { ...actual, useQuery: mocks.useQuery };
 });
 
+vi.mock('@/pages/ProjectRequirements/RevisionComparisonPanel', () => ({
+    RevisionComparisonPanel: () => <div>Revision comparison</div>,
+}));
+
 const baseRevision = {
     id: '11111111-1111-4111-8111-111111111111',
     projectId: '22222222-2222-4222-8222-222222222222',

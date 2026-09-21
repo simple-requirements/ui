@@ -7,6 +7,7 @@ import type {
 } from '@/api/generated/model';
 import {
     compareRequirementRevisions as compareGeneratedRequirementRevisions,
+    getCompareRequirementRevisionsQueryKey as getGeneratedCompareRequirementRevisionsQueryKey,
     createRequirement as createGeneratedRequirement,
     getListRequirementRevisionsQueryKey as getRequirementRevisionsQueryKey,
     getListRequirementsQueryKey,
@@ -156,6 +157,18 @@ function toRequirementLifecycleDto(
 }
 
 export { getRequirementRevisionsQueryKey, getListRequirementsQueryKey as getListProjectRequirementsQueryKey };
+
+export function getRequirementRevisionComparisonQueryKey(
+    projectId: string,
+    requirementId: string,
+    fromRevision: number,
+    toRevision: number,
+) {
+    return getGeneratedCompareRequirementRevisionsQueryKey(projectId, requirementId, {
+        from: fromRevision,
+        to: toRevision,
+    });
+}
 
 export async function listProjectRequirementsRequest(projectId: string): Promise<Requirement[]> {
     const response = await listGeneratedRequirements(projectId);

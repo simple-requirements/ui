@@ -6,6 +6,7 @@ import {
     type Requirement,
 } from '@/api/requirementsApi';
 import { LoadableContent } from '@/components/Feedback/LoadableContent';
+import { RevisionComparisonPanel } from '@/pages/ProjectRequirements/RevisionComparisonPanel';
 import { formatDateTime } from '@/utils/displayFormatters';
 
 import '@/pages/ProjectRequirements/RevisionHistoryPanel.scss';
@@ -93,10 +94,17 @@ export function RevisionHistoryPanel({ projectId, requirementId, currentRevision
                 loadingMessage='Loading revision history …'
                 errorMessage='Revision history could not be loaded.'
                 emptyMessage='No revision history is available for this requirement.'>
-                <RevisionHistoryTable
-                    revisions={revisions}
-                    currentRevisionNumber={currentRevisionNumber}
-                />
+                <>
+                    <RevisionHistoryTable
+                        revisions={revisions}
+                        currentRevisionNumber={currentRevisionNumber}
+                    />
+                    <RevisionComparisonPanel
+                        projectId={projectId}
+                        requirementId={requirementId}
+                        revisions={revisions}
+                    />
+                </>
             </LoadableContent>
         </section>
     );

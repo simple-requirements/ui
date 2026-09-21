@@ -1,0 +1,136 @@
+@use 'styles/UiMixins' as ui;
+
+.ui-button {
+    @include ui.prime-button-reset;
+
+    .p-button-icon {
+        font-size: var(--ui-icon-size);
+    }
+}
+
+.ui-button--primary {
+    border: 0;
+    background: var(--color-primary-400);
+    color: var(--color-app-text-inverse);
+
+    &:enabled:hover {
+        border: 0;
+        background: var(--color-primary-500);
+        color: var(--color-app-text-inverse);
+        box-shadow: none;
+    }
+
+    &:enabled:active {
+        background: var(--color-primary-600);
+        color: var(--color-app-text-inverse);
+        transform: translateY(0.1rem);
+        box-shadow: none;
+    }
+}
+
+.ui-button--outline {
+    color: var(--color-primary-500);
+    border-color: var(--color-primary-400);
+    background: transparent;
+
+    &:enabled:hover {
+        background: var(--color-primary-100);
+        border-color: var(--color-primary-500);
+        color: var(--color-primary-600);
+        box-shadow: none;
+    }
+
+    &:enabled:active {
+        background: var(--color-primary-200);
+        border-color: var(--color-primary-600);
+        color: var(--color-primary-600);
+        transform: translateY(0.1rem);
+        box-shadow: none;
+    }
+}
+
+.ui-button--danger {
+    border: 0;
+    background: var(--color-feedback-error-border);
+    color: var(--color-app-text-inverse);
+
+    &:enabled:hover {
+        border: 0;
+        background: var(--color-feedback-error-text);
+        color: var(--color-app-text-inverse);
+        box-shadow: none;
+    }
+
+    &:enabled:active {
+        background: var(--color-feedback-error-text);
+        color: var(--color-app-text-inverse);
+        transform: translateY(0.1rem);
+        box-shadow: none;
+    }
+}
+
+.ui-button--ghost {
+    border: 0;
+    background: transparent;
+    color: var(--color-primary-400);
+
+    &:enabled:hover {
+        border: 0;
+        background: var(--color-primary-100);
+        color: var(--color-primary-500);
+        box-shadow: none;
+    }
+
+    &:enabled:active {
+        background: var(--color-primary-200);
+        color: var(--color-primary-600);
+        box-shadow: none;
+    }
+}
+
+.ui-button--transparent {
+    border: 0;
+    background: transparent;
+    color: inherit;
+
+    &:enabled:hover,
+    &:enabled:active {
+        border: 0;
+        background: transparent;
+        color: inherit;
+        box-shadow: none;
+    }
+}
+
+.ui-button--action {
+    block-size: var(--ui-control-height);
+    padding-inline: 1rem;
+    white-space: nowrap;
+}
+
+.ui-button--dialog {
+    block-size: var(--ui-control-height-large);
+    padding-inline: 1.4rem;
+    font-size: var(--font-size-small);
+    white-space: nowrap;
+}
+
+.ui-button--form {
+    block-size: var(--ui-control-height);
+    padding-inline: var(--ui-space-md);
+}
+
+.ui-button--icon-only {
+    inline-size: var(--ui-control-height);
+    block-size: var(--ui-control-height);
+    padding: 0;
+    justify-content: center;
+}
+
+.ui-button--with-icon {
+    gap: var(--ui-space-xs);
+
+    .p-button-icon {
+        margin: 0;
+    }
+}

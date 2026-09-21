@@ -1,0 +1,21 @@
+@use 'styles/UiMixins' as ui;
+
+.project-requirements-details-page {
+    @include ui.page-shell;
+}
+
+.implementation-tickets-dialog {
+    &__content {
+        display: flex;
+        flex-direction: column;
+        gap: var(--ui-space-lg);
+    }
+
+    .implementation-tickets-panel__table {
+        font-size: var(--font-size-paragraph);
+    }
+
+    .implementation-tickets-panel__table th {
+        font-weight: 600;
+    }
+}

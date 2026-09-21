@@ -1,0 +1,46 @@
+.administrator-projects {
+    display: grid;
+    gap: var(--ui-space-lg);
+    padding: var(--ui-space-xl);
+
+    &__workspace {
+        display: grid;
+        gap: var(--ui-space-lg);
+        min-inline-size: 0;
+    }
+
+    &__details > h2,
+    &__categories-panel > h3,
+    &__ticket-settings > h3,
+    &__memberships > h3 {
+        margin-block-start: 0;
+    }
+
+    &__project-link {
+        color: var(--color-app-active-border);
+        text-decoration: underline;
+    }
+
+    &__actions-column {
+        inline-size: 1%;
+    }
+
+    &__summary {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--ui-space-md);
+        margin-block: var(--ui-space-lg) 0;
+    }
+
+    &__summary dt {
+        font-weight: 700;
+    }
+
+    &__summary dd {
+        margin: var(--ui-space-xs) 0 0;
+    }
+
+    &__error {
+        color: var(--color-feedback-error-text);
+    }
+}

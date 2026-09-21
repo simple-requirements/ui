@@ -1,0 +1,39 @@
+@use 'styles/UiMixins' as ui;
+
+.administrator-sidebar {
+    inline-size: var(--layout-sidebar-width);
+    block-size: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-app-surface-muted);
+    border-inline-end: var(--ui-border);
+
+    &__header {
+        flex: 0 0 var(--layout-region-height);
+        display: flex;
+        align-items: center;
+        padding-inline: var(--ui-space-md);
+        background: var(--color-app-surface);
+        font-weight: 700;
+    }
+
+    &__navigation {
+        flex: 1 1 auto;
+        min-block-size: 0;
+        overflow: auto;
+        padding: var(--ui-space-sm);
+    }
+
+    &__list {
+        @include ui.list-reset;
+
+        display: flex;
+        flex-direction: column;
+        gap: var(--ui-space-xs);
+    }
+
+    .expandable-navigation-item__icon {
+        font-size: var(--ui-icon-size);
+    }
+}

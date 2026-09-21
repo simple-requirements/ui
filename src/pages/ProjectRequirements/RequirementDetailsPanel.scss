@@ -1,0 +1,33 @@
+@use 'styles/UiMixins' as ui;
+
+.requirement-details-panel {
+}
+
+.requirement-details-panel__header {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ui-space-md);
+    margin-block-end: 1rem;
+}
+
+.requirement-details-panel__title {
+    min-inline-size: 0;
+    margin: 0;
+    font-size: var(--font-size-h5);
+    line-height: var(--line-height-heading);
+    color: var(--color-app-text);
+}
+
+.requirement-details-panel__details-list {
+    @include ui.details-list;
+}
+
+.requirement-details-panel__details-row {
+    @include ui.details-row;
+}
+
+.requirement-details-panel__tickets-table th {
+    font-weight: 600;
+}

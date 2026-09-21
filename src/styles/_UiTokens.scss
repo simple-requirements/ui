@@ -1,0 +1,47 @@
+@layer tokens {
+    :root {
+        --ui-space-2xs: 0.2rem;
+        --ui-space-xs: 0.4rem;
+        --ui-space-sm: 0.8rem;
+        --ui-space-md: 1.2rem;
+        --ui-space-lg: 1.6rem;
+        --ui-space-xl: 2.4rem;
+        --ui-space-2xl: 3.2rem;
+
+        --ui-border: 0.1rem solid var(--color-app-border);
+        --ui-border-strong: 0.1rem solid var(--color-app-border-strong);
+
+        --ui-border-radius-small: 0.4rem;
+
+        --ui-control-height: 3.6rem;
+        --ui-control-height-large: 4rem;
+        --ui-dialog-control-height: 4.4rem;
+        --ui-dialog-inline-margin: 3.2rem;
+        --ui-dialog-header-padding: 2rem 2.4rem 1.2rem;
+        --ui-dialog-content-padding: 0 2.4rem 2.4rem;
+        --ui-dialog-actions-gap: 1rem;
+        --ui-dialog-actions-margin: 2.4rem;
+
+        --ui-navigation-row-height: 3.6rem;
+        --ui-navigation-sub-row-height: 3.2rem;
+
+        --ui-icon-size: 1.6rem;
+        --ui-sub-icon-size: 1.4rem;
+
+        --ui-badge-min-width: 4.8rem;
+        --ui-badge-height: 2.8rem;
+
+        --ui-page-padding: var(--ui-space-lg);
+        --ui-panel-padding: var(--ui-space-md) 1.4rem;
+        --ui-panel-header-padding: var(--ui-space-md) 1.4rem;
+        --ui-status-padding: var(--ui-space-md) 1.4rem;
+        --ui-table-cell-padding: var(--ui-space-sm) 1rem;
+
+        --ui-details-row-gap: var(--ui-space-sm);
+        --ui-details-column-gap: var(--ui-space-lg);
+
+        --layout-region-height: 5rem;
+        --layout-sidebar-width: 30rem;
+        --layout-tab-height: 4.25rem;
+    }
+}

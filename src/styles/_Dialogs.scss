@@ -1,0 +1,40 @@
+.ui-dialog {
+    inline-size: min(56rem, calc(100vw - var(--ui-dialog-inline-margin)));
+}
+
+.ui-dialog--compact {
+    inline-size: min(52rem, calc(100vw - var(--ui-dialog-inline-margin)));
+}
+
+.ui-dialog__header {
+    padding: var(--ui-dialog-header-padding);
+}
+
+.ui-dialog__content {
+    padding: var(--ui-dialog-content-padding);
+}
+
+.ui-dialog__heading {
+    margin: 0;
+    font-size: var(--font-size-h3);
+    line-height: var(--line-height-heading);
+    color: var(--color-app-text);
+}
+
+.ui-dialog__message {
+    margin: 0;
+    font-size: var(--font-size-paragraph);
+    line-height: var(--line-height-paragraph);
+    color: var(--color-app-text);
+}
+
+.ui-dialog__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--ui-dialog-actions-gap);
+    margin-block-start: var(--ui-dialog-actions-margin);
+}
+
+.ui-dialog__actions--flush {
+    margin-block-start: 0;
+}

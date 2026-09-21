@@ -1,0 +1,64 @@
+@use 'styles/UiMixins' as ui;
+
+.sidebar-context-menu {
+    @include ui.floating-surface;
+
+    inline-size: max-content;
+    min-inline-size: max-content;
+    padding-block: 0.4rem;
+    padding-inline: 0;
+    border-radius: 0;
+}
+
+.sidebar-context-menu__menu {
+    @include ui.list-reset;
+}
+
+.sidebar-context-menu__item {
+    margin: 0;
+}
+
+.sidebar-context-menu__action {
+    @include ui.small-text;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding-block: 0.8rem;
+    padding-inline: 1.2rem;
+    color: var(--color-app-text);
+    white-space: nowrap;
+    text-decoration: none;
+    border-radius: 0;
+}
+
+.sidebar-context-menu__label {
+    flex: 0 0 auto;
+    color: inherit;
+}
+
+.sidebar-context-menu__icon {
+    order: 2;
+    margin-inline-start: 1.2rem;
+    margin-inline-end: 0;
+    color: var(--color-primary-500);
+    font-size: var(--ui-sub-icon-size);
+}
+
+.sidebar-context-menu__item:not([data-p-disabled='true']) .sidebar-context-menu__action:hover {
+    background: var(--color-app-hover-background);
+    color: var(--color-app-text);
+}
+
+.sidebar-context-menu__item:not([data-p-disabled='true'])
+    .sidebar-context-menu__action:hover
+    .sidebar-context-menu__icon {
+    color: var(--color-primary-600);
+}
+
+.sidebar-context-menu__separator {
+    margin-block: 0.4rem;
+    margin-inline: 0.8rem;
+    border-block-start: var(--ui-border);
+}

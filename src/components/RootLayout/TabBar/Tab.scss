@@ -1,0 +1,67 @@
+@use 'styles/UiMixins' as ui;
+
+.tab {
+    min-inline-size: 14rem;
+    max-inline-size: 28rem;
+    block-size: var(--tab-bar-tab-height);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 1.2rem;
+    padding-block: 0.35rem;
+    padding-inline: 1.2rem 0.7rem;
+    background: var(--color-app-surface);
+    color: var(--color-app-text-muted);
+    overflow: hidden;
+
+    &:hover {
+        background: var(--color-app-hover-background);
+        color: var(--color-app-text);
+    }
+
+    &--active {
+        background: var(--color-app-active-background);
+        color: var(--color-app-text);
+        box-shadow: var(--shadow-active-tab);
+    }
+
+    &--fixed {
+        font-weight: 700;
+    }
+
+    &__select-button {
+        min-inline-size: 0;
+        block-size: 100%;
+        justify-content: flex-start;
+        padding: 0;
+    }
+
+    &__label {
+        @include ui.text-ellipsis;
+
+        color: inherit;
+    }
+
+    &__close-button {
+        inline-size: 2.6rem;
+        min-inline-size: 2.6rem;
+        block-size: 2.6rem;
+        padding: 0;
+        color: var(--color-app-text-muted);
+    }
+
+    &__close-button:enabled:hover {
+        background: var(--color-app-hover-background);
+        color: var(--color-app-text);
+    }
+
+    &__close-button:enabled:active {
+        background: var(--color-app-active-background);
+        color: var(--color-app-text);
+    }
+
+    &__close-icon {
+        font-size: var(--font-size-very-small);
+        color: inherit;
+    }
+}

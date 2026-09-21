@@ -1,0 +1,5 @@
+@use 'styles/UiMixins' as ui;
+
+.project-categories-form-page {
+    @include ui.page-shell;
+}

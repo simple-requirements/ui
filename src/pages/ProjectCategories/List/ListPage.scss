@@ -1,0 +1,62 @@
+@use 'styles/UiMixins' as ui;
+
+.project-categories-list-page {
+    @include ui.page-shell;
+}
+
+.project-categories-list-page__splitter {
+    block-size: 100%;
+    border: 0;
+    background: transparent;
+}
+
+.project-categories-list-page__splitter-panel {
+    min-block-size: 0;
+    overflow: hidden;
+}
+
+.project-categories-list-page__data-table {
+    @include ui.prime-data-table;
+}
+
+.project-categories-list-page__data-table-wrapper {
+    @include ui.prime-data-table-wrapper;
+}
+
+.project-categories-list-page__table {
+    @include ui.prime-data-table-table;
+}
+
+.project-categories-list-page__table-header-cell,
+.project-categories-list-page__table-body-cell {
+    @include ui.prime-data-table-cell;
+}
+
+.project-categories-list-page__table-header-cell {
+    @include ui.prime-data-table-header-cell;
+}
+
+.project-categories-list-page__table-row {
+    @include ui.prime-data-table-selectable-row;
+
+    &--selected {
+        @include ui.prime-data-table-selected-row;
+    }
+}
+
+.project-categories-list-page__key-column {
+    inline-size: 10rem;
+}
+
+.project-categories-list-page__type-column {
+    inline-size: 8rem;
+}
+
+.project-categories-list-page__requirements-column {
+    inline-size: 12rem;
+    text-align: end;
+}
+
+.project-categories-list-page__key-copy-link {
+    @include ui.interactive-link;
+}

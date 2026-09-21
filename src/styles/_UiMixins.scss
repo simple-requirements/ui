@@ -1,0 +1,172 @@
+@mixin focus-ring($color: var(--color-app-active-border), $offset: 0.2rem) {
+    outline: 0.2rem solid $color;
+    outline-offset: $offset;
+    box-shadow: none;
+}
+
+@mixin text-ellipsis {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@mixin small-text {
+    font-size: var(--font-size-small);
+    line-height: var(--line-height-small);
+}
+
+@mixin list-reset {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+@mixin page-shell($font-size: var(--font-size-small)) {
+    block-size: 100%;
+    min-block-size: 0;
+    padding: var(--ui-page-padding);
+    background: var(--color-app-background);
+    font-size: $font-size;
+}
+
+@mixin floating-surface(
+    $background: var(--color-app-surface),
+    $border: var(--ui-border),
+    $shadow: var(--shadow-floating)
+) {
+    background: $background;
+    border: $border;
+    box-shadow: $shadow;
+}
+
+@mixin status-text($padding: var(--ui-status-padding)) {
+    padding: $padding;
+    color: var(--color-app-text-muted);
+    font-size: var(--font-size-small);
+    line-height: var(--line-height-small);
+}
+
+@mixin details-list {
+    @include small-text;
+
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: var(--ui-details-row-gap) var(--ui-details-column-gap);
+    margin: 0;
+}
+
+@mixin details-row {
+    display: contents;
+
+    dt {
+        @include small-text;
+
+        color: var(--color-app-text-muted);
+        font-weight: 600;
+    }
+
+    dd {
+        @include small-text;
+
+        min-inline-size: 0;
+        margin: 0;
+        color: var(--color-app-text);
+    }
+}
+
+@mixin prime-data-table {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    font-size: var(--font-size-small);
+}
+
+@mixin prime-data-table-wrapper {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow: auto;
+}
+
+@mixin prime-data-table-table {
+    table-layout: fixed;
+}
+
+@mixin prime-data-table-cell {
+    @include small-text;
+
+    padding: var(--ui-table-cell-padding);
+    border-block-end: var(--ui-border);
+    text-align: start;
+    vertical-align: middle;
+}
+
+@mixin prime-data-table-header-cell {
+    background: var(--color-app-surface-muted);
+    color: var(--color-app-text);
+    font-weight: 600;
+}
+
+@mixin prime-data-table-selectable-row {
+    cursor: pointer;
+
+    &:hover {
+        background: var(--color-app-hover-background);
+    }
+
+    &:focus-visible {
+        @include focus-ring(var(--color-primary-500), -0.2rem);
+    }
+}
+
+@mixin prime-data-table-selected-row {
+    background: var(--color-app-active-background);
+}
+
+@mixin interactive-link {
+    color: var(--color-primary-500);
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+        text-decoration: underline;
+    }
+
+    &:focus-visible {
+        @include focus-ring(var(--color-primary-500));
+    }
+}
+
+@mixin prime-button-reset {
+    border-radius: 0;
+    box-shadow: none;
+
+    &:focus {
+        box-shadow: none;
+    }
+
+    &:focus-visible {
+        @include focus-ring;
+    }
+}
+
+@mixin navigation-row-button {
+    @include prime-button-reset;
+
+    inline-size: 100%;
+    min-block-size: var(--ui-navigation-row-height);
+    justify-content: flex-start;
+    padding-inline: 1rem;
+    border-color: transparent;
+    background: transparent;
+    color: var(--color-app-text);
+
+    &:enabled:hover {
+        background: var(--color-app-hover-background);
+        border-color: var(--color-app-border);
+        color: var(--color-app-text);
+        box-shadow: none;
+    }
+}

@@ -1,0 +1,136 @@
+.ui-form {
+    display: grid;
+    gap: var(--ui-space-lg);
+    padding: var(--ui-panel-padding);
+}
+
+.ui-form--medium {
+    max-inline-size: 64rem;
+}
+
+.ui-form--wide {
+    max-inline-size: 72rem;
+}
+
+.ui-form--dialog {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-space-sm);
+    padding: 0;
+}
+
+.ui-form--dialog-spacious {
+    justify-content: space-between;
+    gap: var(--ui-space-xl);
+}
+
+.ui-field {
+    display: grid;
+    gap: var(--ui-space-xs);
+}
+
+.ui-field--dialog {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-space-sm);
+}
+
+.ui-label {
+    font-size: var(--font-size-small);
+    line-height: var(--line-height-small);
+    font-weight: 600;
+    color: var(--color-app-text);
+}
+
+.ui-label--dialog {
+    font-size: var(--font-size-h6);
+    line-height: var(--line-height-heading);
+}
+
+.ui-control {
+    inline-size: min(100%, 44rem);
+    padding-inline: var(--ui-space-sm);
+    border: var(--ui-border);
+    border-radius: 0;
+    background: var(--color-app-surface);
+    color: var(--color-app-text);
+    box-shadow: none;
+}
+
+.ui-control:focus-visible {
+    outline: 2px solid var(--color-app-active-border);
+    outline-offset: 2px;
+}
+
+.ui-control:disabled,
+.ui-control[readonly] {
+    background: var(--color-app-surface-muted);
+    color: var(--color-app-text-muted);
+    cursor: not-allowed;
+}
+
+.ui-control--line {
+    block-size: var(--ui-control-height-large);
+}
+
+.ui-control--dialog {
+    block-size: var(--ui-dialog-control-height);
+    padding-inline: 1rem;
+    inline-size: 100%;
+    max-inline-size: none;
+    font-size: var(--font-size-paragraph);
+    line-height: var(--line-height-paragraph);
+}
+
+.ui-control--narrow {
+    max-inline-size: 36rem;
+}
+
+.ui-control--full {
+    inline-size: 100%;
+    max-inline-size: none;
+}
+
+.ui-control--invalid {
+    border-color: var(--color-feedback-error-border);
+}
+
+.ui-textarea {
+    min-block-size: 8rem;
+    padding-block: var(--ui-space-sm);
+    resize: vertical;
+}
+
+.ui-message {
+    max-inline-size: 44rem;
+    margin: 0;
+    color: var(--color-app-text-muted);
+    font-size: var(--font-size-small);
+    line-height: var(--line-height-small);
+}
+
+.ui-message--full {
+    max-inline-size: none;
+}
+
+.ui-message--error {
+    color: var(--color-feedback-error-text);
+}
+
+.ui-message--warning {
+    color: var(--color-feedback-warning-text);
+}
+
+.ui-form-actions {
+    display: flex;
+    gap: var(--ui-space-sm);
+    align-items: center;
+}
+
+.ui-form--flush {
+    padding: 0;
+}
+
+.ui-form--compact {
+    gap: var(--ui-space-sm);
+}

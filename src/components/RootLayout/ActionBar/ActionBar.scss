@@ -1,0 +1,31 @@
+.action-bar {
+    block-size: 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--ui-space-md);
+    padding-inline: var(--ui-space-md);
+    position: relative;
+    z-index: var(--z-index-action-bar, 30);
+    overflow: visible;
+    background: var(--color-app-surface);
+    border-block-end: var(--ui-border);
+
+    &__lookup {
+        min-inline-size: 0;
+        display: flex;
+        align-items: center;
+        gap: var(--ui-space-sm);
+    }
+
+    &__input {
+        inline-size: 18rem;
+        block-size: var(--ui-control-height);
+        padding-inline: var(--ui-space-sm);
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    &__account {
+        margin-inline-start: auto;
+    }
+}

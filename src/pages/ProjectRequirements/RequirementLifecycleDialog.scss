@@ -1,0 +1,14 @@
+.requirement-lifecycle-dialog {
+    min-block-size: 38rem;
+
+    &__form {
+        min-block-size: 27rem;
+    }
+
+    &__form textarea {
+        flex: 1 1 auto;
+        min-block-size: 12rem;
+        font-size: var(--font-size-paragraph);
+        line-height: var(--line-height-paragraph);
+    }
+}

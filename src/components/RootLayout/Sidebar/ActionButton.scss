@@ -1,0 +1,27 @@
+@use 'styles/UiMixins' as ui;
+
+.sidebar-action-button {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    block-size: var(--sidebar-actions-button-height);
+    padding: 1rem 1.2rem;
+    white-space: nowrap;
+
+    &.sidebar-action-button--ghost {
+        inline-size: var(--sidebar-actions-icon-button-size);
+        min-inline-size: var(--sidebar-actions-icon-button-size);
+        flex: 0 0 var(--sidebar-actions-icon-button-size);
+        padding: 0;
+    }
+}
+
+.sidebar-action-button__icon {
+    font-size: var(--sidebar-actions-icon-size);
+    color: inherit;
+}
+
+.sidebar-action-button__label {
+    @include ui.text-ellipsis;
+
+    color: inherit;
+}

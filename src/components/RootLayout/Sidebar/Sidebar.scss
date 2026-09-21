@@ -1,0 +1,44 @@
+@use 'styles/UiMixins' as ui;
+
+.sidebar {
+    --sidebar-actions-button-height: var(--ui-control-height);
+    --sidebar-actions-icon-button-size: var(--ui-control-height);
+    --sidebar-actions-icon-size: 2rem;
+
+    inline-size: var(--layout-sidebar-width);
+    block-size: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-app-surface-muted);
+    border-inline-end: var(--ui-border);
+
+    &__actions {
+        flex: 0 0 var(--layout-region-height);
+        display: flex;
+        align-items: center;
+        gap: var(--ui-space-sm);
+        min-block-size: 0;
+        padding: 0.6rem var(--ui-space-sm);
+        background: var(--color-app-surface);
+    }
+
+    &__project-navigation {
+        flex: 1 1 auto;
+        min-block-size: 0;
+        overflow: auto;
+        padding: var(--ui-space-sm);
+    }
+
+    &__project-list {
+        @include ui.list-reset;
+
+        display: flex;
+        flex-direction: column;
+        gap: var(--ui-space-xs);
+    }
+
+    &__status {
+        @include ui.status-text(var(--ui-space-sm));
+    }
+}

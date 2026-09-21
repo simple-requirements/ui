@@ -1,0 +1,31 @@
+@layer components {
+    .p-toast {
+        inline-size: min(42rem, calc(100vw - 4rem));
+        min-inline-size: min(34rem, calc(100vw - 4rem));
+    }
+
+    .p-toast .p-toast-message-content {
+        min-block-size: 7.2rem;
+        gap: var(--ui-space-sm);
+        align-items: center;
+        padding: var(--ui-space-md);
+    }
+
+    .p-toast .p-toast-message-text {
+        display: flex;
+        align-self: stretch;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .p-toast .p-toast-summary {
+        font-size: var(--font-size-small);
+        line-height: var(--line-height-small);
+    }
+
+    .p-toast .p-toast-detail {
+        margin-block-start: var(--ui-space-sm);
+        font-size: var(--font-size-small);
+        line-height: var(--line-height-small);
+    }
+}

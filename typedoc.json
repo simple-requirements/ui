@@ -1,8 +1,8 @@
 {
     "$schema": "https://typedoc.org/schema.json",
-    "entryPoints": ["src/main/index.ts", "src/preload/index.ts", "src/renderer/App.tsx"],
+    "entryPoints": ["src/main.tsx"],
     "out": "docs",
-    "tsconfig": "tsconfig.typedoc.json",
+    "tsconfig": "tsconfig.node.json",
     "excludePrivate": true,
     "excludeInternal": true,
     "excludeExternals": true

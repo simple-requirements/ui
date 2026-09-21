@@ -1,0 +1,107 @@
+import { Button } from 'primereact/button';
+import { Dialog } from 'primereact/dialog';
+import { useState } from 'react';
+
+import '@/pages/ProjectRequirements/RequirementLifecycleDialog.scss';
+
+export type RequirementLifecycleDialogProps = Readonly<{
+    visible: boolean;
+    title: string;
+    reasonRequired?: boolean;
+    reasonLabel?: string;
+    confirmLabel?: string;
+    warning?: string;
+    confirmationBlocked?: boolean;
+    pending?: boolean;
+    onAbort: () => void;
+    onConfirm: (reason?: string) => void | Promise<void>;
+}>;
+
+/**
+ * Renders a modal confirmation dialog for requirement-changing actions.
+ * @param props Dialog labels, state and callbacks.
+ * @returns Requirement confirmation dialog.
+ */
+export function RequirementLifecycleDialog({
+    visible,
+    title,
+    reasonRequired = false,
+    reasonLabel = 'Reason',
+    confirmLabel = 'OK',
+    warning,
+    confirmationBlocked = false,
+    pending = false,
+    onAbort,
+    onConfirm,
+}: RequirementLifecycleDialogProps) {
+    const [reason, setReason] = useState('');
+    const valid = !reasonRequired || reason.trim().length > 0;
+    const fieldPrefix = title.toLowerCase().replaceAll(/[^a-z0-9]+/gu, '-');
+
+    return (
+        <Dialog
+            visible={visible}
+            modal
+            dismissableMask={false}
+            closable={false}
+            closeOnEscape={!pending}
+            draggable={false}
+            resizable={false}
+            header={<h2 className='requirement-lifecycle-dialog__heading ui-dialog__heading'>{title}</h2>}
+            pt={{
+                root: { className: 'requirement-lifecycle-dialog ui-dialog' },
+                header: { className: 'requirement-lifecycle-dialog__header ui-dialog__header' },
+                content: { className: 'requirement-lifecycle-dialog__content ui-dialog__content' },
+            }}
+            onHide={onAbort}>
+            <form
+                className='requirement-lifecycle-dialog__form ui-form--dialog'
+                onSubmit={(event) => {
+                    event.preventDefault();
+                    if (valid && !confirmationBlocked) {
+                        void onConfirm(reasonRequired ? reason.trim() : undefined);
+                    }
+                }}>
+                {warning !== undefined && (
+                    <p className='requirement-lifecycle-dialog__warning ui-message ui-message--warning ui-message--full'>
+                        {warning}
+                    </p>
+                )}
+                {reasonRequired && (
+                    <>
+                        <label
+                            className='ui-label'
+                            htmlFor={`${fieldPrefix}-reason`}>
+                            {reasonLabel}
+                        </label>
+                        <textarea
+                            id={`${fieldPrefix}-reason`}
+                            className='ui-control ui-control--full ui-textarea'
+                            rows={5}
+                            maxLength={500}
+                            value={reason}
+                            disabled={pending}
+                            onChange={(event) => setReason(event.currentTarget.value)}
+                        />
+                    </>
+                )}
+                <div className='requirement-lifecycle-dialog__actions ui-dialog__actions ui-dialog__actions--flush'>
+                    <Button
+                        type='button'
+                        outlined
+                        label='Abort'
+                        disabled={pending}
+                        pt={{ root: { className: 'ui-button ui-button--outline ui-button--dialog' } }}
+                        onClick={onAbort}
+                    />
+                    <Button
+                        type='submit'
+                        label={confirmLabel}
+                        disabled={!valid || pending || confirmationBlocked}
+                        pt={{ root: { className: 'ui-button ui-button--primary ui-button--dialog' } }}
+                    />
+                </div>
+            </form>
+        </Dialog>
+    );
+}

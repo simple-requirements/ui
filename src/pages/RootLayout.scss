@@ -1,0 +1,63 @@
+.root-layout {
+    min-block-size: 100vh;
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    grid-template-rows: var(--layout-region-height) var(--layout-region-height) minmax(0, 1fr);
+    grid-template-areas:
+        'tabbar tabbar'
+        'sidebar actionbar'
+        'sidebar content';
+    overflow: hidden;
+    background: var(--color-app-background);
+    color: var(--color-app-text);
+
+    &__tabbar,
+    &__sidebar,
+    &__actionbar,
+    &__content {
+        min-inline-size: 0;
+        min-block-size: 0;
+    }
+
+    &__tabbar {
+        grid-area: tabbar;
+        block-size: 100%;
+    }
+
+    &__sidebar {
+        grid-area: sidebar;
+        block-size: 100%;
+    }
+
+    &__actionbar {
+        position: relative;
+        z-index: var(--z-index-action-bar, 30);
+        grid-area: actionbar;
+        block-size: 100%;
+        overflow: visible;
+    }
+
+    &__content {
+        position: relative;
+        z-index: 0;
+        grid-area: content;
+        overflow: auto;
+        background: var(--color-app-background);
+    }
+
+    &__content-placeholder {
+        padding: var(--ui-space-2xl);
+    }
+
+    &__content-title {
+        margin-block-end: var(--ui-space-md);
+        font-size: var(--font-size-h2);
+        line-height: var(--line-height-heading);
+        color: var(--color-app-text);
+    }
+
+    &__content-text {
+        max-inline-size: 72rem;
+        color: var(--color-app-text-muted);
+    }
+}

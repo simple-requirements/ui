@@ -1,0 +1,115 @@
+@use 'styles/UiMixins' as ui;
+
+.expandable-navigation-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.expandable-navigation-item__button {
+    @include ui.navigation-row-button;
+
+    &.expandable-navigation-item__button--active {
+        background: var(--color-app-active-background);
+        border-color: var(--color-app-active-border);
+        color: var(--color-app-text);
+    }
+}
+
+.expandable-navigation-item__button-content {
+    inline-size: 100%;
+    min-inline-size: 0;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.expandable-navigation-item__icon {
+    font-size: var(--ui-icon-size);
+    color: var(--color-primary-500);
+}
+
+.expandable-navigation-item__label {
+    @include ui.text-ellipsis;
+
+    text-align: start;
+}
+
+.expandable-navigation-item__badge {
+    min-inline-size: var(--ui-badge-min-width);
+    block-size: var(--ui-badge-height);
+    padding-inline: 0.8rem;
+    justify-self: end;
+    font-size: var(--font-size-small);
+    line-height: var(--ui-badge-height);
+    background: var(--color-primary-400);
+    color: var(--color-app-text-inverse);
+}
+
+.expandable-navigation-item__sub-list-wrapper {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+        grid-template-rows 160ms ease,
+        opacity 160ms ease;
+}
+
+.expandable-navigation-item--expanded .expandable-navigation-item__sub-list-wrapper {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.expandable-navigation-item__sub-list {
+    @include ui.list-reset;
+
+    min-block-size: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.3rem 0 0.4rem 2.8rem;
+}
+
+.expandable-navigation-item__sub-link {
+    @include ui.small-text;
+
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    min-block-size: var(--ui-navigation-sub-row-height);
+    padding-inline: 0.8rem;
+    border: 0.1rem solid transparent;
+    border-radius: var(--ui-border-radius-small);
+    color: var(--color-app-text);
+    text-decoration: none;
+
+    &:hover {
+        background: var(--color-app-hover-background);
+        border-color: var(--color-app-border);
+    }
+
+    &--active {
+        background: var(--color-app-active-background);
+        border-color: var(--color-app-active-border);
+        color: var(--color-app-text);
+    }
+}
+
+.expandable-navigation-item__sub-badge {
+    min-inline-size: var(--ui-badge-min-width);
+    block-size: var(--ui-badge-height);
+    padding-inline: 0.8rem;
+    margin-inline-start: auto;
+    font-size: var(--font-size-small);
+    line-height: var(--ui-badge-height);
+    background: var(--color-primary-400);
+    color: var(--color-app-text-inverse);
+}
+
+.expandable-navigation-item__sub-icon {
+    font-size: var(--ui-sub-icon-size);
+    color: var(--color-primary-500);
+}

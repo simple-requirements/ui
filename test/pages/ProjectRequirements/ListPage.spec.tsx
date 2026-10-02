@@ -4,6 +4,7 @@ import { cleanup, render, screen, waitFor, within } from '@testing-library/react
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type * as ReactQueryModule from '@tanstack/react-query';
 
 import type { Requirement } from '@/api/requirementsApi';
 import { ListPage } from '@/pages/ProjectRequirements/List/ListPage';
@@ -82,7 +83,7 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock('@tanstack/react-db', () => ({ useLiveQuery: mocks.useLiveQuery }));
 vi.mock('@tanstack/react-query', async (importOriginal) => {
-    const actual = await importOriginal<typeof import('@tanstack/react-query')>();
+    const actual = await importOriginal<typeof ReactQueryModule>();
     return { ...actual, useQueries: mocks.useQueries };
 });
 vi.mock('@/api/collections/projectRequirementsCollection', () => ({

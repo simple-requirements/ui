@@ -152,7 +152,7 @@ export function RequirementLinksPanel({
 
     const targetKeys = useMemo(
         () =>
-            (requirementsQuery.data ?? [])
+            requirementsQuery.data
                 .filter((candidate) => candidate.id !== requirement.id)
                 .map((candidate) => candidate.visibleKey),
         [requirement.id, requirementsQuery.data],
@@ -166,7 +166,7 @@ export function RequirementLinksPanel({
     const outgoingLinks = (overviewQuery.data?.outgoing ?? []).filter(matchesFilter);
     const incomingLinks = (overviewQuery.data?.incoming ?? []).filter(matchesFilter);
 
-    const refresh = async () => queryClient.invalidateQueries({ queryKey });
+    const refresh = () => queryClient.invalidateQueries({ queryKey: ['projects', projectId, 'requirements'] });
     const mutation = useMutation({
         mutationFn: async (state: EditorState) =>
             state.link === undefined ?

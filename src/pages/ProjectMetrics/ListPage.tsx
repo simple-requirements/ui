@@ -71,14 +71,14 @@ export function ListPage() {
         () => [...(metricsQuery.data ?? [])].sort((a, b) => a.key.localeCompare(b.key)),
         [metricsQuery.data],
     );
-    const selectedMetric = metrics.find((metric) => metric.id === selectedMetricId) ?? metrics[0];
+    const selectedMetric = metrics.find((metric) => metric.id === selectedMetricId) ?? metrics.at(0);
 
     useEffect(() => {
         if (metrics.length === 0) {
             setSelectedMetricId(undefined);
             return;
         }
-        setSelectedMetricId((current) => (metrics.some((metric) => metric.id === current) ? current : metrics[0].id));
+        setSelectedMetricId((current) => (metrics.some((metric) => metric.id === current) ? current : metrics.at(0)?.id));
     }, [metrics]);
 
     if (projectId === undefined) {
@@ -160,10 +160,11 @@ export function ListPage() {
                                         label='Edit'
                                         outlined
                                         disabled={selectedMetric === undefined}
-                                        onClick={() =>
-                                            selectedMetric !== undefined
-                                            && void navigate(getProjectMetricEditRoute(projectId, selectedMetric.id))
-                                        }
+                                        onClick={() => {
+                                            if (selectedMetric !== undefined) {
+                                                void navigate(getProjectMetricEditRoute(projectId, selectedMetric.id));
+                                            }
+                                        }}
                                         pt={{ root: { className: 'ui-button ui-button--outline ui-button--action' } }}
                                     />
                                     <Button

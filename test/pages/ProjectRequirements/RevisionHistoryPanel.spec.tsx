@@ -96,6 +96,15 @@ afterEach(() => {
     vi.clearAllMocks();
 });
 
+
+function getRevisionRow(label: string): HTMLTableRowElement {
+    const row = screen.getByText(label).closest('tr');
+    if (!(row instanceof HTMLTableRowElement)) {
+        throw new Error(`Expected ${label} to be rendered in a table row.`);
+    }
+    return row;
+}
+
 function renderPanel(onSelectRevision = vi.fn()) {
     render(
         <RevisionHistoryPanel
@@ -135,10 +144,9 @@ describe('RevisionHistoryPanel', () => {
     it('browses a revision on a normal row click', () => {
         mocks.useQuery.mockReturnValue({ data: revisions, isLoading: false, isError: false });
         const onSelectRevision = renderPanel();
-        const revisionOneRow = screen.getByText('Revision 1').closest('tr');
+        const revisionOneRow = getRevisionRow('Revision 1');
 
-        expect(revisionOneRow).not.toBeNull();
-        fireEvent.click(revisionOneRow!);
+        fireEvent.click(revisionOneRow);
 
         expect(revisionOneRow).toHaveClass('revision-history-panel__row--selected');
         expect(screen.getByText('Revision 3').closest('tr')).not.toHaveClass('revision-history-panel__row--selected');
@@ -148,18 +156,16 @@ describe('RevisionHistoryPanel', () => {
     it('marks two revisions with Ctrl+click and compares them from the selected-row context menu', () => {
         mocks.useQuery.mockReturnValue({ data: revisions, isLoading: false, isError: false });
         renderPanel();
-        const revisionOneRow = screen.getByText('Revision 1').closest('tr');
-        const revisionTwoRow = screen.getByText('Revision 2').closest('tr');
+        const revisionOneRow = getRevisionRow('Revision 1');
+        const revisionTwoRow = getRevisionRow('Revision 2');
 
-        expect(revisionOneRow).not.toBeNull();
-        expect(revisionTwoRow).not.toBeNull();
-        fireEvent.click(revisionOneRow!);
-        fireEvent.click(revisionTwoRow!, { ctrlKey: true });
+        fireEvent.click(revisionOneRow);
+        fireEvent.click(revisionTwoRow, { ctrlKey: true });
 
         expect(revisionOneRow).toHaveClass('revision-history-panel__row--selected');
         expect(revisionTwoRow).toHaveClass('revision-history-panel__row--selected');
 
-        fireEvent.contextMenu(revisionOneRow!);
+        fireEvent.contextMenu(revisionOneRow);
         fireEvent.click(screen.getByRole('button', { name: 'Compare revisions' }));
 
         expect(screen.getByText('Revision comparison 1 → 2')).toBeInTheDocument();
@@ -168,10 +174,9 @@ describe('RevisionHistoryPanel', () => {
     it('does not open the comparison context menu unless exactly two revisions are selected', () => {
         mocks.useQuery.mockReturnValue({ data: revisions, isLoading: false, isError: false });
         renderPanel();
-        const revisionThreeRow = screen.getByText('Revision 3').closest('tr');
+        const revisionThreeRow = getRevisionRow('Revision 3');
 
-        expect(revisionThreeRow).not.toBeNull();
-        fireEvent.contextMenu(revisionThreeRow!);
+        fireEvent.contextMenu(revisionThreeRow);
 
         expect(screen.queryByRole('button', { name: 'Compare revisions' })).not.toBeInTheDocument();
     });

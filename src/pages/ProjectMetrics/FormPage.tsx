@@ -3,7 +3,7 @@ import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { useEffect, useMemo, useState } from 'react';
-import type { FormEvent } from 'react';
+import type { SyntheticEvent } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { cacheProjectMetric, getProjectMetricsCollection } from '@/api/collections/projectMetricsCollection';
@@ -60,7 +60,7 @@ export function FormPage() {
         return <InlineStatus kind='error'>Project route is missing a project id.</InlineStatus>;
     }
 
-    async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
+    async function handleSubmit(event: SyntheticEvent<HTMLFormElement>): Promise<void> {
         event.preventDefault();
         setValueError(undefined);
         setFormError(undefined);

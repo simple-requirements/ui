@@ -121,9 +121,6 @@ function renderFieldValue(field: ComparableField, value: Requirement[ComparableF
         }
         return <ul className='revision-comparison-dialog__ticket-list'>{value.map(formatTicket)}</ul>;
     }
-    if (typeof value === 'object' && value !== null) {
-        return <pre className='revision-comparison-dialog__structured-value'>{JSON.stringify(value, null, 2)}</pre>;
-    }
     return formatSimpleValue(field, value);
 }
 

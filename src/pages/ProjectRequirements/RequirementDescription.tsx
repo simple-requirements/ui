@@ -62,8 +62,7 @@ export function RequirementDescription({
 
     for (const match of requirement.description.matchAll(metricPlaceholderPattern)) {
         const key = match[1];
-        const index = match.index ?? cursor;
-        if (key === undefined) continue;
+        const index = match.index;
         const reference = referencesByKey.get(key);
         if (reference === undefined) continue;
 

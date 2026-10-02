@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { expect, it } from 'vitest';
 
 import type { Category } from '@/api/categoriesApi';
 import type { RequirementLinksOverview } from '@/api/requirementLinksApi';

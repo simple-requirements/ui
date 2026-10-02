@@ -87,7 +87,7 @@ export function RequirementTable({
     }
 
     function typeBodyTemplate(requirement: RequirementTableRow): string {
-        return categoriesById.get(requirement.categoryId)?.type ?? requirement.visibleKey.split('-')[0] ?? '—';
+        return categoriesById.get(requirement.categoryId)?.type ?? requirement.visibleKey.split('-')[0];
     }
 
     function categoryBodyTemplate(requirement: RequirementTableRow): string {

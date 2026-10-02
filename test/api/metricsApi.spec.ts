@@ -53,8 +53,9 @@ describe('metricsApi', () => {
         mocks.apiFetch.mockResolvedValue({ data: metricResponse, status: 201, headers: new Headers() });
         await createProjectMetricRequest('project alpha', { value: '2000 ms', description: 'Response time' });
         const [, request] = mocks.apiFetch.mock.calls[0] as [string, RequestInit];
-        expect(JSON.parse(String(request.body))).toEqual({ value: '2000 ms', description: 'Response time' });
-        expect(JSON.parse(String(request.body))).not.toHaveProperty('key');
+        if (typeof request.body !== 'string') throw new Error('Expected a JSON string request body.');
+        expect(JSON.parse(request.body)).toEqual({ value: '2000 ms', description: 'Response time' });
+        expect(JSON.parse(request.body)).not.toHaveProperty('key');
     });
 
     it('updates and deactivates a metric through the generated client.', async () => {

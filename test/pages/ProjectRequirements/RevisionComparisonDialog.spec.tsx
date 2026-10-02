@@ -8,7 +8,15 @@ import type * as ReactQueryModule from '@tanstack/react-query';
 import type { Requirement } from '@/api/requirementsApi';
 import { RevisionComparisonDialog } from '@/pages/ProjectRequirements/RevisionComparisonDialog';
 
-const mocks = vi.hoisted(() => ({ useQuery: vi.fn(), diffView: vi.fn() }));
+type DiffViewProps = Readonly<{
+    data: Readonly<{
+        oldFile: Readonly<{ content: string }>;
+        newFile: Readonly<{ content: string }>;
+        hunks: readonly string[];
+    }>;
+}>;
+
+const mocks = vi.hoisted(() => ({ useQuery: vi.fn(), diffView: vi.fn<(props: DiffViewProps) => void>() }));
 
 vi.mock('@tanstack/react-query', async (importOriginal) => {
     const actual = await importOriginal<typeof ReactQueryModule>();
@@ -17,7 +25,7 @@ vi.mock('@tanstack/react-query', async (importOriginal) => {
 
 vi.mock('@git-diff-view/react', () => ({
     DiffModeEnum: { Split: 'split' },
-    DiffView: (props: Readonly<{ data: unknown }>) => {
+    DiffView: (props: DiffViewProps) => {
         mocks.diffView(props);
         return <div data-testid='description-diff' />;
     },
@@ -108,17 +116,12 @@ describe('RevisionComparisonDialog', () => {
             'revision-comparison-dialog__field--changed',
         );
         expect(screen.getByRole('button', { name: 'Show all fields' })).toHaveAttribute('aria-pressed', 'false');
-        expect(mocks.diffView).toHaveBeenCalledWith(
-            expect.objectContaining({
-                data: expect.objectContaining({
-                    oldFile: expect.objectContaining({ content: 'Users can sign in.' }),
-                    newFile: expect.objectContaining({ content: 'Users can sign in securely.' }),
-                    hunks: [
-                        '--- Revision 2\n+++ Revision 3\n@@ -1,1 +1,1 @@\n-Users can sign in.\n+Users can sign in securely.\n',
-                    ],
-                }),
-            }),
-        );
+        const diffProps = mocks.diffView.mock.calls.at(-1)?.[0];
+        expect(diffProps?.data.oldFile.content).toBe('Users can sign in.');
+        expect(diffProps?.data.newFile.content).toBe('Users can sign in securely.');
+        expect(diffProps?.data.hunks).toEqual([
+            '--- Revision 2\n+++ Revision 3\n@@ -1,1 +1,1 @@\n-Users can sign in.\n+Users can sign in securely.\n',
+        ]);
     });
 
     it('diffs frozen rendered metric values instead of raw placeholders.', () => {
@@ -147,14 +150,9 @@ describe('RevisionComparisonDialog', () => {
             />,
         );
 
-        expect(mocks.diffView).toHaveBeenCalledWith(
-            expect.objectContaining({
-                data: expect.objectContaining({
-                    oldFile: expect.objectContaining({ content: 'Below 2000 ms.' }),
-                    newFile: expect.objectContaining({ content: 'Below 1000 ms.' }),
-                }),
-            }),
-        );
+        const diffProps = mocks.diffView.mock.calls.at(-1)?.[0];
+        expect(diffProps?.data.oldFile.content).toBe('Below 2000 ms.');
+        expect(diffProps?.data.newFile.content).toBe('Below 1000 ms.');
     });
 
     it('uses a preselected revision pair when opened from revision history', () => {

@@ -55,12 +55,14 @@ function metricRow(page: Page, key: string) {
     return page.getByRole('table', { name: 'Metrics' }).getByRole('row').filter({ hasText: key });
 }
 
+// eslint-disable-next-line no-empty-pattern -- {} Is correct Playwright syntax
 Given('the backend contains a metric test project named {string}', async ({}, projectName: string) => {
     await resetTestBackend();
     const project = await createTestProject(projectName);
     metricContext = { projectId: project.id };
 });
 
+// eslint-disable-next-line no-empty-pattern -- {} Is correct Playwright syntax
 Given('the backend contains a metric test project named {string} with a metric', async ({}, projectName: string) => {
     await resetTestBackend();
     const project = await createTestProject(projectName);
@@ -149,6 +151,7 @@ Then('project metric content should not be accessible', async ({ page }) => {
 
 Given(
     'the backend contains a metric integration project named {string} with two referencing requirements',
+    // eslint-disable-next-line no-empty-pattern -- {} Is correct Playwright syntax
     async ({}, projectName: string) => {
         await resetTestBackend();
         const project = await createTestProject(projectName);
@@ -180,6 +183,7 @@ Given(
 
 Given(
     'the backend contains a metric integration project named {string} with a deactivated referenced metric',
+    // eslint-disable-next-line no-empty-pattern -- {} Is correct Playwright syntax
     async ({}, projectName: string) => {
         await resetTestBackend();
         const project = await createTestProject(projectName);
@@ -204,6 +208,7 @@ Given(
 
 Given(
     'the backend contains a metric integration project named {string} with an unresolved metric requirement',
+    // eslint-disable-next-line no-empty-pattern -- {} Is correct Playwright syntax
     async ({}, projectName: string) => {
         await resetTestBackend();
         const project = await createTestProject(projectName);

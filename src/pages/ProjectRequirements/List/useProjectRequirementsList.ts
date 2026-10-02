@@ -89,7 +89,7 @@ export function useProjectRequirementsList(projectId: string | undefined) {
     const linksByRequirementId = useMemo(() => {
         const result = new Map<string, RequirementLinksOverview>();
         allRequirements.forEach((requirement, index) => {
-            const data = linkQueries[index].data;
+            const data = linkQueries.at(index)?.data;
             if (data !== undefined) result.set(requirement.id, data);
         });
         return result;

@@ -390,3 +390,59 @@ Then('the URL should point to the requirements list route', async ({ page }) => 
 Then('the requirements table should be visible again', async ({ page }) => {
     await expect(getRequirementTable(page)).toBeVisible();
 });
+
+function getRequirementLinksPanel(page: Page) {
+    return page.getByRole('region', { name: 'Requirement links' });
+}
+
+function getRequirementLinksGroup(page: Page, direction: 'Outgoing' | 'Incoming') {
+    return getRequirementLinksPanel(page).getByRole('region', { name: `${direction} references` });
+}
+
+When('I create a requirement link to {string}', async ({ page }, targetKey: string) => {
+    const panel = getRequirementLinksPanel(page);
+    await panel.getByRole('button', { name: 'New link' }).click();
+    const dialog = page.getByRole('dialog');
+    await dialog.getByRole('textbox', { name: 'Target requirement key' }).fill(targetKey);
+    await dialog.getByRole('button', { name: 'Save' }).click();
+    await expect(dialog).not.toBeVisible();
+});
+
+When(
+    'I correct the outgoing requirement link {string} to {string}',
+    async ({ page }, currentTargetKey: string, correctedTargetKey: string) => {
+        const row = getRequirementLinksGroup(page, 'Outgoing').getByRole('row').filter({ hasText: currentTargetKey });
+        await row.getByRole('button', { name: 'Correct' }).click();
+        const dialog = page.getByRole('dialog');
+        const targetInput = dialog.getByRole('textbox', { name: 'Target requirement key' });
+        await expect(targetInput).toHaveValue(currentTargetKey);
+        await targetInput.fill(correctedTargetKey);
+        await dialog.getByRole('button', { name: 'Save' }).click();
+        await expect(dialog).not.toBeVisible();
+    },
+);
+
+When('I remove the outgoing requirement link {string}', async ({ page }, targetKey: string) => {
+    const row = getRequirementLinksGroup(page, 'Outgoing').getByRole('row').filter({ hasText: targetKey });
+    await row.getByRole('button', { name: 'Remove' }).click();
+    const dialog = page.getByRole('dialog');
+    await dialog.getByRole('button', { name: 'Remove' }).click();
+    await expect(dialog).not.toBeVisible();
+});
+
+When('I open linked requirement {string}', async ({ page }, requirementKey: string) => {
+    await getRequirementLinksPanel(page).getByRole('button', { name: requirementKey }).click();
+    await expect(page).toHaveURL(new RegExp(`${escapeRegExp(getRequirementDetailsRoute(requirementKey))}$`, 'u'));
+});
+
+Then('outgoing requirement links should contain {string}', async ({ page }, requirementKey: string) => {
+    await expect(getRequirementLinksGroup(page, 'Outgoing')).toContainText(requirementKey);
+});
+
+Then('outgoing requirement links should not contain {string}', async ({ page }, requirementKey: string) => {
+    await expect(getRequirementLinksGroup(page, 'Outgoing')).not.toContainText(requirementKey);
+});
+
+Then('incoming requirement links should contain {string}', async ({ page }, requirementKey: string) => {
+    await expect(getRequirementLinksGroup(page, 'Incoming')).toContainText(requirementKey);
+});

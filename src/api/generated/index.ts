@@ -8,3 +8,4 @@ export * from './projects/projects';
 export * from './requirement-reviews/requirement-reviews';
 export * from './requirements/requirements';
 export * from './user-administration/user-administration';
+export * from './metrics/metrics';

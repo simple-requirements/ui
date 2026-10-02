@@ -25,6 +25,9 @@ import {
     loadProjectCategoriesListRoute,
     loadProjectCategoryDetailsRoute,
     loadProjectDetailsRoute,
+    loadProjectMetricDetailsRoute,
+    loadProjectMetricsFormRoute,
+    loadProjectMetricsListRoute,
     loadProjectRequirementDetailsRoute,
     loadProjectRequirementReviewRoute,
     loadProjectRequirementsFormRoute,
@@ -118,6 +121,32 @@ export const routes: RouteObject[] = [
                                                 handle: routeHandle({ actionBar: 'review' }),
                                             },
                                             { path: ':requirementId', lazy: loadProjectRequirementDetailsRoute },
+                                        ],
+                                    },
+                                    {
+                                        path: 'metrics',
+                                        children: [
+                                            { index: true, lazy: loadProjectMetricsListRoute },
+                                            {
+                                                element: (
+                                                    <ProjectPermissionRoute
+                                                        permission={projectPermissionKinds.manageRequirements}
+                                                    />
+                                                ),
+                                                children: [
+                                                    {
+                                                        path: 'new',
+                                                        lazy: loadProjectMetricsFormRoute,
+                                                        handle: routeHandle({ disableChromeActions: true }),
+                                                    },
+                                                    {
+                                                        path: ':metricId/edit',
+                                                        lazy: loadProjectMetricsFormRoute,
+                                                        handle: routeHandle({ disableChromeActions: true }),
+                                                    },
+                                                ],
+                                            },
+                                            { path: ':metricId', lazy: loadProjectMetricDetailsRoute },
                                         ],
                                     },
                                     {

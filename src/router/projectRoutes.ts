@@ -1,6 +1,6 @@
 import { matchPath } from 'react-router';
 
-export type ProjectSubRoute = 'requirements' | 'categories';
+export type ProjectSubRoute = 'requirements' | 'categories' | 'metrics';
 
 export type ActiveProjectRoute = Readonly<{ projectId?: string; subRoute?: ProjectSubRoute }>;
 
@@ -9,6 +9,12 @@ export function getActiveProjectRoute(pathname: string): ActiveProjectRoute {
 
     if (requirementsRouteMatch?.params.projectId !== undefined) {
         return { projectId: requirementsRouteMatch.params.projectId, subRoute: 'requirements' };
+    }
+
+    const metricsRouteMatch = matchPath('/projects/:projectId/metrics/*', pathname);
+
+    if (metricsRouteMatch?.params.projectId !== undefined) {
+        return { projectId: metricsRouteMatch.params.projectId, subRoute: 'metrics' };
     }
 
     const categoriesRouteMatch = matchPath('/projects/:projectId/categories/*', pathname);
@@ -52,6 +58,22 @@ export function getProjectRequirementCreateRoute(projectId: string, categoryId?:
     return categoryId === undefined ? route : `${route}?categoryId=${encodeURIComponent(categoryId)}`;
 }
 
+export function getProjectMetricsRoute(projectId: string): string {
+    return `/projects/${projectId}/metrics`;
+}
+
+export function getProjectMetricCreateRoute(projectId: string): string {
+    return `/projects/${projectId}/metrics/new`;
+}
+
+export function getProjectMetricDetailsRoute(projectId: string, metricId: string): string {
+    return `/projects/${projectId}/metrics/${metricId}`;
+}
+
+export function getProjectMetricEditRoute(projectId: string, metricId: string): string {
+    return `/projects/${projectId}/metrics/${metricId}/edit`;
+}
+
 export function getProjectCategoriesRoute(projectId: string): string {
     return `/projects/${projectId}/categories`;
 }
@@ -87,6 +109,17 @@ export function getProjectRequirementDetailsCloseRoute(route: string): string | 
     return match?.params.projectId === undefined ? undefined : getProjectRequirementsRoute(match.params.projectId);
 }
 
+export function getProjectMetricDetailsCloseRoute(route: string): string | undefined {
+    const match =
+        matchPath('/projects/:projectId/metrics/new', route)
+        ?? matchPath('/projects/:projectId/metrics/:metricId/edit', route)
+        ?? matchPath('/projects/:projectId/metrics/:metricId', route);
+
+    return match?.params.projectId === undefined ? undefined : getProjectMetricsRoute(match.params.projectId);
+}
+
 export function getProjectDetailsCloseRoute(route: string): string | undefined {
-    return getProjectCategoryDetailsCloseRoute(route) ?? getProjectRequirementDetailsCloseRoute(route);
+    return getProjectCategoryDetailsCloseRoute(route)
+        ?? getProjectMetricDetailsCloseRoute(route)
+        ?? getProjectRequirementDetailsCloseRoute(route);
 }

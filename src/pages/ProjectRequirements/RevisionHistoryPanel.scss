@@ -18,11 +18,15 @@
     font-weight: 600;
 }
 
-.revision-history-panel__row--current {
+.revision-history-panel__row--selected {
     background: var(--color-app-active-background);
 }
 
 .revision-history-panel__table td:nth-child(3) {
     min-inline-size: 18rem;
     white-space: normal;
+}
+
+.revision-history-panel__table tbody tr {
+    cursor: pointer;
 }

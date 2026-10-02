@@ -77,3 +77,14 @@ export type ImplementationTicket = Readonly<{
     createdAt: string;
     updatedAt: string;
 }>;
+
+export type Metric = Readonly<{
+    id: string;
+    projectId: string;
+    key: string;
+    value: string;
+    description: string;
+    active: boolean;
+    createdAt: string;
+    updatedAt: string;
+}>;

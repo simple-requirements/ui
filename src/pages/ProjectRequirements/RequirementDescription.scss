@@ -1,0 +1,32 @@
+@use 'styles/UiMixins' as ui;
+
+.requirement-metric-reference {
+    display: inline-block;
+    padding: 0.05rem 0.3rem;
+    border: 0.1rem solid transparent;
+    border-radius: 0.25rem;
+    font: inherit;
+    line-height: inherit;
+    text-decoration: none;
+}
+
+.requirement-metric-reference--resolved {
+    border-color: var(--color-app-active-border);
+    background: var(--color-app-active-background);
+    color: var(--color-app-text);
+
+    &:hover {
+        background: var(--color-app-hover-background);
+        text-decoration: underline;
+    }
+
+    &:focus-visible {
+        @include ui.focus-ring;
+    }
+}
+
+.requirement-metric-reference--unresolved {
+    border-color: var(--color-feedback-error-border);
+    background: var(--color-feedback-error-background);
+    color: var(--color-feedback-error-text);
+}

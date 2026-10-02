@@ -83,6 +83,24 @@ export async function loadProjectRequirementDetailsRoute() {
     return { Component: DetailsPage };
 }
 
+export async function loadProjectMetricsListRoute() {
+    const { ListPage } = await import('@/pages/ProjectMetrics/ListPage');
+
+    return { Component: ListPage };
+}
+
+export async function loadProjectMetricsFormRoute() {
+    const { FormPage } = await import('@/pages/ProjectMetrics/FormPage');
+
+    return { Component: FormPage };
+}
+
+export async function loadProjectMetricDetailsRoute() {
+    const { DetailsPage } = await import('@/pages/ProjectMetrics/DetailsPage');
+
+    return { Component: DetailsPage };
+}
+
 export async function loadProjectCategoriesListRoute() {
     const { ListPage } = await import('@/pages/ProjectCategories/List/ListPage');
 
@@ -113,6 +131,11 @@ export function preloadProjectDetailsRoute(): void {
 /** Starts loading the requirements list route code on navigation intent. */
 export function preloadProjectRequirementsListRoute(): void {
     preloadRoute(loadProjectRequirementsListRoute);
+}
+
+/** Starts loading the metrics list route code on navigation intent. */
+export function preloadProjectMetricsListRoute(): void {
+    preloadRoute(loadProjectMetricsListRoute);
 }
 
 /** Starts loading the categories list route code on navigation intent. */

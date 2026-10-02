@@ -72,7 +72,16 @@ describe('requirementsApi', () => {
             changedByDisplayName: 'Backend User',
             visibleKey: 'FR-AUTH-0001',
             status: 'approved',
-            description: 'Users can sign in.',
+            description: 'Users can sign in below [~MET-0001].',
+            metricReferences: [
+                {
+                    key: 'MET-0001',
+                    metricId: '77777777-7777-4777-8777-777777777777',
+                    value: '2000 ms',
+                    resolved: true,
+                    active: true,
+                },
+            ],
             priority: 'p1',
             owner: 'Alice',
             rationale: null,
@@ -92,6 +101,9 @@ describe('requirementsApi', () => {
         expect(requirement.visibleKey).toBe('FR-AUTH-0001');
         expect(requirement.status).toBe('approved');
         expect(requirement.changeReason).toBe('Requirement changed.');
+        expect(requirement.metricReferences).toEqual([
+            expect.objectContaining({ key: 'MET-0001', value: '2000 ms', resolved: true }),
+        ]);
         expect(requirement).not.toHaveProperty('deletedAt');
     });
 

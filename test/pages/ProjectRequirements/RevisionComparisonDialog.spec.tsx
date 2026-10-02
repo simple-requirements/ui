@@ -74,7 +74,7 @@ afterEach(() => {
 });
 
 describe('RevisionComparisonDialog', () => {
-    it('compares the previous revision with the current revision and renders all non-description fields', () => {
+    it('compares the previous revision with the current revision and shows changed fields by default', () => {
         mocks.useQuery.mockReturnValue({
             data: {
                 fromRevision: 2,
@@ -103,20 +103,129 @@ describe('RevisionComparisonDialog', () => {
         expect(screen.getByLabelText('To revision')).toHaveValue('3');
         expect(screen.getByTestId('description-diff')).toBeInTheDocument();
         expect(screen.getByRole('rowheader', { name: 'Owner' })).toBeInTheDocument();
-        expect(screen.getByRole('rowheader', { name: 'Priority' })).toBeInTheDocument();
+        expect(screen.queryByRole('rowheader', { name: 'Priority' })).not.toBeInTheDocument();
         expect(screen.getByRole('rowheader', { name: 'Owner' }).closest('tr')).toHaveClass(
             'revision-comparison-dialog__field--changed',
         );
-        expect(screen.getByRole('rowheader', { name: 'Priority' }).closest('tr')).not.toHaveClass(
-            'revision-comparison-dialog__field--changed',
-        );
+        expect(screen.getByRole('button', { name: 'Show all fields' })).toHaveAttribute('aria-pressed', 'false');
         expect(mocks.diffView).toHaveBeenCalledWith(
             expect.objectContaining({
                 data: expect.objectContaining({
                     oldFile: expect.objectContaining({ content: 'Users can sign in.' }),
                     newFile: expect.objectContaining({ content: 'Users can sign in securely.' }),
+                    hunks: [
+                        '--- Revision 2\n+++ Revision 3\n@@ -1,1 +1,1 @@\n-Users can sign in.\n+Users can sign in securely.\n',
+                    ],
                 }),
             }),
+        );
+    });
+
+    it('diffs frozen rendered metric values instead of raw placeholders.', () => {
+        mocks.useQuery.mockReturnValue({
+            data: {
+                fromRevision: 1,
+                toRevision: 2,
+                differences: [
+                    { field: 'description', from: 'Below 2000 ms.', to: 'Below 1000 ms.' },
+                ],
+            },
+            isLoading: false,
+            isError: false,
+        });
+        const metricRevisions: Requirement[] = [
+            {
+                ...revisions[0],
+                description: 'Below [~MET-0001].',
+                renderedDescription: 'Below 2000 ms.',
+            },
+            {
+                ...revisions[1],
+                description: 'Below [~MET-0001].',
+                renderedDescription: 'Below 1000 ms.',
+            },
+        ];
+
+        render(
+            <RevisionComparisonDialog
+                projectId={baseRevision.projectId}
+                requirementId={baseRevision.id}
+                revisions={metricRevisions}
+                initialRevisionNumbers={[1, 2]}
+                visible
+                onHide={vi.fn()}
+            />,
+        );
+
+        expect(mocks.diffView).toHaveBeenCalledWith(
+            expect.objectContaining({
+                data: expect.objectContaining({
+                    oldFile: expect.objectContaining({ content: 'Below 2000 ms.' }),
+                    newFile: expect.objectContaining({ content: 'Below 1000 ms.' }),
+                }),
+            }),
+        );
+    });
+
+    it('uses a preselected revision pair when opened from revision history', () => {
+        mocks.useQuery.mockReturnValue({
+            data: { fromRevision: 1, toRevision: 2, differences: [] },
+            isLoading: false,
+            isError: false,
+        });
+
+        render(
+            <RevisionComparisonDialog
+                projectId={baseRevision.projectId}
+                requirementId={baseRevision.id}
+                revisions={revisions}
+                initialRevisionNumbers={[1, 2]}
+                visible
+                onHide={vi.fn()}
+            />,
+        );
+
+        expect(screen.getByLabelText('From revision')).toHaveValue('1');
+        expect(screen.getByLabelText('To revision')).toHaveValue('2');
+        expect(mocks.useQuery).toHaveBeenCalledWith(
+            expect.objectContaining({
+                queryKey: [
+                    '/projects/22222222-2222-4222-8222-222222222222/requirements/11111111-1111-4111-8111-111111111111/revisions/compare',
+                    { from: 1, to: 2 },
+                ],
+            }),
+        );
+    });
+
+    it('can toggle unchanged fields into the comparison table', () => {
+        mocks.useQuery.mockReturnValue({
+            data: {
+                fromRevision: 2,
+                toRevision: 3,
+                differences: [{ field: 'owner', from: 'Alice', to: 'Bob' }],
+            },
+            isLoading: false,
+            isError: false,
+        });
+
+        render(
+            <RevisionComparisonDialog
+                projectId={baseRevision.projectId}
+                requirementId={baseRevision.id}
+                revisions={revisions}
+                visible
+                onHide={vi.fn()}
+            />,
+        );
+
+        expect(screen.queryByRole('rowheader', { name: 'Priority' })).not.toBeInTheDocument();
+
+        fireEvent.click(screen.getByRole('button', { name: 'Show all fields' }));
+
+        expect(screen.getByRole('rowheader', { name: 'Priority' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Show changed fields only' })).toHaveAttribute(
+            'aria-pressed',
+            'true',
         );
     });
 

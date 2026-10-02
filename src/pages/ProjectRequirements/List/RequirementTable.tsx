@@ -9,6 +9,7 @@ import {
 } from '@/pages/ProjectRequirements/List/requirementListTableUtils';
 import type { RequirementTableRow } from '@/pages/ProjectRequirements/List/requirementListTypes';
 import { isRequirementTableRow } from '@/pages/ProjectRequirements/List/requirementListTypes';
+import { RequirementDescription } from '@/pages/ProjectRequirements/RequirementDescription';
 import { RequirementStatusBadge } from '@/pages/ProjectRequirements/RequirementStatusBadge';
 
 export type RequirementTableProps = Readonly<{
@@ -20,8 +21,8 @@ export type RequirementTableProps = Readonly<{
     onOpenRequirement: (requirement: RequirementTableRow) => void;
 }>;
 
-function descriptionBodyTemplate(requirement: RequirementTableRow): string {
-    return formatNullableValue(requirement.description);
+function descriptionBodyTemplate(requirement: RequirementTableRow): ReactNode {
+    return <RequirementDescription requirement={requirement} stopNavigationPropagation />;
 }
 
 function ownerBodyTemplate(requirement: RequirementTableRow): string {

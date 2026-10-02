@@ -5,6 +5,8 @@
 .revision-comparison-dialog__content {
     display: grid;
     gap: var(--ui-space-xl);
+    font-size: var(--font-size-paragraph);
+    line-height: var(--line-height-paragraph);
 }
 
 .revision-comparison-dialog__selectors {
@@ -20,16 +22,35 @@
 
 .revision-comparison-dialog__result h3,
 .revision-comparison-dialog__description h3 {
-    margin: 0 0 var(--ui-space-md);
+    margin: 0;
     font-size: var(--font-size-h6);
     line-height: var(--line-height-heading);
     color: var(--color-app-text);
 }
 
+.revision-comparison-dialog__description {
+    display: grid;
+    gap: var(--ui-space-md);
+}
+
 .revision-comparison-dialog__diff {
+    min-block-size: 4rem;
     overflow: auto;
     border: var(--ui-border);
     border-radius: var(--ui-border-radius-small);
+}
+
+.revision-comparison-dialog__section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ui-space-md);
+    margin-block-end: var(--ui-space-md);
+}
+
+.revision-comparison-dialog__no-field-differences {
+    margin: 0;
+    color: var(--color-app-text-muted);
 }
 
 .revision-comparison-dialog__table th[scope='row'] {
@@ -47,8 +68,11 @@
 }
 
 .revision-comparison-dialog__field--changed > * {
-    color: var(--color-feedback-error-text);
     background: var(--color-feedback-error-background);
+}
+
+.revision-comparison-dialog__field-toggle {
+    font-size: var(--font-size-paragraph);
 }
 
 .revision-comparison-dialog__ticket-list {

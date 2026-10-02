@@ -104,3 +104,22 @@ Feature: Project requirements
     When I open the requirement details URL directly for requirement "FR-AUTH-0001"
     Then the tab bar should contain "FR-AUTH-0001"
     And the full requirement details page should show requirement "FR-AUTH-0001"
+
+  Scenario: Requirements Engineer manages structured requirement links
+    Given the backend contains a requirement test project named "Requirement Links BDD Project" with requirements
+      | categoryKey | categoryType | categoryName   | description              | priority | owner |
+      | AUTH        | FR           | Authentication | Users can sign in.       | p1       | Alice |
+      | PERF        | NFR          | Performance    | Requests finish quickly. | p2       | Bob   |
+      | DATA        | FR           | Data            | Data is retained.        | p3       | Carol |
+    When I open the requirements list for the requirement test project
+    And I double-click requirement "FR-AUTH-0001"
+    And I create a requirement link to "NFR-PERF-0001"
+    Then outgoing requirement links should contain "NFR-PERF-0001"
+    When I correct the outgoing requirement link "NFR-PERF-0001" to "FR-DATA-0001"
+    Then outgoing requirement links should contain "FR-DATA-0001"
+    And outgoing requirement links should not contain "NFR-PERF-0001"
+    When I open linked requirement "FR-DATA-0001"
+    Then incoming requirement links should contain "FR-AUTH-0001"
+    When I open linked requirement "FR-AUTH-0001"
+    And I remove the outgoing requirement link "FR-DATA-0001"
+    Then outgoing requirement links should not contain "FR-DATA-0001"

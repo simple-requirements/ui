@@ -7,6 +7,11 @@ import {
     getProjectCategoryDetailsCloseRoute,
     getProjectCategoryDetailsRoute,
     getProjectCategoryEditRoute,
+    getProjectMetricCreateRoute,
+    getProjectMetricDetailsCloseRoute,
+    getProjectMetricDetailsRoute,
+    getProjectMetricEditRoute,
+    getProjectMetricsRoute,
     getProjectRequirementDetailsCloseRoute,
     getProjectRequirementDetailsRoute,
     getProjectRequirementsRoute,
@@ -20,6 +25,10 @@ describe('projectRoutes', () => {
         expect(getProjectRequirementDetailsRoute('project-alpha', 'requirement-auth')).toBe(
             '/projects/project-alpha/requirements/requirement-auth',
         );
+        expect(getProjectMetricsRoute('project-alpha')).toBe('/projects/project-alpha/metrics');
+        expect(getProjectMetricCreateRoute('project-alpha')).toBe('/projects/project-alpha/metrics/new');
+        expect(getProjectMetricDetailsRoute('project-alpha', 'metric-one')).toBe('/projects/project-alpha/metrics/metric-one');
+        expect(getProjectMetricEditRoute('project-alpha', 'metric-one')).toBe('/projects/project-alpha/metrics/metric-one/edit');
         expect(getProjectCategoriesRoute('project-alpha')).toBe('/projects/project-alpha/categories');
         expect(getProjectCategoryCreateRoute('project-alpha')).toBe('/projects/project-alpha/categories/new');
         expect(getProjectCategoryDetailsRoute('project-alpha', 'category-auth')).toBe(
@@ -35,6 +44,10 @@ describe('projectRoutes', () => {
         expect(getActiveProjectRoute('/projects/project-alpha/requirements')).toEqual({
             projectId: 'project-alpha',
             subRoute: 'requirements',
+        });
+        expect(getActiveProjectRoute('/projects/project-alpha/metrics/metric-one')).toEqual({
+            projectId: 'project-alpha',
+            subRoute: 'metrics',
         });
         expect(getActiveProjectRoute('/projects/project-alpha/categories/category-auth')).toEqual({
             projectId: 'project-alpha',
@@ -55,6 +68,12 @@ describe('projectRoutes', () => {
         );
     });
 
+    it('derives the close route from metric detail and form routes.', () => {
+        expect(getProjectMetricDetailsCloseRoute('/projects/project-alpha/metrics/metric-one')).toBe('/projects/project-alpha/metrics');
+        expect(getProjectMetricDetailsCloseRoute('/projects/project-alpha/metrics/new')).toBe('/projects/project-alpha/metrics');
+        expect(getProjectMetricDetailsCloseRoute('/projects/project-alpha/metrics/metric-one/edit')).toBe('/projects/project-alpha/metrics');
+    });
+
     it('derives the close route from requirement details routes.', () => {
         expect(getProjectRequirementDetailsCloseRoute('/projects/project-alpha/requirements/requirement-auth')).toBe(
             '/projects/project-alpha/requirements',
@@ -63,6 +82,7 @@ describe('projectRoutes', () => {
 
     it('returns undefined for list routes.', () => {
         expect(getProjectCategoryDetailsCloseRoute('/projects/project-alpha/categories')).toBeUndefined();
+        expect(getProjectMetricDetailsCloseRoute('/projects/project-alpha/metrics')).toBeUndefined();
         expect(getProjectRequirementDetailsCloseRoute('/projects/project-alpha/requirements')).toBeUndefined();
     });
 });

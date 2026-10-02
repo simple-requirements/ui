@@ -103,3 +103,6 @@ export * from './userAdministrationResponseDto';
 export * from './userAdministrationResponseDtoEmailVerifiedAt';
 export * from './userAdministrationResponseDtoRole';
 export * from './userAdministrationResponseDtoStatus';
+export * from './createMetricDto';
+export * from './metricResponseDto';
+export * from './updateMetricDto';

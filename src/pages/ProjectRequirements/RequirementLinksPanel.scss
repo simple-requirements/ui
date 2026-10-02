@@ -1,0 +1,74 @@
+@use 'styles/UiMixins' as ui;
+
+.requirement-links-panel {
+    margin-block-start: var(--ui-space-lg);
+}
+
+.requirement-links-panel__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ui-space-md);
+    margin-block-end: var(--ui-space-lg);
+}
+
+.requirement-links-panel__title,
+.requirement-links-panel__group-title {
+    margin: 0;
+    color: var(--color-app-text);
+    line-height: var(--line-height-heading);
+}
+
+.requirement-links-panel__title {
+    font-size: var(--font-size-h5);
+}
+
+.requirement-links-panel__group-title {
+    margin-block-end: var(--ui-space-sm);
+    font-size: var(--font-size-paragraph);
+}
+
+.requirement-links-panel__groups {
+    display: grid;
+    gap: var(--ui-space-lg);
+}
+
+.requirement-links-panel__table-wrap {
+    overflow: auto;
+}
+
+.requirement-links-panel__table {
+    inline-size: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+        @include ui.prime-data-table-cell;
+    }
+
+    th {
+        @include ui.prime-data-table-header-cell;
+    }
+}
+
+.requirement-links-panel__link-button {
+    @include ui.interactive-link;
+
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font: inherit;
+}
+
+.requirement-links-panel__actions {
+    display: flex;
+    gap: var(--ui-space-sm);
+}
+
+.requirement-links-panel__filter {
+    display: grid;
+    grid-template-columns: max-content minmax(12rem, 24rem);
+    align-items: center;
+    gap: var(--ui-space-sm);
+    margin-block-end: var(--ui-space-lg);
+}

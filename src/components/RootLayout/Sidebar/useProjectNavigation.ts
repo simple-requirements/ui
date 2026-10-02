@@ -1,11 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 
-import { prefetchProjectCategories, prefetchProjectDetails, prefetchProjectRequirements } from '@/api/projectPrefetch';
+import {
+    prefetchProjectCategories,
+    prefetchProjectDetails,
+    prefetchProjectMetrics,
+    prefetchProjectRequirements,
+} from '@/api/projectPrefetch';
 import { getProjectRoute, type ActiveProjectRoute, type ProjectSubRoute } from '@/router/projectRoutes';
 import {
     preloadProjectCategoriesListRoute,
     preloadProjectDetailsRoute,
+    preloadProjectMetricsListRoute,
     preloadProjectRequirementsListRoute,
 } from '@/router/routeModules';
 
@@ -45,6 +51,12 @@ export function useProjectNavigation(activeProjectRoute: ActiveProjectRoute): Pr
         if (subRoute === 'categories') {
             preloadProjectCategoriesListRoute();
             void prefetchProjectCategories(projectId);
+            return;
+        }
+
+        if (subRoute === 'metrics') {
+            preloadProjectMetricsListRoute();
+            void prefetchProjectMetrics(projectId);
             return;
         }
 

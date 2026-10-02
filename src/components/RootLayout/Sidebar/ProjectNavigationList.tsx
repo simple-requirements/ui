@@ -4,6 +4,7 @@ import type { SidebarProject } from '@/api/collections/projectsCollection';
 import { ExpandableNavigationItem } from '@/components/Navigation/ExpandableNavigationItem';
 import {
     getProjectCategoriesRoute,
+    getProjectMetricsRoute,
     getProjectRequirementsRoute,
     type ActiveProjectRoute,
     type ProjectSubRoute,
@@ -59,6 +60,13 @@ export function ProjectNavigationList({
                                     to: getProjectCategoriesRoute(project.id),
                                     iconClassName: 'pi pi-tags',
                                     onIntent: () => onProjectIntent(project.id, 'categories'),
+                                },
+                                {
+                                    id: 'metrics',
+                                    label: 'Metrics',
+                                    to: getProjectMetricsRoute(project.id),
+                                    iconClassName: 'pi pi-chart-bar',
+                                    onIntent: () => onProjectIntent(project.id, 'metrics'),
                                 },
                             ]}
                             onToggle={() => onToggleProject(project.id)}

@@ -1,5 +1,6 @@
 import { DiffModeEnum, DiffView } from '@git-diff-view/react';
 import { useQuery } from '@tanstack/react-query';
+import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { useState, type ReactNode } from 'react';
 
@@ -20,6 +21,7 @@ type RevisionComparisonDialogProps = Readonly<{
     projectId: string;
     requirementId: string;
     revisions: Requirement[];
+    initialRevisionNumbers?: readonly [number, number];
     visible: boolean;
     onHide: () => void;
 }>;
@@ -171,20 +173,30 @@ function buildDiffOperations(oldLines: string[], newLines: string[]): DiffOperat
     return operations;
 }
 
-function buildDescriptionHunk(oldContent: string, newContent: string): string {
+function formatHunkRange(start: number, lineCount: number): string {
+    // @git-diff-view/core expects both the start and line count while parsing
+    // hunk metadata. Git's abbreviated single-line form (`-1`) leaves the
+    // library without a length, so keep the explicit `-1,1` representation.
+    return `${String(start)},${String(lineCount)}`;
+}
+
+function buildDescriptionDiff(oldContent: string, newContent: string, oldFileName: string, newFileName: string): string {
     const oldLines = splitLines(oldContent);
     const newLines = splitLines(newContent);
-    const oldStart = oldLines.length === 0 ? '0' : '1';
-    const newStart = newLines.length === 0 ? '0' : '1';
-    const header = `@@ -${oldStart},${String(oldLines.length)} +${newStart},${String(newLines.length)} @@`;
+    const oldStart = oldLines.length === 0 ? 0 : 1;
+    const newStart = newLines.length === 0 ? 0 : 1;
+    const header = `@@ -${formatHunkRange(oldStart, oldLines.length)} +${formatHunkRange(newStart, newLines.length)} @@`;
     const body = buildDiffOperations(oldLines, newLines).map(({ prefix, line }) => `${prefix}${line}`);
 
-    return [header, ...body].join('\n');
+    // Despite the API name, @git-diff-view parses every entry in `hunks` as a
+    // complete unified diff. The ---/+++ file header is therefore required;
+    // passing only an @@ hunk makes the parser treat the input as header-only.
+    return `${[`--- ${oldFileName}`, `+++ ${newFileName}`, header, ...body].join('\n')}\n`;
 }
 
 function DescriptionDiff({ fromRevision, toRevision }: Readonly<{ fromRevision: Requirement; toRevision: Requirement }>) {
-    const fromDescription = fromRevision.description ?? '';
-    const toDescription = toRevision.description ?? '';
+    const fromDescription = fromRevision.renderedDescription ?? fromRevision.description ?? '';
+    const toDescription = toRevision.renderedDescription ?? toRevision.description ?? '';
 
     return (
         <section className='revision-comparison-dialog__description' aria-labelledby='revision-description-diff-title'>
@@ -194,17 +206,23 @@ function DescriptionDiff({ fromRevision, toRevision }: Readonly<{ fromRevision: 
                     data={{
                         oldFile: {
                             fileName: `Revision ${String(fromRevision.revisionNumber)}`,
-                            fileLang: 'text',
                             content: fromDescription,
                         },
                         newFile: {
                             fileName: `Revision ${String(toRevision.revisionNumber)}`,
-                            fileLang: 'text',
                             content: toDescription,
                         },
-                        hunks: [buildDescriptionHunk(fromDescription, toDescription)],
+                        hunks: [
+                            buildDescriptionDiff(
+                                fromDescription,
+                                toDescription,
+                                `Revision ${String(fromRevision.revisionNumber)}`,
+                                `Revision ${String(toRevision.revisionNumber)}`,
+                            ),
+                        ],
                     }}
                     diffViewMode={DiffModeEnum.Split}
+                    diffViewFontSize={16}
                     diffViewTheme='light'
                     diffViewWrap
                 />
@@ -217,12 +235,20 @@ function RevisionFieldTable({
     fromRevision,
     toRevision,
     differences,
+    showAllFields,
 }: Readonly<{
     fromRevision: Requirement;
     toRevision: Requirement;
     differences: RequirementRevisionDifference[];
+    showAllFields: boolean;
 }>) {
     const changedFields = new Set(differences.map((difference) => difference.field));
+    const visibleFields =
+        showAllFields ? comparisonFields : comparisonFields.filter((field) => changedFields.has(field));
+
+    if (visibleFields.length === 0) {
+        return <p className='revision-comparison-dialog__no-field-differences'>No other fields differ.</p>;
+    }
 
     return (
         <div className='revision-comparison-dialog__table-wrapper ui-table-wrapper ui-table-wrapper--bordered'>
@@ -235,7 +261,7 @@ function RevisionFieldTable({
                     </tr>
                 </thead>
                 <tbody>
-                    {comparisonFields.map((field) => {
+                    {visibleFields.map((field) => {
                         const changed = changedFields.has(field);
                         return (
                             <tr
@@ -264,6 +290,7 @@ function RevisionComparisonResult({
     fromRevision: Requirement;
     toRevision: Requirement;
 }>) {
+    const [showAllFields, setShowAllFields] = useState(false);
     const comparisonQuery = useQuery({
         queryKey: getRequirementRevisionComparisonQueryKey(
             projectId,
@@ -294,11 +321,26 @@ function RevisionComparisonResult({
                         toRevision={toRevision}
                     />
                     <section aria-labelledby='revision-field-comparison-title'>
-                        <h3 id='revision-field-comparison-title'>Other fields</h3>
+                        <div className='revision-comparison-dialog__section-header'>
+                            <h3 id='revision-field-comparison-title'>Other fields</h3>
+                            <Button
+                                type='button'
+                                label={showAllFields ? 'Show changed fields only' : 'Show all fields'}
+                                aria-pressed={showAllFields}
+                                onClick={() => setShowAllFields((current) => !current)}
+                                pt={{
+                                    root: {
+                                        className:
+                                            'revision-comparison-dialog__field-toggle ui-button ui-button--outline ui-button--action',
+                                    },
+                                }}
+                            />
+                        </div>
                         <RevisionFieldTable
                             fromRevision={fromRevision}
                             toRevision={toRevision}
                             differences={comparisonQuery.data.differences}
+                            showAllFields={showAllFields}
                         />
                     </section>
                 </div>
@@ -312,12 +354,13 @@ export function RevisionComparisonDialog({
     projectId,
     requirementId,
     revisions,
+    initialRevisionNumbers,
     visible,
     onHide,
 }: RevisionComparisonDialogProps) {
     const orderedRevisions = [...revisions].sort((left, right) => left.revisionNumber - right.revisionNumber);
-    const defaultToRevisionNumber = orderedRevisions.at(-1)?.revisionNumber;
-    const defaultFromRevisionNumber = orderedRevisions.at(-2)?.revisionNumber;
+    const defaultToRevisionNumber = initialRevisionNumbers?.[1] ?? orderedRevisions.at(-1)?.revisionNumber;
+    const defaultFromRevisionNumber = initialRevisionNumbers?.[0] ?? orderedRevisions.at(-2)?.revisionNumber;
     const [selectedFromRevision, setSelectedFromRevision] = useState<number>();
     const [selectedToRevision, setSelectedToRevision] = useState<number>();
     const fromRevisionNumber = selectedFromRevision ?? defaultFromRevisionNumber;
@@ -338,17 +381,21 @@ export function RevisionComparisonDialog({
                 header: { className: 'revision-comparison-dialog__header ui-dialog__header' },
                 content: { className: 'revision-comparison-dialog__content ui-dialog__content' },
             }}
-            onHide={onHide}>
+            onHide={() => {
+                setSelectedFromRevision(undefined);
+                setSelectedToRevision(undefined);
+                onHide();
+            }}>
             {fromRevision !== undefined && toRevision !== undefined && (
                 <>
                     <div className='revision-comparison-dialog__selectors'>
                         <div className='ui-field'>
-                            <label className='ui-label' htmlFor='revision-comparison-from'>
+                            <label className='ui-label ui-label--dialog' htmlFor='revision-comparison-from'>
                                 From revision
                             </label>
                             <select
                                 id='revision-comparison-from'
-                                className='ui-control ui-control--line'
+                                className='ui-control ui-control--dialog'
                                 value={fromRevision.revisionNumber}
                                 onChange={(event) => setSelectedFromRevision(Number(event.currentTarget.value))}>
                                 {orderedRevisions
@@ -361,12 +408,12 @@ export function RevisionComparisonDialog({
                             </select>
                         </div>
                         <div className='ui-field'>
-                            <label className='ui-label' htmlFor='revision-comparison-to'>
+                            <label className='ui-label ui-label--dialog' htmlFor='revision-comparison-to'>
                                 To revision
                             </label>
                             <select
                                 id='revision-comparison-to'
-                                className='ui-control ui-control--line'
+                                className='ui-control ui-control--dialog'
                                 value={toRevision.revisionNumber}
                                 onChange={(event) => setSelectedToRevision(Number(event.currentTarget.value))}>
                                 {orderedRevisions

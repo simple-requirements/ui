@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/vitest';
 
-import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type * as ReactQueryModule from '@tanstack/react-query';
@@ -8,7 +8,19 @@ import type * as ReactQueryModule from '@tanstack/react-query';
 import { DetailsPage } from '@/pages/ProjectRequirements/DetailsPage';
 import { actionBarStore } from '@/stores/actionBarStore';
 
-const mocks = vi.hoisted(() => ({ useLiveQuery: vi.fn(), useQuery: vi.fn(), eq: vi.fn(), openTab: vi.fn() }));
+const mocks = vi.hoisted(() => ({
+    useLiveQuery: vi.fn(),
+    useQuery: vi.fn(),
+    eq: vi.fn(),
+    openTab: vi.fn(),
+    revisionOne: {
+        id: 'requirement-1',
+        visibleKey: 'FR-AUTH-0001',
+        revisionNumber: 1,
+        status: 'draft',
+        implementationTickets: [],
+    },
+}));
 
 vi.mock('@tanstack/react-db', () => ({ useLiveQuery: mocks.useLiveQuery, eq: mocks.eq }));
 vi.mock('@tanstack/react-query', async (importOriginal) => {
@@ -19,10 +31,22 @@ vi.mock('@tanstack/react-query', async (importOriginal) => {
 vi.mock('@/api/collections/projectRequirementsCollection', () => ({ getProjectRequirementsCollection: () => ({}) }));
 vi.mock('@/stores/tabBarStore', () => ({ openTab: mocks.openTab }));
 vi.mock('@/pages/ProjectRequirements/RequirementDetailsPanel', () => ({
-    RequirementDetailsPanel: ({ title }: Readonly<{ title: string }>) => <h1>{title}</h1>,
+    RequirementDetailsPanel: ({ requirement, title }: Readonly<{ requirement?: { revisionNumber: number }; title: string }>) => (
+        <>
+            <h1>{title}</h1>
+            <output aria-label='Displayed revision'>{requirement?.revisionNumber}</output>
+        </>
+    ),
 }));
 vi.mock('@/pages/ProjectRequirements/RevisionHistoryPanel', () => ({
-    RevisionHistoryPanel: () => <section aria-label='Revision history' />,
+    RevisionHistoryPanel: ({ onSelectRevision }: Readonly<{ onSelectRevision: (revision: unknown) => void }>) => (
+        <section aria-label='Revision history'>
+            <button type='button' onClick={() => onSelectRevision(mocks.revisionOne)}>Browse revision 1</button>
+        </section>
+    ),
+}));
+vi.mock('@/pages/ProjectRequirements/RequirementLinksPanel', () => ({
+    RequirementLinksPanel: () => <section aria-label='Requirement links'>Requirement links</section>,
 }));
 vi.mock('@/pages/ProjectRequirements/ImplementationTicketsPanel', () => ({
     ImplementationTicketsPanel: ({ visible }: Readonly<{ visible: boolean }>) => (
@@ -81,6 +105,19 @@ describe('Requirement DetailsPage', () => {
         expect(actionBarStore.state.reviewActionRequirement).toEqual(
             expect.objectContaining({ requirementId: 'requirement-1' }),
         );
+    });
+
+
+    it('shows the selected historical revision in the details panel', async () => {
+        renderPage();
+
+        expect(await screen.findByLabelText('Displayed revision')).toHaveTextContent('2');
+        expect(screen.getByRole('region', { name: 'Requirement links' })).toBeInTheDocument();
+
+        fireEvent.click(screen.getByRole('button', { name: 'Browse revision 1' }));
+
+        expect(screen.getByLabelText('Displayed revision')).toHaveTextContent('1');
+        expect(screen.queryByRole('region', { name: 'Requirement links' })).not.toBeInTheDocument();
     });
 
     it('redirects a draft requirement to review when review activity has started', async () => {

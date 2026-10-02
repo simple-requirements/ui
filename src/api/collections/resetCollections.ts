@@ -1,4 +1,5 @@
 import { resetProjectCategoriesCollections } from '@/api/collections/projectCategoriesCollection';
+import { resetProjectMetricsCollections } from '@/api/collections/projectMetricsCollection';
 import { resetProjectRequirementsCollections } from '@/api/collections/projectRequirementsCollection';
 import { resetProjectsCollection } from '@/api/collections/projectsCollection';
 
@@ -7,6 +8,7 @@ export async function resetDomainCollections(): Promise<void> {
     await Promise.all([
         resetProjectsCollection(),
         resetProjectCategoriesCollections(),
+        resetProjectMetricsCollections(),
         resetProjectRequirementsCollections(),
     ]);
 }

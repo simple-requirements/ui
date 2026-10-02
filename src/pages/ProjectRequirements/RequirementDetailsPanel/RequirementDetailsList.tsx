@@ -2,6 +2,7 @@ import type { Requirement } from '@/api/requirementsApi';
 import { RequirementStatusBadge } from '@/pages/ProjectRequirements/RequirementStatusBadge';
 import { ImplementationTicketsDetail } from '@/pages/ProjectRequirements/RequirementDetailsPanel/ImplementationTicketsDetail';
 import { RequirementDetailsRow } from '@/pages/ProjectRequirements/RequirementDetailsPanel/RequirementDetailsRow';
+import { RequirementDescription } from '@/pages/ProjectRequirements/RequirementDescription';
 import { formatDateTime, formatNullableDateTime, formatNullableValue } from '@/utils/displayFormatters';
 
 export type RequirementDetailsListProps = Readonly<{ requirement: Requirement }>;
@@ -16,7 +17,7 @@ export function RequirementDetailsList({ requirement }: RequirementDetailsListPr
             </RequirementDetailsRow>
 
             <RequirementDetailsRow label='Description'>
-                {formatNullableValue(requirement.description)}
+                <RequirementDescription requirement={requirement} />
             </RequirementDetailsRow>
 
             <RequirementDetailsRow label='Priority'>{formatNullableValue(requirement.priority)}</RequirementDetailsRow>

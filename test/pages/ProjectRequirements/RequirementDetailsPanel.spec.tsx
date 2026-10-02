@@ -52,6 +52,22 @@ describe('RequirementDetailsPanel', () => {
         expect(screen.getAllByText(/2026/u).length).toBeGreaterThan(0);
     });
 
+    it('prefers the frozen rendered description when viewing a historical revision.', () => {
+        render(
+            <RequirementDetailsPanel
+                requirement={{
+                    ...rejectedRequirement,
+                    description: 'The response time shall be below [~MET-0001].',
+                    renderedDescription: 'The response time shall be below 2000 ms.',
+                }}
+                title='FR-AUTH-0001'
+            />,
+        );
+
+        expect(screen.getByText('The response time shall be below 2000 ms.')).toBeInTheDocument();
+        expect(screen.queryByText('The response time shall be below [~MET-0001].')).not.toBeInTheDocument();
+    });
+
     it('shows the actor, reason, and timestamp for obsolete requirements while retaining the reviewer.', () => {
         render(
             <RequirementDetailsPanel

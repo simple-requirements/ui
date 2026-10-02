@@ -4,8 +4,10 @@ type QueryOptions = Readonly<{ queryKey: readonly unknown[]; queryFn: () => Prom
 
 const mocks = vi.hoisted(() => ({
     getListProjectCategoriesQueryKey: vi.fn(() => ['categories', 'project-alpha'] as const),
+    getListProjectMetricsQueryKey: vi.fn(() => ['metrics', 'project-alpha'] as const),
     getListProjectRequirementsQueryKey: vi.fn(() => ['requirements', 'project-alpha'] as const),
     listProjectCategoriesRequest: vi.fn(() => Promise.resolve([])),
+    listProjectMetricsRequest: vi.fn(() => Promise.resolve([])),
     listProjectRequirementsRequest: vi.fn(() => Promise.resolve([])),
     prefetchQuery: vi.fn<(options: QueryOptions) => Promise<void>>(async (options) => {
         await options.queryFn();
@@ -17,6 +19,11 @@ vi.mock('@/api/categoriesApi', () => ({
     listProjectCategoriesRequest: mocks.listProjectCategoriesRequest,
 }));
 
+vi.mock('@/api/metricsApi', () => ({
+    getListProjectMetricsQueryKey: mocks.getListProjectMetricsQueryKey,
+    listProjectMetricsRequest: mocks.listProjectMetricsRequest,
+}));
+
 vi.mock('@/api/requirementsApi', () => ({
     getListProjectRequirementsQueryKey: mocks.getListProjectRequirementsQueryKey,
     listProjectRequirementsRequest: mocks.listProjectRequirementsRequest,
@@ -24,7 +31,12 @@ vi.mock('@/api/requirementsApi', () => ({
 
 vi.mock('@/api/queryClient', () => ({ queryClient: { prefetchQuery: mocks.prefetchQuery } }));
 
-import { prefetchProjectCategories, prefetchProjectDetails, prefetchProjectRequirements } from '@/api/projectPrefetch';
+import {
+    prefetchProjectCategories,
+    prefetchProjectDetails,
+    prefetchProjectMetrics,
+    prefetchProjectRequirements,
+} from '@/api/projectPrefetch';
 
 afterEach(() => {
     vi.clearAllMocks();
@@ -51,6 +63,16 @@ describe('projectPrefetch', () => {
         expect(mocks.listProjectCategoriesRequest).toHaveBeenCalledWith('project-alpha');
         expect(mocks.prefetchQuery).toHaveBeenCalledWith(
             expect.objectContaining({ queryKey: ['categories', 'project-alpha'] }),
+        );
+    });
+
+    it('prefetches project metrics with the collection backing query key.', async () => {
+        await prefetchProjectMetrics('project-alpha');
+
+        expect(mocks.getListProjectMetricsQueryKey).toHaveBeenCalledWith('project-alpha');
+        expect(mocks.listProjectMetricsRequest).toHaveBeenCalledWith('project-alpha');
+        expect(mocks.prefetchQuery).toHaveBeenCalledWith(
+            expect.objectContaining({ queryKey: ['metrics', 'project-alpha'] }),
         );
     });
 

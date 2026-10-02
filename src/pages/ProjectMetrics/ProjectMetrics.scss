@@ -1,0 +1,124 @@
+@use 'styles/UiMixins' as ui;
+
+.project-metrics-list-page,
+.project-metrics-form-page,
+.project-metrics-details-page {
+    @include ui.page-shell;
+}
+
+.project-metrics-list-page__splitter {
+    block-size: 100%;
+    border: 0;
+    background: transparent;
+}
+
+.project-metrics-list-page__splitter-panel {
+    min-block-size: 0;
+    overflow: hidden;
+}
+
+.project-metrics-list-page__header,
+.project-metrics-form-page__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ui-space-md);
+}
+
+.project-metrics-list-page__actions,
+.project-metrics-details-page__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--ui-space-sm);
+    flex-wrap: wrap;
+}
+
+.project-metrics-list-page__list-panel {
+    min-block-size: 0;
+}
+
+.project-metrics-list-page__data-table {
+    @include ui.prime-data-table;
+}
+
+.project-metrics-list-page__data-table-wrapper {
+    @include ui.prime-data-table-wrapper;
+}
+
+.project-metrics-list-page__table {
+    @include ui.prime-data-table-table;
+}
+
+.project-metrics-list-page__table-header-cell,
+.project-metrics-list-page__table-body-cell {
+    @include ui.prime-data-table-cell;
+}
+
+.project-metrics-list-page__table-header-cell {
+    @include ui.prime-data-table-header-cell;
+}
+
+.project-metrics-list-page__table-row {
+    @include ui.prime-data-table-selectable-row;
+
+    &--selected {
+        @include ui.prime-data-table-selected-row;
+    }
+}
+
+.project-metrics-list-page__key-column,
+.project-metrics-list-page__status-column {
+    inline-size: 10rem;
+}
+
+.project-metrics-list-page__value-column {
+    inline-size: 16rem;
+}
+
+.project-metrics-details-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ui-space-sm);
+}
+
+.project-metrics-details-page__actions {
+    flex: 0 0 auto;
+    justify-content: flex-end;
+}
+
+.metric-details-panel__header {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ui-space-md);
+    margin-block-end: 1rem;
+}
+
+.metric-details-panel__title {
+    min-inline-size: 0;
+    margin: 0;
+    font-size: var(--font-size-h5);
+    line-height: var(--line-height-heading);
+    color: var(--color-app-text);
+}
+
+.metric-details-panel__details-list {
+    @include ui.details-list;
+}
+
+.metric-details-panel__details-row {
+    @include ui.details-row;
+}
+
+.metric-details-panel__requirement-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ui-space-xs) var(--ui-space-sm);
+    margin: 0;
+    padding-inline-start: 1.25rem;
+}
+
+.metric-details-panel__requirement-list a {
+    @include ui.interactive-link;
+}

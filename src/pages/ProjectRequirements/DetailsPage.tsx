@@ -1,7 +1,7 @@
 import { eq, useLiveQuery } from '@tanstack/react-db';
 import { useSelector } from '@tanstack/react-store';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { getProjectRequirementsCollection } from '@/api/collections/projectRequirementsCollection';
@@ -20,6 +20,7 @@ import { openTab } from '@/stores/tabBarStore';
 import { RequirementDetailsPanel } from '@/pages/ProjectRequirements/RequirementDetailsPanel';
 import { RevisionHistoryPanel } from '@/pages/ProjectRequirements/RevisionHistoryPanel';
 import { ImplementationTicketsPanel } from '@/pages/ProjectRequirements/ImplementationTicketsPanel';
+import { RequirementLinksPanel } from '@/pages/ProjectRequirements/RequirementLinksPanel';
 
 import '@/pages/ProjectRequirements/DetailsPage.scss';
 
@@ -56,6 +57,7 @@ export function DetailsPage() {
     );
 
     const requirement = requirementQuery.data;
+    const [selectedRevision, setSelectedRevision] = useState<typeof requirement>();
     const ticketsDialogOpen = useSelector(actionBarStore, (state) => state.implementationTicketsDialogOpen ?? false);
     useEffect(
         () => () => {
@@ -63,6 +65,10 @@ export function DetailsPage() {
         },
         [],
     );
+
+    useEffect(() => {
+        setSelectedRevision(undefined);
+    }, [requirementId]);
 
     const reviewSummaryQuery = useQuery({
         queryKey: getReviewSummaryQueryKey(projectId, requirementId),
@@ -129,16 +135,25 @@ export function DetailsPage() {
                 errorMessage='Requirement could not be loaded.'
                 emptyMessage='Requirement could not be found in the project requirements list.'>
                 <RequirementDetailsPanel
-                    requirement={requirement}
+                    requirement={selectedRevision ?? requirement}
                     title={requirement === undefined ? 'Requirement details' : requirement.visibleKey}
                     titleElement='h1'
                     titleId='project-requirements-details-page-title'
                 />
+                {requirement !== undefined && selectedRevision === undefined && (
+                    <RequirementLinksPanel projectId={projectId} requirement={requirement} />
+                )}
                 {requirement !== undefined && (
                     <RevisionHistoryPanel
+                        key={`${requirement.id}-${String(requirement.revisionNumber)}`}
                         projectId={projectId}
                         requirementId={requirement.id}
                         currentRevisionNumber={requirement.revisionNumber}
+                        onSelectRevision={(revision) => {
+                            setSelectedRevision(
+                                revision.revisionNumber === requirement.revisionNumber ? undefined : revision,
+                            );
+                        }}
                     />
                 )}
                 {requirement !== undefined && (

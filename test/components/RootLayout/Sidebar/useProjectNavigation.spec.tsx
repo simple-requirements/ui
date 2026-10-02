@@ -11,21 +11,25 @@ import { useProjectNavigation } from '@/components/RootLayout/Sidebar/useProject
 const mocks = vi.hoisted(() => ({
     prefetchProjectCategories: vi.fn<() => Promise<void>>(() => Promise.resolve()),
     prefetchProjectDetails: vi.fn<() => Promise<void>>(() => Promise.resolve()),
+    prefetchProjectMetrics: vi.fn<() => Promise<void>>(() => Promise.resolve()),
     prefetchProjectRequirements: vi.fn<() => Promise<void>>(() => Promise.resolve()),
     preloadProjectCategoriesListRoute: vi.fn(),
     preloadProjectDetailsRoute: vi.fn(),
+    preloadProjectMetricsListRoute: vi.fn(),
     preloadProjectRequirementsListRoute: vi.fn(),
 }));
 
 vi.mock('@/api/projectPrefetch', () => ({
     prefetchProjectCategories: mocks.prefetchProjectCategories,
     prefetchProjectDetails: mocks.prefetchProjectDetails,
+    prefetchProjectMetrics: mocks.prefetchProjectMetrics,
     prefetchProjectRequirements: mocks.prefetchProjectRequirements,
 }));
 
 vi.mock('@/router/routeModules', () => ({
     preloadProjectCategoriesListRoute: mocks.preloadProjectCategoriesListRoute,
     preloadProjectDetailsRoute: mocks.preloadProjectDetailsRoute,
+    preloadProjectMetricsListRoute: mocks.preloadProjectMetricsListRoute,
     preloadProjectRequirementsListRoute: mocks.preloadProjectRequirementsListRoute,
 }));
 
@@ -63,6 +67,11 @@ function ProjectNavigationProbe({ activeProjectRoute }: ProbeProps) {
                 type='button'
                 onClick={() => controller.prefetchProjectRoute('project-alpha', 'categories')}>
                 Prefetch Alpha categories
+            </button>
+            <button
+                type='button'
+                onClick={() => controller.prefetchProjectRoute('project-alpha', 'metrics')}>
+                Prefetch Alpha metrics
             </button>
         </div>
     );
@@ -137,6 +146,7 @@ describe('useProjectNavigation', () => {
         await user.click(screen.getByRole('button', { name: /prefetch alpha overview/i }));
         await user.click(screen.getByRole('button', { name: /prefetch alpha requirements/i }));
         await user.click(screen.getByRole('button', { name: /prefetch alpha categories/i }));
+        await user.click(screen.getByRole('button', { name: /prefetch alpha metrics/i }));
 
         expect(mocks.preloadProjectDetailsRoute).toHaveBeenCalledOnce();
         expect(mocks.prefetchProjectDetails).toHaveBeenCalledWith('project-alpha');
@@ -144,5 +154,7 @@ describe('useProjectNavigation', () => {
         expect(mocks.prefetchProjectRequirements).toHaveBeenCalledWith('project-alpha');
         expect(mocks.preloadProjectCategoriesListRoute).toHaveBeenCalledOnce();
         expect(mocks.prefetchProjectCategories).toHaveBeenCalledWith('project-alpha');
+        expect(mocks.preloadProjectMetricsListRoute).toHaveBeenCalledOnce();
+        expect(mocks.prefetchProjectMetrics).toHaveBeenCalledWith('project-alpha');
     });
 });

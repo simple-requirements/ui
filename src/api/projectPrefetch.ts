@@ -1,4 +1,5 @@
 import { getListProjectCategoriesQueryKey, listProjectCategoriesRequest } from '@/api/categoriesApi';
+import { getListProjectMetricsQueryKey, listProjectMetricsRequest } from '@/api/metricsApi';
 import { queryClient } from '@/api/queryClient';
 import { getListProjectRequirementsQueryKey, listProjectRequirementsRequest } from '@/api/requirementsApi';
 
@@ -12,6 +13,16 @@ export function prefetchProjectRequirements(projectId: string): Promise<void> {
         queryClient.prefetchQuery({
             queryKey: getListProjectRequirementsQueryKey(projectId),
             queryFn: () => listProjectRequirementsRequest(projectId),
+        }),
+    );
+}
+
+/** Warms the metrics cache for a project on likely navigation intent. */
+export function prefetchProjectMetrics(projectId: string): Promise<void> {
+    return queryWithoutSurfacingError(
+        queryClient.prefetchQuery({
+            queryKey: getListProjectMetricsQueryKey(projectId),
+            queryFn: () => listProjectMetricsRequest(projectId),
         }),
     );
 }

@@ -269,6 +269,55 @@ export const DeleteCategoryParams = zod.object({
 export const DeleteCategoryResponse = zod.void();
 
 /**
+ * @summary List all metrics of a project.
+ */
+export const ListMetricsParams = zod.object({ projectId: zod.string().describe('Project identifier.') });
+
+export const ListMetricsResponseItem = zod.object({
+    id: zod.string().describe('Stable internal metric identifier.'),
+    projectId: zod.string().describe('Owning project identifier.'),
+    key: zod.string().describe('Immutable project-scoped generated metric key.'),
+    value: zod.string().describe('Metric value.'),
+    description: zod.string().describe('Metric description.'),
+    active: zod.boolean().describe('Whether the metric is active.'),
+    createdAt: zod.iso.datetime({ offset: true }),
+    updatedAt: zod.iso.datetime({ offset: true }),
+});
+export const ListMetricsResponse = zod.array(ListMetricsResponseItem);
+
+/**
+ * @summary Get one metric.
+ */
+export const GetMetricParams = zod.object({ projectId: zod.string(), metricId: zod.string() });
+export const GetMetricResponse = ListMetricsResponseItem;
+
+/**
+ * @summary Create a project metric.
+ */
+export const CreateMetricParams = zod.object({ projectId: zod.string() });
+export const CreateMetricBody = zod.object({
+    value: zod.string().describe('Non-empty metric value.'),
+    description: zod.string().optional().describe('Metric description.'),
+});
+export const CreateMetricResponse = ListMetricsResponseItem;
+
+/**
+ * @summary Update a metric value or description.
+ */
+export const UpdateMetricParams = zod.object({ projectId: zod.string(), metricId: zod.string() });
+export const UpdateMetricBody = zod.object({
+    value: zod.string().optional().describe('Non-empty metric value.'),
+    description: zod.string().optional().describe('Metric description.'),
+});
+export const UpdateMetricResponse = ListMetricsResponseItem;
+
+/**
+ * @summary Deactivate a metric without deleting it.
+ */
+export const DeactivateMetricParams = zod.object({ projectId: zod.string(), metricId: zod.string() });
+export const DeactivateMetricResponse = ListMetricsResponseItem;
+
+/**
  * @summary List all requirements of a project.
  */
 export const ListRequirementsParams = zod.object({ projectId: zod.string().describe('Project identifier.') });

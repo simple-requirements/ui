@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom/vitest';
 
-import { cleanup, render, screen, within } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import type { ContextMenu } from 'primereact/contextmenu';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type * as ReactQueryModule from '@tanstack/react-query';
 
@@ -15,9 +16,39 @@ vi.mock('@tanstack/react-query', async (importOriginal) => {
     return { ...actual, useQuery: mocks.useQuery };
 });
 
+vi.mock('@/components/ContextMenu/AppContextMenu', async () => {
+    const React = await import('react');
+
+    return {
+        AppContextMenu: React.forwardRef<
+            ContextMenu,
+            Readonly<{ model: readonly { label?: string; command?: () => void }[] }>
+        >(function MockContextMenu({ model }, ref) {
+            const [visible, setVisible] = React.useState(false);
+            React.useImperativeHandle(ref, () => ({ show: () => setVisible(true) }) as unknown as ContextMenu);
+
+            return visible ?
+                    <nav aria-label='Revision context menu'>
+                        {model.map((item) => (
+                            <button
+                                key={item.label}
+                                type='button'
+                                onClick={item.command}>
+                                {item.label}
+                            </button>
+                        ))}
+                    </nav>
+                :   null;
+        }),
+    };
+});
+
 vi.mock('@/pages/ProjectRequirements/RevisionComparisonDialog', () => ({
-    RevisionComparisonDialog: ({ visible }: Readonly<{ visible: boolean }>) =>
-        visible ? <div>Revision comparison</div> : null,
+    RevisionComparisonDialog: ({
+        visible,
+        initialRevisionNumbers,
+    }: Readonly<{ visible: boolean; initialRevisionNumbers?: readonly [number, number] }>) =>
+        visible ? <div>Revision comparison {initialRevisionNumbers?.join(' → ') ?? 'default'}</div> : null,
 }));
 
 const baseRevision = {
@@ -48,27 +79,16 @@ const baseRevision = {
     'revisionNumber' | 'changeType' | 'changeReason' | 'changedAt' | 'changedByUserId' | 'changedByDisplayName'
 >;
 
-const revisions: Requirement[] = [
-    {
-        ...baseRevision,
-        revisionNumber: 1,
-        changeType: 'requirement_created',
-        changeReason: 'Requirement created.',
-        changedAt: '2026-09-20T08:00:00.000Z',
-        changedByUserId: null,
-        changedByDisplayName: 'System',
-    },
-    {
-        ...baseRevision,
-        revisionNumber: 2,
-        changeType: 'content_changed',
-        changeReason: 'Clarified authentication behavior.',
-        changedAt: '2026-09-21T09:30:00.000Z',
-        changedByUserId: '66666666-6666-4666-8666-666666666666',
-        changedByDisplayName: 'Ada Engineer',
-        updatedAt: '2026-09-21T09:30:00.000Z',
-    },
-];
+const revisions: Requirement[] = [1, 2, 3].map((revisionNumber) => ({
+    ...baseRevision,
+    revisionNumber,
+    description: `Description ${String(revisionNumber)}`,
+    changeType: revisionNumber === 1 ? 'requirement_created' : 'content_changed',
+    changeReason: revisionNumber === 1 ? 'Requirement created.' : `Revision ${String(revisionNumber)} reason.`,
+    changedAt: `2026-09-2${String(revisionNumber - 1)}T08:00:00.000Z`,
+    changedByUserId: null,
+    changedByDisplayName: 'System',
+}));
 
 afterEach(() => {
     cleanup();
@@ -76,27 +96,31 @@ afterEach(() => {
     vi.clearAllMocks();
 });
 
+function renderPanel(onSelectRevision = vi.fn()) {
+    render(
+        <RevisionHistoryPanel
+            projectId={baseRevision.projectId}
+            requirementId={baseRevision.id}
+            currentRevisionNumber={3}
+            onSelectRevision={onSelectRevision}
+        />,
+    );
+    return onSelectRevision;
+}
+
 describe('RevisionHistoryPanel', () => {
-    it('shows newest revisions first and highlights the current revision', () => {
+    it('shows newest revisions first and selects the current revision initially', () => {
         mocks.useQuery.mockReturnValue({ data: revisions, isLoading: false, isError: false });
 
-        render(
-            <RevisionHistoryPanel
-                projectId={baseRevision.projectId}
-                requirementId={baseRevision.id}
-                currentRevisionNumber={2}
-            />,
-        );
+        renderPanel();
 
         const rows = screen.getAllByRole('row');
-        expect(within(rows[1]).getByText('Revision 2')).toBeInTheDocument();
-        expect(rows[1]).toHaveClass('revision-history-panel__row--current');
+        expect(within(rows[1]).getByText('Revision 3')).toBeInTheDocument();
+        expect(rows[1]).toHaveClass('revision-history-panel__row--selected');
         expect(within(rows[1]).queryByText('Current')).not.toBeInTheDocument();
-        expect(within(rows[1]).getByText('Content changed')).toBeInTheDocument();
-        expect(within(rows[1]).getByText('Clarified authentication behavior.')).toBeInTheDocument();
-        expect(within(rows[1]).getByText('Ada Engineer')).toBeInTheDocument();
-        expect(within(rows[2]).getByText('Revision 1')).toBeInTheDocument();
-        expect(within(rows[2]).getByText('Requirement created')).toBeInTheDocument();
+        expect(within(rows[2]).getByText('Revision 2')).toBeInTheDocument();
+        expect(within(rows[3]).getByText('Revision 1')).toBeInTheDocument();
+        expect(within(rows[3]).getByText('Requirement created')).toBeInTheDocument();
 
         expect(mocks.useQuery).toHaveBeenCalledWith(
             expect.objectContaining({
@@ -108,13 +132,58 @@ describe('RevisionHistoryPanel', () => {
         expect(actionBarStore.state.revisionComparisonAvailable).toBe(true);
     });
 
+    it('browses a revision on a normal row click', () => {
+        mocks.useQuery.mockReturnValue({ data: revisions, isLoading: false, isError: false });
+        const onSelectRevision = renderPanel();
+        const revisionOneRow = screen.getByText('Revision 1').closest('tr');
+
+        expect(revisionOneRow).not.toBeNull();
+        fireEvent.click(revisionOneRow!);
+
+        expect(revisionOneRow).toHaveClass('revision-history-panel__row--selected');
+        expect(screen.getByText('Revision 3').closest('tr')).not.toHaveClass('revision-history-panel__row--selected');
+        expect(onSelectRevision).toHaveBeenCalledWith(expect.objectContaining({ revisionNumber: 1 }));
+    });
+
+    it('marks two revisions with Ctrl+click and compares them from the selected-row context menu', () => {
+        mocks.useQuery.mockReturnValue({ data: revisions, isLoading: false, isError: false });
+        renderPanel();
+        const revisionOneRow = screen.getByText('Revision 1').closest('tr');
+        const revisionTwoRow = screen.getByText('Revision 2').closest('tr');
+
+        expect(revisionOneRow).not.toBeNull();
+        expect(revisionTwoRow).not.toBeNull();
+        fireEvent.click(revisionOneRow!);
+        fireEvent.click(revisionTwoRow!, { ctrlKey: true });
+
+        expect(revisionOneRow).toHaveClass('revision-history-panel__row--selected');
+        expect(revisionTwoRow).toHaveClass('revision-history-panel__row--selected');
+
+        fireEvent.contextMenu(revisionOneRow!);
+        fireEvent.click(screen.getByRole('button', { name: 'Compare revisions' }));
+
+        expect(screen.getByText('Revision comparison 1 → 2')).toBeInTheDocument();
+    });
+
+    it('does not open the comparison context menu unless exactly two revisions are selected', () => {
+        mocks.useQuery.mockReturnValue({ data: revisions, isLoading: false, isError: false });
+        renderPanel();
+        const revisionThreeRow = screen.getByText('Revision 3').closest('tr');
+
+        expect(revisionThreeRow).not.toBeNull();
+        fireEvent.contextMenu(revisionThreeRow!);
+
+        expect(screen.queryByRole('button', { name: 'Compare revisions' })).not.toBeInTheDocument();
+    });
+
     it('shows loading, error, and empty states', () => {
         mocks.useQuery.mockReturnValueOnce({ data: undefined, isLoading: true, isError: false });
         const { rerender } = render(
             <RevisionHistoryPanel
                 projectId={baseRevision.projectId}
                 requirementId={baseRevision.id}
-                currentRevisionNumber={2}
+                currentRevisionNumber={3}
+                onSelectRevision={vi.fn()}
             />,
         );
         expect(screen.getByText('Loading revision history …')).toBeInTheDocument();
@@ -124,7 +193,8 @@ describe('RevisionHistoryPanel', () => {
             <RevisionHistoryPanel
                 projectId={baseRevision.projectId}
                 requirementId={baseRevision.id}
-                currentRevisionNumber={2}
+                currentRevisionNumber={3}
+                onSelectRevision={vi.fn()}
             />,
         );
         expect(screen.getByText('Revision history could not be loaded.')).toBeInTheDocument();
@@ -134,7 +204,8 @@ describe('RevisionHistoryPanel', () => {
             <RevisionHistoryPanel
                 projectId={baseRevision.projectId}
                 requirementId={baseRevision.id}
-                currentRevisionNumber={2}
+                currentRevisionNumber={3}
+                onSelectRevision={vi.fn()}
             />,
         );
         expect(screen.getByText('No revision history is available for this requirement.')).toBeInTheDocument();

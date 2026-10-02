@@ -34,6 +34,15 @@ export type ImplementationTicketInput = Readonly<
     Pick<ImplementationTicket, 'ticketId' | 'completedBy' | 'completedAt'>
 >;
 
+export const requirementMetricReferenceSchema = z.object({
+    key: z.string().regex(/^MET-[0-9]{4}$/u),
+    metricId: z.uuid().nullable(),
+    value: z.string().min(1).nullable(),
+    resolved: z.boolean(),
+    active: z.boolean().nullable(),
+});
+export type RequirementMetricReference = z.infer<typeof requirementMetricReferenceSchema>;
+
 const nullableIsoDateTimeSchema = z.iso
     .datetime()
     .nullable()
@@ -59,6 +68,8 @@ export const requirementSchema = z.object({
     visibleKey: z.string().regex(/^(FR|NFR)-[A-Z]{2,4}-[0-9]{4}$/u),
     status: requirementStatusSchema,
     description: nullableTextSchema,
+    renderedDescription: nullableTextSchema.optional(),
+    metricReferences: z.array(requirementMetricReferenceSchema).optional(),
     priority: requirementPrioritySchema
         .nullable()
         .optional()

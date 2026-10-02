@@ -1,6 +1,10 @@
+import { useSelector } from '@tanstack/react-store';
+import { useState } from 'react';
+
 import { getListProjectsQueryKey } from '@/api/projectsApi';
 import { queryClient } from '@/api/queryClient';
 import { ActionButton } from '@/components/RootLayout/Sidebar/ActionButton';
+import { ProjectExportDialog } from '@/components/RootLayout/Sidebar/ProjectExportDialog';
 import { ProjectNavigationList } from '@/components/RootLayout/Sidebar/ProjectNavigationList';
 import { SidebarContextMenu } from '@/components/RootLayout/Sidebar/SidebarContextMenu';
 import { useActiveProjectRoute } from '@/components/RootLayout/Sidebar/useActiveProjectRoute';
@@ -8,6 +12,7 @@ import { useProjectContextMenu } from '@/components/RootLayout/Sidebar/useProjec
 import { useProjectNavigation } from '@/components/RootLayout/Sidebar/useProjectNavigation';
 import { useSidebarProjects } from '@/components/RootLayout/Sidebar/useSidebarProjects';
 import { useRouteUiMetadata } from '@/router/routeUiMetadata';
+import { authStore } from '@/stores/authStore';
 
 import '@/components/RootLayout/Sidebar/Sidebar.scss';
 
@@ -17,22 +22,19 @@ export function Sidebar() {
     const routeUiMetadata = useRouteUiMetadata();
     const projectsWithRequirementCounts = useSidebarProjects();
     const projectContextMenu = useProjectContextMenu(projectsWithRequirementCounts);
+    const canExportProjects = useSelector(authStore, (state) => state.user?.role === 'requirements_engineer');
+    const [exportProjectId, setExportProjectId] = useState<string>();
 
     function handleSynchronizeProjects(): void {
         void queryClient.invalidateQueries({ queryKey: getListProjectsQueryKey() });
     }
 
     function handleExportProject(): void {
-        if (projectContextMenu.contextMenuProject === undefined) {
-            return;
-        }
-
-        // TODO: export projectContextMenu.contextMenuProject.
+        if (projectContextMenu.contextMenuProject === undefined || !canExportProjects) return;
+        setExportProjectId(projectContextMenu.contextMenuProject.id);
     }
 
-    function handleExportAllProjects(): void {
-        // TODO: export all projects.
-    }
+    const exportProject = projectsWithRequirementCounts.find((project) => project.id === exportProjectId);
 
     return (
         <aside
@@ -40,8 +42,15 @@ export function Sidebar() {
             aria-label='Projects'>
             <SidebarContextMenu
                 contextMenuRef={projectContextMenu.contextMenuRef}
+                canExportProject={canExportProjects}
                 onExportProject={handleExportProject}
-                onExportAllProjects={handleExportAllProjects}
+            />
+
+            <ProjectExportDialog
+                visible={exportProjectId !== undefined}
+                projectId={exportProjectId}
+                projectName={exportProject?.name}
+                onClose={() => setExportProjectId(undefined)}
             />
 
             <div

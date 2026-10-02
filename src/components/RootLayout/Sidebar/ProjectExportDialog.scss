@@ -1,0 +1,19 @@
+.project-export-dialog {
+    width: min(34rem, calc(100vw - 2rem));
+}
+
+.project-export-dialog__heading {
+    margin: 0;
+}
+
+.project-export-dialog__body {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.project-export-dialog__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}

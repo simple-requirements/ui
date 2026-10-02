@@ -7,17 +7,16 @@ import { AppContextMenu } from '@/components/ContextMenu/AppContextMenu';
 
 type Props = Readonly<{
     contextMenuRef: RefObject<ContextMenu | null>;
+    canExportProject: boolean;
     onExportProject?: () => void;
-    onExportAllProjects?: () => void;
 }>;
 
-export function SidebarContextMenu({ contextMenuRef, onExportProject, onExportAllProjects }: Props) {
+export function SidebarContextMenu({ contextMenuRef, canExportProject, onExportProject }: Props) {
     const menuItems = useMemo<MenuItem[]>(
         () => [
-            { label: 'Export project', icon: 'pi pi-chart-bar', command: onExportProject },
-            { label: 'Export all projects', icon: 'pi pi-database', command: onExportAllProjects },
+            { label: 'Export project', icon: 'pi pi-download', command: onExportProject, disabled: !canExportProject },
         ],
-        [onExportAllProjects, onExportProject],
+        [canExportProject, onExportProject],
     );
 
     return (

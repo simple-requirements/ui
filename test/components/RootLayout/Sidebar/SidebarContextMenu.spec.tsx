@@ -8,12 +8,13 @@ import { describe, expect, it, vi } from 'vitest';
 import { SidebarContextMenu } from '@/components/RootLayout/Sidebar/SidebarContextMenu';
 
 vi.mock('@/components/ContextMenu/AppContextMenu', () => ({
-    AppContextMenu: ({ model }: { model: readonly { label?: string; command?: () => void }[] }) => (
+    AppContextMenu: ({ model }: { model: readonly { label?: string; command?: () => void; disabled?: boolean }[] }) => (
         <nav aria-label='Sidebar context menu'>
             {model.map((item) => (
                 <button
                     key={item.label}
                     type='button'
+                    disabled={item.disabled}
                     onClick={item.command}>
                     {item.label}
                 </button>
@@ -23,18 +24,25 @@ vi.mock('@/components/ContextMenu/AppContextMenu', () => ({
 }));
 
 describe('SidebarContextMenu', () => {
-    it('contains only project-workspace export actions.', () => {
-        render(
+    it('offers project export only when the account can manage requirements.', () => {
+        const { rerender } = render(
             <SidebarContextMenu
                 contextMenuRef={createRef<ContextMenu>()}
+                canExportProject
                 onExportProject={vi.fn()}
-                onExportAllProjects={vi.fn()}
             />,
         );
 
-        expect(screen.getByRole('button', { name: 'Export project' })).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: 'Export all projects' })).toBeInTheDocument();
-        expect(screen.queryByRole('button', { name: /rename project/i })).not.toBeInTheDocument();
-        expect(screen.queryByRole('button', { name: /delete project/i })).not.toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Export project' })).toBeEnabled();
+        expect(screen.queryByRole('button', { name: 'Export all projects' })).not.toBeInTheDocument();
+
+        rerender(
+            <SidebarContextMenu
+                contextMenuRef={createRef<ContextMenu>()}
+                canExportProject={false}
+                onExportProject={vi.fn()}
+            />,
+        );
+        expect(screen.getByRole('button', { name: 'Export project' })).toBeDisabled();
     });
 });

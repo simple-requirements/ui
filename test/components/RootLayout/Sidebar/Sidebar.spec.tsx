@@ -28,12 +28,12 @@ vi.mock('@/api/collections/projectsCollection', () => ({ projectsCollection: {} 
 vi.mock('@/components/RootLayout/Sidebar/SidebarContextMenu', () => ({
     SidebarContextMenu: ({
         contextMenuRef,
+        canExportProject,
         onExportProject,
-        onExportAllProjects,
     }: {
         contextMenuRef: unknown;
+        canExportProject: boolean;
         onExportProject?: () => void;
-        onExportAllProjects?: () => void;
     }) => {
         (contextMenuRef as { current: { show: (event: unknown) => void } | null }).current = {
             show: mocks.contextMenuShow,
@@ -43,18 +43,16 @@ vi.mock('@/components/RootLayout/Sidebar/SidebarContextMenu', () => ({
             <nav aria-label='Sidebar context menu'>
                 <button
                     type='button'
+                    disabled={!canExportProject}
                     onClick={onExportProject}>
                     Export project
-                </button>
-                <button
-                    type='button'
-                    onClick={onExportAllProjects}>
-                    Export all projects
                 </button>
             </nav>
         );
     },
 }));
+
+vi.mock('@/components/RootLayout/Sidebar/ProjectExportDialog', () => ({ ProjectExportDialog: () => null }));
 
 function createTestQueryClient(): ReactQuery.QueryClient {
     return new ReactQuery.QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });

@@ -173,7 +173,7 @@ export function ListPage() {
                                         type='button'
                                         label='Deactivate'
                                         outlined
-                                        disabled={selectedMetric === undefined || !selectedMetric.active}
+                                        disabled={!selectedMetric?.active}
                                         onClick={() => setDeactivateCandidate(selectedMetric)}
                                         pt={{ root: { className: 'ui-button ui-button--outline ui-button--action' } }}
                                     />

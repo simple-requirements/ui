@@ -62,7 +62,7 @@ export function useProjectRequirementsList(projectId: string | undefined) {
         for (const requirement of allRequirements) {
             if (byId.has(requirement.categoryId)) continue;
             const [type, key] = requirement.visibleKey.split('-');
-            if ((type !== 'FR' && type !== 'NFR') || key === undefined) continue;
+            if (type !== 'FR' && type !== 'NFR') continue;
             byId.set(requirement.categoryId, {
                 id: requirement.categoryId,
                 projectId: requirement.projectId,

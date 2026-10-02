@@ -17,10 +17,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock('@/auth/projectPermissions', () => ({ useProjectPermissions: mocks.useProjectPermissions }));
-vi.mock('@tanstack/react-query', () => ({
-    useQuery: mocks.useQuery,
-    useMutation: mocks.useMutation,
-}));
+vi.mock('@tanstack/react-query', () => ({ useQuery: mocks.useQuery, useMutation: mocks.useMutation }));
 vi.mock('@tanstack/react-db', () => ({ useLiveQuery: mocks.useLiveQuery }));
 vi.mock('@/api/collections/projectRequirementsCollection', () => ({
     getProjectRequirementsCollection: () => ({ id: 'requirements' }),
@@ -70,18 +67,17 @@ const link = {
 function renderPanel() {
     return render(
         <MemoryRouter>
-            <RequirementLinksPanel projectId={projectId} requirement={source} />
+            <RequirementLinksPanel
+                projectId={projectId}
+                requirement={source}
+            />
         </MemoryRouter>,
     );
 }
 
 beforeEach(() => {
     mocks.useProjectPermissions.mockReturnValue({ canManageRequirements: false });
-    mocks.useQuery.mockReturnValue({
-        data: { outgoing: [link], incoming: [] },
-        isLoading: false,
-        isError: false,
-    });
+    mocks.useQuery.mockReturnValue({ data: { outgoing: [link], incoming: [] }, isLoading: false, isError: false });
     mocks.useLiveQuery.mockReturnValue({ data: [source, target], isLoading: false, isError: false });
     mocks.useMutation.mockReturnValue({ mutate: mocks.mutate, isPending: false });
 });

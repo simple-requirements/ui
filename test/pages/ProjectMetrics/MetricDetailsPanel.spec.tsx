@@ -31,7 +31,11 @@ describe('MetricDetailsPanel', () => {
     it('renders the metric key, value, description and state without mutation controls.', () => {
         render(
             <MemoryRouter>
-                <MetricDetailsPanel metric={metric} title='Metric MET-0001' titleElement='h1' />
+                <MetricDetailsPanel
+                    metric={metric}
+                    title='Metric MET-0001'
+                    titleElement='h1'
+                />
             </MemoryRouter>,
         );
         expect(screen.getByRole('heading', { name: 'Metric MET-0001' })).toBeInTheDocument();
@@ -63,7 +67,10 @@ describe('MetricDetailsPanel', () => {
     it('shows deactivated state.', () => {
         render(
             <MemoryRouter>
-                <MetricDetailsPanel metric={{ ...metric, active: false }} title='Metric details' />
+                <MetricDetailsPanel
+                    metric={{ ...metric, active: false }}
+                    title='Metric details'
+                />
             </MemoryRouter>,
         );
         expect(screen.getByText('Deactivated')).toBeInTheDocument();

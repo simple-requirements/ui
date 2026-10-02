@@ -69,12 +69,7 @@ describe('requirementLinksApi', () => {
             expect.objectContaining({ method: 'POST', body: JSON.stringify({ targetKey: link.target.visibleKey }) }),
         );
 
-        await updateRequirementLinkRequest(
-            link.projectId,
-            link.source.requirementId,
-            link.id,
-            'FR-DATA-0002',
-        );
+        await updateRequirementLinkRequest(link.projectId, link.source.requirementId, link.id, 'FR-DATA-0002');
         expect(mocks.apiFetch).toHaveBeenLastCalledWith(
             `/projects/${link.projectId}/requirements/${link.source.requirementId}/links/${link.id}`,
             expect.objectContaining({ method: 'PATCH', body: JSON.stringify({ targetKey: 'FR-DATA-0002' }) }),

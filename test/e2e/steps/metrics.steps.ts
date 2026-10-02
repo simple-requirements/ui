@@ -36,10 +36,14 @@ function requireContext(): MetricContext {
 
 function usernameForRole(role: TestRole): string {
     switch (role) {
-        case 'Requirements Engineer': return E2E_REQUIREMENTS_ENGINEER_LOGIN_USERNAME;
-        case 'Developer': return E2E_DEVELOPER_LOGIN_USERNAME;
-        case 'Viewer': return E2E_VIEWER_LOGIN_USERNAME;
-        case 'Administrator': return E2E_LOGIN_USERNAME;
+        case 'Requirements Engineer':
+            return E2E_REQUIREMENTS_ENGINEER_LOGIN_USERNAME;
+        case 'Developer':
+            return E2E_DEVELOPER_LOGIN_USERNAME;
+        case 'Viewer':
+            return E2E_VIEWER_LOGIN_USERNAME;
+        case 'Administrator':
+            return E2E_LOGIN_USERNAME;
     }
 }
 
@@ -74,7 +78,9 @@ Given('the Viewer has membership in the metric test project', async () => {
 
 When('I open the metric list for the metric test project as a Requirements Engineer', async ({ page }) => {
     await openAuthenticatedRoute(page, metricRoute(), usernameForRole('Requirements Engineer'));
-    await expect(page.getByRole('table', { name: 'Metrics' }).or(page.getByText('No metrics available.'))).toBeVisible();
+    await expect(
+        page.getByRole('table', { name: 'Metrics' }).or(page.getByText('No metrics available.')),
+    ).toBeVisible();
 });
 
 When('I open the metric list for the metric test project as the Developer', async ({ page }) => {
@@ -89,26 +95,32 @@ When('I open the metric list for the metric test project as an Administrator', a
     await openAuthenticatedRoute(page, metricRoute(), usernameForRole('Administrator'));
 });
 
-When('I create a metric with value {string} and description {string}', async ({ page }, value: string, description: string) => {
-    await page.getByRole('button', { name: 'New metric' }).click();
-    await page.getByLabel('Value').fill(value);
-    await page.getByLabel('Description').fill(description);
-    await page.getByRole('button', { name: 'Save' }).click();
-    await expect(page.getByRole('heading', { name: 'Metric MET-0001' })).toBeVisible();
-    await page.getByRole('link', { name: 'Metrics', exact: true }).click();
-    await expect(page).toHaveURL(metricRoute());
-});
+When(
+    'I create a metric with value {string} and description {string}',
+    async ({ page }, value: string, description: string) => {
+        await page.getByRole('button', { name: 'New metric' }).click();
+        await page.getByLabel('Value').fill(value);
+        await page.getByLabel('Description').fill(description);
+        await page.getByRole('button', { name: 'Save' }).click();
+        await expect(page.getByRole('heading', { name: 'Metric MET-0001' })).toBeVisible();
+        await page.getByRole('link', { name: 'Metrics', exact: true }).click();
+        await expect(page).toHaveURL(metricRoute());
+    },
+);
 
-When('I edit metric {string} to value {string} and description {string}', async ({ page }, key: string, value: string, description: string) => {
-    await metricRow(page, key).click();
-    await page.getByRole('button', { name: 'Edit' }).click();
-    await expect(page.getByLabel('Key')).toBeDisabled();
-    await page.getByLabel('Value').fill(value);
-    await page.getByLabel('Description').fill(description);
-    await page.getByRole('button', { name: 'Save' }).click();
-    await page.getByRole('link', { name: 'Metrics', exact: true }).click();
-    await expect(page).toHaveURL(metricRoute());
-});
+When(
+    'I edit metric {string} to value {string} and description {string}',
+    async ({ page }, key: string, value: string, description: string) => {
+        await metricRow(page, key).click();
+        await page.getByRole('button', { name: 'Edit' }).click();
+        await expect(page.getByLabel('Key')).toBeDisabled();
+        await page.getByLabel('Value').fill(value);
+        await page.getByLabel('Description').fill(description);
+        await page.getByRole('button', { name: 'Save' }).click();
+        await page.getByRole('link', { name: 'Metrics', exact: true }).click();
+        await expect(page).toHaveURL(metricRoute());
+    },
+);
 
 When('I deactivate metric {string}', async ({ page }, key: string) => {
     await metricRow(page, key).click();
@@ -251,7 +263,8 @@ When('I update the open metric value to {string}', async ({ page }, value: strin
 When('I open referencing requirement {string} from the metric detail', async ({ page }, requirementKey: string) => {
     await page.getByRole('link', { name: requirementKey }).click();
     const requirementId = requireContext().requirementIds?.[requirementKey];
-    if (requirementId === undefined) throw new Error(`Requirement ${requirementKey} is not in the metric test context.`);
+    if (requirementId === undefined)
+        throw new Error(`Requirement ${requirementKey} is not in the metric test context.`);
     await expect(page).toHaveURL(new RegExp(`/requirements/${requirementId}$`, 'u'));
 });
 

@@ -38,9 +38,9 @@ function formatChangeType(changeType: string): string {
 
 function toggleRevisionSelection(selectedRevisionNumbers: number[], revisionNumber: number): number[] {
     if (selectedRevisionNumbers.includes(revisionNumber)) {
-        return selectedRevisionNumbers.length === 1 ? selectedRevisionNumbers : selectedRevisionNumbers.filter(
-            (selectedRevisionNumber) => selectedRevisionNumber !== revisionNumber,
-        );
+        return selectedRevisionNumbers.length === 1 ?
+                selectedRevisionNumbers
+            :   selectedRevisionNumbers.filter((selectedRevisionNumber) => selectedRevisionNumber !== revisionNumber);
     }
 
     return [...selectedRevisionNumbers.slice(-1), revisionNumber];
@@ -128,14 +128,16 @@ export function RevisionHistoryPanel({
 
     function selectRevision(revision: Requirement, extendSelection: boolean): void {
         const nextSelectedRevisionNumbers =
-            extendSelection ? toggleRevisionSelection(selectedRevisionNumbers, revision.revisionNumber)
+            extendSelection ?
+                toggleRevisionSelection(selectedRevisionNumbers, revision.revisionNumber)
             :   [revision.revisionNumber];
 
         setSelectedRevisionNumbers(nextSelectedRevisionNumbers);
         setComparisonPair(undefined);
 
         const nextDisplayedRevisionNumber =
-            nextSelectedRevisionNumbers.includes(revision.revisionNumber) ? revision.revisionNumber
+            nextSelectedRevisionNumbers.includes(revision.revisionNumber) ?
+                revision.revisionNumber
             :   nextSelectedRevisionNumbers.at(-1);
         const nextDisplayedRevision = revisions.find(
             (candidate) => candidate.revisionNumber === nextDisplayedRevisionNumber,
@@ -165,11 +167,7 @@ export function RevisionHistoryPanel({
     }
 
     const contextMenuItems: MenuItem[] = [
-        {
-            label: 'Compare revisions',
-            icon: 'pi pi-clone',
-            command: compareSelectedRevisions,
-        },
+        { label: 'Compare revisions', icon: 'pi pi-clone', command: compareSelectedRevisions },
     ];
 
     return (

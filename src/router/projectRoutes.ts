@@ -119,7 +119,9 @@ export function getProjectMetricDetailsCloseRoute(route: string): string | undef
 }
 
 export function getProjectDetailsCloseRoute(route: string): string | undefined {
-    return getProjectCategoryDetailsCloseRoute(route)
+    return (
+        getProjectCategoryDetailsCloseRoute(route)
         ?? getProjectMetricDetailsCloseRoute(route)
-        ?? getProjectRequirementDetailsCloseRoute(route);
+        ?? getProjectRequirementDetailsCloseRoute(route)
+    );
 }

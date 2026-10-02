@@ -8,10 +8,7 @@ import '@/pages/ProjectRequirements/RequirementDescription.scss';
 
 const metricPlaceholderPattern = /\[~(MET-[0-9]{4})\]/gu;
 
-export type RequirementDescriptionProps = Readonly<{
-    requirement: Requirement;
-    stopNavigationPropagation?: boolean;
-}>;
+export type RequirementDescriptionProps = Readonly<{ requirement: Requirement; stopNavigationPropagation?: boolean }>;
 
 function stopPropagation(event: MouseEvent<HTMLAnchorElement>): void {
     event.stopPropagation();
@@ -48,7 +45,10 @@ function renderMetricReference(
 }
 
 /** Renders current metric placeholders as linked values while keeping historical revisions frozen. */
-export function RequirementDescription({ requirement, stopNavigationPropagation = false }: RequirementDescriptionProps) {
+export function RequirementDescription({
+    requirement,
+    stopNavigationPropagation = false,
+}: RequirementDescriptionProps) {
     if (requirement.metricReferences === undefined) {
         return <>{requirement.renderedDescription ?? requirement.description ?? '—'}</>;
     }

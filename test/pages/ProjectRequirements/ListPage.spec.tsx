@@ -74,12 +74,17 @@ const requirements: readonly Requirement[] = [
 const mocks = vi.hoisted(() => ({
     useLiveQuery: vi.fn(),
     getProjectRequirementsCollection: vi.fn((projectId: string) => ({ id: `requirements:${projectId}` })),
+    useQueries: vi.fn(() => []),
     openTab: vi.fn(),
     showToastMessage: vi.fn(),
     getReviewSummary: vi.fn(),
 }));
 
 vi.mock('@tanstack/react-db', () => ({ useLiveQuery: mocks.useLiveQuery }));
+vi.mock('@tanstack/react-query', async (importOriginal) => {
+    const actual = await importOriginal<typeof import('@tanstack/react-query')>();
+    return { ...actual, useQueries: mocks.useQueries };
+});
 vi.mock('@/api/collections/projectRequirementsCollection', () => ({
     getProjectRequirementsCollection: mocks.getProjectRequirementsCollection,
 }));
@@ -239,6 +244,23 @@ describe('ProjectRequirements ListPage', () => {
         });
         expect(mocks.openTab).not.toHaveBeenCalled();
         expect(screen.getByText('Security policy')).toBeInTheDocument();
+    });
+
+    it('filters requirements and switches to the document view.', async () => {
+        const user = userEvent.setup();
+        renderRequirementsListPage({ data: requirements });
+
+        await user.type(screen.getByRole('textbox', { name: 'Search requirements' }), 'Alice');
+        expect(within(getRequirementsTable()).getByText('FR-AUTH-0001')).toBeInTheDocument();
+        expect(within(getRequirementsTable()).queryByText('NFR-PERF-0001')).not.toBeInTheDocument();
+
+        await user.click(screen.getByRole('button', { name: 'Clear filters' }));
+        await user.selectOptions(screen.getByRole('combobox', { name: 'Filter by type' }), 'NFR');
+        expect(within(getRequirementsTable()).getByText('NFR-PERF-0001')).toBeInTheDocument();
+        expect(within(getRequirementsTable()).queryByText('FR-AUTH-0001')).not.toBeInTheDocument();
+
+        await user.click(screen.getByRole('button', { name: 'Document', exact: true }));
+        expect(screen.getByLabelText('Requirement specification document')).toHaveTextContent('NFR-PERF-0001');
     });
 
     it('renders the loading state.', () => {

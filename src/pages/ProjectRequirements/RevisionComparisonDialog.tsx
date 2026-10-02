@@ -180,7 +180,12 @@ function formatHunkRange(start: number, lineCount: number): string {
     return `${String(start)},${String(lineCount)}`;
 }
 
-function buildDescriptionDiff(oldContent: string, newContent: string, oldFileName: string, newFileName: string): string {
+function buildDescriptionDiff(
+    oldContent: string,
+    newContent: string,
+    oldFileName: string,
+    newFileName: string,
+): string {
     const oldLines = splitLines(oldContent);
     const newLines = splitLines(newContent);
     const oldStart = oldLines.length === 0 ? 0 : 1;
@@ -194,12 +199,17 @@ function buildDescriptionDiff(oldContent: string, newContent: string, oldFileNam
     return `${[`--- ${oldFileName}`, `+++ ${newFileName}`, header, ...body].join('\n')}\n`;
 }
 
-function DescriptionDiff({ fromRevision, toRevision }: Readonly<{ fromRevision: Requirement; toRevision: Requirement }>) {
+function DescriptionDiff({
+    fromRevision,
+    toRevision,
+}: Readonly<{ fromRevision: Requirement; toRevision: Requirement }>) {
     const fromDescription = fromRevision.renderedDescription ?? fromRevision.description ?? '';
     const toDescription = toRevision.renderedDescription ?? toRevision.description ?? '';
 
     return (
-        <section className='revision-comparison-dialog__description' aria-labelledby='revision-description-diff-title'>
+        <section
+            className='revision-comparison-dialog__description'
+            aria-labelledby='revision-description-diff-title'>
             <h3 id='revision-description-diff-title'>Description</h3>
             <div className='revision-comparison-dialog__diff'>
                 <DiffView
@@ -208,10 +218,7 @@ function DescriptionDiff({ fromRevision, toRevision }: Readonly<{ fromRevision: 
                             fileName: `Revision ${String(fromRevision.revisionNumber)}`,
                             content: fromDescription,
                         },
-                        newFile: {
-                            fileName: `Revision ${String(toRevision.revisionNumber)}`,
-                            content: toDescription,
-                        },
+                        newFile: { fileName: `Revision ${String(toRevision.revisionNumber)}`, content: toDescription },
                         hunks: [
                             buildDescriptionDiff(
                                 fromDescription,
@@ -284,12 +291,7 @@ function RevisionComparisonResult({
     requirementId,
     fromRevision,
     toRevision,
-}: Readonly<{
-    projectId: string;
-    requirementId: string;
-    fromRevision: Requirement;
-    toRevision: Requirement;
-}>) {
+}: Readonly<{ projectId: string; requirementId: string; fromRevision: Requirement; toRevision: Requirement }>) {
     const [showAllFields, setShowAllFields] = useState(false);
     const comparisonQuery = useQuery({
         queryKey: getRequirementRevisionComparisonQueryKey(
@@ -390,7 +392,9 @@ export function RevisionComparisonDialog({
                 <>
                     <div className='revision-comparison-dialog__selectors'>
                         <div className='ui-field'>
-                            <label className='ui-label ui-label--dialog' htmlFor='revision-comparison-from'>
+                            <label
+                                className='ui-label ui-label--dialog'
+                                htmlFor='revision-comparison-from'>
                                 From revision
                             </label>
                             <select
@@ -401,14 +405,18 @@ export function RevisionComparisonDialog({
                                 {orderedRevisions
                                     .filter((revision) => revision.revisionNumber !== toRevision.revisionNumber)
                                     .map((revision) => (
-                                        <option key={revision.revisionNumber} value={revision.revisionNumber}>
+                                        <option
+                                            key={revision.revisionNumber}
+                                            value={revision.revisionNumber}>
                                             Revision {String(revision.revisionNumber)}
                                         </option>
                                     ))}
                             </select>
                         </div>
                         <div className='ui-field'>
-                            <label className='ui-label ui-label--dialog' htmlFor='revision-comparison-to'>
+                            <label
+                                className='ui-label ui-label--dialog'
+                                htmlFor='revision-comparison-to'>
                                 To revision
                             </label>
                             <select
@@ -419,7 +427,9 @@ export function RevisionComparisonDialog({
                                 {orderedRevisions
                                     .filter((revision) => revision.revisionNumber !== fromRevision.revisionNumber)
                                     .map((revision) => (
-                                        <option key={revision.revisionNumber} value={revision.revisionNumber}>
+                                        <option
+                                            key={revision.revisionNumber}
+                                            value={revision.revisionNumber}>
                                             Revision {String(revision.revisionNumber)}
                                         </option>
                                     ))}

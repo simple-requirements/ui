@@ -70,8 +70,7 @@ export const createMetric = async (
 export type updateMetricResponse200 = { data: MetricResponseDto; status: 200 };
 export type updateMetricResponse = updateMetricResponse200 & { headers: Headers };
 
-export const getUpdateMetricUrl = (projectId: string, metricId: string) =>
-    `/projects/${projectId}/metrics/${metricId}`;
+export const getUpdateMetricUrl = (projectId: string, metricId: string) => `/projects/${projectId}/metrics/${metricId}`;
 
 /** @summary Update a metric value or description. */
 export const updateMetric = async (

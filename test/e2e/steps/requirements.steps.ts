@@ -446,3 +446,36 @@ Then('outgoing requirement links should not contain {string}', async ({ page }, 
 Then('incoming requirement links should contain {string}', async ({ page }, requirementKey: string) => {
     await expect(getRequirementLinksGroup(page, 'Incoming')).toContainText(requirementKey);
 });
+
+When('I search requirements for {string}', async ({ page }, search: string) => {
+    await page.getByRole('textbox', { name: 'Search requirements' }).fill(search);
+});
+
+When('I clear requirement filters', async ({ page }) => {
+    await page.getByRole('button', { name: 'Clear filters' }).click();
+});
+
+When('I filter requirements by type {string}', async ({ page }, type: string) => {
+    await page.getByRole('combobox', { name: 'Filter by type' }).selectOption(type);
+});
+
+When('I switch to the requirement document view', async ({ page }) => {
+    await page.getByRole('button', { name: 'Document', exact: true }).click();
+});
+
+Then('requirement {string} should be visible in the requirements list', async ({ page }, requirementKey: string) => {
+    await expect(page.getByText(requirementKey, { exact: true }).first()).toBeVisible();
+});
+
+Then(
+    'requirement {string} should not be visible in the requirements list',
+    async ({ page }, requirementKey: string) => {
+        await expect(getRequirementTable(page).getByText(requirementKey, { exact: true })).toHaveCount(0);
+    },
+);
+
+Then('the requirement specification document should show {string}', async ({ page }, requirementKey: string) => {
+    const documentView = page.getByLabel('Requirement specification document');
+    await expect(documentView).toBeVisible();
+    await expect(documentView).toContainText(requirementKey);
+});

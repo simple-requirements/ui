@@ -27,8 +27,12 @@ describe('projectRoutes', () => {
         );
         expect(getProjectMetricsRoute('project-alpha')).toBe('/projects/project-alpha/metrics');
         expect(getProjectMetricCreateRoute('project-alpha')).toBe('/projects/project-alpha/metrics/new');
-        expect(getProjectMetricDetailsRoute('project-alpha', 'metric-one')).toBe('/projects/project-alpha/metrics/metric-one');
-        expect(getProjectMetricEditRoute('project-alpha', 'metric-one')).toBe('/projects/project-alpha/metrics/metric-one/edit');
+        expect(getProjectMetricDetailsRoute('project-alpha', 'metric-one')).toBe(
+            '/projects/project-alpha/metrics/metric-one',
+        );
+        expect(getProjectMetricEditRoute('project-alpha', 'metric-one')).toBe(
+            '/projects/project-alpha/metrics/metric-one/edit',
+        );
         expect(getProjectCategoriesRoute('project-alpha')).toBe('/projects/project-alpha/categories');
         expect(getProjectCategoryCreateRoute('project-alpha')).toBe('/projects/project-alpha/categories/new');
         expect(getProjectCategoryDetailsRoute('project-alpha', 'category-auth')).toBe(
@@ -69,9 +73,15 @@ describe('projectRoutes', () => {
     });
 
     it('derives the close route from metric detail and form routes.', () => {
-        expect(getProjectMetricDetailsCloseRoute('/projects/project-alpha/metrics/metric-one')).toBe('/projects/project-alpha/metrics');
-        expect(getProjectMetricDetailsCloseRoute('/projects/project-alpha/metrics/new')).toBe('/projects/project-alpha/metrics');
-        expect(getProjectMetricDetailsCloseRoute('/projects/project-alpha/metrics/metric-one/edit')).toBe('/projects/project-alpha/metrics');
+        expect(getProjectMetricDetailsCloseRoute('/projects/project-alpha/metrics/metric-one')).toBe(
+            '/projects/project-alpha/metrics',
+        );
+        expect(getProjectMetricDetailsCloseRoute('/projects/project-alpha/metrics/new')).toBe(
+            '/projects/project-alpha/metrics',
+        );
+        expect(getProjectMetricDetailsCloseRoute('/projects/project-alpha/metrics/metric-one/edit')).toBe(
+            '/projects/project-alpha/metrics',
+        );
     });
 
     it('derives the close route from requirement details routes.', () => {

@@ -59,10 +59,19 @@ describe('metricsApi', () => {
 
     it('updates and deactivates a metric through the generated client.', async () => {
         mocks.apiFetch
-            .mockResolvedValueOnce({ data: { ...metricResponse, value: '1000 ms' }, status: 200, headers: new Headers() })
+            .mockResolvedValueOnce({
+                data: { ...metricResponse, value: '1000 ms' },
+                status: 200,
+                headers: new Headers(),
+            })
             .mockResolvedValueOnce({ data: { ...metricResponse, active: false }, status: 200, headers: new Headers() });
-        await updateProjectMetricRequest('project alpha', 'metric one', { value: '1000 ms', description: 'Response time' });
+        await updateProjectMetricRequest('project alpha', 'metric one', {
+            value: '1000 ms',
+            description: 'Response time',
+        });
         await deactivateProjectMetricRequest('project alpha', 'metric one');
-        expect(mocks.apiFetch).toHaveBeenLastCalledWith('/projects/project alpha/metrics/metric one/deactivate', { method: 'POST' });
+        expect(mocks.apiFetch).toHaveBeenLastCalledWith('/projects/project alpha/metrics/metric one/deactivate', {
+            method: 'POST',
+        });
     });
 });

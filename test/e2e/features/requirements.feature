@@ -123,3 +123,19 @@ Feature: Project requirements
     When I open linked requirement "FR-AUTH-0001"
     And I remove the outgoing requirement link "FR-DATA-0001"
     Then outgoing requirement links should not contain "FR-DATA-0001"
+
+  Scenario: User searches and filters requirements and switches to document view
+    Given the backend contains a requirement test project named "Requirement Search BDD Project" with requirements
+      | categoryKey | categoryType | categoryName   | description                        | priority | owner |
+      | AUTH        | FR           | Authentication | Users can sign in securely.        | p1       | Alice |
+      | PERF        | NFR          | Performance    | Dashboard response is measurable.  | p2       | Bob   |
+    When I open the requirements list for the requirement test project
+    And I search requirements for "Alice"
+    Then requirement "FR-AUTH-0001" should be visible in the requirements list
+    And requirement "NFR-PERF-0001" should not be visible in the requirements list
+    When I clear requirement filters
+    And I filter requirements by type "NFR"
+    Then requirement "NFR-PERF-0001" should be visible in the requirements list
+    And requirement "FR-AUTH-0001" should not be visible in the requirements list
+    When I switch to the requirement document view
+    Then the requirement specification document should show "NFR-PERF-0001"

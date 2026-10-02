@@ -19,10 +19,17 @@ export type RequirementTableProps = Readonly<{
     onSelectRequirement: (requirementId: string) => void;
     onCopyRequirementKey: (requirement: RequirementTableRow) => void;
     onOpenRequirement: (requirement: RequirementTableRow) => void;
+    categoriesById: ReadonlyMap<string, Readonly<{ name: string; type: string }>>;
+    visibleColumns: ReadonlySet<string>;
 }>;
 
 function descriptionBodyTemplate(requirement: RequirementTableRow): ReactNode {
-    return <RequirementDescription requirement={requirement} stopNavigationPropagation />;
+    return (
+        <RequirementDescription
+            requirement={requirement}
+            stopNavigationPropagation
+        />
+    );
 }
 
 function ownerBodyTemplate(requirement: RequirementTableRow): string {
@@ -52,6 +59,8 @@ export function RequirementTable({
     onSelectRequirement,
     onCopyRequirementKey,
     onOpenRequirement,
+    categoriesById,
+    visibleColumns,
 }: RequirementTableProps) {
     function handleRequirementSelectionChange(event: DataTableSelectionSingleChangeEvent<RequirementTableRow[]>): void {
         if (isRequirementTableRow(event.value)) {
@@ -75,6 +84,14 @@ export function RequirementTable({
         event.stopPropagation();
         onSelectRequirement(requirement.id);
         onCopyRequirementKey(requirement);
+    }
+
+    function typeBodyTemplate(requirement: RequirementTableRow): string {
+        return categoriesById.get(requirement.categoryId)?.type ?? requirement.visibleKey.split('-')[0] ?? '—';
+    }
+
+    function categoryBodyTemplate(requirement: RequirementTableRow): string {
+        return categoriesById.get(requirement.categoryId)?.name ?? '—';
     }
 
     function keyBodyTemplate(requirement: RequirementTableRow): ReactNode {
@@ -111,44 +128,82 @@ export function RequirementTable({
                 field='visibleKey'
                 header='Key'
                 body={keyBodyTemplate}
+                sortable
                 pt={getRequirementColumnPassThrough('project-requirements-list-page__key-column')}
             />
 
-            <Column
-                header='Description'
-                body={descriptionBodyTemplate}
-                pt={getRequirementColumnPassThrough('project-requirements-list-page__description-column')}
-            />
+            {visibleColumns.has('description') && (
+                <Column
+                    header='Description'
+                    body={descriptionBodyTemplate}
+                    pt={getRequirementColumnPassThrough('project-requirements-list-page__description-column')}
+                />
+            )}
 
-            <Column
-                header='Status'
-                body={statusBodyTemplate}
-                pt={getRequirementColumnPassThrough('project-requirements-list-page__status-column')}
-            />
+            {visibleColumns.has('type') && (
+                <Column
+                    header='Type'
+                    body={typeBodyTemplate}
+                    sortable
+                    sortField='visibleKey'
+                    pt={getRequirementColumnPassThrough('project-requirements-list-page__type-column')}
+                />
+            )}
+            {visibleColumns.has('category') && (
+                <Column
+                    header='Category'
+                    body={categoryBodyTemplate}
+                    pt={getRequirementColumnPassThrough('project-requirements-list-page__category-column')}
+                />
+            )}
 
-            <Column
-                header='Priority'
-                body={priorityBodyTemplate}
-                pt={getRequirementColumnPassThrough('project-requirements-list-page__priority-column')}
-            />
+            {visibleColumns.has('status') && (
+                <Column
+                    header='Status'
+                    body={statusBodyTemplate}
+                    sortable
+                    field='status'
+                    pt={getRequirementColumnPassThrough('project-requirements-list-page__status-column')}
+                />
+            )}
 
-            <Column
-                header='Owner'
-                body={ownerBodyTemplate}
-                pt={getRequirementColumnPassThrough('project-requirements-list-page__owner-column')}
-            />
+            {visibleColumns.has('priority') && (
+                <Column
+                    header='Priority'
+                    body={priorityBodyTemplate}
+                    sortable
+                    field='priority'
+                    pt={getRequirementColumnPassThrough('project-requirements-list-page__priority-column')}
+                />
+            )}
 
-            <Column
-                header='Reviewer'
-                body={reviewerBodyTemplate}
-                pt={getRequirementColumnPassThrough('project-requirements-list-page__reviewer-column')}
-            />
+            {visibleColumns.has('owner') && (
+                <Column
+                    header='Owner'
+                    body={ownerBodyTemplate}
+                    sortable
+                    field='owner'
+                    pt={getRequirementColumnPassThrough('project-requirements-list-page__owner-column')}
+                />
+            )}
 
-            <Column
-                header='Updated'
-                body={updatedAtBodyTemplate}
-                pt={getRequirementColumnPassThrough('project-requirements-list-page__updated-column')}
-            />
+            {visibleColumns.has('reviewer') && (
+                <Column
+                    header='Reviewer'
+                    body={reviewerBodyTemplate}
+                    pt={getRequirementColumnPassThrough('project-requirements-list-page__reviewer-column')}
+                />
+            )}
+
+            {visibleColumns.has('updatedAt') && (
+                <Column
+                    header='Updated'
+                    body={updatedAtBodyTemplate}
+                    sortable
+                    field='updatedAt'
+                    pt={getRequirementColumnPassThrough('project-requirements-list-page__updated-column')}
+                />
+            )}
         </DataTable>
     );
 }

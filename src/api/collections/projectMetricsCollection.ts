@@ -27,7 +27,7 @@ export function cacheProjectMetric(projectId: string, metric: Metric): void {
         const existingIndex = current.findIndex((candidate) => candidate.id === metric.id);
         if (existingIndex === -1) return [...current, metric].sort((a, b) => a.key.localeCompare(b.key));
 
-        return current.map((candidate) => candidate.id === metric.id ? metric : candidate);
+        return current.map((candidate) => (candidate.id === metric.id ? metric : candidate));
     });
 }
 

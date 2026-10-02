@@ -126,24 +126,14 @@ describe('RevisionComparisonDialog', () => {
             data: {
                 fromRevision: 1,
                 toRevision: 2,
-                differences: [
-                    { field: 'description', from: 'Below 2000 ms.', to: 'Below 1000 ms.' },
-                ],
+                differences: [{ field: 'description', from: 'Below 2000 ms.', to: 'Below 1000 ms.' }],
             },
             isLoading: false,
             isError: false,
         });
         const metricRevisions: Requirement[] = [
-            {
-                ...revisions[0],
-                description: 'Below [~MET-0001].',
-                renderedDescription: 'Below 2000 ms.',
-            },
-            {
-                ...revisions[1],
-                description: 'Below [~MET-0001].',
-                renderedDescription: 'Below 1000 ms.',
-            },
+            { ...revisions[0], description: 'Below [~MET-0001].', renderedDescription: 'Below 2000 ms.' },
+            { ...revisions[1], description: 'Below [~MET-0001].', renderedDescription: 'Below 1000 ms.' },
         ];
 
         render(
@@ -199,11 +189,7 @@ describe('RevisionComparisonDialog', () => {
 
     it('can toggle unchanged fields into the comparison table', () => {
         mocks.useQuery.mockReturnValue({
-            data: {
-                fromRevision: 2,
-                toRevision: 3,
-                differences: [{ field: 'owner', from: 'Alice', to: 'Bob' }],
-            },
+            data: { fromRevision: 2, toRevision: 3, differences: [{ field: 'owner', from: 'Alice', to: 'Bob' }] },
             isLoading: false,
             isError: false,
         });

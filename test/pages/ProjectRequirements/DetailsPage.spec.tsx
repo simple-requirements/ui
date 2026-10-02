@@ -31,7 +31,10 @@ vi.mock('@tanstack/react-query', async (importOriginal) => {
 vi.mock('@/api/collections/projectRequirementsCollection', () => ({ getProjectRequirementsCollection: () => ({}) }));
 vi.mock('@/stores/tabBarStore', () => ({ openTab: mocks.openTab }));
 vi.mock('@/pages/ProjectRequirements/RequirementDetailsPanel', () => ({
-    RequirementDetailsPanel: ({ requirement, title }: Readonly<{ requirement?: { revisionNumber: number }; title: string }>) => (
+    RequirementDetailsPanel: ({
+        requirement,
+        title,
+    }: Readonly<{ requirement?: { revisionNumber: number }; title: string }>) => (
         <>
             <h1>{title}</h1>
             <output aria-label='Displayed revision'>{requirement?.revisionNumber}</output>
@@ -41,7 +44,11 @@ vi.mock('@/pages/ProjectRequirements/RequirementDetailsPanel', () => ({
 vi.mock('@/pages/ProjectRequirements/RevisionHistoryPanel', () => ({
     RevisionHistoryPanel: ({ onSelectRevision }: Readonly<{ onSelectRevision: (revision: unknown) => void }>) => (
         <section aria-label='Revision history'>
-            <button type='button' onClick={() => onSelectRevision(mocks.revisionOne)}>Browse revision 1</button>
+            <button
+                type='button'
+                onClick={() => onSelectRevision(mocks.revisionOne)}>
+                Browse revision 1
+            </button>
         </section>
     ),
 }));
@@ -106,7 +113,6 @@ describe('Requirement DetailsPage', () => {
             expect.objectContaining({ requirementId: 'requirement-1' }),
         );
     });
-
 
     it('shows the selected historical revision in the details panel', async () => {
         renderPage();

@@ -32,15 +32,16 @@ export function MetricDetailsPanel({
     return (
         <div className='metric-details-panel ui-panel ui-panel--padded ui-panel--full-height ui-panel--flex-column ui-panel--overflow-auto'>
             <header className='metric-details-panel__header'>
-                <TitleElement id={titleId} className='metric-details-panel__title'>
+                <TitleElement
+                    id={titleId}
+                    className='metric-details-panel__title'>
                     {title}
                 </TitleElement>
             </header>
 
-            {metric === undefined ? (
+            {metric === undefined ?
                 <InlineStatus kind='empty'>{emptyMessage}</InlineStatus>
-            ) : (
-                <dl className='metric-details-panel__details-list'>
+            :   <dl className='metric-details-panel__details-list'>
                     <div className='metric-details-panel__details-row'>
                         <dt>Key</dt>
                         <dd>{metric.key}</dd>
@@ -72,23 +73,26 @@ export function MetricDetailsPanel({
                     <div className='metric-details-panel__details-row'>
                         <dt>Referencing requirements</dt>
                         <dd>
-                            {referencingRequirements.length === 0 ? (
+                            {referencingRequirements.length === 0 ?
                                 '—'
-                            ) : (
-                                <ul className='metric-details-panel__requirement-list'>
+                            :   <ul className='metric-details-panel__requirement-list'>
                                     {referencingRequirements.map((requirement) => (
                                         <li key={requirement.id}>
-                                            <Link to={getProjectRequirementDetailsRoute(metric.projectId, requirement.id)}>
+                                            <Link
+                                                to={getProjectRequirementDetailsRoute(
+                                                    metric.projectId,
+                                                    requirement.id,
+                                                )}>
                                                 {requirement.visibleKey}
                                             </Link>
                                         </li>
                                     ))}
                                 </ul>
-                            )}
+                            }
                         </dd>
                     </div>
                 </dl>
-            )}
+            }
         </div>
     );
 }

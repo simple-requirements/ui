@@ -25,9 +25,9 @@ export function ReviewWorkspace({
     onReply,
     onResolve,
 }: ReviewWorkspaceProps) {
-    const unresolvedMetricKeys = requirement.metricReferences
-        ?.filter((reference) => !reference.resolved)
-        .map((reference) => reference.key) ?? [];
+    const unresolvedMetricKeys =
+        requirement.metricReferences?.filter((reference) => !reference.resolved).map((reference) => reference.key)
+        ?? [];
 
     return (
         <Splitter pt={{ root: { className: 'project-requirement-review-page__splitter' } }}>

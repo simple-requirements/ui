@@ -33,7 +33,10 @@ export function DetailsPage() {
     const metricQuery = useLiveQuery(
         (query) => {
             if (collection === undefined || metricId === undefined) return undefined;
-            return query.from({ metrics: collection }).where(({ metrics }) => eq(metrics.id, metricId)).findOne();
+            return query
+                .from({ metrics: collection })
+                .where(({ metrics }) => eq(metrics.id, metricId))
+                .findOne();
         },
         [collection, metricId],
     );
@@ -43,14 +46,18 @@ export function DetailsPage() {
         [projectId],
     );
     const requirementsQuery = useLiveQuery(
-        (query) => (requirementsCollection === undefined ? undefined : query.from({ requirements: requirementsCollection })),
+        (query) =>
+            requirementsCollection === undefined ? undefined : query.from({ requirements: requirementsCollection }),
         [requirementsCollection],
     );
     const referencingRequirements = useMemo(
         () =>
-            metric === undefined ? [] : (requirementsQuery.data ?? []).filter((requirement) =>
-                requirement.metricReferences?.some((reference) => reference.metricId === metric.id) ?? false,
-            ),
+            metric === undefined ?
+                []
+            :   (requirementsQuery.data ?? []).filter(
+                    (requirement) =>
+                        requirement.metricReferences?.some((reference) => reference.metricId === metric.id) ?? false,
+                ),
         [metric, requirementsQuery.data],
     );
 
@@ -72,17 +79,29 @@ export function DetailsPage() {
             cacheProjectMetric(projectId, deactivatedMetric);
             void queryClient.invalidateQueries({ queryKey: getListProjectMetricsQueryKey(projectId) });
             void queryClient.invalidateQueries({ queryKey: getListProjectRequirementsQueryKey(projectId) });
-            showToastMessage({ severity: 'success', summary: 'Metric deactivated', detail: `${metric.key} has been deactivated.`, life: 3000 });
+            showToastMessage({
+                severity: 'success',
+                summary: 'Metric deactivated',
+                detail: `${metric.key} has been deactivated.`,
+                life: 3000,
+            });
             setDeactivateRequested(false);
         } catch {
-            showToastMessage({ severity: 'error', summary: 'Metric could not be deactivated', detail: `${metric.key} could not be deactivated.`, life: 5000 });
+            showToastMessage({
+                severity: 'error',
+                summary: 'Metric could not be deactivated',
+                detail: `${metric.key} could not be deactivated.`,
+                life: 5000,
+            });
         } finally {
             setPending(false);
         }
     }
 
     return (
-        <section className='project-metrics-details-page' aria-labelledby='project-metrics-details-page-title'>
+        <section
+            className='project-metrics-details-page'
+            aria-labelledby='project-metrics-details-page-title'>
             <MetricDeactivateDialog
                 metric={deactivateRequested ? metric : undefined}
                 pending={pending}

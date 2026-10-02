@@ -141,7 +141,10 @@ export function DetailsPage() {
                     titleId='project-requirements-details-page-title'
                 />
                 {requirement !== undefined && selectedRevision === undefined && (
-                    <RequirementLinksPanel projectId={projectId} requirement={requirement} />
+                    <RequirementLinksPanel
+                        projectId={projectId}
+                        requirement={requirement}
+                    />
                 )}
                 {requirement !== undefined && (
                     <RevisionHistoryPanel

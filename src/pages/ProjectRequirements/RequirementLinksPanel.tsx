@@ -44,14 +44,20 @@ function LinkTable({
     onRemove: (link: RequirementLink) => void;
 }>) {
     return (
-        <section className='requirement-links-panel__group' aria-labelledby={`requirement-links-${direction}`}>
-            <h3 id={`requirement-links-${direction}`} className='requirement-links-panel__group-title'>
+        <section
+            className='requirement-links-panel__group'
+            aria-labelledby={`requirement-links-${direction}`}>
+            <h3
+                id={`requirement-links-${direction}`}
+                className='requirement-links-panel__group-title'>
                 {label}
             </h3>
             {links.length === 0 ?
                 <InlineStatus kind='empty'>No {direction} links.</InlineStatus>
             :   <div className='requirement-links-panel__table-wrap'>
-                    <table className='requirement-links-panel__table' aria-label={`${label} links`}>
+                    <table
+                        className='requirement-links-panel__table'
+                        aria-label={`${label} links`}>
                         <thead>
                             <tr>
                                 <th>Source</th>
@@ -85,21 +91,31 @@ function LinkTable({
                                         </td>
                                         <td>{endpoint.type}</td>
                                         <td>{endpoint.categoryName}</td>
-                                        <td><RequirementStatusBadge status={endpoint.status} /></td>
+                                        <td>
+                                            <RequirementStatusBadge status={endpoint.status} />
+                                        </td>
                                         {canManage && direction === 'outgoing' && (
                                             <td className='requirement-links-panel__actions'>
                                                 <Button
                                                     type='button'
                                                     label='Correct'
                                                     outlined
-                                                    pt={{ root: { className: 'ui-button ui-button--outline ui-button--action' } }}
+                                                    pt={{
+                                                        root: {
+                                                            className: 'ui-button ui-button--outline ui-button--action',
+                                                        },
+                                                    }}
                                                     onClick={() => onEdit(link)}
                                                 />
                                                 <Button
                                                     type='button'
                                                     label='Remove'
                                                     outlined
-                                                    pt={{ root: { className: 'ui-button ui-button--outline ui-button--action' } }}
+                                                    pt={{
+                                                        root: {
+                                                            className: 'ui-button ui-button--outline ui-button--action',
+                                                        },
+                                                    }}
                                                     onClick={() => onRemove(link)}
                                                 />
                                             </td>
@@ -115,7 +131,10 @@ function LinkTable({
     );
 }
 
-export function RequirementLinksPanel({ projectId, requirement }: Readonly<{ projectId: string; requirement: Requirement }>) {
+export function RequirementLinksPanel({
+    projectId,
+    requirement,
+}: Readonly<{ projectId: string; requirement: Requirement }>) {
     const navigate = useNavigate();
     const permissions = useProjectPermissions(projectId);
     const [editor, setEditor] = useState<EditorState>();
@@ -124,12 +143,12 @@ export function RequirementLinksPanel({ projectId, requirement }: Readonly<{ pro
     const [filterText, setFilterText] = useState('');
 
     const queryKey = getRequirementLinksQueryKey(projectId, requirement.id);
-    const overviewQuery = useQuery({
-        queryKey,
-        queryFn: () => getRequirementLinksRequest(projectId, requirement.id),
-    });
+    const overviewQuery = useQuery({ queryKey, queryFn: () => getRequirementLinksRequest(projectId, requirement.id) });
     const requirementsCollection = useMemo(() => getProjectRequirementsCollection(projectId), [projectId]);
-    const requirementsQuery = useLiveQuery((query) => query.from({ requirements: requirementsCollection }), [requirementsCollection]);
+    const requirementsQuery = useLiveQuery(
+        (query) => query.from({ requirements: requirementsCollection }),
+        [requirementsCollection],
+    );
 
     const targetKeys = useMemo(
         () =>
@@ -158,7 +177,8 @@ export function RequirementLinksPanel({ projectId, requirement }: Readonly<{ pro
             setErrorMessage(undefined);
             void refresh();
         },
-        onError: (error) => setErrorMessage(error instanceof Error ? error.message : 'Requirement link could not be saved.'),
+        onError: (error) =>
+            setErrorMessage(error instanceof Error ? error.message : 'Requirement link could not be saved.'),
     });
     const removeMutation = useMutation({
         mutationFn: (link: RequirementLink) => deleteRequirementLinkRequest(projectId, requirement.id, link.id),
@@ -182,7 +202,10 @@ export function RequirementLinksPanel({ projectId, requirement }: Readonly<{ pro
     };
 
     return (
-        <div className='requirement-links-panel ui-panel ui-panel--padded' role='region' aria-label='Requirement links'>
+        <div
+            className='requirement-links-panel ui-panel ui-panel--padded'
+            role='region'
+            aria-label='Requirement links'>
             <div className='requirement-links-panel__header'>
                 <h2 className='requirement-links-panel__title'>Requirement links</h2>
                 {permissions.canManageRequirements && (
@@ -199,7 +222,11 @@ export function RequirementLinksPanel({ projectId, requirement }: Readonly<{ pro
             </div>
 
             <div className='requirement-links-panel__filter'>
-                <label className='ui-label' htmlFor='requirement-links-filter'>Filter by source or target</label>
+                <label
+                    className='ui-label'
+                    htmlFor='requirement-links-filter'>
+                    Filter by source or target
+                </label>
                 <InputText
                     id='requirement-links-filter'
                     value={filterText}
@@ -248,12 +275,24 @@ export function RequirementLinksPanel({ projectId, requirement }: Readonly<{ pro
                 closeOnEscape={!mutation.isPending}
                 draggable={false}
                 resizable={false}
-                header={<h2 className='ui-dialog__heading'>{editor?.link === undefined ? 'Create requirement link' : 'Correct requirement link'}</h2>}
-                pt={{ root: { className: 'ui-dialog ui-dialog--compact' }, header: { className: 'ui-dialog__header' }, content: { className: 'ui-dialog__content' } }}
+                header={
+                    <h2 className='ui-dialog__heading'>
+                        {editor?.link === undefined ? 'Create requirement link' : 'Correct requirement link'}
+                    </h2>
+                }
+                pt={{
+                    root: { className: 'ui-dialog ui-dialog--compact' },
+                    header: { className: 'ui-dialog__header' },
+                    content: { className: 'ui-dialog__content' },
+                }}
                 onHide={() => setEditor(undefined)}>
                 <div className='ui-form--dialog ui-form--dialog-spacious'>
                     <div className='ui-field--dialog'>
-                        <label className='ui-label ui-label--dialog' htmlFor='requirement-link-target'>Target requirement key</label>
+                        <label
+                            className='ui-label ui-label--dialog'
+                            htmlFor='requirement-link-target'>
+                            Target requirement key
+                        </label>
                         <InputText
                             id='requirement-link-target'
                             value={editor?.targetKey ?? ''}
@@ -261,16 +300,41 @@ export function RequirementLinksPanel({ projectId, requirement }: Readonly<{ pro
                             autoComplete='off'
                             disabled={mutation.isPending}
                             pt={{ root: { className: 'ui-control ui-control--dialog' } }}
-                            onChange={(event) => setEditor((current) => current === undefined ? current : { ...current, targetKey: event.target.value.toUpperCase() })}
+                            onChange={(event) =>
+                                setEditor((current) =>
+                                    current === undefined ? current : (
+                                        { ...current, targetKey: event.target.value.toUpperCase() }
+                                    ),
+                                )
+                            }
                         />
                         <datalist id='requirement-link-targets'>
-                            {targetKeys.map((key) => <option key={key} value={key} />)}
+                            {targetKeys.map((key) => (
+                                <option
+                                    key={key}
+                                    value={key}
+                                />
+                            ))}
                         </datalist>
                         {errorMessage !== undefined && <InlineStatus kind='error'>{errorMessage}</InlineStatus>}
                     </div>
                     <div className='ui-dialog__actions'>
-                        <Button type='button' label='Abort' outlined disabled={mutation.isPending} pt={{ root: { className: 'ui-button ui-button--outline ui-button--dialog' } }} onClick={() => setEditor(undefined)} />
-                        <Button type='button' label='Save' loading={mutation.isPending} disabled={mutation.isPending} pt={{ root: { className: 'ui-button ui-button--primary ui-button--dialog' } }} onClick={submitEditor} />
+                        <Button
+                            type='button'
+                            label='Abort'
+                            outlined
+                            disabled={mutation.isPending}
+                            pt={{ root: { className: 'ui-button ui-button--outline ui-button--dialog' } }}
+                            onClick={() => setEditor(undefined)}
+                        />
+                        <Button
+                            type='button'
+                            label='Save'
+                            loading={mutation.isPending}
+                            disabled={mutation.isPending}
+                            pt={{ root: { className: 'ui-button ui-button--primary ui-button--dialog' } }}
+                            onClick={submitEditor}
+                        />
                     </div>
                 </div>
             </Dialog>
@@ -284,13 +348,35 @@ export function RequirementLinksPanel({ projectId, requirement }: Readonly<{ pro
                 draggable={false}
                 resizable={false}
                 header={<h2 className='ui-dialog__heading'>Remove requirement link</h2>}
-                pt={{ root: { className: 'ui-dialog ui-dialog--compact' }, header: { className: 'ui-dialog__header' }, content: { className: 'ui-dialog__content' } }}
+                pt={{
+                    root: { className: 'ui-dialog ui-dialog--compact' },
+                    header: { className: 'ui-dialog__header' },
+                    content: { className: 'ui-dialog__content' },
+                }}
                 onHide={() => setRemoveLink(undefined)}>
-                <p className='ui-dialog__message'>Remove the reference to {removeLink?.target.visibleKey ?? 'this requirement'}?</p>
+                <p className='ui-dialog__message'>
+                    Remove the reference to {removeLink?.target.visibleKey ?? 'this requirement'}?
+                </p>
                 {errorMessage !== undefined && <InlineStatus kind='error'>{errorMessage}</InlineStatus>}
                 <div className='ui-dialog__actions'>
-                    <Button type='button' label='Abort' outlined disabled={removeMutation.isPending} pt={{ root: { className: 'ui-button ui-button--outline ui-button--dialog' } }} onClick={() => setRemoveLink(undefined)} />
-                    <Button type='button' label='Remove' loading={removeMutation.isPending} disabled={removeMutation.isPending} pt={{ root: { className: 'ui-button ui-button--primary ui-button--dialog' } }} onClick={() => { if (removeLink !== undefined) removeMutation.mutate(removeLink); }} />
+                    <Button
+                        type='button'
+                        label='Abort'
+                        outlined
+                        disabled={removeMutation.isPending}
+                        pt={{ root: { className: 'ui-button ui-button--outline ui-button--dialog' } }}
+                        onClick={() => setRemoveLink(undefined)}
+                    />
+                    <Button
+                        type='button'
+                        label='Remove'
+                        loading={removeMutation.isPending}
+                        disabled={removeMutation.isPending}
+                        pt={{ root: { className: 'ui-button ui-button--primary ui-button--dialog' } }}
+                        onClick={() => {
+                            if (removeLink !== undefined) removeMutation.mutate(removeLink);
+                        }}
+                    />
                 </div>
             </Dialog>
         </div>

@@ -47,9 +47,9 @@ function getMetricColumnPassThrough(columnClassName?: string): ColumnPassThrough
 }
 
 function getMetricRowClassName(metric: Metric, selectedMetricId: string | undefined): string {
-    return metric.id === selectedMetricId
-        ? 'project-metrics-list-page__table-row project-metrics-list-page__table-row--selected'
-        : 'project-metrics-list-page__table-row';
+    return metric.id === selectedMetricId ?
+            'project-metrics-list-page__table-row project-metrics-list-page__table-row--selected'
+        :   'project-metrics-list-page__table-row';
 }
 
 export function ListPage() {
@@ -67,7 +67,10 @@ export function ListPage() {
         (query) => (collection === undefined ? undefined : query.from({ metrics: collection })),
         [collection],
     );
-    const metrics = useMemo(() => [...(metricsQuery.data ?? [])].sort((a, b) => a.key.localeCompare(b.key)), [metricsQuery.data]);
+    const metrics = useMemo(
+        () => [...(metricsQuery.data ?? [])].sort((a, b) => a.key.localeCompare(b.key)),
+        [metricsQuery.data],
+    );
     const selectedMetric = metrics.find((metric) => metric.id === selectedMetricId) ?? metrics[0];
 
     useEffect(() => {
@@ -115,18 +118,29 @@ export function ListPage() {
     }
 
     return (
-        <section className='project-metrics-list-page' aria-labelledby='project-metrics-list-page-title'>
+        <section
+            className='project-metrics-list-page'
+            aria-labelledby='project-metrics-list-page-title'>
             <MetricDeactivateDialog
                 metric={deactivateCandidate}
                 pending={deactivatePending}
                 onAbort={() => setDeactivateCandidate(undefined)}
                 onConfirm={() => void confirmDeactivate()}
             />
-            <Splitter layout='vertical' pt={{ root: { className: 'project-metrics-list-page__splitter' } }}>
-                <SplitterPanel size={67} minSize={25} pt={{ root: { className: 'project-metrics-list-page__splitter-panel' } }}>
+            <Splitter
+                layout='vertical'
+                pt={{ root: { className: 'project-metrics-list-page__splitter' } }}>
+                <SplitterPanel
+                    size={67}
+                    minSize={25}
+                    pt={{ root: { className: 'project-metrics-list-page__splitter-panel' } }}>
                     <div className='project-metrics-list-page__list-panel ui-panel ui-panel--full-height ui-panel--flex-column ui-panel--overflow-hidden'>
                         <header className='project-metrics-list-page__header ui-panel__header'>
-                            <h1 id='project-metrics-list-page-title' className='project-metrics-list-page__title ui-panel__title'>Metrics</h1>
+                            <h1
+                                id='project-metrics-list-page-title'
+                                className='project-metrics-list-page__title ui-panel__title'>
+                                Metrics
+                            </h1>
                             {permissions.canManageRequirements && (
                                 <div className='project-metrics-list-page__actions'>
                                     <Button
@@ -134,14 +148,22 @@ export function ListPage() {
                                         label='New metric'
                                         icon='pi pi-plus'
                                         onClick={() => void navigate(getProjectMetricCreateRoute(projectId))}
-                                        pt={{ root: { className: 'ui-button ui-button--primary ui-button--action ui-button--with-icon' } }}
+                                        pt={{
+                                            root: {
+                                                className:
+                                                    'ui-button ui-button--primary ui-button--action ui-button--with-icon',
+                                            },
+                                        }}
                                     />
                                     <Button
                                         type='button'
                                         label='Edit'
                                         outlined
                                         disabled={selectedMetric === undefined}
-                                        onClick={() => selectedMetric !== undefined && void navigate(getProjectMetricEditRoute(projectId, selectedMetric.id))}
+                                        onClick={() =>
+                                            selectedMetric !== undefined
+                                            && void navigate(getProjectMetricEditRoute(projectId, selectedMetric.id))
+                                        }
                                         pt={{ root: { className: 'ui-button ui-button--outline ui-button--action' } }}
                                     />
                                     <Button
@@ -168,8 +190,12 @@ export function ListPage() {
                                 selectionMode='single'
                                 metaKeySelection={false}
                                 selection={selectedMetric ?? null}
-                                onSelectionChange={(event: DataTableSelectionSingleChangeEvent<Metric[]>) => setSelectedMetricId(isMetric(event.value) ? event.value.id : undefined)}
-                                onRowDoubleClick={(event: DataTableRowClickEvent) => isMetric(event.data) && openMetric(event.data)}
+                                onSelectionChange={(event: DataTableSelectionSingleChangeEvent<Metric[]>) =>
+                                    setSelectedMetricId(isMetric(event.value) ? event.value.id : undefined)
+                                }
+                                onRowDoubleClick={(event: DataTableRowClickEvent) =>
+                                    isMetric(event.data) && openMetric(event.data)
+                                }
                                 rowClassName={(metric: Metric) => getMetricRowClassName(metric, selectedMetricId)}
                                 scrollable
                                 scrollHeight='flex'
@@ -178,20 +204,38 @@ export function ListPage() {
                                     wrapper: { className: 'project-metrics-list-page__data-table-wrapper' },
                                     table: { 'className': 'project-metrics-list-page__table', 'aria-label': 'Metrics' },
                                 }}>
-                                <Column field='key' header='Key' pt={getMetricColumnPassThrough('project-metrics-list-page__key-column')} />
-                                <Column field='value' header='Value' pt={getMetricColumnPassThrough('project-metrics-list-page__value-column')} />
-                                <Column field='description' header='Description' pt={getMetricColumnPassThrough()} />
+                                <Column
+                                    field='key'
+                                    header='Key'
+                                    pt={getMetricColumnPassThrough('project-metrics-list-page__key-column')}
+                                />
+                                <Column
+                                    field='value'
+                                    header='Value'
+                                    pt={getMetricColumnPassThrough('project-metrics-list-page__value-column')}
+                                />
+                                <Column
+                                    field='description'
+                                    header='Description'
+                                    pt={getMetricColumnPassThrough()}
+                                />
                                 <Column
                                     header='Status'
-                                    body={(metric: Metric) => metric.active ? 'Active' : 'Deactivated'}
+                                    body={(metric: Metric) => (metric.active ? 'Active' : 'Deactivated')}
                                     pt={getMetricColumnPassThrough('project-metrics-list-page__status-column')}
                                 />
                             </DataTable>
                         </LoadableContent>
                     </div>
                 </SplitterPanel>
-                <SplitterPanel size={33} minSize={20} pt={{ root: { className: 'project-metrics-list-page__splitter-panel' } }}>
-                    <MetricDetailsPanel metric={selectedMetric} title='Metric details' />
+                <SplitterPanel
+                    size={33}
+                    minSize={20}
+                    pt={{ root: { className: 'project-metrics-list-page__splitter-panel' } }}>
+                    <MetricDetailsPanel
+                        metric={selectedMetric}
+                        title='Metric details'
+                    />
                 </SplitterPanel>
             </Splitter>
         </section>

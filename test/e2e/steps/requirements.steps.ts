@@ -403,7 +403,7 @@ When('I create a requirement link to {string}', async ({ page }, targetKey: stri
     const panel = getRequirementLinksPanel(page);
     await panel.getByRole('button', { name: 'New link' }).click();
     const dialog = page.getByRole('dialog');
-    await dialog.getByRole('textbox', { name: 'Target requirement key' }).fill(targetKey);
+    await dialog.getByLabel('Target requirement key').fill(targetKey);
     await dialog.getByRole('button', { name: 'Save' }).click();
     await expect(dialog).not.toBeVisible();
 });
@@ -414,7 +414,7 @@ When(
         const row = getRequirementLinksGroup(page, 'Outgoing').getByRole('row').filter({ hasText: currentTargetKey });
         await row.getByRole('button', { name: 'Correct' }).click();
         const dialog = page.getByRole('dialog');
-        const targetInput = dialog.getByRole('textbox', { name: 'Target requirement key' });
+        const targetInput = dialog.getByLabel('Target requirement key');
         await expect(targetInput).toHaveValue(currentTargetKey);
         await targetInput.fill(correctedTargetKey);
         await dialog.getByRole('button', { name: 'Save' }).click();

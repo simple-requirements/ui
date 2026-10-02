@@ -6,9 +6,7 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export interface CreateMetricDto {
-    /** Non-empty metric value. */
-    value: string;
-    /** Metric description. */
-    description?: string;
-}
+/**
+ * @nullable
+ */
+export type RequirementReviewTaskResponseDtoCompletedAt = { [key: string]: unknown } | null;

@@ -1,3 +1,4 @@
+import { useSelector } from '@tanstack/react-store';
 import type { MouseEvent } from 'react';
 
 import type { SidebarProject } from '@/api/collections/projectsCollection';
@@ -5,10 +6,13 @@ import { ExpandableNavigationItem } from '@/components/Navigation/ExpandableNavi
 import {
     getProjectCategoriesRoute,
     getProjectMetricsRoute,
+    getProjectReviewTasksRoute,
     getProjectRequirementsRoute,
     type ActiveProjectRoute,
     type ProjectSubRoute,
 } from '@/router/projectRoutes';
+import { getProjectPermissions } from '@/auth/projectPermissions';
+import { authStore } from '@/stores/authStore';
 
 export type ProjectNavigationListProps = Readonly<{
     projects: readonly SidebarProject[];
@@ -29,6 +33,8 @@ export function ProjectNavigationList({
     onProjectContextMenu,
     onProjectIntent,
 }: ProjectNavigationListProps) {
+    const user = useSelector(authStore, (state) => state.user);
+
     return (
         <nav
             className='sidebar__project-navigation'
@@ -54,6 +60,17 @@ export function ProjectNavigationList({
                                     iconClassName: 'pi pi-list',
                                     onIntent: () => onProjectIntent(project.id, 'requirements'),
                                 },
+                                ...(getProjectPermissions(user, project.id).canManageRequirements ?
+                                    [
+                                        {
+                                            id: 'review-tasks',
+                                            label: 'Review tasks',
+                                            to: getProjectReviewTasksRoute(project.id),
+                                            iconClassName: 'pi pi-inbox',
+                                            onIntent: () => onProjectIntent(project.id, 'review-tasks'),
+                                        },
+                                    ]
+                                :   []),
                                 {
                                     id: 'categories',
                                     label: 'Categories',

@@ -168,6 +168,6 @@ describe('ReviewPage', () => {
             ),
         );
         expect(mocks.approveReview).toHaveBeenCalledWith('project-1', 'requirement-1');
-        expect(mocks.invalidateQueries).toHaveBeenCalledTimes(2);
+        expect(mocks.invalidateQueries).toHaveBeenCalledTimes(4);
     });
 });

@@ -1,0 +1,31 @@
+@use '@/styles/mixins' as *;
+
+.project-review-tasks-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+
+    &__header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    &__header h1,
+    &__header p {
+        margin: 0;
+    }
+
+    &__header p {
+        margin-top: 0.25rem;
+    }
+
+    &__toggle,
+    &__actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+}

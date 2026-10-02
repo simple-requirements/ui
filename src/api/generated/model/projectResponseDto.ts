@@ -12,6 +12,8 @@ export interface ProjectResponseDto {
     id: string;
     /** Human-readable project name. */
     name: string;
+    /** Number of requirements currently contained in the project. */
+    requirementCount: number;
     /** @nullable */
     ticketUrlTemplate?: ProjectResponseDtoTicketUrlTemplate;
     /** Date and time when the project was created. */

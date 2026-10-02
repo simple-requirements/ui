@@ -178,6 +178,7 @@ export const AdminDeleteProjectResponse = zod.void();
 export const ListProjectsResponseItem = zod.object({
     id: zod.string().describe('Stable project identifier.'),
     name: zod.string().describe('Human-readable project name.'),
+    requirementCount: zod.number().describe('Number of requirements currently contained in the project.'),
     ticketUrlTemplate: zod.looseObject({}).nullish(),
     createdAt: zod.iso.datetime({ offset: true }).describe('Date and time when the project was created.'),
     updatedAt: zod.iso.datetime({ offset: true }).describe('Date and time when the project was last updated.'),
@@ -192,6 +193,7 @@ export const GetProjectParams = zod.object({ id: zod.string().describe('Project 
 export const GetProjectResponse = zod.object({
     id: zod.string().describe('Stable project identifier.'),
     name: zod.string().describe('Human-readable project name.'),
+    requirementCount: zod.number().describe('Number of requirements currently contained in the project.'),
     ticketUrlTemplate: zod.looseObject({}).nullish(),
     createdAt: zod.iso.datetime({ offset: true }).describe('Date and time when the project was created.'),
     updatedAt: zod.iso.datetime({ offset: true }).describe('Date and time when the project was last updated.'),
@@ -269,55 +271,6 @@ export const DeleteCategoryParams = zod.object({
 export const DeleteCategoryResponse = zod.void();
 
 /**
- * @summary List all metrics of a project.
- */
-export const ListMetricsParams = zod.object({ projectId: zod.string().describe('Project identifier.') });
-
-export const ListMetricsResponseItem = zod.object({
-    id: zod.string().describe('Stable internal metric identifier.'),
-    projectId: zod.string().describe('Owning project identifier.'),
-    key: zod.string().describe('Immutable project-scoped generated metric key.'),
-    value: zod.string().describe('Metric value.'),
-    description: zod.string().describe('Metric description.'),
-    active: zod.boolean().describe('Whether the metric is active.'),
-    createdAt: zod.iso.datetime({ offset: true }),
-    updatedAt: zod.iso.datetime({ offset: true }),
-});
-export const ListMetricsResponse = zod.array(ListMetricsResponseItem);
-
-/**
- * @summary Get one metric.
- */
-export const GetMetricParams = zod.object({ projectId: zod.string(), metricId: zod.string() });
-export const GetMetricResponse = ListMetricsResponseItem;
-
-/**
- * @summary Create a project metric.
- */
-export const CreateMetricParams = zod.object({ projectId: zod.string() });
-export const CreateMetricBody = zod.object({
-    value: zod.string().describe('Non-empty metric value.'),
-    description: zod.string().optional().describe('Metric description.'),
-});
-export const CreateMetricResponse = ListMetricsResponseItem;
-
-/**
- * @summary Update a metric value or description.
- */
-export const UpdateMetricParams = zod.object({ projectId: zod.string(), metricId: zod.string() });
-export const UpdateMetricBody = zod.object({
-    value: zod.string().optional().describe('Non-empty metric value.'),
-    description: zod.string().optional().describe('Metric description.'),
-});
-export const UpdateMetricResponse = ListMetricsResponseItem;
-
-/**
- * @summary Deactivate a metric without deleting it.
- */
-export const DeactivateMetricParams = zod.object({ projectId: zod.string(), metricId: zod.string() });
-export const DeactivateMetricResponse = ListMetricsResponseItem;
-
-/**
  * @summary List all requirements of a project.
  */
 export const ListRequirementsParams = zod.object({ projectId: zod.string().describe('Project identifier.') });
@@ -338,6 +291,32 @@ export const ListRequirementsResponseItem = zod.object({
     changedByDisplayName: zod.string(),
     status: zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
     description: zod.looseObject({}).nullish(),
+    renderedDescription: zod
+        .looseObject({})
+        .nullish()
+        .describe(
+            'Rendered description for revision-history responses. Archived revisions use their frozen metric snapshot; the current revision uses live metric values.',
+        ),
+    metricReferences: zod
+        .array(
+            zod.object({
+                key: zod.string().describe('Metric key exactly as referenced by the requirement.'),
+                metricId: zod
+                    .looseObject({})
+                    .nullish()
+                    .describe('Stable internal metric identifier when the reference resolves.'),
+                value: zod.looseObject({}).nullish().describe('Current metric value when the reference resolves.'),
+                resolved: zod.boolean().describe('Whether the referenced metric exists in the same project.'),
+                active: zod
+                    .looseObject({})
+                    .nullish()
+                    .describe('Current active state when the referenced metric resolves.'),
+            }),
+        )
+        .optional()
+        .describe(
+            'Resolution details for metric placeholders in the current requirement description. Historical revisions omit this live resolution data.',
+        ),
     priority: zod.enum(['p1', 'p2', 'p3']).nullish(),
     owner: zod.looseObject({}).nullish(),
     rationale: zod.looseObject({}).nullish(),
@@ -397,6 +376,32 @@ export const CreateRequirementResponse = zod.object({
     changedByDisplayName: zod.string(),
     status: zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
     description: zod.looseObject({}).nullish(),
+    renderedDescription: zod
+        .looseObject({})
+        .nullish()
+        .describe(
+            'Rendered description for revision-history responses. Archived revisions use their frozen metric snapshot; the current revision uses live metric values.',
+        ),
+    metricReferences: zod
+        .array(
+            zod.object({
+                key: zod.string().describe('Metric key exactly as referenced by the requirement.'),
+                metricId: zod
+                    .looseObject({})
+                    .nullish()
+                    .describe('Stable internal metric identifier when the reference resolves.'),
+                value: zod.looseObject({}).nullish().describe('Current metric value when the reference resolves.'),
+                resolved: zod.boolean().describe('Whether the referenced metric exists in the same project.'),
+                active: zod
+                    .looseObject({})
+                    .nullish()
+                    .describe('Current active state when the referenced metric resolves.'),
+            }),
+        )
+        .optional()
+        .describe(
+            'Resolution details for metric placeholders in the current requirement description. Historical revisions omit this live resolution data.',
+        ),
     priority: zod.enum(['p1', 'p2', 'p3']).nullish(),
     owner: zod.looseObject({}).nullish(),
     rationale: zod.looseObject({}).nullish(),
@@ -446,6 +451,32 @@ export const ListRequirementRevisionsResponseItem = zod.object({
     changedByDisplayName: zod.string(),
     status: zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
     description: zod.looseObject({}).nullish(),
+    renderedDescription: zod
+        .looseObject({})
+        .nullish()
+        .describe(
+            'Rendered description for revision-history responses. Archived revisions use their frozen metric snapshot; the current revision uses live metric values.',
+        ),
+    metricReferences: zod
+        .array(
+            zod.object({
+                key: zod.string().describe('Metric key exactly as referenced by the requirement.'),
+                metricId: zod
+                    .looseObject({})
+                    .nullish()
+                    .describe('Stable internal metric identifier when the reference resolves.'),
+                value: zod.looseObject({}).nullish().describe('Current metric value when the reference resolves.'),
+                resolved: zod.boolean().describe('Whether the referenced metric exists in the same project.'),
+                active: zod
+                    .looseObject({})
+                    .nullish()
+                    .describe('Current active state when the referenced metric resolves.'),
+            }),
+        )
+        .optional()
+        .describe(
+            'Resolution details for metric placeholders in the current requirement description. Historical revisions omit this live resolution data.',
+        ),
     priority: zod.enum(['p1', 'p2', 'p3']).nullish(),
     owner: zod.looseObject({}).nullish(),
     rationale: zod.looseObject({}).nullish(),
@@ -541,6 +572,32 @@ export const GetRequirementResponse = zod.object({
     changedByDisplayName: zod.string(),
     status: zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
     description: zod.looseObject({}).nullish(),
+    renderedDescription: zod
+        .looseObject({})
+        .nullish()
+        .describe(
+            'Rendered description for revision-history responses. Archived revisions use their frozen metric snapshot; the current revision uses live metric values.',
+        ),
+    metricReferences: zod
+        .array(
+            zod.object({
+                key: zod.string().describe('Metric key exactly as referenced by the requirement.'),
+                metricId: zod
+                    .looseObject({})
+                    .nullish()
+                    .describe('Stable internal metric identifier when the reference resolves.'),
+                value: zod.looseObject({}).nullish().describe('Current metric value when the reference resolves.'),
+                resolved: zod.boolean().describe('Whether the referenced metric exists in the same project.'),
+                active: zod
+                    .looseObject({})
+                    .nullish()
+                    .describe('Current active state when the referenced metric resolves.'),
+            }),
+        )
+        .optional()
+        .describe(
+            'Resolution details for metric placeholders in the current requirement description. Historical revisions omit this live resolution data.',
+        ),
     priority: zod.enum(['p1', 'p2', 'p3']).nullish(),
     owner: zod.looseObject({}).nullish(),
     rationale: zod.looseObject({}).nullish(),
@@ -616,6 +673,32 @@ export const UpdateRequirementResponse = zod.object({
     changedByDisplayName: zod.string(),
     status: zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
     description: zod.looseObject({}).nullish(),
+    renderedDescription: zod
+        .looseObject({})
+        .nullish()
+        .describe(
+            'Rendered description for revision-history responses. Archived revisions use their frozen metric snapshot; the current revision uses live metric values.',
+        ),
+    metricReferences: zod
+        .array(
+            zod.object({
+                key: zod.string().describe('Metric key exactly as referenced by the requirement.'),
+                metricId: zod
+                    .looseObject({})
+                    .nullish()
+                    .describe('Stable internal metric identifier when the reference resolves.'),
+                value: zod.looseObject({}).nullish().describe('Current metric value when the reference resolves.'),
+                resolved: zod.boolean().describe('Whether the referenced metric exists in the same project.'),
+                active: zod
+                    .looseObject({})
+                    .nullish()
+                    .describe('Current active state when the referenced metric resolves.'),
+            }),
+        )
+        .optional()
+        .describe(
+            'Resolution details for metric placeholders in the current requirement description. Historical revisions omit this live resolution data.',
+        ),
     priority: zod.enum(['p1', 'p2', 'p3']).nullish(),
     owner: zod.looseObject({}).nullish(),
     rationale: zod.looseObject({}).nullish(),
@@ -719,6 +802,263 @@ export const DeleteImplementationTicketParams = zod.object({
 });
 
 export const DeleteImplementationTicketResponse = zod.void();
+
+/**
+ * @summary List all metrics of a project.
+ */
+export const ListMetricsParams = zod.object({ projectId: zod.string().describe('Project identifier.') });
+
+export const ListMetricsResponseItem = zod.object({
+    id: zod.string().describe('Stable internal metric identifier.'),
+    projectId: zod.string().describe('Owning project identifier.'),
+    key: zod.string().describe('Immutable project-scoped generated metric key.'),
+    value: zod.string().describe('Metric value.'),
+    description: zod.string().describe('Metric description.'),
+    active: zod.boolean().describe('Whether the metric is active.'),
+    createdAt: zod.iso.datetime({ offset: true }),
+    updatedAt: zod.iso.datetime({ offset: true }),
+});
+export const ListMetricsResponse = zod.array(ListMetricsResponseItem);
+
+/**
+ * @summary Create a project metric.
+ */
+export const CreateMetricParams = zod.object({ projectId: zod.string() });
+
+export const CreateMetricBody = zod.object({
+    value: zod.string().describe('Non-empty metric value.'),
+    description: zod.string().optional().describe('Metric description.'),
+});
+
+export const CreateMetricResponse = zod.object({
+    id: zod.string().describe('Stable internal metric identifier.'),
+    projectId: zod.string().describe('Owning project identifier.'),
+    key: zod.string().describe('Immutable project-scoped generated metric key.'),
+    value: zod.string().describe('Metric value.'),
+    description: zod.string().describe('Metric description.'),
+    active: zod.boolean().describe('Whether the metric is active.'),
+    createdAt: zod.iso.datetime({ offset: true }),
+    updatedAt: zod.iso.datetime({ offset: true }),
+});
+
+/**
+ * @summary Get one metric.
+ */
+export const GetMetricParams = zod.object({ projectId: zod.string(), metricId: zod.string() });
+
+export const GetMetricResponse = zod.object({
+    id: zod.string().describe('Stable internal metric identifier.'),
+    projectId: zod.string().describe('Owning project identifier.'),
+    key: zod.string().describe('Immutable project-scoped generated metric key.'),
+    value: zod.string().describe('Metric value.'),
+    description: zod.string().describe('Metric description.'),
+    active: zod.boolean().describe('Whether the metric is active.'),
+    createdAt: zod.iso.datetime({ offset: true }),
+    updatedAt: zod.iso.datetime({ offset: true }),
+});
+
+/**
+ * @summary Update a metric value or description.
+ */
+export const UpdateMetricParams = zod.object({ projectId: zod.string(), metricId: zod.string() });
+
+export const UpdateMetricBody = zod.object({
+    value: zod.string().optional().describe('Non-empty metric value.'),
+    description: zod.string().optional().describe('Metric description.'),
+});
+
+export const UpdateMetricResponse = zod.object({
+    id: zod.string().describe('Stable internal metric identifier.'),
+    projectId: zod.string().describe('Owning project identifier.'),
+    key: zod.string().describe('Immutable project-scoped generated metric key.'),
+    value: zod.string().describe('Metric value.'),
+    description: zod.string().describe('Metric description.'),
+    active: zod.boolean().describe('Whether the metric is active.'),
+    createdAt: zod.iso.datetime({ offset: true }),
+    updatedAt: zod.iso.datetime({ offset: true }),
+});
+
+/**
+ * @summary Deactivate a metric without deleting it.
+ */
+export const DeactivateMetricParams = zod.object({ projectId: zod.string(), metricId: zod.string() });
+
+export const DeactivateMetricResponse = zod.object({
+    id: zod.string().describe('Stable internal metric identifier.'),
+    projectId: zod.string().describe('Owning project identifier.'),
+    key: zod.string().describe('Immutable project-scoped generated metric key.'),
+    value: zod.string().describe('Metric value.'),
+    description: zod.string().describe('Metric description.'),
+    active: zod.boolean().describe('Whether the metric is active.'),
+    createdAt: zod.iso.datetime({ offset: true }),
+    updatedAt: zod.iso.datetime({ offset: true }),
+});
+
+/**
+ * @summary List incoming and outgoing links for a requirement.
+ */
+export const GetRequirementLinksParams = zod.object({
+    projectId: zod.string().describe('Project identifier.'),
+    requirementId: zod.string().describe('Selected requirement identifier.'),
+});
+
+export const getRequirementLinksResponseOutgoingItemSourceVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-\\d{4}$');
+export const getRequirementLinksResponseOutgoingItemTargetVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-\\d{4}$');
+export const getRequirementLinksResponseIncomingItemSourceVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-\\d{4}$');
+export const getRequirementLinksResponseIncomingItemTargetVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-\\d{4}$');
+
+export const GetRequirementLinksResponse = zod.object({
+    outgoing: zod.array(
+        zod.object({
+            id: zod.uuid(),
+            projectId: zod.uuid(),
+            relationshipType: zod.enum(['references']),
+            source: zod.object({
+                requirementId: zod.uuid(),
+                visibleKey: zod.string().regex(getRequirementLinksResponseOutgoingItemSourceVisibleKeyRegExp),
+                type: zod.enum(['FR', 'NFR']),
+                categoryId: zod.uuid(),
+                categoryName: zod.string(),
+                status: zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
+            }),
+            target: zod.object({
+                requirementId: zod.uuid(),
+                visibleKey: zod.string().regex(getRequirementLinksResponseOutgoingItemTargetVisibleKeyRegExp),
+                type: zod.enum(['FR', 'NFR']),
+                categoryId: zod.uuid(),
+                categoryName: zod.string(),
+                status: zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
+            }),
+            createdAt: zod.iso.datetime({ offset: true }),
+            updatedAt: zod.iso.datetime({ offset: true }),
+        }),
+    ),
+    incoming: zod.array(
+        zod.object({
+            id: zod.uuid(),
+            projectId: zod.uuid(),
+            relationshipType: zod.enum(['references']),
+            source: zod.object({
+                requirementId: zod.uuid(),
+                visibleKey: zod.string().regex(getRequirementLinksResponseIncomingItemSourceVisibleKeyRegExp),
+                type: zod.enum(['FR', 'NFR']),
+                categoryId: zod.uuid(),
+                categoryName: zod.string(),
+                status: zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
+            }),
+            target: zod.object({
+                requirementId: zod.uuid(),
+                visibleKey: zod.string().regex(getRequirementLinksResponseIncomingItemTargetVisibleKeyRegExp),
+                type: zod.enum(['FR', 'NFR']),
+                categoryId: zod.uuid(),
+                categoryName: zod.string(),
+                status: zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
+            }),
+            createdAt: zod.iso.datetime({ offset: true }),
+            updatedAt: zod.iso.datetime({ offset: true }),
+        }),
+    ),
+});
+
+/**
+ * @summary Create a references link to a target requirement key.
+ */
+export const CreateRequirementLinkParams = zod.object({
+    projectId: zod.string().describe('Project identifier.'),
+    requirementId: zod.string().describe('Source requirement identifier.'),
+});
+
+export const createRequirementLinkBodyTargetKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-\\d{4}$');
+
+export const CreateRequirementLinkBody = zod.object({
+    targetKey: zod
+        .string()
+        .regex(createRequirementLinkBodyTargetKeyRegExp)
+        .describe('Visible key of the target requirement.'),
+});
+
+export const createRequirementLinkResponseSourceVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-\\d{4}$');
+export const createRequirementLinkResponseTargetVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-\\d{4}$');
+
+export const CreateRequirementLinkResponse = zod.object({
+    id: zod.uuid(),
+    projectId: zod.uuid(),
+    relationshipType: zod.enum(['references']),
+    source: zod.object({
+        requirementId: zod.uuid(),
+        visibleKey: zod.string().regex(createRequirementLinkResponseSourceVisibleKeyRegExp),
+        type: zod.enum(['FR', 'NFR']),
+        categoryId: zod.uuid(),
+        categoryName: zod.string(),
+        status: zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
+    }),
+    target: zod.object({
+        requirementId: zod.uuid(),
+        visibleKey: zod.string().regex(createRequirementLinkResponseTargetVisibleKeyRegExp),
+        type: zod.enum(['FR', 'NFR']),
+        categoryId: zod.uuid(),
+        categoryName: zod.string(),
+        status: zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
+    }),
+    createdAt: zod.iso.datetime({ offset: true }),
+    updatedAt: zod.iso.datetime({ offset: true }),
+});
+
+/**
+ * @summary Correct the target of an existing requirement link.
+ */
+export const UpdateRequirementLinkParams = zod.object({
+    projectId: zod.string().describe('Project identifier.'),
+    requirementId: zod.string().describe('Source requirement identifier.'),
+    linkId: zod.string().describe('Requirement-link identifier.'),
+});
+
+export const updateRequirementLinkBodyTargetKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-\\d{4}$');
+
+export const UpdateRequirementLinkBody = zod.object({
+    targetKey: zod
+        .string()
+        .regex(updateRequirementLinkBodyTargetKeyRegExp)
+        .describe('Visible key of the corrected target requirement.'),
+});
+
+export const updateRequirementLinkResponseSourceVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-\\d{4}$');
+export const updateRequirementLinkResponseTargetVisibleKeyRegExp = new RegExp('^(FR|NFR)-[A-Z]{2,4}-\\d{4}$');
+
+export const UpdateRequirementLinkResponse = zod.object({
+    id: zod.uuid(),
+    projectId: zod.uuid(),
+    relationshipType: zod.enum(['references']),
+    source: zod.object({
+        requirementId: zod.uuid(),
+        visibleKey: zod.string().regex(updateRequirementLinkResponseSourceVisibleKeyRegExp),
+        type: zod.enum(['FR', 'NFR']),
+        categoryId: zod.uuid(),
+        categoryName: zod.string(),
+        status: zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
+    }),
+    target: zod.object({
+        requirementId: zod.uuid(),
+        visibleKey: zod.string().regex(updateRequirementLinkResponseTargetVisibleKeyRegExp),
+        type: zod.enum(['FR', 'NFR']),
+        categoryId: zod.uuid(),
+        categoryName: zod.string(),
+        status: zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
+    }),
+    createdAt: zod.iso.datetime({ offset: true }),
+    updatedAt: zod.iso.datetime({ offset: true }),
+});
+
+/**
+ * @summary Remove an existing requirement link.
+ */
+export const DeleteRequirementLinkParams = zod.object({
+    projectId: zod.string().describe('Project identifier.'),
+    requirementId: zod.string().describe('Source requirement identifier.'),
+    linkId: zod.string().describe('Requirement-link identifier.'),
+});
+
+export const DeleteRequirementLinkResponse = zod.void();
 
 export const AuthControllerLoginBody = zod.object({ username: zod.string(), password: zod.string() });
 
@@ -1109,6 +1449,32 @@ export const ApproveRequirementReviewResponse = zod.object({
     changedByDisplayName: zod.string(),
     status: zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
     description: zod.looseObject({}).nullish(),
+    renderedDescription: zod
+        .looseObject({})
+        .nullish()
+        .describe(
+            'Rendered description for revision-history responses. Archived revisions use their frozen metric snapshot; the current revision uses live metric values.',
+        ),
+    metricReferences: zod
+        .array(
+            zod.object({
+                key: zod.string().describe('Metric key exactly as referenced by the requirement.'),
+                metricId: zod
+                    .looseObject({})
+                    .nullish()
+                    .describe('Stable internal metric identifier when the reference resolves.'),
+                value: zod.looseObject({}).nullish().describe('Current metric value when the reference resolves.'),
+                resolved: zod.boolean().describe('Whether the referenced metric exists in the same project.'),
+                active: zod
+                    .looseObject({})
+                    .nullish()
+                    .describe('Current active state when the referenced metric resolves.'),
+            }),
+        )
+        .optional()
+        .describe(
+            'Resolution details for metric placeholders in the current requirement description. Historical revisions omit this live resolution data.',
+        ),
     priority: zod.enum(['p1', 'p2', 'p3']).nullish(),
     owner: zod.looseObject({}).nullish(),
     rationale: zod.looseObject({}).nullish(),
@@ -1163,6 +1529,32 @@ export const RejectRequirementReviewResponse = zod.object({
     changedByDisplayName: zod.string(),
     status: zod.enum(['draft', 'approved', 'implemented', 'obsolete', 'rejected']),
     description: zod.looseObject({}).nullish(),
+    renderedDescription: zod
+        .looseObject({})
+        .nullish()
+        .describe(
+            'Rendered description for revision-history responses. Archived revisions use their frozen metric snapshot; the current revision uses live metric values.',
+        ),
+    metricReferences: zod
+        .array(
+            zod.object({
+                key: zod.string().describe('Metric key exactly as referenced by the requirement.'),
+                metricId: zod
+                    .looseObject({})
+                    .nullish()
+                    .describe('Stable internal metric identifier when the reference resolves.'),
+                value: zod.looseObject({}).nullish().describe('Current metric value when the reference resolves.'),
+                resolved: zod.boolean().describe('Whether the referenced metric exists in the same project.'),
+                active: zod
+                    .looseObject({})
+                    .nullish()
+                    .describe('Current active state when the referenced metric resolves.'),
+            }),
+        )
+        .optional()
+        .describe(
+            'Resolution details for metric placeholders in the current requirement description. Historical revisions omit this live resolution data.',
+        ),
     priority: zod.enum(['p1', 'p2', 'p3']).nullish(),
     owner: zod.looseObject({}).nullish(),
     rationale: zod.looseObject({}).nullish(),
@@ -1189,4 +1581,102 @@ export const RejectRequirementReviewResponse = zod.object({
     ),
     createdAt: zod.iso.datetime({ offset: true }).describe('Date and time when the requirement was created.'),
     updatedAt: zod.iso.datetime({ offset: true }).describe('Date and time when the requirement was last updated.'),
+});
+
+/**
+ * @summary List eligible review-task assignees.
+ */
+export const ListReviewAssigneesParams = zod.object({ projectId: zod.string() });
+
+export const ListReviewAssigneesResponseItem = zod.object({
+    userId: zod.uuid(),
+    username: zod.string(),
+    displayName: zod.string(),
+});
+export const ListReviewAssigneesResponse = zod.array(ListReviewAssigneesResponseItem);
+
+/**
+ * @summary List the signed-in engineer review tasks.
+ */
+export const ListMyReviewTasksParams = zod.object({ projectId: zod.string() });
+
+export const ListMyReviewTasksResponseItem = zod.object({
+    id: zod.uuid(),
+    projectId: zod.uuid(),
+    requirementId: zod.uuid(),
+    requirementKey: zod.string(),
+    requirementDescription: zod.looseObject({}).nullish(),
+    status: zod.enum(['pending', 'completed']),
+    assignee: zod.object({ userId: zod.uuid(), username: zod.string(), displayName: zod.string() }),
+    assignedBy: zod.object({ userId: zod.uuid(), username: zod.string(), displayName: zod.string() }),
+    createdAt: zod.iso.datetime({ offset: true }),
+    updatedAt: zod.iso.datetime({ offset: true }),
+    completedAt: zod.looseObject({}).nullish(),
+});
+export const ListMyReviewTasksResponse = zod.array(ListMyReviewTasksResponseItem);
+
+/**
+ * @summary List review tasks for a requirement.
+ */
+export const ListRequirementReviewTasksParams = zod.object({ projectId: zod.string(), requirementId: zod.string() });
+
+export const ListRequirementReviewTasksResponseItem = zod.object({
+    id: zod.uuid(),
+    projectId: zod.uuid(),
+    requirementId: zod.uuid(),
+    requirementKey: zod.string(),
+    requirementDescription: zod.looseObject({}).nullish(),
+    status: zod.enum(['pending', 'completed']),
+    assignee: zod.object({ userId: zod.uuid(), username: zod.string(), displayName: zod.string() }),
+    assignedBy: zod.object({ userId: zod.uuid(), username: zod.string(), displayName: zod.string() }),
+    createdAt: zod.iso.datetime({ offset: true }),
+    updatedAt: zod.iso.datetime({ offset: true }),
+    completedAt: zod.looseObject({}).nullish(),
+});
+export const ListRequirementReviewTasksResponse = zod.array(ListRequirementReviewTasksResponseItem);
+
+/**
+ * @summary Assign a review task.
+ */
+export const AssignRequirementReviewTaskParams = zod.object({ projectId: zod.string(), requirementId: zod.string() });
+
+export const AssignRequirementReviewTaskBody = zod.object({ assigneeUserId: zod.uuid() });
+
+export const AssignRequirementReviewTaskResponse = zod.object({
+    id: zod.uuid(),
+    projectId: zod.uuid(),
+    requirementId: zod.uuid(),
+    requirementKey: zod.string(),
+    requirementDescription: zod.looseObject({}).nullish(),
+    status: zod.enum(['pending', 'completed']),
+    assignee: zod.object({ userId: zod.uuid(), username: zod.string(), displayName: zod.string() }),
+    assignedBy: zod.object({ userId: zod.uuid(), username: zod.string(), displayName: zod.string() }),
+    createdAt: zod.iso.datetime({ offset: true }),
+    updatedAt: zod.iso.datetime({ offset: true }),
+    completedAt: zod.looseObject({}).nullish(),
+});
+
+/**
+ * @summary Update the status of an assigned review task.
+ */
+export const UpdateRequirementReviewTaskParams = zod.object({
+    projectId: zod.string(),
+    requirementId: zod.string(),
+    taskId: zod.string(),
+});
+
+export const UpdateRequirementReviewTaskBody = zod.object({ status: zod.enum(['pending', 'completed']) });
+
+export const UpdateRequirementReviewTaskResponse = zod.object({
+    id: zod.uuid(),
+    projectId: zod.uuid(),
+    requirementId: zod.uuid(),
+    requirementKey: zod.string(),
+    requirementDescription: zod.looseObject({}).nullish(),
+    status: zod.enum(['pending', 'completed']),
+    assignee: zod.object({ userId: zod.uuid(), username: zod.string(), displayName: zod.string() }),
+    assignedBy: zod.object({ userId: zod.uuid(), username: zod.string(), displayName: zod.string() }),
+    createdAt: zod.iso.datetime({ offset: true }),
+    updatedAt: zod.iso.datetime({ offset: true }),
+    completedAt: zod.looseObject({}).nullish(),
 });

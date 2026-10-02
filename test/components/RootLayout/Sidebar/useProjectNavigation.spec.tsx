@@ -17,6 +17,7 @@ const mocks = vi.hoisted(() => ({
     preloadProjectDetailsRoute: vi.fn(),
     preloadProjectMetricsListRoute: vi.fn(),
     preloadProjectRequirementsListRoute: vi.fn(),
+    preloadProjectReviewTasksListRoute: vi.fn(),
 }));
 
 vi.mock('@/api/projectPrefetch', () => ({
@@ -31,6 +32,7 @@ vi.mock('@/router/routeModules', () => ({
     preloadProjectDetailsRoute: mocks.preloadProjectDetailsRoute,
     preloadProjectMetricsListRoute: mocks.preloadProjectMetricsListRoute,
     preloadProjectRequirementsListRoute: mocks.preloadProjectRequirementsListRoute,
+    preloadProjectReviewTasksListRoute: mocks.preloadProjectReviewTasksListRoute,
 }));
 
 type ProbeProps = Readonly<{ activeProjectRoute: ActiveProjectRoute }>;
@@ -62,6 +64,11 @@ function ProjectNavigationProbe({ activeProjectRoute }: ProbeProps) {
                 type='button'
                 onClick={() => controller.prefetchProjectRoute('project-alpha', 'requirements')}>
                 Prefetch Alpha requirements
+            </button>
+            <button
+                type='button'
+                onClick={() => controller.prefetchProjectRoute('project-alpha', 'review-tasks')}>
+                Prefetch Alpha review tasks
             </button>
             <button
                 type='button'
@@ -145,6 +152,7 @@ describe('useProjectNavigation', () => {
 
         await user.click(screen.getByRole('button', { name: /prefetch alpha overview/i }));
         await user.click(screen.getByRole('button', { name: /prefetch alpha requirements/i }));
+        await user.click(screen.getByRole('button', { name: /prefetch alpha review tasks/i }));
         await user.click(screen.getByRole('button', { name: /prefetch alpha categories/i }));
         await user.click(screen.getByRole('button', { name: /prefetch alpha metrics/i }));
 
@@ -152,6 +160,7 @@ describe('useProjectNavigation', () => {
         expect(mocks.prefetchProjectDetails).toHaveBeenCalledWith('project-alpha');
         expect(mocks.preloadProjectRequirementsListRoute).toHaveBeenCalledOnce();
         expect(mocks.prefetchProjectRequirements).toHaveBeenCalledWith('project-alpha');
+        expect(mocks.preloadProjectReviewTasksListRoute).toHaveBeenCalledOnce();
         expect(mocks.preloadProjectCategoriesListRoute).toHaveBeenCalledOnce();
         expect(mocks.prefetchProjectCategories).toHaveBeenCalledWith('project-alpha');
         expect(mocks.preloadProjectMetricsListRoute).toHaveBeenCalledOnce();

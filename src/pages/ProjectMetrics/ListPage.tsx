@@ -78,7 +78,9 @@ export function ListPage() {
             setSelectedMetricId(undefined);
             return;
         }
-        setSelectedMetricId((current) => (metrics.some((metric) => metric.id === current) ? current : metrics.at(0)?.id));
+        setSelectedMetricId((current) =>
+            metrics.some((metric) => metric.id === current) ? current : metrics.at(0)?.id,
+        );
     }, [metrics]);
 
     if (projectId === undefined) {

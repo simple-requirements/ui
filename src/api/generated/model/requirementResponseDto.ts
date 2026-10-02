@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.0.1
  */
 import type { ImplementationTicketResponseDto } from './implementationTicketResponseDto';
+import type { RequirementMetricReferenceDto } from './requirementMetricReferenceDto';
 import type { RequirementResponseDtoApprovedAt } from './requirementResponseDtoApprovedAt';
 import type { RequirementResponseDtoChangedByUserId } from './requirementResponseDtoChangedByUserId';
 import type { RequirementResponseDtoDescription } from './requirementResponseDtoDescription';
@@ -18,6 +19,7 @@ import type { RequirementResponseDtoPriority } from './requirementResponseDtoPri
 import type { RequirementResponseDtoRationale } from './requirementResponseDtoRationale';
 import type { RequirementResponseDtoRejectedAt } from './requirementResponseDtoRejectedAt';
 import type { RequirementResponseDtoRejectionReason } from './requirementResponseDtoRejectionReason';
+import type { RequirementResponseDtoRenderedDescription } from './requirementResponseDtoRenderedDescription';
 import type { RequirementResponseDtoReviewer } from './requirementResponseDtoReviewer';
 import type { RequirementResponseDtoSource } from './requirementResponseDtoSource';
 import type { RequirementResponseDtoStatus } from './requirementResponseDtoStatus';
@@ -47,6 +49,13 @@ export interface RequirementResponseDto {
     status: RequirementResponseDtoStatus;
     /** @nullable */
     description?: RequirementResponseDtoDescription;
+    /**
+     * Rendered description for revision-history responses. Archived revisions use their frozen metric snapshot; the current revision uses live metric values.
+     * @nullable
+     */
+    renderedDescription?: RequirementResponseDtoRenderedDescription;
+    /** Resolution details for metric placeholders in the current requirement description. Historical revisions omit this live resolution data. */
+    metricReferences?: RequirementMetricReferenceDto[];
     /** @nullable */
     priority?: RequirementResponseDtoPriority;
     /** @nullable */

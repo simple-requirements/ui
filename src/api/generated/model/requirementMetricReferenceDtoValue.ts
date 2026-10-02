@@ -6,9 +6,8 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export interface CreateMetricDto {
-    /** Non-empty metric value. */
-    value: string;
-    /** Metric description. */
-    description?: string;
-}
+/**
+ * Current metric value when the reference resolves.
+ * @nullable
+ */
+export type RequirementMetricReferenceDtoValue = { [key: string]: unknown } | null;

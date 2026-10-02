@@ -8,14 +8,17 @@ export const E2E_LOGIN_USERNAME = process.env.E2E_LOGIN_USERNAME ?? 'administrat
 export const E2E_LOGIN_PASSWORD = process.env.E2E_LOGIN_PASSWORD ?? 'password';
 export const E2E_REQUIREMENTS_ENGINEER_USER_ID =
     process.env.E2E_REQUIREMENTS_ENGINEER_USER_ID ?? '10000000-0000-4000-8000-000000000002';
+export const E2E_REVIEWER_USER_ID = process.env.E2E_REVIEWER_USER_ID ?? '10000000-0000-4000-8000-000000000005';
 export const E2E_DEVELOPER_USER_ID = process.env.E2E_DEVELOPER_USER_ID ?? '10000000-0000-4000-8000-000000000003';
 export const E2E_VIEWER_USER_ID = process.env.E2E_VIEWER_USER_ID ?? '10000000-0000-4000-8000-000000000004';
 export const E2E_REQUIREMENTS_ENGINEER_ACCESS_TOKEN =
     process.env.E2E_REQUIREMENTS_ENGINEER_TOKEN ?? 'e2e-requirements-engineer-token';
+export const E2E_REVIEWER_ACCESS_TOKEN = process.env.E2E_REVIEWER_TOKEN ?? 'e2e-reviewer-token';
 export const E2E_DEVELOPER_ACCESS_TOKEN = process.env.E2E_DEVELOPER_TOKEN ?? 'e2e-developer-token';
 export const E2E_VIEWER_ACCESS_TOKEN = process.env.E2E_VIEWER_TOKEN ?? 'e2e-viewer-token';
 export const E2E_REQUIREMENTS_ENGINEER_LOGIN_USERNAME =
     process.env.E2E_REQUIREMENTS_ENGINEER_LOGIN_USERNAME ?? 'requirementsengineer';
+export const E2E_REVIEWER_LOGIN_USERNAME = process.env.E2E_REVIEWER_LOGIN_USERNAME ?? 'reviewengineer';
 export const E2E_DEVELOPER_LOGIN_USERNAME = process.env.E2E_DEVELOPER_LOGIN_USERNAME ?? 'developer';
 export const E2E_VIEWER_LOGIN_USERNAME = process.env.E2E_VIEWER_LOGIN_USERNAME ?? 'viewer';
 

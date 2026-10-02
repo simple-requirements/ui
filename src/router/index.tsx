@@ -32,6 +32,7 @@ import {
     loadProjectRequirementReviewRoute,
     loadProjectRequirementsFormRoute,
     loadProjectRequirementsListRoute,
+    loadProjectReviewTasksListRoute,
     loadRegistrationRoute,
     loadResendEmailVerificationRoute,
     loadUserAdministrationRoute,
@@ -122,6 +123,14 @@ export const routes: RouteObject[] = [
                                             },
                                             { path: ':requirementId', lazy: loadProjectRequirementDetailsRoute },
                                         ],
+                                    },
+                                    {
+                                        element: (
+                                            <ProjectPermissionRoute
+                                                permission={projectPermissionKinds.manageRequirements}
+                                            />
+                                        ),
+                                        children: [{ path: 'review-tasks', lazy: loadProjectReviewTasksListRoute }],
                                     },
                                     {
                                         path: 'metrics',

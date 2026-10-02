@@ -7,7 +7,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { SidebarProject } from '@/api/collections/projectsCollection';
 import { ProjectNavigationList } from '@/components/RootLayout/Sidebar/ProjectNavigationList';
-import type { ActiveProjectRoute } from '@/router/projectRoutes';
+import type { ActiveProjectRoute, ProjectSubRoute } from '@/router/projectRoutes';
 
 const projects: readonly SidebarProject[] = [
     {
@@ -35,7 +35,7 @@ type RenderProjectNavigationListOptions = Readonly<{
     onToggleProject?: (projectId: string) => void;
     onOpenProjectSubItem?: (projectId: string) => void;
     onProjectContextMenu?: (projectId: string, event: React.MouseEvent<HTMLButtonElement>) => void;
-    onProjectIntent?: (projectId: string, subRoute?: 'requirements' | 'categories') => void;
+    onProjectIntent?: (projectId: string, subRoute?: ProjectSubRoute) => void;
 }>;
 
 function renderProjectNavigationList(options: RenderProjectNavigationListOptions = {}): ReturnType<typeof render> {

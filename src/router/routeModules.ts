@@ -83,6 +83,12 @@ export async function loadProjectRequirementDetailsRoute() {
     return { Component: DetailsPage };
 }
 
+export async function loadProjectReviewTasksListRoute() {
+    const { ListPage } = await import('@/pages/ProjectReviewTasks/ListPage');
+
+    return { Component: ListPage };
+}
+
 export async function loadProjectMetricsListRoute() {
     const { ListPage } = await import('@/pages/ProjectMetrics/ListPage');
 
@@ -131,6 +137,11 @@ export function preloadProjectDetailsRoute(): void {
 /** Starts loading the requirements list route code on navigation intent. */
 export function preloadProjectRequirementsListRoute(): void {
     preloadRoute(loadProjectRequirementsListRoute);
+}
+
+/** Starts loading the review-task list route code on navigation intent. */
+export function preloadProjectReviewTasksListRoute(): void {
+    preloadRoute(loadProjectReviewTasksListRoute);
 }
 
 /** Starts loading the metrics list route code on navigation intent. */

@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router';
 
 import { queryClient } from '@/api/queryClient';
 import { getListProjectRequirementsQueryKey, getRequirementRevisionsQueryKey } from '@/api/requirementsApi';
+import { getMyReviewTasksQueryKey, getRequirementReviewTasksQueryKey } from '@/api/reviewTasksApi';
 import {
     approveReview,
     createReviewComment,
@@ -117,6 +118,10 @@ export function ReviewPage() {
                     queryClient.invalidateQueries({
                         queryKey: getRequirementRevisionsQueryKey(activeProjectId, activeRequirementId),
                     }),
+                    queryClient.invalidateQueries({
+                        queryKey: getRequirementReviewTasksQueryKey(activeProjectId, activeRequirementId),
+                    }),
+                    queryClient.invalidateQueries({ queryKey: getMyReviewTasksQueryKey(activeProjectId) }),
                 ]);
                 return updatedRequirement;
             },
@@ -143,6 +148,7 @@ export function ReviewPage() {
                 {requirement !== undefined && (
                     <ReviewWorkspace
                         requirement={requirement}
+                        projectId={activeProjectId}
                         comments={comments}
                         pending={pending}
                         readOnly={!permissions.canManageRequirements}

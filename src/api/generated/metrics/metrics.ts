@@ -5,97 +5,619 @@
  * HTTP API for the Requirements Management app.
  * OpenAPI spec version: 0.0.1
  */
+import { useQuery } from '@tanstack/react-query';
+import type {
+    DataTag,
+    DefinedInitialDataOptions,
+    DefinedUseQueryResult,
+    QueryClient,
+    QueryFunction,
+    QueryKey,
+    UndefinedInitialDataOptions,
+    UseQueryOptions,
+    UseQueryResult,
+} from '@tanstack/react-query';
+
 import type { CreateMetricDto, MetricResponseDto, UpdateMetricDto } from '../model';
 
 import { apiFetch } from '../../fetch';
 
-function getHeaders(headers?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> {
-    if (headers === undefined) return {};
-    if (headers instanceof Headers) return Object.fromEntries(headers.entries());
-    if (Symbol.iterator in headers) {
-        return Object.fromEntries(
-            Array.from(headers as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
-        );
-    }
-
-    const result: Record<string, string | readonly string[]> = {};
-    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(headers)) {
-        if (value !== undefined) result[name] = value;
+const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKey: K } => {
+    const result = { queryKey } as T & { queryKey: K };
+    for (const key of Object.keys(query)) {
+        // The explicit queryKey always wins, matching the previous
+        // `{ ...query, queryKey }` spread where it was set last.
+        if (key === 'queryKey') continue;
+        Object.defineProperty(result, key, {
+            enumerable: true,
+            configurable: true,
+            get: () => (query as Record<string, unknown>)[key],
+        });
     }
     return result;
-}
+};
 
 export type listMetricsResponse200 = { data: MetricResponseDto[]; status: 200 };
-export type listMetricsResponse = listMetricsResponse200 & { headers: Headers };
 
-export const getListMetricsUrl = (projectId: string) => `/projects/${projectId}/metrics`;
+export type listMetricsResponse403 = { data: void; status: 403 };
 
-/** @summary List all metrics of a project. */
-export const listMetrics = async (projectId: string, options?: RequestInit): Promise<listMetricsResponse> =>
-    apiFetch<listMetricsResponse>(getListMetricsUrl(projectId), { ...options, method: 'GET' });
+export type listMetricsResponseSuccess = listMetricsResponse200 & { headers: Headers };
+export type listMetricsResponseError = listMetricsResponse403 & { headers: Headers };
 
-export const getListMetricsQueryKey = (projectId: string) => [`/projects/${projectId}/metrics`] as const;
+export type listMetricsResponse = listMetricsResponseSuccess | listMetricsResponseError;
 
-export type getMetricResponse200 = { data: MetricResponseDto; status: 200 };
-export type getMetricResponse = getMetricResponse200 & { headers: Headers };
+export const getListMetricsUrl = (projectId: string) => {
+    return `/projects/${projectId}/metrics`;
+};
 
-export const getGetMetricUrl = (projectId: string, metricId: string) => `/projects/${projectId}/metrics/${metricId}`;
+/**
+ * @summary List all metrics of a project.
+ */
+export const listMetrics = async (projectId: string, options?: RequestInit): Promise<listMetricsResponse> => {
+    return apiFetch<listMetricsResponse>(getListMetricsUrl(projectId), { ...options, method: 'GET' });
+};
 
-/** @summary Get one metric. */
-export const getMetric = async (
+export const getListMetricsQueryKey = (projectId: string) => {
+    return [`/projects/${projectId}/metrics`] as const;
+};
+
+export const getListMetricsQueryOptions = <TData = Awaited<ReturnType<typeof listMetrics>>, TError = void>(
     projectId: string,
-    metricId: string,
-    options?: RequestInit,
-): Promise<getMetricResponse> =>
-    apiFetch<getMetricResponse>(getGetMetricUrl(projectId, metricId), { ...options, method: 'GET' });
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listMetrics>>, TError, TData>> },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey = queryOptions?.queryKey ?? getListMetricsQueryKey(projectId);
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listMetrics>>> = ({ signal }) =>
+        listMetrics(projectId, { signal });
+
+    return {
+        queryKey,
+        queryFn,
+        enabled: projectId !== null && projectId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof listMetrics>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
+
+export type ListMetricsQueryResult = NonNullable<Awaited<ReturnType<typeof listMetrics>>>;
+export type ListMetricsQueryError = void;
+
+export function useListMetrics<TData = Awaited<ReturnType<typeof listMetrics>>, TError = void>(
+    projectId: string,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof listMetrics>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof listMetrics>>,
+                    TError,
+                    Awaited<ReturnType<typeof listMetrics>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useListMetrics<TData = Awaited<ReturnType<typeof listMetrics>>, TError = void>(
+    projectId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listMetrics>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof listMetrics>>,
+                    TError,
+                    Awaited<ReturnType<typeof listMetrics>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useListMetrics<TData = Awaited<ReturnType<typeof listMetrics>>, TError = void>(
+    projectId: string,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listMetrics>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary List all metrics of a project.
+ */
+
+export function useListMetrics<TData = Awaited<ReturnType<typeof listMetrics>>, TError = void>(
+    projectId: string,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listMetrics>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getListMetricsQueryOptions(projectId, options);
+
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+
+    return withQueryKey(query, queryOptions.queryKey);
+}
 
 export type createMetricResponse201 = { data: MetricResponseDto; status: 201 };
-export type createMetricResponse = createMetricResponse201 & { headers: Headers };
 
-export const getCreateMetricUrl = (projectId: string) => `/projects/${projectId}/metrics`;
+export type createMetricResponse400 = { data: void; status: 400 };
 
-/** @summary Create a project metric. */
+export type createMetricResponseSuccess = createMetricResponse201 & { headers: Headers };
+export type createMetricResponseError = createMetricResponse400 & { headers: Headers };
+
+export type createMetricResponse = createMetricResponseSuccess | createMetricResponseError;
+
+export const getCreateMetricUrl = (projectId: string) => {
+    return `/projects/${projectId}/metrics`;
+};
+
+/**
+ * @summary Create a project metric.
+ */
 export const createMetric = async (
     projectId: string,
     createMetricDto: CreateMetricDto,
     options?: RequestInit,
-): Promise<createMetricResponse> =>
-    apiFetch<createMetricResponse>(getCreateMetricUrl(projectId), {
+): Promise<createMetricResponse> => {
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+        if (!h) return {};
+        if (h instanceof Headers) return Object.fromEntries(h.entries());
+        if (Symbol.iterator in h) {
+            return Object.fromEntries(
+                Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+            );
+        }
+        const headers: Record<string, string | readonly string[]> = {};
+        for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+            if (value !== undefined) headers[name] = value;
+        }
+        return headers;
+    };
+    return apiFetch<createMetricResponse>(getCreateMetricUrl(projectId), {
         ...options,
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
         body: JSON.stringify(createMetricDto),
     });
+};
+
+export const getCreateMetricQueryKey = (projectId: string, createMetricDto?: CreateMetricDto) => {
+    return ['POST', `/projects/${projectId}/metrics`, createMetricDto] as const;
+};
+
+export const getCreateMetricQueryOptions = <TData = Awaited<ReturnType<typeof createMetric>>, TError = void>(
+    projectId: string,
+    createMetricDto: CreateMetricDto,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createMetric>>, TError, TData>> },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey = queryOptions?.queryKey ?? getCreateMetricQueryKey(projectId, createMetricDto);
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof createMetric>>> = ({ signal }) =>
+        createMetric(projectId, createMetricDto, { signal });
+
+    return {
+        queryKey,
+        queryFn,
+        enabled: projectId !== null && projectId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof createMetric>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
+
+export type CreateMetricQueryResult = NonNullable<Awaited<ReturnType<typeof createMetric>>>;
+export type CreateMetricQueryError = void;
+
+export function useCreateMetric<TData = Awaited<ReturnType<typeof createMetric>>, TError = void>(
+    projectId: string,
+    createMetricDto: CreateMetricDto,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof createMetric>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof createMetric>>,
+                    TError,
+                    Awaited<ReturnType<typeof createMetric>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useCreateMetric<TData = Awaited<ReturnType<typeof createMetric>>, TError = void>(
+    projectId: string,
+    createMetricDto: CreateMetricDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createMetric>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof createMetric>>,
+                    TError,
+                    Awaited<ReturnType<typeof createMetric>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useCreateMetric<TData = Awaited<ReturnType<typeof createMetric>>, TError = void>(
+    projectId: string,
+    createMetricDto: CreateMetricDto,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createMetric>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Create a project metric.
+ */
+
+export function useCreateMetric<TData = Awaited<ReturnType<typeof createMetric>>, TError = void>(
+    projectId: string,
+    createMetricDto: CreateMetricDto,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof createMetric>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getCreateMetricQueryOptions(projectId, createMetricDto, options);
+
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+
+    return withQueryKey(query, queryOptions.queryKey);
+}
+
+export type getMetricResponse200 = { data: MetricResponseDto; status: 200 };
+
+export type getMetricResponse404 = { data: void; status: 404 };
+
+export type getMetricResponseSuccess = getMetricResponse200 & { headers: Headers };
+export type getMetricResponseError = getMetricResponse404 & { headers: Headers };
+
+export type getMetricResponse = getMetricResponseSuccess | getMetricResponseError;
+
+export const getGetMetricUrl = (projectId: string, metricId: string) => {
+    return `/projects/${projectId}/metrics/${metricId}`;
+};
+
+/**
+ * @summary Get one metric.
+ */
+export const getMetric = async (
+    projectId: string,
+    metricId: string,
+    options?: RequestInit,
+): Promise<getMetricResponse> => {
+    return apiFetch<getMetricResponse>(getGetMetricUrl(projectId, metricId), { ...options, method: 'GET' });
+};
+
+export const getGetMetricQueryKey = (projectId: string, metricId: string) => {
+    return [`/projects/${projectId}/metrics/${metricId}`] as const;
+};
+
+export const getGetMetricQueryOptions = <TData = Awaited<ReturnType<typeof getMetric>>, TError = void>(
+    projectId: string,
+    metricId: string,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMetric>>, TError, TData>> },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey = queryOptions?.queryKey ?? getGetMetricQueryKey(projectId, metricId);
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMetric>>> = ({ signal }) =>
+        getMetric(projectId, metricId, { signal });
+
+    return {
+        queryKey,
+        queryFn,
+        enabled: projectId !== null && projectId !== undefined && metricId !== null && metricId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof getMetric>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
+
+export type GetMetricQueryResult = NonNullable<Awaited<ReturnType<typeof getMetric>>>;
+export type GetMetricQueryError = void;
+
+export function useGetMetric<TData = Awaited<ReturnType<typeof getMetric>>, TError = void>(
+    projectId: string,
+    metricId: string,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMetric>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof getMetric>>,
+                    TError,
+                    Awaited<ReturnType<typeof getMetric>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetMetric<TData = Awaited<ReturnType<typeof getMetric>>, TError = void>(
+    projectId: string,
+    metricId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMetric>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof getMetric>>,
+                    TError,
+                    Awaited<ReturnType<typeof getMetric>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useGetMetric<TData = Awaited<ReturnType<typeof getMetric>>, TError = void>(
+    projectId: string,
+    metricId: string,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMetric>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Get one metric.
+ */
+
+export function useGetMetric<TData = Awaited<ReturnType<typeof getMetric>>, TError = void>(
+    projectId: string,
+    metricId: string,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMetric>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getGetMetricQueryOptions(projectId, metricId, options);
+
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+
+    return withQueryKey(query, queryOptions.queryKey);
+}
 
 export type updateMetricResponse200 = { data: MetricResponseDto; status: 200 };
-export type updateMetricResponse = updateMetricResponse200 & { headers: Headers };
 
-export const getUpdateMetricUrl = (projectId: string, metricId: string) => `/projects/${projectId}/metrics/${metricId}`;
+export type updateMetricResponseSuccess = updateMetricResponse200 & { headers: Headers };
+export type updateMetricResponse = updateMetricResponseSuccess;
 
-/** @summary Update a metric value or description. */
+export const getUpdateMetricUrl = (projectId: string, metricId: string) => {
+    return `/projects/${projectId}/metrics/${metricId}`;
+};
+
+/**
+ * @summary Update a metric value or description.
+ */
 export const updateMetric = async (
     projectId: string,
     metricId: string,
     updateMetricDto: UpdateMetricDto,
     options?: RequestInit,
-): Promise<updateMetricResponse> =>
-    apiFetch<updateMetricResponse>(getUpdateMetricUrl(projectId, metricId), {
+): Promise<updateMetricResponse> => {
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+        if (!h) return {};
+        if (h instanceof Headers) return Object.fromEntries(h.entries());
+        if (Symbol.iterator in h) {
+            return Object.fromEntries(
+                Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+            );
+        }
+        const headers: Record<string, string | readonly string[]> = {};
+        for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+            if (value !== undefined) headers[name] = value;
+        }
+        return headers;
+    };
+    return apiFetch<updateMetricResponse>(getUpdateMetricUrl(projectId, metricId), {
         ...options,
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
         body: JSON.stringify(updateMetricDto),
     });
+};
+
+export const getUpdateMetricQueryKey = (projectId: string, metricId: string, updateMetricDto?: UpdateMetricDto) => {
+    return ['PATCH', `/projects/${projectId}/metrics/${metricId}`, updateMetricDto] as const;
+};
+
+export const getUpdateMetricQueryOptions = <TData = Awaited<ReturnType<typeof updateMetric>>, TError = unknown>(
+    projectId: string,
+    metricId: string,
+    updateMetricDto: UpdateMetricDto,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof updateMetric>>, TError, TData>> },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey = queryOptions?.queryKey ?? getUpdateMetricQueryKey(projectId, metricId, updateMetricDto);
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof updateMetric>>> = ({ signal }) =>
+        updateMetric(projectId, metricId, updateMetricDto, { signal });
+
+    return {
+        queryKey,
+        queryFn,
+        enabled: projectId !== null && projectId !== undefined && metricId !== null && metricId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof updateMetric>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
+
+export type UpdateMetricQueryResult = NonNullable<Awaited<ReturnType<typeof updateMetric>>>;
+export type UpdateMetricQueryError = unknown;
+
+export function useUpdateMetric<TData = Awaited<ReturnType<typeof updateMetric>>, TError = unknown>(
+    projectId: string,
+    metricId: string,
+    updateMetricDto: UpdateMetricDto,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof updateMetric>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof updateMetric>>,
+                    TError,
+                    Awaited<ReturnType<typeof updateMetric>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useUpdateMetric<TData = Awaited<ReturnType<typeof updateMetric>>, TError = unknown>(
+    projectId: string,
+    metricId: string,
+    updateMetricDto: UpdateMetricDto,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof updateMetric>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof updateMetric>>,
+                    TError,
+                    Awaited<ReturnType<typeof updateMetric>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useUpdateMetric<TData = Awaited<ReturnType<typeof updateMetric>>, TError = unknown>(
+    projectId: string,
+    metricId: string,
+    updateMetricDto: UpdateMetricDto,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof updateMetric>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Update a metric value or description.
+ */
+
+export function useUpdateMetric<TData = Awaited<ReturnType<typeof updateMetric>>, TError = unknown>(
+    projectId: string,
+    metricId: string,
+    updateMetricDto: UpdateMetricDto,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof updateMetric>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getUpdateMetricQueryOptions(projectId, metricId, updateMetricDto, options);
+
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+
+    return withQueryKey(query, queryOptions.queryKey);
+}
 
 export type deactivateMetricResponse200 = { data: MetricResponseDto; status: 200 };
-export type deactivateMetricResponse = deactivateMetricResponse200 & { headers: Headers };
 
-export const getDeactivateMetricUrl = (projectId: string, metricId: string) =>
-    `/projects/${projectId}/metrics/${metricId}/deactivate`;
+export type deactivateMetricResponseSuccess = deactivateMetricResponse200 & { headers: Headers };
+export type deactivateMetricResponse = deactivateMetricResponseSuccess;
 
-/** @summary Deactivate a metric without deleting it. */
+export const getDeactivateMetricUrl = (projectId: string, metricId: string) => {
+    return `/projects/${projectId}/metrics/${metricId}/deactivate`;
+};
+
+/**
+ * @summary Deactivate a metric without deleting it.
+ */
 export const deactivateMetric = async (
     projectId: string,
     metricId: string,
     options?: RequestInit,
-): Promise<deactivateMetricResponse> =>
-    apiFetch<deactivateMetricResponse>(getDeactivateMetricUrl(projectId, metricId), { ...options, method: 'POST' });
+): Promise<deactivateMetricResponse> => {
+    return apiFetch<deactivateMetricResponse>(getDeactivateMetricUrl(projectId, metricId), {
+        ...options,
+        method: 'POST',
+    });
+};
+
+export const getDeactivateMetricQueryKey = (projectId: string, metricId: string) => {
+    return ['POST', `/projects/${projectId}/metrics/${metricId}/deactivate`] as const;
+};
+
+export const getDeactivateMetricQueryOptions = <TData = Awaited<ReturnType<typeof deactivateMetric>>, TError = unknown>(
+    projectId: string,
+    metricId: string,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deactivateMetric>>, TError, TData>> },
+) => {
+    const { query: queryOptions } = options ?? {};
+
+    const queryKey = queryOptions?.queryKey ?? getDeactivateMetricQueryKey(projectId, metricId);
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof deactivateMetric>>> = ({ signal }) =>
+        deactivateMetric(projectId, metricId, { signal });
+
+    return {
+        queryKey,
+        queryFn,
+        enabled: projectId !== null && projectId !== undefined && metricId !== null && metricId !== undefined,
+        staleTime: 30000,
+        ...queryOptions,
+    } as UseQueryOptions<Awaited<ReturnType<typeof deactivateMetric>>, TError, TData> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+};
+
+export type DeactivateMetricQueryResult = NonNullable<Awaited<ReturnType<typeof deactivateMetric>>>;
+export type DeactivateMetricQueryError = unknown;
+
+export function useDeactivateMetric<TData = Awaited<ReturnType<typeof deactivateMetric>>, TError = unknown>(
+    projectId: string,
+    metricId: string,
+    options: {
+        query: Partial<UseQueryOptions<Awaited<ReturnType<typeof deactivateMetric>>, TError, TData>>
+            & Pick<
+                DefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof deactivateMetric>>,
+                    TError,
+                    Awaited<ReturnType<typeof deactivateMetric>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useDeactivateMetric<TData = Awaited<ReturnType<typeof deactivateMetric>>, TError = unknown>(
+    projectId: string,
+    metricId: string,
+    options?: {
+        query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deactivateMetric>>, TError, TData>>
+            & Pick<
+                UndefinedInitialDataOptions<
+                    Awaited<ReturnType<typeof deactivateMetric>>,
+                    TError,
+                    Awaited<ReturnType<typeof deactivateMetric>>
+                >,
+                'initialData'
+            >;
+    },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useDeactivateMetric<TData = Awaited<ReturnType<typeof deactivateMetric>>, TError = unknown>(
+    projectId: string,
+    metricId: string,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deactivateMetric>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+/**
+ * @summary Deactivate a metric without deleting it.
+ */
+
+export function useDeactivateMetric<TData = Awaited<ReturnType<typeof deactivateMetric>>, TError = unknown>(
+    projectId: string,
+    metricId: string,
+    options?: { query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof deactivateMetric>>, TError, TData>> },
+    queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+    const queryOptions = getDeactivateMetricQueryOptions(projectId, metricId, options);
+
+    const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+        queryKey: DataTag<QueryKey, TData, TError>;
+    };
+
+    return withQueryKey(query, queryOptions.queryKey);
+}

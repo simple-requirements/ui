@@ -5,6 +5,7 @@
  * HTTP API for the Requirements Management app.
  * OpenAPI spec version: 0.0.1
  */
+
 export interface UpdateMetricDto {
     /** Non-empty metric value. */
     value?: string;

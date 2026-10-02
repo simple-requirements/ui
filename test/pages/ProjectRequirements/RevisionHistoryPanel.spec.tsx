@@ -96,7 +96,6 @@ afterEach(() => {
     vi.clearAllMocks();
 });
 
-
 function getRevisionRow(label: string): HTMLTableRowElement {
     const row = screen.getByText(label).closest('tr');
     if (!(row instanceof HTMLTableRowElement)) {

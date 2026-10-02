@@ -82,9 +82,10 @@ When('I open the review-task requirement review as a Requirements Engineer', asy
 
 When('I assign the review task to {string}', async ({ page }, displayName: string) => {
     await page.getByRole('button', { name: 'Assign reviewer' }).click();
-    await page.getByLabel('Requirements Engineer').click();
+    const dialog = page.getByRole('dialog');
+    await dialog.locator('.p-dropdown').click();
     await page.getByRole('option', { name: displayName }).click();
-    await page.getByRole('dialog').getByRole('button', { name: 'Assign', exact: true }).click();
+    await dialog.getByRole('button', { name: 'Assign', exact: true }).click();
 });
 
 Then('review assignments should show {string} as {string}', async ({ page }, displayName: string, status: string) => {

@@ -19,7 +19,14 @@ export async function signInToRealBackend(
 ): Promise<void> {
     const currentUser = page.getByLabel('Current user');
     if (await currentUser.isVisible().catch(() => false)) {
-        return;
+        await page.getByRole('button', { name: 'Account menu' }).click();
+        const signedInUser = page.getByLabel('Signed in user');
+        if ((await signedInUser.textContent())?.includes(`@${username}`) === true) {
+            await page.getByRole('button', { name: 'Account menu' }).click();
+            return;
+        }
+        await page.getByRole('menuitem', { name: 'Logout' }).click();
+        await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible({ timeout: 10_000 });
     }
 
     const bootstrapForm = page.getByRole('heading', { name: 'Create initial Administrator' });

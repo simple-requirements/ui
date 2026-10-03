@@ -59,6 +59,7 @@ export function useProjectRequirementsList(projectId: string | undefined) {
         queryKey: [...getMyReviewTasksQueryKey(projectId), authenticatedUserId],
         queryFn: () => (projectId === undefined ? Promise.resolve([]) : listMyReviewTasks(projectId)),
         enabled: projectId !== undefined && authenticatedUserId !== undefined && permissions.canManageRequirements,
+        refetchOnMount: 'always',
     });
     const pendingReviewRequirementIds = useMemo(
         () =>

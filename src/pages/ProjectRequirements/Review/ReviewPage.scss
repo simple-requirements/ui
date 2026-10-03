@@ -28,6 +28,18 @@
     gap: 1.6rem;
 }
 
+.review-comments-panel__header h2 {
+    margin: 0;
+    font-size: var(--font-size-h5);
+    line-height: var(--line-height-heading);
+}
+
+.review-comments-panel__list > p {
+    margin: 0;
+    font-size: var(--font-size-paragraph);
+    line-height: var(--line-height-paragraph);
+}
+
 .review-comments-panel__list {
     display: flex;
     flex-direction: column;
@@ -114,42 +126,4 @@
     height: 100%;
     overflow: auto;
     padding: 1rem;
-}
-
-.project-requirement-review-page__task-header,
-.project-requirement-review-page__dialog-actions {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-}
-
-.project-requirement-review-page__task-header h2 {
-    margin: 0;
-}
-
-.project-requirement-review-page__task-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    margin: 0.75rem 0 0;
-    padding: 0;
-    list-style: none;
-}
-
-.project-requirement-review-page__task-list li {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 0.25rem 0.75rem;
-}
-
-.project-requirement-review-page__task-list small {
-    grid-column: 1 / -1;
-}
-
-.project-requirement-review-page__assign-dialog {
-    display: flex;
-    min-width: 22rem;
-    flex-direction: column;
-    gap: 0.75rem;
 }

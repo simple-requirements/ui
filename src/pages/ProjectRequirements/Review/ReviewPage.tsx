@@ -148,7 +148,6 @@ export function ReviewPage() {
                 {requirement !== undefined && (
                     <ReviewWorkspace
                         requirement={requirement}
-                        projectId={activeProjectId}
                         comments={comments}
                         pending={pending}
                         readOnly={!permissions.canManageRequirements}

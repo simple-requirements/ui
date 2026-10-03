@@ -12,6 +12,7 @@ import {
 } from '@/pages/ProjectRequirements/List/useRequirementListActions';
 import { useSelectedRequirementActionBar } from '@/pages/ProjectRequirements/List/useSelectedRequirementActionBar';
 import { RequirementDetailsPanel } from '@/pages/ProjectRequirements/RequirementDetailsPanel';
+import { ReviewAssignmentDialog } from '@/pages/ProjectRequirements/Review/ReviewAssignmentDialog';
 
 import '@/pages/ProjectRequirements/List/ListPage.scss';
 
@@ -98,6 +99,12 @@ export function ListPage() {
                     />
                 </SplitterPanel>
             </Splitter>
+            {selectedRequirement !== undefined && (
+                <ReviewAssignmentDialog
+                    projectId={projectId}
+                    requirementId={selectedRequirement.id}
+                />
+            )}
         </section>
     );
 }

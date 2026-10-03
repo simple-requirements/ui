@@ -54,6 +54,7 @@ export function getActionBarConfiguration(actionBarKind: ActionBarKind): ActionB
                 showObsoleteRequirement: true,
                 showImplementedRequirement: true,
                 showReview: true,
+                showAssignReviewer: true,
             };
         case 'requirementForm':
             return { ariaLabel: 'Requirement form actions', disabled: true, showRequirementLookup: false };
@@ -67,6 +68,7 @@ export function getActionBarConfiguration(actionBarKind: ActionBarKind): ActionB
                 showObsoleteRequirement: true,
                 showImplementedRequirement: true,
                 showReview: true,
+                showAssignReviewer: true,
             };
         case 'project':
             return { ariaLabel: 'Project actions', disabled: false, showRequirementLookup: false };
@@ -91,7 +93,6 @@ export function getActionBarConfiguration(actionBarKind: ActionBarKind): ActionB
                 ariaLabel: 'Requirement review actions',
                 disabled: false,
                 showRequirementLookup: false,
-                showAssignReviewer: true,
                 showReviewDecisions: true,
             };
     }

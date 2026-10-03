@@ -8,6 +8,8 @@ export type ReviewActionRequirement = Readonly<{
     visibleKey: string;
     status: RequirementStatus;
     implementationTicketCount?: number;
+    hasAssignedReviewer?: boolean;
+    assignedToCurrentUser?: boolean;
 }>;
 
 export type ReviewDecisionRequest = 'approve' | 'reject';
@@ -113,7 +115,7 @@ export function clearReviewActionRequirement(): void {
     }));
 }
 
-/** Opens the reviewer-assignment dialog for the active requirement review. */
+/** Opens the reviewer-assignment dialog for the active requirement. */
 export function openReviewAssignmentDialog(): void {
     actionBarStore.setState((state) => ({ ...state, reviewAssignmentDialogOpen: true }));
 }

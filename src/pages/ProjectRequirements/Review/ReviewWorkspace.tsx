@@ -5,14 +5,12 @@ import type { ReviewComment } from '@/api/reviewApi';
 import { InlineStatus } from '@/components/Feedback/InlineStatus';
 import { RequirementDetailsPanel } from '@/pages/ProjectRequirements/RequirementDetailsPanel';
 import { ReviewCommentsPanel } from '@/pages/ProjectRequirements/Review/ReviewCommentsPanel';
-import { ReviewTasksPanel } from '@/pages/ProjectRequirements/Review/ReviewTasksPanel';
 
 export type ReviewWorkspaceProps = Readonly<{
     requirement: Requirement;
     comments: readonly ReviewComment[];
     pending: boolean;
     readOnly: boolean;
-    projectId: string;
     onComment: () => void;
     onReply: (comment: ReviewComment) => void;
     onResolve: (comment: ReviewComment) => void;
@@ -23,7 +21,6 @@ export function ReviewWorkspace({
     comments,
     pending,
     readOnly,
-    projectId,
     onComment,
     onReply,
     onResolve,
@@ -54,11 +51,6 @@ export function ReviewWorkspace({
                 size={50}
                 minSize={30}>
                 <div className='project-requirement-review-page__review-side'>
-                    <ReviewTasksPanel
-                        projectId={projectId}
-                        requirementId={requirement.id}
-                        canAssign={!readOnly}
-                    />
                     <ReviewCommentsPanel
                         comments={comments}
                         pending={pending}

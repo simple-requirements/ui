@@ -156,11 +156,12 @@ function canReviewRequirement(
         (configuration.showReview ?? false)
         && permissions.canManageRequirements
         && isDraftRequirementStatus(requirement?.status)
+        && requirement?.assignedToCurrentUser === true
     );
 }
 
 /**
- * Returns whether review assignment is available from the review workspace.
+ * Returns whether reviewer assignment is available for the active requirement.
  * @param configuration Active route ActionBar configuration.
  * @param permissions Current project permissions.
  * @param requirement Active requirement action context.
@@ -175,6 +176,7 @@ function canAssignReviewer(
         (configuration.showAssignReviewer ?? false)
         && permissions.canManageRequirements
         && isDraftRequirementStatus(requirement?.status)
+        && requirement?.hasAssignedReviewer === false
     );
 }
 

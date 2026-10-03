@@ -71,13 +71,13 @@ Given(
     },
 );
 
-When('I open the review-task requirement review as a Requirements Engineer', async ({ page }) => {
-    const { projectId, requirement } = requireContext();
-    await openAuthenticatedRoute(
-        page,
-        `/projects/${projectId}/requirements/${requirement.id}/review`,
-        E2E_REQUIREMENTS_ENGINEER_LOGIN_USERNAME,
-    );
+When('I open the review-task project requirements as a Requirements Engineer', async ({ page }) => {
+    const { projectId } = requireContext();
+    await openAuthenticatedRoute(page, `/projects/${projectId}/requirements`, E2E_REQUIREMENTS_ENGINEER_LOGIN_USERNAME);
+});
+
+Then('the review-task requirement should allow reviewer assignment', async ({ page }) => {
+    await expect(page.getByRole('button', { name: 'Assign reviewer' })).toBeVisible();
 });
 
 When('I assign the review task to {string}', async ({ page }, displayName: string) => {
@@ -86,12 +86,11 @@ When('I assign the review task to {string}', async ({ page }, displayName: strin
     await dialog.locator('.p-dropdown').click();
     await page.getByRole('option', { name: displayName }).click();
     await dialog.getByRole('button', { name: 'Assign', exact: true }).click();
+    await expect(dialog).not.toBeVisible();
 });
 
-Then('review assignments should show {string} as {string}', async ({ page }, displayName: string, status: string) => {
-    const section = page.getByRole('region', { name: 'Review assignments' });
-    await expect(section).toContainText(displayName);
-    await expect(section).toContainText(status);
+Then('reviewer assignment should no longer be available for the review-task requirement', async ({ page }) => {
+    await expect(page.getByRole('button', { name: 'Assign reviewer' })).not.toBeVisible();
 });
 
 When('I open the review-task project requirements as the Review Engineer', async ({ page }) => {
@@ -106,6 +105,11 @@ When('I open the review-task project requirements as the Review Engineer', async
 
     const response = await reviewTasksResponse;
     expect(response.status()).toBe(200);
+    expect(await response.json()).toEqual(
+        expect.arrayContaining([
+            expect.objectContaining({ requirementId: requireContext().requirement.id, status: 'pending' }),
+        ]),
+    );
 });
 
 Then('the review-task requirement should show a review action', async ({ page }) => {

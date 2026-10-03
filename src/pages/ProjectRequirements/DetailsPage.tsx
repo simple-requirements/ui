@@ -21,6 +21,8 @@ import { RequirementDetailsPanel } from '@/pages/ProjectRequirements/Requirement
 import { RevisionHistoryPanel } from '@/pages/ProjectRequirements/RevisionHistoryPanel';
 import { ImplementationTicketsPanel } from '@/pages/ProjectRequirements/ImplementationTicketsPanel';
 import { RequirementLinksPanel } from '@/pages/ProjectRequirements/RequirementLinksPanel';
+import { ReviewAssignmentDialog } from '@/pages/ProjectRequirements/Review/ReviewAssignmentDialog';
+import { useRequirementReviewAssignment } from '@/pages/ProjectRequirements/Review/useRequirementReviewAssignment';
 
 import '@/pages/ProjectRequirements/DetailsPage.scss';
 
@@ -57,6 +59,7 @@ export function DetailsPage() {
     );
 
     const requirement = requirementQuery.data;
+    const assignment = useRequirementReviewAssignment(projectId, requirement?.id);
     const [selectedRevision, setSelectedRevision] = useState<typeof requirement>();
     const ticketsDialogOpen = useSelector(actionBarStore, (state) => state.implementationTicketsDialogOpen ?? false);
     useEffect(
@@ -92,8 +95,10 @@ export function DetailsPage() {
             visibleKey: requirement.visibleKey,
             status: requirement.status,
             implementationTicketCount: requirement.implementationTickets.length,
+            hasAssignedReviewer: assignment.hasAssignedReviewer,
+            assignedToCurrentUser: assignment.assignedToCurrentUser,
         });
-    }, [projectId, requirement]);
+    }, [assignment.assignedToCurrentUser, assignment.hasAssignedReviewer, projectId, requirement]);
 
     useEffect(() => {
         if (
@@ -157,6 +162,12 @@ export function DetailsPage() {
                                 revision.revisionNumber === requirement.revisionNumber ? undefined : revision,
                             );
                         }}
+                    />
+                )}
+                {requirement !== undefined && (
+                    <ReviewAssignmentDialog
+                        projectId={projectId}
+                        requirementId={requirement.id}
                     />
                 )}
                 {requirement !== undefined && (

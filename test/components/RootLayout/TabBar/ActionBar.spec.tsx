@@ -37,7 +37,14 @@ function setMockRequirementKey(requirementKey: string): void {
     actionBarStore.setState((state) => ({ ...state, requirementKey }));
 }
 
-function setMockReviewActionRequirement(status: RequirementStatus = 'draft', implementationTicketCount = 0): void {
+function setMockReviewActionRequirement(
+    status: RequirementStatus = 'draft',
+    implementationTicketCount = 0,
+    assignment: Readonly<{ hasAssignedReviewer: boolean; assignedToCurrentUser: boolean }> = {
+        hasAssignedReviewer: false,
+        assignedToCurrentUser: false,
+    },
+): void {
     actionBarStore.setState((state) => ({
         ...state,
         reviewActionRequirement: {
@@ -46,6 +53,7 @@ function setMockReviewActionRequirement(status: RequirementStatus = 'draft', imp
             visibleKey: 'FR-AUTH-0001',
             status,
             implementationTicketCount,
+            ...assignment,
         },
     }));
 }
@@ -162,7 +170,7 @@ describe('ActionBar', () => {
 
         it('opens the review workspace for a selected draft requirement.', async () => {
             const user = userEvent.setup();
-            setMockReviewActionRequirement('draft');
+            setMockReviewActionRequirement('draft', 0, { hasAssignedReviewer: true, assignedToCurrentUser: true });
 
             renderActionBar('/projects/project-alpha/requirements');
 
@@ -181,8 +189,16 @@ describe('ActionBar', () => {
             expect(screen.queryByRole('button', { name: 'Review' })).not.toBeInTheDocument();
         });
 
-        it('shows Create, Edit, and Review in this order on draft requirement detail routes.', () => {
-            setMockReviewActionRequirement('draft');
+        it('shows Review only to the assigned reviewer.', () => {
+            setMockReviewActionRequirement('draft', 0, { hasAssignedReviewer: true, assignedToCurrentUser: false });
+
+            renderActionBar('/projects/project-alpha/requirements');
+
+            expect(screen.queryByRole('button', { name: 'Review' })).not.toBeInTheDocument();
+        });
+
+        it('shows Create, Edit, and Review in this order for the assigned reviewer on draft requirement detail routes.', () => {
+            setMockReviewActionRequirement('draft', 0, { hasAssignedReviewer: true, assignedToCurrentUser: true });
 
             renderActionBar('/projects/project-alpha/requirements/requirement-alpha');
 
@@ -194,20 +210,39 @@ describe('ActionBar', () => {
             expect(editButton.compareDocumentPosition(reviewButton)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
         });
 
-        it('shows Assign reviewer, Approve, and Reject without Edit on review routes for draft requirements.', async () => {
+        it('shows Assign reviewer on requirement list and detail routes only while no reviewer is assigned.', async () => {
             const user = userEvent.setup();
             setMockReviewActionRequirement('draft');
+
+            const { unmount } = renderActionBar('/projects/project-alpha/requirements');
+            const listAssignButton = screen.getByRole('button', { name: 'Assign reviewer' });
+            expect(listAssignButton).toBeInTheDocument();
+            await user.click(listAssignButton);
+            expect(actionBarStore.state.reviewAssignmentDialogOpen).toBe(true);
+            unmount();
+
+            actionBarStore.setState((state) => ({ ...state, reviewAssignmentDialogOpen: false }));
+            renderActionBar('/projects/project-alpha/requirements/requirement-alpha');
+            expect(screen.getByRole('button', { name: 'Assign reviewer' })).toBeInTheDocument();
+        });
+
+        it('hides Assign reviewer after a reviewer is assigned.', () => {
+            setMockReviewActionRequirement('draft', 0, { hasAssignedReviewer: true, assignedToCurrentUser: false });
+
+            renderActionBar('/projects/project-alpha/requirements/requirement-alpha');
+
+            expect(screen.queryByRole('button', { name: 'Assign reviewer' })).not.toBeInTheDocument();
+        });
+
+        it('shows Approve and Reject without Edit or Assign reviewer on review routes for draft requirements.', () => {
+            setMockReviewActionRequirement('draft', 0, { hasAssignedReviewer: true, assignedToCurrentUser: true });
 
             renderActionBar('/projects/project-alpha/requirements/requirement-alpha/review');
 
             expect(screen.queryByRole('button', { name: 'Edit' })).not.toBeInTheDocument();
-            const assignReviewerButton = screen.getByRole('button', { name: 'Assign reviewer' });
-            expect(assignReviewerButton).toBeInTheDocument();
+            expect(screen.queryByRole('button', { name: 'Assign reviewer' })).not.toBeInTheDocument();
             expect(screen.getByRole('button', { name: 'Approve' })).toBeInTheDocument();
             expect(screen.getByRole('button', { name: 'Reject' })).toBeInTheDocument();
-
-            await user.click(assignReviewerButton);
-            expect(actionBarStore.state.reviewAssignmentDialogOpen).toBe(true);
         });
 
         it('hides Approve and Reject on review routes for rejected requirements.', () => {

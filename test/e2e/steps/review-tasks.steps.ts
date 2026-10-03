@@ -95,11 +95,17 @@ Then('review assignments should show {string} as {string}', async ({ page }, dis
 });
 
 When('I open the review-task project requirements as the Review Engineer', async ({ page }) => {
-    await openAuthenticatedRoute(
-        page,
-        `/projects/${requireContext().projectId}/requirements`,
-        E2E_REVIEWER_LOGIN_USERNAME,
+    const { projectId } = requireContext();
+    const reviewTasksResponse = page.waitForResponse(
+        (response) =>
+            response.request().method() === 'GET'
+            && new URL(response.url()).pathname === `/projects/${projectId}/review-tasks`,
     );
+
+    await openAuthenticatedRoute(page, `/projects/${projectId}/requirements`, E2E_REVIEWER_LOGIN_USERNAME);
+
+    const response = await reviewTasksResponse;
+    expect(response.status()).toBe(200);
 });
 
 Then('the review-task requirement should show a review action', async ({ page }) => {

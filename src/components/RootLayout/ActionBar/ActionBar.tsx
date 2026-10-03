@@ -10,6 +10,7 @@ import {
     CategoryRouteActionButtons,
     CreateActionButton,
     RequirementRouteActionButtons,
+    ReviewAssignmentActionButton,
     ReviewDecisionActionButtons,
 } from '@/components/RootLayout/ActionBar/ActionBarButtons';
 import { getActionBarConfiguration, getCreateRoute } from '@/components/RootLayout/ActionBar/actionBarConfiguration';
@@ -29,6 +30,7 @@ import { useRouteUiMetadata } from '@/router/routeUiMetadata';
 import {
     actionBarStore,
     openImplementationTicketsDialog,
+    openReviewAssignmentDialog,
     openRevisionComparisonDialog,
     requestAdministratorAction,
     requestReviewDecision,
@@ -184,6 +186,11 @@ export function ActionBar({ onFindRequirementKey }: ActionBarProps) {
                 onCompareRevisions={openRevisionComparisonDialog}
                 onMarkObsolete={obsoleteAction.open}
                 onMarkImplemented={() => void implementAction.implement()}
+            />
+
+            <ReviewAssignmentActionButton
+                canAssign={availability.canAssignReviewer}
+                onAssign={openReviewAssignmentDialog}
             />
 
             <ReviewDecisionActionButtons

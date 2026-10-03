@@ -1,15 +1,18 @@
 import { useLiveQuery } from '@tanstack/react-db';
 import { useQuery } from '@tanstack/react-query';
+import { useSelector } from '@tanstack/react-store';
 import { useEffect, useMemo, useState } from 'react';
 
 import { getProjectRequirementsCollection } from '@/api/collections/projectRequirementsCollection';
 import { getMyReviewTasksQueryKey, listMyReviewTasks } from '@/api/reviewTasksApi';
 import { useProjectPermissions } from '@/auth/projectPermissions';
+import { authStore } from '@/stores/authStore';
 import type { RequirementTableRow } from '@/pages/ProjectRequirements/List/requirementListTypes';
 
 export function useProjectRequirementsList(projectId: string | undefined) {
     const [selectedRequirementId, setSelectedRequirementId] = useState<string>();
     const permissions = useProjectPermissions(projectId);
+    const authenticatedUserId = useSelector(authStore, (state) => state.user?.id);
     const requirementsCollection = useMemo(
         () => (projectId === undefined ? undefined : getProjectRequirementsCollection(projectId)),
         [projectId],
@@ -53,9 +56,9 @@ export function useProjectRequirementsList(projectId: string | undefined) {
         return [...byId.values()];
     }, [requirements]);
     const myReviewTasksQuery = useQuery({
-        queryKey: getMyReviewTasksQueryKey(projectId),
+        queryKey: [...getMyReviewTasksQueryKey(projectId), authenticatedUserId],
         queryFn: () => (projectId === undefined ? Promise.resolve([]) : listMyReviewTasks(projectId)),
-        enabled: projectId !== undefined && permissions.canManageRequirements,
+        enabled: projectId !== undefined && authenticatedUserId !== undefined && permissions.canManageRequirements,
     });
     const pendingReviewRequirementIds = useMemo(
         () =>

@@ -35,6 +35,7 @@ export type ActionBarState = Readonly<{
     requirementKey: string;
     reviewActionRequirement?: ReviewActionRequirement;
     reviewDecisionRequest?: ReviewDecisionRequest;
+    reviewAssignmentDialogOpen?: boolean;
     implementationTicketsDialogOpen?: boolean;
     revisionComparisonAvailable?: boolean;
     revisionComparisonDialogOpen?: boolean;
@@ -90,6 +91,10 @@ export function setReviewActionRequirement(reviewActionRequirement: ReviewAction
             state.reviewActionRequirement?.requirementId === reviewActionRequirement.requirementId ?
                 state.revisionComparisonDialogOpen
             :   false,
+        reviewAssignmentDialogOpen:
+            state.reviewActionRequirement?.requirementId === reviewActionRequirement.requirementId ?
+                state.reviewAssignmentDialogOpen
+            :   false,
     }));
 }
 
@@ -104,7 +109,18 @@ export function clearReviewActionRequirement(): void {
         implementationTicketsDialogOpen: false,
         revisionComparisonAvailable: false,
         revisionComparisonDialogOpen: false,
+        reviewAssignmentDialogOpen: false,
     }));
+}
+
+/** Opens the reviewer-assignment dialog for the active requirement review. */
+export function openReviewAssignmentDialog(): void {
+    actionBarStore.setState((state) => ({ ...state, reviewAssignmentDialogOpen: true }));
+}
+
+/** Closes the reviewer-assignment dialog for the active requirement review. */
+export function closeReviewAssignmentDialog(): void {
+    actionBarStore.setState((state) => ({ ...state, reviewAssignmentDialogOpen: false }));
 }
 
 /**

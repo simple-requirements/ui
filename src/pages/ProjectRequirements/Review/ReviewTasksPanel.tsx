@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useSelector } from '@tanstack/react-store';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { Dropdown } from 'primereact/dropdown';
@@ -14,11 +15,13 @@ import {
     listReviewAssignees,
 } from '@/api/reviewTasksApi';
 import { InlineStatus } from '@/components/Feedback/InlineStatus';
+import { actionBarStore, closeReviewAssignmentDialog } from '@/stores/actionBarStore';
 
 export type ReviewTasksPanelProps = Readonly<{ projectId: string; requirementId: string; canAssign: boolean }>;
 
 export function ReviewTasksPanel({ projectId, requirementId, canAssign }: ReviewTasksPanelProps) {
-    const [dialogVisible, setDialogVisible] = useState(false);
+    const dialogRequested = useSelector(actionBarStore, (state) => state.reviewAssignmentDialogOpen === true);
+    const dialogVisible = canAssign && dialogRequested;
     const [assigneeUserId, setAssigneeUserId] = useState<string>();
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string>();
@@ -52,7 +55,7 @@ export function ReviewTasksPanel({ projectId, requirementId, canAssign }: Review
                 }),
                 queryClient.invalidateQueries({ queryKey: getMyReviewTasksQueryKey(projectId) }),
             ]);
-            setDialogVisible(false);
+            closeReviewAssignmentDialog();
             setAssigneeUserId(undefined);
         } catch {
             setError('Review task could not be assigned.');
@@ -65,14 +68,6 @@ export function ReviewTasksPanel({ projectId, requirementId, canAssign }: Review
         <section aria-labelledby='review-task-heading'>
             <div className='project-requirement-review-page__task-header'>
                 <h2 id='review-task-heading'>Review assignments</h2>
-                {canAssign && (
-                    <Button
-                        label='Assign reviewer'
-                        icon='pi pi-user-plus'
-                        className='ui-button ui-button--outline'
-                        onClick={() => setDialogVisible(true)}
-                    />
-                )}
             </div>
             {tasksQuery.isError && <InlineStatus kind='error'>Review assignments could not be loaded.</InlineStatus>}
             {!tasksQuery.isLoading && (tasksQuery.data?.length ?? 0) === 0 && <p>No review tasks assigned.</p>}
@@ -91,7 +86,7 @@ export function ReviewTasksPanel({ projectId, requirementId, canAssign }: Review
                 header='Assign review task'
                 visible={dialogVisible}
                 modal
-                onHide={() => setDialogVisible(false)}>
+                onHide={closeReviewAssignmentDialog}>
                 <div className='project-requirement-review-page__assign-dialog'>
                     <label htmlFor='review-task-assignee'>Requirements Engineer</label>
                     <Dropdown
@@ -113,7 +108,7 @@ export function ReviewTasksPanel({ projectId, requirementId, canAssign }: Review
                         <Button
                             label='Cancel'
                             className='ui-button ui-button--outline'
-                            onClick={() => setDialogVisible(false)}
+                            onClick={closeReviewAssignmentDialog}
                         />
                         <Button
                             label='Assign'

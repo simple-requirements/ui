@@ -135,6 +135,23 @@ export function CategoryRouteActionButtons({ canEdit, onEdit }: CategoryRouteAct
         :   null;
 }
 
+export type ReviewAssignmentActionButtonProps = Readonly<{ canAssign: boolean; onAssign: () => void }>;
+
+/** Renders the reviewer-assignment action inside the shared ActionBar. */
+export function ReviewAssignmentActionButton({ canAssign, onAssign }: ReviewAssignmentActionButtonProps) {
+    if (!canAssign) return null;
+
+    return (
+        <Button
+            type='button'
+            label='Assign reviewer'
+            icon='pi pi-user-plus'
+            onClick={onAssign}
+            pt={{ root: { className: 'ui-button ui-button--outline ui-button--action' } }}
+        />
+    );
+}
+
 export type ReviewDecisionActionButtonsProps = Readonly<{
     canDecide: boolean;
     onApprove: () => void;

@@ -16,6 +16,7 @@ export type ActionBarConfiguration = Readonly<{
     showImplementedRequirement?: boolean;
     showReview?: boolean;
     showReviewDecisions?: boolean;
+    showAssignReviewer?: boolean;
     administratorActions?: 'users' | 'projects';
 }>;
 
@@ -55,12 +56,7 @@ export function getActionBarConfiguration(actionBarKind: ActionBarKind): ActionB
                 showReview: true,
             };
         case 'requirementForm':
-            return {
-                ariaLabel: 'Requirement form actions',
-                createActionKind: 'requirement',
-                disabled: true,
-                showRequirementLookup: false,
-            };
+            return { ariaLabel: 'Requirement form actions', disabled: true, showRequirementLookup: false };
         case 'requirements':
             return {
                 ariaLabel: 'Requirement actions',
@@ -95,7 +91,7 @@ export function getActionBarConfiguration(actionBarKind: ActionBarKind): ActionB
                 ariaLabel: 'Requirement review actions',
                 disabled: false,
                 showRequirementLookup: false,
-                showEditRequirement: true,
+                showAssignReviewer: true,
                 showReviewDecisions: true,
             };
     }

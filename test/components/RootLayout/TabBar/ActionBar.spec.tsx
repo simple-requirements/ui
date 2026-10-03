@@ -73,6 +73,11 @@ function renderActionBar(initialRoute = '/'): ReturnType<typeof render> {
                 handle: { actionBar: 'requirementForm', disableChromeActions: true },
             },
             {
+                path: '/projects/:projectId/requirements/:requirementId/edit',
+                element,
+                handle: { actionBar: 'requirementForm', disableChromeActions: true },
+            },
+            {
                 path: '/projects/:projectId/requirements/:requirementId',
                 element,
                 handle: { actionBar: 'requirementDetails' },
@@ -189,14 +194,20 @@ describe('ActionBar', () => {
             expect(editButton.compareDocumentPosition(reviewButton)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
         });
 
-        it('shows Edit, Approve, and Reject on review routes for draft requirements.', () => {
+        it('shows Assign reviewer, Approve, and Reject without Edit on review routes for draft requirements.', async () => {
+            const user = userEvent.setup();
             setMockReviewActionRequirement('draft');
 
             renderActionBar('/projects/project-alpha/requirements/requirement-alpha/review');
 
-            expect(screen.getByRole('button', { name: 'Edit' })).toBeInTheDocument();
+            expect(screen.queryByRole('button', { name: 'Edit' })).not.toBeInTheDocument();
+            const assignReviewerButton = screen.getByRole('button', { name: 'Assign reviewer' });
+            expect(assignReviewerButton).toBeInTheDocument();
             expect(screen.getByRole('button', { name: 'Approve' })).toBeInTheDocument();
             expect(screen.getByRole('button', { name: 'Reject' })).toBeInTheDocument();
+
+            await user.click(assignReviewerButton);
+            expect(actionBarStore.state.reviewAssignmentDialogOpen).toBe(true);
         });
 
         it('hides Approve and Reject on review routes for rejected requirements.', () => {
@@ -290,12 +301,18 @@ describe('ActionBar', () => {
             expect(screen.queryByRole('button', { name: /find requirement/i })).not.toBeInTheDocument();
         });
 
-        it('hides requirement lookup and disables Create on requirement form routes.', () => {
+        it('hides requirement lookup and Create on requirement form routes.', () => {
             renderActionBar('/projects/project-alpha/requirements/new');
 
             expect(screen.queryByRole('textbox', { name: /requirement key/i })).not.toBeInTheDocument();
             expect(screen.queryByRole('button', { name: /find requirement/i })).not.toBeInTheDocument();
-            expect(screen.getByRole('button', { name: 'Create' })).toBeDisabled();
+            expect(screen.queryByRole('button', { name: 'Create' })).not.toBeInTheDocument();
+        });
+
+        it('does not show Create on requirement update routes.', () => {
+            renderActionBar('/projects/project-alpha/requirements/requirement-alpha/edit');
+
+            expect(screen.queryByRole('button', { name: 'Create' })).not.toBeInTheDocument();
         });
 
         it('hides requirement lookup and disables Create on category form routes.', () => {

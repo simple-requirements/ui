@@ -15,6 +15,7 @@ export type ActionBarAvailability = Readonly<{
     canMarkObsolete: boolean;
     canMarkImplemented: boolean;
     canReview: boolean;
+    canAssignReviewer: boolean;
     canDecideReview: boolean;
 }>;
 
@@ -159,6 +160,25 @@ function canReviewRequirement(
 }
 
 /**
+ * Returns whether review assignment is available from the review workspace.
+ * @param configuration Active route ActionBar configuration.
+ * @param permissions Current project permissions.
+ * @param requirement Active requirement action context.
+ * @returns True when another reviewer can be assigned.
+ */
+function canAssignReviewer(
+    configuration: ActionBarConfiguration,
+    permissions: ProjectPermissions,
+    requirement: ReviewActionRequirement | undefined,
+): boolean {
+    return (
+        (configuration.showAssignReviewer ?? false)
+        && permissions.canManageRequirements
+        && isDraftRequirementStatus(requirement?.status)
+    );
+}
+
+/**
  * Returns whether approve/reject review actions are available.
  * @param configuration Active route ActionBar configuration.
  * @param permissions Current project permissions.
@@ -204,6 +224,7 @@ export function getActionBarAvailability(
         canMarkObsolete: canMarkObsoleteAction(configuration, permissions, requirement),
         canMarkImplemented: canMarkImplemented(configuration, permissions, requirement),
         canReview: canReviewRequirement(configuration, permissions, requirement),
+        canAssignReviewer: canAssignReviewer(configuration, permissions, requirement),
         canDecideReview: canDecideReview(configuration, permissions, requirement),
     };
 }

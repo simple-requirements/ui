@@ -1,0 +1,13 @@
+.project-requirement-review-assignment-dialog {
+    display: flex;
+    min-width: 22rem;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.project-requirement-review-assignment-dialog__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}

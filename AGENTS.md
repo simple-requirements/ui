@@ -8,15 +8,15 @@
 4. Do not use `npx`; use `pnpm exec` when a binary must be invoked directly.
 5. If `pnpm` does not exist in your environment use `npm` or `npx`.
 
-5. Use the `@/` alias for imports from `src`.
-6. Implement only the requested scope.
+6. Use the `@/` alias for imports from `src`.
+7. Implement only the requested scope.
     - Do not implement later backlog items pre-emptively.
     - Do not add abstractions solely for hypothetical future requirements.
 
-7. Preserve existing behavior unless changing that behavior is part of the task.
-8. Prefer focused changes over unrelated repository-wide refactorings.
-9. Before creating a new component, hook, helper, store, API abstraction, style, or test fixture, check whether an equivalent already exists.
-10. Keep generated code, server state, domain data, and client-only UI state in their existing architectural layers.
+8. Preserve existing behavior unless changing that behavior is part of the task.
+9. Prefer focused changes over unrelated repository-wide refactorings.
+10. Before creating a new component, hook, helper, store, API abstraction, style, or test fixture, check whether an equivalent already exists.
+11. Keep generated code, server state, domain data, and client-only UI state in their existing architectural layers.
 
 ## Architecture overview
 

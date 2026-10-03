@@ -94,36 +94,31 @@ Then('review assignments should show {string} as {string}', async ({ page }, dis
     await expect(section).toContainText(status);
 });
 
-When('I open my review tasks as the Review Engineer', async ({ page }) => {
+When('I open the review-task project requirements as the Review Engineer', async ({ page }) => {
     await openAuthenticatedRoute(
         page,
-        `/projects/${requireContext().projectId}/review-tasks`,
+        `/projects/${requireContext().projectId}/requirements`,
         E2E_REVIEWER_LOGIN_USERNAME,
     );
 });
 
-Then('my review tasks should contain the review-task requirement', async ({ page }) => {
-    await expect(page.getByRole('table', { name: 'My review tasks' })).toContainText(
-        requireContext().requirement.visibleKey,
-    );
-});
-
-When('I mark the review-task requirement completed', async ({ page }) => {
+Then('the review-task requirement should show a review action', async ({ page }) => {
     const row = page
-        .getByRole('table', { name: 'My review tasks' })
+        .getByRole('table', { name: 'Requirements' })
         .getByRole('row')
         .filter({ hasText: requireContext().requirement.visibleKey });
-    await row.getByRole('button', { name: 'Mark completed' }).click();
+    await expect(row.getByRole('button', { name: 'Review this requirement' })).toBeVisible();
 });
 
-When('I show completed review tasks', async ({ page }) => {
-    await page.getByLabel('Show completed').check();
-});
-
-Then('my review tasks should show the review-task requirement as {string}', async ({ page }, status: string) => {
+When('I open the review action for the review-task requirement', async ({ page }) => {
     const row = page
-        .getByRole('table', { name: 'My review tasks' })
+        .getByRole('table', { name: 'Requirements' })
         .getByRole('row')
         .filter({ hasText: requireContext().requirement.visibleKey });
-    await expect(row).toContainText(status);
+    await row.getByRole('button', { name: 'Review this requirement' }).click();
+});
+
+Then('the review-task requirement review should be open', async ({ page }) => {
+    const { projectId, requirement } = requireContext();
+    await expect(page).toHaveURL(new RegExp(`/projects/${projectId}/requirements/${requirement.id}/review$`));
 });

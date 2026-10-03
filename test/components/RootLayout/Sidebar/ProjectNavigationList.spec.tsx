@@ -88,6 +88,7 @@ describe('ProjectNavigationList', () => {
             'href',
             '/projects/project-alpha/categories',
         );
+        expect(screen.queryByRole('link', { name: /review tasks/i })).not.toBeInTheDocument();
     });
 
     it('marks the active project overview.', () => {

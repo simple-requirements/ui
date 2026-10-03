@@ -4,8 +4,6 @@ import { useParams } from 'react-router';
 
 import { InlineStatus } from '@/components/Feedback/InlineStatus';
 import { LoadableContent } from '@/components/Feedback/LoadableContent';
-import { RequirementDocumentView } from '@/pages/ProjectRequirements/List/RequirementDocumentView';
-import { RequirementListFilters } from '@/pages/ProjectRequirements/List/RequirementListFilters';
 import { RequirementTable } from '@/pages/ProjectRequirements/List/RequirementTable';
 import { useProjectRequirementsList } from '@/pages/ProjectRequirements/List/useProjectRequirementsList';
 import {
@@ -20,20 +18,13 @@ import '@/pages/ProjectRequirements/List/ListPage.scss';
 export function ListPage() {
     const { projectId } = useParams();
     const {
-        allRequirements,
         categories,
-        filters,
-        linksByRequirementId,
+        pendingReviewRequirementIds,
         requirements,
         requirementsQuery,
         selectedRequirement,
         selectedRequirementId,
-        setFilters,
         setSelectedRequirementId,
-        setView,
-        setVisibleColumns,
-        view,
-        visibleColumns,
     } = useProjectRequirementsList(projectId);
     useSelectedRequirementActionBar(projectId, selectedRequirement);
     const actions: RequirementListActions = useRequirementListActions({
@@ -72,52 +63,28 @@ export function ListPage() {
                                 className='project-requirements-list-page__title ui-panel__title'>
                                 Requirements
                             </h1>
-                            <span className='project-requirements-list-page__result-count'>
-                                {requirements.length} of {allRequirements.length}
-                            </span>
+                            <span className='project-requirements-list-page__result-count'>{requirements.length}</span>
                         </header>
-                        <RequirementListFilters
-                            categories={categories}
-                            requirements={allRequirements}
-                            filters={filters}
-                            view={view}
-                            visibleColumns={visibleColumns}
-                            onFiltersChange={setFilters}
-                            onViewChange={setView}
-                            onVisibleColumnsChange={setVisibleColumns}
-                        />
                         <LoadableContent
                             loading={requirementsQuery.isLoading}
                             error={requirementsQuery.isError}
                             empty={requirements.length === 0}
                             loadingMessage='Loading requirements …'
                             errorMessage='Requirements could not be loaded.'
-                            emptyMessage={
-                                allRequirements.length === 0 ?
-                                    'No requirements available.'
-                                :   'No requirements match the current filters.'
-                            }>
-                            {view === 'table' ?
-                                <RequirementTable
-                                    requirements={requirements}
-                                    selectedRequirement={selectedRequirement}
-                                    selectedRequirementId={selectedRequirementId}
-                                    categoriesById={categoriesById}
-                                    visibleColumns={visibleColumns}
-                                    onSelectRequirement={actions.selectRequirement}
-                                    onCopyRequirementKey={(requirement) => {
-                                        void actions.copyRequirementKey(requirement);
-                                    }}
-                                    onOpenRequirement={actions.openRequirement}
-                                />
-                            :   <RequirementDocumentView
-                                    requirements={requirements}
-                                    allRequirements={allRequirements}
-                                    categories={categories}
-                                    linksByRequirementId={linksByRequirementId}
-                                    onOpenRequirement={actions.openRequirement}
-                                />
-                            }
+                            emptyMessage='No requirements available.'>
+                            <RequirementTable
+                                requirements={requirements}
+                                selectedRequirement={selectedRequirement}
+                                selectedRequirementId={selectedRequirementId}
+                                categoriesById={categoriesById}
+                                pendingReviewRequirementIds={pendingReviewRequirementIds}
+                                onSelectRequirement={actions.selectRequirement}
+                                onCopyRequirementKey={(requirement) => {
+                                    void actions.copyRequirementKey(requirement);
+                                }}
+                                onOpenRequirement={actions.openRequirement}
+                                onOpenRequirementReview={actions.openRequirementReview}
+                            />
                         </LoadableContent>
                     </div>
                 </SplitterPanel>

@@ -2,11 +2,11 @@ import { useNavigate } from 'react-router';
 
 import { getReviewSummary } from '@/api/reviewApi';
 import { toastMessages } from '@/components/Feedback/AppToast/toastMessages';
+import { showToastMessage } from '@/components/Feedback/toastEvents';
+import type { RequirementTableRow } from '@/pages/ProjectRequirements/List/requirementListTypes';
 import { getProjectRequirementDetailsRoute, getProjectRequirementReviewRoute } from '@/router/projectRoutes';
 import { clearReviewActionRequirement, setReviewActionRequirement } from '@/stores/actionBarStore';
 import { openTab } from '@/stores/tabBarStore';
-import { showToastMessage } from '@/components/Feedback/toastEvents';
-import type { RequirementTableRow } from '@/pages/ProjectRequirements/List/requirementListTypes';
 
 type Options = Readonly<{
     projectId: string | undefined;
@@ -18,6 +18,7 @@ export type RequirementListActions = Readonly<{
     copyRequirementKey: (requirement: RequirementTableRow) => Promise<void>;
     selectRequirement: (requirementId: string) => void;
     openRequirement: (requirement: RequirementTableRow) => void;
+    openRequirementReview: (requirement: RequirementTableRow) => void;
 }>;
 
 export function useRequirementListActions({
@@ -56,5 +57,18 @@ export function useRequirementListActions({
         openTab({ id: detailsRoute, label: requirement.visibleKey, closable: true });
         void navigate(detailsRoute);
     }
-    return { copyRequirementKey, selectRequirement, openRequirement };
+    function openRequirementReview(requirement: RequirementTableRow): void {
+        if (projectId === undefined) return;
+        const reviewRoute = getProjectRequirementReviewRoute(projectId, requirement.id);
+        setSelectedRequirementId(requirement.id);
+        setReviewActionRequirement({
+            projectId,
+            requirementId: requirement.id,
+            visibleKey: requirement.visibleKey,
+            status: requirement.status,
+        });
+        openTab({ id: reviewRoute, label: requirement.visibleKey, closable: true });
+        void navigate(reviewRoute);
+    }
+    return { copyRequirementKey, selectRequirement, openRequirement, openRequirementReview };
 }

@@ -1,6 +1,6 @@
 import { matchPath } from 'react-router';
 
-export type ProjectSubRoute = 'requirements' | 'review-tasks' | 'categories' | 'metrics';
+export type ProjectSubRoute = 'requirements' | 'categories' | 'metrics';
 
 export type ActiveProjectRoute = Readonly<{ projectId?: string; subRoute?: ProjectSubRoute }>;
 
@@ -9,12 +9,6 @@ export function getActiveProjectRoute(pathname: string): ActiveProjectRoute {
 
     if (requirementsRouteMatch?.params.projectId !== undefined) {
         return { projectId: requirementsRouteMatch.params.projectId, subRoute: 'requirements' };
-    }
-
-    const reviewTasksRouteMatch = matchPath('/projects/:projectId/review-tasks/*', pathname);
-
-    if (reviewTasksRouteMatch?.params.projectId !== undefined) {
-        return { projectId: reviewTasksRouteMatch.params.projectId, subRoute: 'review-tasks' };
     }
 
     const metricsRouteMatch = matchPath('/projects/:projectId/metrics/*', pathname);
@@ -62,10 +56,6 @@ export function getProjectRequirementCreateRoute(projectId: string, categoryId?:
     const route = `/projects/${projectId}/requirements/new`;
 
     return categoryId === undefined ? route : `${route}?categoryId=${encodeURIComponent(categoryId)}`;
-}
-
-export function getProjectReviewTasksRoute(projectId: string): string {
-    return `/projects/${projectId}/review-tasks`;
 }
 
 export function getProjectMetricsRoute(projectId: string): string {

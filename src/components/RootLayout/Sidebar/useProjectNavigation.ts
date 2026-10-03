@@ -13,7 +13,6 @@ import {
     preloadProjectDetailsRoute,
     preloadProjectMetricsListRoute,
     preloadProjectRequirementsListRoute,
-    preloadProjectReviewTasksListRoute,
 } from '@/router/routeModules';
 
 export type ProjectNavigationController = Readonly<{
@@ -46,11 +45,6 @@ export function useProjectNavigation(activeProjectRoute: ActiveProjectRoute): Pr
         if (subRoute === 'requirements') {
             preloadProjectRequirementsListRoute();
             void prefetchProjectRequirements(projectId);
-            return;
-        }
-
-        if (subRoute === 'review-tasks') {
-            preloadProjectReviewTasksListRoute();
             return;
         }
 

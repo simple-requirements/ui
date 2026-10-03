@@ -19,8 +19,9 @@ export type RequirementTableProps = Readonly<{
     onSelectRequirement: (requirementId: string) => void;
     onCopyRequirementKey: (requirement: RequirementTableRow) => void;
     onOpenRequirement: (requirement: RequirementTableRow) => void;
+    onOpenRequirementReview: (requirement: RequirementTableRow) => void;
     categoriesById: ReadonlyMap<string, Readonly<{ name: string; type: string }>>;
-    visibleColumns: ReadonlySet<string>;
+    pendingReviewRequirementIds: ReadonlySet<string>;
 }>;
 
 function descriptionBodyTemplate(requirement: RequirementTableRow): ReactNode {
@@ -59,8 +60,9 @@ export function RequirementTable({
     onSelectRequirement,
     onCopyRequirementKey,
     onOpenRequirement,
+    onOpenRequirementReview,
     categoriesById,
-    visibleColumns,
+    pendingReviewRequirementIds,
 }: RequirementTableProps) {
     function handleRequirementSelectionChange(event: DataTableSelectionSingleChangeEvent<RequirementTableRow[]>): void {
         if (isRequirementTableRow(event.value)) {
@@ -86,6 +88,11 @@ export function RequirementTable({
         onCopyRequirementKey(requirement);
     }
 
+    function handleReviewClick(event: MouseEvent<HTMLButtonElement>, requirement: RequirementTableRow): void {
+        event.stopPropagation();
+        onOpenRequirementReview(requirement);
+    }
+
     function typeBodyTemplate(requirement: RequirementTableRow): string {
         return categoriesById.get(requirement.categoryId)?.type ?? requirement.visibleKey.split('-')[0];
     }
@@ -102,6 +109,24 @@ export function RequirementTable({
                 aria-label={`Copy requirement key ${requirement.visibleKey}`}
                 onClick={(event) => handleRequirementKeyClick(event, requirement)}>
                 {requirement.visibleKey}
+            </button>
+        );
+    }
+
+    function reviewBodyTemplate(requirement: RequirementTableRow): ReactNode {
+        if (!pendingReviewRequirementIds.has(requirement.id)) return null;
+
+        return (
+            <button
+                type='button'
+                className='project-requirements-list-page__review-button'
+                aria-label='Review this requirement'
+                title='Review this requirement'
+                onClick={(event) => handleReviewClick(event, requirement)}>
+                <i
+                    className='pi pi-eye'
+                    aria-hidden='true'
+                />
             </button>
         );
     }
@@ -131,79 +156,61 @@ export function RequirementTable({
                 sortable
                 pt={getRequirementColumnPassThrough('project-requirements-list-page__key-column')}
             />
-
-            {visibleColumns.has('description') && (
-                <Column
-                    header='Description'
-                    body={descriptionBodyTemplate}
-                    pt={getRequirementColumnPassThrough('project-requirements-list-page__description-column')}
-                />
-            )}
-
-            {visibleColumns.has('type') && (
-                <Column
-                    header='Type'
-                    body={typeBodyTemplate}
-                    sortable
-                    sortField='visibleKey'
-                    pt={getRequirementColumnPassThrough('project-requirements-list-page__type-column')}
-                />
-            )}
-            {visibleColumns.has('category') && (
-                <Column
-                    header='Category'
-                    body={categoryBodyTemplate}
-                    pt={getRequirementColumnPassThrough('project-requirements-list-page__category-column')}
-                />
-            )}
-
-            {visibleColumns.has('status') && (
-                <Column
-                    header='Status'
-                    body={statusBodyTemplate}
-                    sortable
-                    field='status'
-                    pt={getRequirementColumnPassThrough('project-requirements-list-page__status-column')}
-                />
-            )}
-
-            {visibleColumns.has('priority') && (
-                <Column
-                    header='Priority'
-                    body={priorityBodyTemplate}
-                    sortable
-                    field='priority'
-                    pt={getRequirementColumnPassThrough('project-requirements-list-page__priority-column')}
-                />
-            )}
-
-            {visibleColumns.has('owner') && (
-                <Column
-                    header='Owner'
-                    body={ownerBodyTemplate}
-                    sortable
-                    field='owner'
-                    pt={getRequirementColumnPassThrough('project-requirements-list-page__owner-column')}
-                />
-            )}
-
-            {visibleColumns.has('reviewer') && (
-                <Column
-                    header='Reviewer'
-                    body={reviewerBodyTemplate}
-                    pt={getRequirementColumnPassThrough('project-requirements-list-page__reviewer-column')}
-                />
-            )}
-
-            {visibleColumns.has('updatedAt') && (
-                <Column
-                    header='Updated'
-                    body={updatedAtBodyTemplate}
-                    sortable
-                    field='updatedAt'
-                    pt={getRequirementColumnPassThrough('project-requirements-list-page__updated-column')}
-                />
-            )}
+            <Column
+                header='Description'
+                body={descriptionBodyTemplate}
+                pt={getRequirementColumnPassThrough('project-requirements-list-page__description-column')}
+            />
+            <Column
+                header='Type'
+                body={typeBodyTemplate}
+                sortable
+                sortField='visibleKey'
+                pt={getRequirementColumnPassThrough('project-requirements-list-page__type-column')}
+            />
+            <Column
+                header='Category'
+                body={categoryBodyTemplate}
+                pt={getRequirementColumnPassThrough('project-requirements-list-page__category-column')}
+            />
+            <Column
+                header='Status'
+                body={statusBodyTemplate}
+                sortable
+                field='status'
+                pt={getRequirementColumnPassThrough('project-requirements-list-page__status-column')}
+            />
+            <Column
+                header='Priority'
+                body={priorityBodyTemplate}
+                sortable
+                field='priority'
+                pt={getRequirementColumnPassThrough('project-requirements-list-page__priority-column')}
+            />
+            <Column
+                header='Owner'
+                body={ownerBodyTemplate}
+                sortable
+                field='owner'
+                pt={getRequirementColumnPassThrough('project-requirements-list-page__owner-column')}
+            />
+            <Column
+                header='Reviewer'
+                body={reviewerBodyTemplate}
+                pt={getRequirementColumnPassThrough('project-requirements-list-page__reviewer-column')}
+            />
+            <Column
+                header='Updated'
+                body={updatedAtBodyTemplate}
+                sortable
+                field='updatedAt'
+                pt={getRequirementColumnPassThrough('project-requirements-list-page__updated-column')}
+            />
+            <Column
+                header='Review'
+                body={reviewBodyTemplate}
+                pt={getRequirementColumnPassThrough('project-requirements-list-page__review-action-column')}
+            />
         </DataTable>
     );
 }

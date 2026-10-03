@@ -1,38 +1,15 @@
 import { useLiveQuery } from '@tanstack/react-db';
-import { useQueries } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 
 import { getProjectRequirementsCollection } from '@/api/collections/projectRequirementsCollection';
-import {
-    getRequirementLinksQueryKey,
-    getRequirementLinksRequest,
-    type RequirementLinksOverview,
-} from '@/api/requirementLinksApi';
+import { getMyReviewTasksQueryKey, listMyReviewTasks } from '@/api/reviewTasksApi';
+import { useProjectPermissions } from '@/auth/projectPermissions';
 import type { RequirementTableRow } from '@/pages/ProjectRequirements/List/requirementListTypes';
-import {
-    emptyRequirementSearchFilters,
-    filterRequirements,
-    type RequirementListView,
-    type RequirementSearchFilters,
-} from '@/pages/ProjectRequirements/List/requirementSearch';
-
-const defaultVisibleColumns = new Set([
-    'description',
-    'type',
-    'category',
-    'status',
-    'priority',
-    'owner',
-    'reviewer',
-    'updatedAt',
-]);
 
 export function useProjectRequirementsList(projectId: string | undefined) {
     const [selectedRequirementId, setSelectedRequirementId] = useState<string>();
-    const [filters, setFilters] = useState<RequirementSearchFilters>(emptyRequirementSearchFilters);
-    const [view, setView] = useState<RequirementListView>('table');
-    const [visibleColumns, setVisibleColumns] = useState<ReadonlySet<string>>(defaultVisibleColumns);
-
+    const permissions = useProjectPermissions(projectId);
     const requirementsCollection = useMemo(
         () => (projectId === undefined ? undefined : getProjectRequirementsCollection(projectId)),
         [projectId],
@@ -42,7 +19,7 @@ export function useProjectRequirementsList(projectId: string | undefined) {
             requirementsCollection === undefined ? undefined : query.from({ requirements: requirementsCollection }),
         [requirementsCollection],
     );
-    const allRequirements = useMemo<RequirementTableRow[]>(
+    const requirements = useMemo<RequirementTableRow[]>(
         () => (requirementsQuery.data ?? []).map((requirement) => ({ ...requirement })),
         [requirementsQuery.data],
     );
@@ -59,7 +36,7 @@ export function useProjectRequirementsList(projectId: string | undefined) {
                 updatedAt: string;
             }
         >();
-        for (const requirement of allRequirements) {
+        for (const requirement of requirements) {
             if (byId.has(requirement.categoryId)) continue;
             const [type, key] = requirement.visibleKey.split('-');
             if (type !== 'FR' && type !== 'NFR') continue;
@@ -74,33 +51,22 @@ export function useProjectRequirementsList(projectId: string | undefined) {
             });
         }
         return [...byId.values()];
-    }, [allRequirements]);
-
-    const linkQueries = useQueries({
-        queries:
-            projectId === undefined ?
-                []
-            :   allRequirements.map((requirement) => ({
-                    queryKey: getRequirementLinksQueryKey(projectId, requirement.id),
-                    queryFn: () => getRequirementLinksRequest(projectId, requirement.id),
-                    staleTime: 30_000,
-                })),
+    }, [requirements]);
+    const myReviewTasksQuery = useQuery({
+        queryKey: getMyReviewTasksQueryKey(projectId),
+        queryFn: () => (projectId === undefined ? Promise.resolve([]) : listMyReviewTasks(projectId)),
+        enabled: projectId !== undefined && permissions.canManageRequirements,
     });
-    const linksByRequirementId = useMemo(() => {
-        const result = new Map<string, RequirementLinksOverview>();
-        allRequirements.forEach((requirement, index) => {
-            const data = linkQueries.at(index)?.data;
-            if (data !== undefined) result.set(requirement.id, data);
-        });
-        return result;
-    }, [allRequirements, linkQueries]);
-
-    const requirements = useMemo<RequirementTableRow[]>(
+    const pendingReviewRequirementIds = useMemo(
         () =>
-            filterRequirements(allRequirements, categories, linksByRequirementId, filters).map((requirement) => ({
-                ...requirement,
-            })),
-        [allRequirements, categories, filters, linksByRequirementId],
+            permissions.canManageRequirements ?
+                new Set(
+                    (myReviewTasksQuery.data ?? [])
+                        .filter((task) => task.status === 'pending')
+                        .map((task) => task.requirementId),
+                )
+            :   new Set<string>(),
+        [myReviewTasksQuery.data, permissions.canManageRequirements],
     );
 
     const selectedRequirement = useMemo(
@@ -121,19 +87,12 @@ export function useProjectRequirementsList(projectId: string | undefined) {
     }, [requirements]);
 
     return {
-        allRequirements,
         categories,
-        filters,
-        linksByRequirementId,
+        pendingReviewRequirementIds,
         requirements,
         requirementsQuery,
         selectedRequirement,
         selectedRequirementId,
-        setFilters,
         setSelectedRequirementId,
-        setView,
-        setVisibleColumns,
-        view,
-        visibleColumns,
     };
 }

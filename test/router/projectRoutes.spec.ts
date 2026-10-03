@@ -15,7 +15,6 @@ import {
     getProjectRequirementDetailsCloseRoute,
     getProjectRequirementDetailsRoute,
     getProjectRequirementsRoute,
-    getProjectReviewTasksRoute,
     getProjectRoute,
 } from '@/router/projectRoutes';
 
@@ -23,7 +22,6 @@ describe('projectRoutes', () => {
     it('builds project routes.', () => {
         expect(getProjectRoute('project-alpha')).toBe('/projects/project-alpha');
         expect(getProjectRequirementsRoute('project-alpha')).toBe('/projects/project-alpha/requirements');
-        expect(getProjectReviewTasksRoute('project-alpha')).toBe('/projects/project-alpha/review-tasks');
         expect(getProjectRequirementDetailsRoute('project-alpha', 'requirement-auth')).toBe(
             '/projects/project-alpha/requirements/requirement-auth',
         );
@@ -50,10 +48,6 @@ describe('projectRoutes', () => {
         expect(getActiveProjectRoute('/projects/project-alpha/requirements')).toEqual({
             projectId: 'project-alpha',
             subRoute: 'requirements',
-        });
-        expect(getActiveProjectRoute('/projects/project-alpha/review-tasks')).toEqual({
-            projectId: 'project-alpha',
-            subRoute: 'review-tasks',
         });
         expect(getActiveProjectRoute('/projects/project-alpha/metrics/metric-one')).toEqual({
             projectId: 'project-alpha',

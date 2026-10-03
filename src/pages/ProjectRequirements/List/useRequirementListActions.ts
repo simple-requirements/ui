@@ -5,7 +5,6 @@ import { toastMessages } from '@/components/Feedback/AppToast/toastMessages';
 import { showToastMessage } from '@/components/Feedback/toastEvents';
 import type { RequirementTableRow } from '@/pages/ProjectRequirements/List/requirementListTypes';
 import { getProjectRequirementDetailsRoute, getProjectRequirementReviewRoute } from '@/router/projectRoutes';
-import { clearReviewActionRequirement, setReviewActionRequirement } from '@/stores/actionBarStore';
 import { openTab } from '@/stores/tabBarStore';
 
 type Options = Readonly<{
@@ -34,16 +33,8 @@ export function useRequirementListActions({
     function selectRequirement(requirementId: string): void {
         setSelectedRequirementId(requirementId);
         const requirement = requirements.find((current) => current.id === requirementId);
-        if (projectId === undefined || requirement === undefined) {
-            clearReviewActionRequirement();
-            return;
-        }
-        setReviewActionRequirement({
-            projectId,
-            requirementId: requirement.id,
-            visibleKey: requirement.visibleKey,
-            status: requirement.status,
-        });
+        if (projectId === undefined || requirement === undefined) return;
+
         void getReviewSummary(projectId, requirementId).then((summary) => {
             if (requirement.status === 'draft' && summary.state !== 'not_started') {
                 void navigate(getProjectRequirementReviewRoute(projectId, requirementId));
@@ -61,12 +52,6 @@ export function useRequirementListActions({
         if (projectId === undefined) return;
         const reviewRoute = getProjectRequirementReviewRoute(projectId, requirement.id);
         setSelectedRequirementId(requirement.id);
-        setReviewActionRequirement({
-            projectId,
-            requirementId: requirement.id,
-            visibleKey: requirement.visibleKey,
-            status: requirement.status,
-        });
         openTab({ id: reviewRoute, label: requirement.visibleKey, closable: true });
         void navigate(reviewRoute);
     }

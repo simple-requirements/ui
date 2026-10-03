@@ -13,6 +13,8 @@ import {
     getReviewAssigneesQueryKey,
     listRequirementReviewTasks,
     listReviewAssignees,
+    type ReviewTask,
+    type ReviewTaskAssignee,
 } from '@/api/reviewTasksApi';
 import { InlineStatus } from '@/components/Feedback/InlineStatus';
 import { actionBarStore, closeReviewAssignmentDialog } from '@/stores/actionBarStore';
@@ -36,14 +38,16 @@ export function ReviewAssignmentDialog({ projectId, requirementId }: ReviewAssig
         queryFn: () => listReviewAssignees(projectId),
         enabled: visible,
     });
+    const reviewTasks: readonly ReviewTask[] = Array.isArray(tasksQuery.data) ? tasksQuery.data : [];
+    const reviewAssignees: readonly ReviewTaskAssignee[] = Array.isArray(assigneesQuery.data) ? assigneesQuery.data : [];
     const pendingAssigneeIds = useMemo(
         () =>
             new Set(
-                (tasksQuery.data ?? []).filter((task) => task.status === 'pending').map((task) => task.assignee.userId),
+                reviewTasks.filter((task) => task.status === 'pending').map((task) => task.assignee.userId),
             ),
-        [tasksQuery.data],
+        [reviewTasks],
     );
-    const assignees = (assigneesQuery.data ?? []).filter((assignee) => !pendingAssigneeIds.has(assignee.userId));
+    const assignees = reviewAssignees.filter((assignee) => !pendingAssigneeIds.has(assignee.userId));
 
     function close(): void {
         closeReviewAssignmentDialog();

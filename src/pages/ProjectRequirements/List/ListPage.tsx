@@ -20,7 +20,7 @@ export function ListPage() {
     const { projectId } = useParams();
     const {
         categories,
-        pendingReviewRequirementIds,
+        canManageRequirements,
         requirements,
         requirementsQuery,
         selectedRequirement,
@@ -78,7 +78,7 @@ export function ListPage() {
                                 selectedRequirement={selectedRequirement}
                                 selectedRequirementId={selectedRequirementId}
                                 categoriesById={categoriesById}
-                                pendingReviewRequirementIds={pendingReviewRequirementIds}
+                                canManageRequirements={canManageRequirements}
                                 onSelectRequirement={actions.selectRequirement}
                                 onCopyRequirementKey={(requirement) => {
                                     void actions.copyRequirementKey(requirement);

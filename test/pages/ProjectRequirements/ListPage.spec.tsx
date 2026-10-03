@@ -8,6 +8,7 @@ import type * as ReactQueryModule from '@tanstack/react-query';
 
 import type { Requirement } from '@/api/requirementsApi';
 import { ListPage } from '@/pages/ProjectRequirements/List/ListPage';
+import { actionBarStore, resetActionBarStore } from '@/stores/actionBarStore';
 
 const requirements: readonly Requirement[] = [
     {
@@ -76,7 +77,7 @@ const mocks = vi.hoisted(() => ({
     useLiveQuery: vi.fn(),
     getProjectRequirementsCollection: vi.fn((projectId: string) => ({ id: `requirements:${projectId}` })),
     useQueries: vi.fn(() => []),
-    useQuery: vi.fn(() => ({ data: [], isLoading: false, isError: false })),
+    useQuery: vi.fn(() => ({ data: [], isLoading: false, isError: false, isSuccess: true })),
     openTab: vi.fn(),
     showToastMessage: vi.fn(),
     getReviewSummary: vi.fn(),
@@ -147,6 +148,7 @@ function renderRequirementsListPage(queryResult: Partial<QueryResult> = {}): Ret
 
 afterEach(() => {
     cleanup();
+    resetActionBarStore();
     vi.clearAllMocks();
 });
 
@@ -200,6 +202,7 @@ describe('ProjectRequirements ListPage', () => {
 
         await waitFor(() => {
             expect(screen.getByText('Security policy')).toBeInTheDocument();
+            expect(actionBarStore.state.reviewActionRequirement?.hasAssignedReviewer).toBe(false);
         });
 
         await user.click(within(getRequirementsTable()).getByText('Users can sign in.'));
@@ -207,6 +210,7 @@ describe('ProjectRequirements ListPage', () => {
         await waitFor(() => {
             expect(screen.getByText('Security policy')).toBeInTheDocument();
             expect(screen.queryByText('Select a requirement to show its details.')).not.toBeInTheDocument();
+            expect(actionBarStore.state.reviewActionRequirement?.hasAssignedReviewer).toBe(false);
         });
     });
 

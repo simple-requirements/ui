@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useSelector } from '@tanstack/react-store';
 
 import { getRequirementReviewTasksQueryKey, listRequirementReviewTasks } from '@/api/reviewTasksApi';
+import type { ReviewTask } from '@/api/reviewTasksApi';
 import { authStore } from '@/stores/authStore';
 
 export type RequirementReviewAssignmentState = Readonly<{
@@ -25,7 +26,9 @@ export function useRequirementReviewAssignment(
         },
         enabled: projectId !== undefined && requirementId !== undefined,
     });
-    const pendingTasks = (tasksQuery.data ?? []).filter((task) => task.status === 'pending');
+    const queryData: unknown = tasksQuery.data;
+    const tasks = Array.isArray(queryData) ? (queryData as ReviewTask[]) : [];
+    const pendingTasks = tasks.filter((task) => task.status === 'pending');
 
     return {
         hasAssignedReviewer: tasksQuery.isSuccess ? pendingTasks.length > 0 : undefined,

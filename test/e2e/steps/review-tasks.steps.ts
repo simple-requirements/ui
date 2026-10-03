@@ -94,11 +94,12 @@ Then('reviewer assignment should no longer be available for the review-task requ
 });
 
 When('I open the review-task project requirements as the Review Engineer', async ({ page }) => {
-    const { projectId } = requireContext();
+    const { projectId, requirement } = requireContext();
     const reviewTasksResponse = page.waitForResponse(
         (response) =>
             response.request().method() === 'GET'
-            && new URL(response.url()).pathname === `/projects/${projectId}/review-tasks`,
+            && new URL(response.url()).pathname
+                === `/projects/${projectId}/requirements/${requirement.id}/review-tasks`,
     );
 
     await openAuthenticatedRoute(page, `/projects/${projectId}/requirements`, E2E_REVIEWER_LOGIN_USERNAME);
@@ -107,7 +108,7 @@ When('I open the review-task project requirements as the Review Engineer', async
     expect(response.status()).toBe(200);
     expect(await response.json()).toEqual(
         expect.arrayContaining([
-            expect.objectContaining({ requirementId: requireContext().requirement.id, status: 'pending' }),
+            expect.objectContaining({ requirementId: requirement.id, status: 'pending' }),
         ]),
     );
 });

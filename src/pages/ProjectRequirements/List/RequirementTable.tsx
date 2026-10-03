@@ -10,6 +10,7 @@ import {
 import type { RequirementTableRow } from '@/pages/ProjectRequirements/List/requirementListTypes';
 import { isRequirementTableRow } from '@/pages/ProjectRequirements/List/requirementListTypes';
 import { RequirementDescription } from '@/pages/ProjectRequirements/RequirementDescription';
+import { useRequirementReviewAssignment } from '@/pages/ProjectRequirements/Review/useRequirementReviewAssignment';
 import { RequirementStatusBadge } from '@/pages/ProjectRequirements/RequirementStatusBadge';
 
 export type RequirementTableProps = Readonly<{
@@ -21,7 +22,7 @@ export type RequirementTableProps = Readonly<{
     onOpenRequirement: (requirement: RequirementTableRow) => void;
     onOpenRequirementReview: (requirement: RequirementTableRow) => void;
     categoriesById: ReadonlyMap<string, Readonly<{ name: string; type: string }>>;
-    pendingReviewRequirementIds: ReadonlySet<string>;
+    canManageRequirements: boolean;
 }>;
 
 function descriptionBodyTemplate(requirement: RequirementTableRow): ReactNode {
@@ -53,6 +54,35 @@ function updatedAtBodyTemplate(requirement: RequirementTableRow): string {
     return new Date(requirement.updatedAt).toLocaleString();
 }
 
+function ReviewActionCell({
+    requirement,
+    onOpenRequirementReview,
+}: Readonly<{
+    requirement: RequirementTableRow;
+    onOpenRequirementReview: (requirement: RequirementTableRow) => void;
+}>) {
+    const assignment = useRequirementReviewAssignment(requirement.projectId, requirement.id);
+
+    if (!assignment.assignedToCurrentUser) return null;
+
+    return (
+        <button
+            type='button'
+            className='project-requirements-list-page__review-button'
+            aria-label='Review this requirement'
+            title='Review this requirement'
+            onClick={(event) => {
+                event.stopPropagation();
+                onOpenRequirementReview(requirement);
+            }}>
+            <i
+                className='pi pi-eye'
+                aria-hidden='true'
+            />
+        </button>
+    );
+}
+
 export function RequirementTable({
     requirements,
     selectedRequirement,
@@ -62,7 +92,7 @@ export function RequirementTable({
     onOpenRequirement,
     onOpenRequirementReview,
     categoriesById,
-    pendingReviewRequirementIds,
+    canManageRequirements,
 }: RequirementTableProps) {
     function handleRequirementSelectionChange(event: DataTableSelectionSingleChangeEvent<RequirementTableRow[]>): void {
         if (isRequirementTableRow(event.value)) {
@@ -88,10 +118,6 @@ export function RequirementTable({
         onCopyRequirementKey(requirement);
     }
 
-    function handleReviewClick(event: MouseEvent<HTMLButtonElement>, requirement: RequirementTableRow): void {
-        event.stopPropagation();
-        onOpenRequirementReview(requirement);
-    }
 
     function typeBodyTemplate(requirement: RequirementTableRow): string {
         return categoriesById.get(requirement.categoryId)?.type ?? requirement.visibleKey.split('-')[0];
@@ -114,20 +140,13 @@ export function RequirementTable({
     }
 
     function reviewBodyTemplate(requirement: RequirementTableRow): ReactNode {
-        if (!pendingReviewRequirementIds.has(requirement.id)) return null;
+        if (!canManageRequirements) return null;
 
         return (
-            <button
-                type='button'
-                className='project-requirements-list-page__review-button'
-                aria-label='Review this requirement'
-                title='Review this requirement'
-                onClick={(event) => handleReviewClick(event, requirement)}>
-                <i
-                    className='pi pi-eye'
-                    aria-hidden='true'
-                />
-            </button>
+            <ReviewActionCell
+                requirement={requirement}
+                onOpenRequirementReview={onOpenRequirementReview}
+            />
         );
     }
 

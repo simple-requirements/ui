@@ -4,10 +4,16 @@ import {
     createTestCategory,
     createPersistentTestProject,
     createTestRequirement,
+    E2E_REQUIREMENTS_ENGINEER_ACCESS_TOKEN,
     E2E_REQUIREMENTS_ENGINEER_LOGIN_USERNAME,
+    E2E_REVIEWER_LOGIN_USERNAME,
+    E2E_REVIEWER_USER_ID,
+    jsonRequestForToken,
     openAuthenticatedRoute,
+    requestJson,
     resetTestBackend,
     resolveTestProjectName,
+    setProjectMembership,
 } from './authenticated-test-backend';
 
 const { Given, When, Then } = createBdd(test);
@@ -234,8 +240,32 @@ When('I select requirement {string}', async ({ page }, requirementKey: string) =
     await getRequirementTableRow(page, requirementKey).click();
 });
 
+When(
+    'I assign requirement {string} to the Review Engineer',
+    // eslint-disable-next-line no-empty-pattern -- Playwright BDD fixture signature
+    async ({}, requirementKey: string) => {
+        const { project } = requireRequirementTestContext();
+        const requirement = requireRequirementByKey(requirementKey);
+
+        await setProjectMembership(project.id, E2E_REVIEWER_USER_ID);
+        await requestJson(
+            `/projects/${project.id}/requirements/${requirement.id}/review-tasks`,
+            jsonRequestForToken(E2E_REQUIREMENTS_ENGINEER_ACCESS_TOKEN, 'POST', {
+                assigneeUserId: E2E_REVIEWER_USER_ID,
+            }),
+            201,
+        );
+    },
+);
+
+When('I open the requirements list for the requirement test project as the Review Engineer', async ({ page }) => {
+    const { project } = requireRequirementTestContext();
+    await openAuthenticatedRoute(page, `/projects/${project.id}/requirements`, E2E_REVIEWER_LOGIN_USERNAME);
+    await waitUntilApplicationHasLoaded(page);
+});
+
 When('I open the review for the selected requirement', async ({ page }) => {
-    await page.getByRole('button', { name: 'Review' }).click();
+    await page.getByRole('button', { name: 'Review', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Review comments' })).toBeVisible();
 });
 
@@ -321,8 +351,12 @@ Then('the requirement test project details should show statistics', async ({ pag
     }
 });
 
-Then('the Review action should be visible', async ({ page }) => {
-    await expect(page.getByRole('button', { name: 'Review' })).toBeVisible();
+Then('the Assign reviewer action should be visible', async ({ page }) => {
+    await expect(page.getByRole('button', { name: 'Assign reviewer', exact: true })).toBeVisible();
+});
+
+Then('the Review action should not be visible', async ({ page }) => {
+    await expect(page.getByRole('button', { name: 'Review', exact: true })).toHaveCount(0);
 });
 
 Then('the Obsolete action should be visible', async ({ page }) => {

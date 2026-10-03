@@ -38,19 +38,21 @@ Feature: Project requirements
     And I select requirement "FR-AUTH-0001"
     Then the requirement details panel should show requirement "FR-AUTH-0001"
 
-  Scenario: User sees the review action for a selected draft requirement
+  Scenario: User sees reviewer assignment for an unassigned draft requirement
     Given the backend contains a requirement test project named "Requirement BDD Project" with requirements
       | categoryKey | categoryType | categoryName   | description         | priority | owner | source          |
       | AUTH        | FR           | Authentication | Users can sign in. | p1       | Alice | Security policy |
     When I open the requirements list for the requirement test project
     And I select requirement "FR-AUTH-0001"
-    Then the Review action should be visible
+    Then the Assign reviewer action should be visible
+    And the Review action should not be visible
 
   Scenario: Requirements Engineer rejects a draft requirement with authenticated identity
     Given the backend contains a requirement test project named "Requirement BDD Project" with requirements
       | categoryKey | categoryType | categoryName   | description         | priority | owner |
       | AUTH        | FR           | Authentication | Users can sign in. | p1       | Alice |
-    When I open the requirements list for the requirement test project
+    When I assign requirement "FR-AUTH-0001" to the Review Engineer
+    And I open the requirements list for the requirement test project as the Review Engineer
     And I select requirement "FR-AUTH-0001"
     And I open the review for the selected requirement
     And I reject the requirement because "The acceptance criterion is ambiguous."
@@ -61,7 +63,8 @@ Feature: Project requirements
     Given the backend contains a requirement test project named "Requirement BDD Project" with requirements
       | categoryKey | categoryType | categoryName   | description         | priority | owner |
       | AUTH        | FR           | Authentication | Users can sign in. | p1       | Alice |
-    When I open the requirements list for the requirement test project
+    When I assign requirement "FR-AUTH-0001" to the Review Engineer
+    And I open the requirements list for the requirement test project as the Review Engineer
     And I select requirement "FR-AUTH-0001"
     And I open the review for the selected requirement
     And I approve the requirement

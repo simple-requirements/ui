@@ -1,18 +1,13 @@
 import { useLiveQuery } from '@tanstack/react-db';
-import { useQuery } from '@tanstack/react-query';
-import { useSelector } from '@tanstack/react-store';
 import { useEffect, useMemo, useState } from 'react';
 
 import { getProjectRequirementsCollection } from '@/api/collections/projectRequirementsCollection';
-import { getMyReviewTasksQueryKey, listMyReviewTasks } from '@/api/reviewTasksApi';
 import { useProjectPermissions } from '@/auth/projectPermissions';
-import { authStore } from '@/stores/authStore';
 import type { RequirementTableRow } from '@/pages/ProjectRequirements/List/requirementListTypes';
 
 export function useProjectRequirementsList(projectId: string | undefined) {
     const [selectedRequirementId, setSelectedRequirementId] = useState<string>();
     const permissions = useProjectPermissions(projectId);
-    const authenticatedUserId = useSelector(authStore, (state) => state.user?.id);
     const requirementsCollection = useMemo(
         () => (projectId === undefined ? undefined : getProjectRequirementsCollection(projectId)),
         [projectId],
@@ -55,24 +50,6 @@ export function useProjectRequirementsList(projectId: string | undefined) {
         }
         return [...byId.values()];
     }, [requirements]);
-    const myReviewTasksQuery = useQuery({
-        queryKey: [...getMyReviewTasksQueryKey(projectId), authenticatedUserId],
-        queryFn: () => (projectId === undefined ? Promise.resolve([]) : listMyReviewTasks(projectId)),
-        enabled: projectId !== undefined && authenticatedUserId !== undefined && permissions.canManageRequirements,
-        refetchOnMount: 'always',
-    });
-    const pendingReviewRequirementIds = useMemo(
-        () =>
-            permissions.canManageRequirements ?
-                new Set(
-                    (myReviewTasksQuery.data ?? [])
-                        .filter((task) => task.status === 'pending')
-                        .map((task) => task.requirementId),
-                )
-            :   new Set<string>(),
-        [myReviewTasksQuery.data, permissions.canManageRequirements],
-    );
-
     const selectedRequirement = useMemo(
         () => requirements.find((requirement) => requirement.id === selectedRequirementId) ?? requirements.at(0),
         [requirements, selectedRequirementId],
@@ -92,7 +69,7 @@ export function useProjectRequirementsList(projectId: string | undefined) {
 
     return {
         categories,
-        pendingReviewRequirementIds,
+        canManageRequirements: permissions.canManageRequirements,
         requirements,
         requirementsQuery,
         selectedRequirement,
